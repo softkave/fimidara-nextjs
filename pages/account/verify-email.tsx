@@ -5,7 +5,7 @@ import { formBodyClassName } from "../../components/form/classNames";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
-import { appRootPaths, systemConstants } from "../../lib/definitions/system";
+import { appOrgPaths, systemConstants } from "../../lib/definitions/system";
 import { useRouter } from "next/router";
 import { getFormError } from "../../components/form/formUtils";
 
@@ -28,12 +28,17 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
         return;
       }
 
-      await UserEndpoint.confirmEmailAddress({ token });
+      const result = await UserEndpoint.confirmEmailAddress({ token });
+
+      if (result.errors) {
+        throw result.errors;
+      }
+
       message.success({
         message: "Email address verified.",
       });
 
-      router.push(appRootPaths.home);
+      router.push(appOrgPaths.orgs);
     } catch (error) {
       const errArray = toAppErrorsArray(error);
       const flattenedErrors = flattenErrorList(errArray);

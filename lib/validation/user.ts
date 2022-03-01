@@ -1,15 +1,10 @@
 import * as yup from "yup";
 import { userConstants } from "../definitions/user";
 import { messages } from "../messages/messages";
-import { regExPatterns } from "../utilities/validationUtils";
 
 export const signupValidationParts = {
   name: yup.string().trim().max(userConstants.maxNameLength, messages.tooLong),
   email: yup.string().trim().email(messages.invalidEmailAddress),
-  phone: yup
-    .string()
-    .trim()
-    .matches(regExPatterns.phone, messages.enterValidPhoneNum),
   confirmEmail: yup
     .string()
     .trim()

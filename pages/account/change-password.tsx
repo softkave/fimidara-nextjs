@@ -1,11 +1,14 @@
 import { css } from "@emotion/css";
-import { Button, Form, Input, notification, Typography } from "antd";
+import { Alert, Button, Form, Input, notification, Typography } from "antd";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
-import { formBodyClassName } from "../../components/form/classNames";
+import {
+  formBodyClassName,
+  formContentWrapperClassName,
+} from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { userConstants } from "../../lib/definitions/user";
 import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
@@ -16,6 +19,9 @@ import SessionActions from "../../lib/store/session/actions";
 import { appOrgPaths, systemConstants } from "../../lib/definitions/system";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
+import Head from "next/head";
+import getAppFonts from "../../components/utils/appFonts";
+import WebHeader from "../../components/web/WebHeader";
 
 export interface IChangePasswordFormData {
   password: string;
@@ -127,26 +133,30 @@ export default function ChangePassword(props: IChangePasswordProps) {
 
   return (
     <div className={formBodyClassName}>
-      <form onSubmit={formik.handleSubmit}>
-        <Typography.Title level={4}>Change Password</Typography.Title>
-        {globalError && (
-          <Form.Item>
-            <FormError error={globalError} />
+      <Head>{getAppFonts()}</Head>
+      <WebHeader />
+      <div className={formContentWrapperClassName}>
+        <form onSubmit={formik.handleSubmit}>
+          <Typography.Title level={4}>Change Password</Typography.Title>
+          {globalError && (
+            <Form.Item>
+              <Alert type="error" message={globalError} />
+            </Form.Item>
+          )}
+          {passwordNode}
+          <Form.Item className={css({ marginTop: "16px" })}>
+            <Button
+              block
+              type="primary"
+              htmlType="submit"
+              loading={submitResult.loading}
+              onClick={() => preSubmitCheck(formik)}
+            >
+              {submitResult.loading ? "Changing Password" : "Change Password"}
+            </Button>
           </Form.Item>
-        )}
-        {passwordNode}
-        <Form.Item className={css({ marginTop: "16px" })}>
-          <Button
-            block
-            type="primary"
-            htmlType="submit"
-            loading={submitResult.loading}
-            onClick={() => preSubmitCheck(formik)}
-          >
-            {submitResult.loading ? "Changing Password" : "Change Password"}
-          </Button>
-        </Form.Item>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

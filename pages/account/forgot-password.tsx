@@ -1,15 +1,18 @@
-import { css } from "@emotion/css";
-import { Button, Form, Input, notification, Typography } from "antd";
-import * as yup from "yup";
 import React from "react";
+import { css } from "@emotion/css";
+import { Alert, Button, Form, Input, notification, Typography } from "antd";
+import * as yup from "yup";
 import { useRequest } from "ahooks";
-import { formBodyClassName } from "../../components/form/classNames";
+import { formClasses } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
+import Head from "next/head";
+import getAppFonts from "../../components/utils/appFonts";
+import WebHeader from "../../components/web/WebHeader";
 
 export interface IForgotPasswordFormData {
   email: string;
@@ -31,16 +34,24 @@ const initialValues: IForgotPasswordFormInternalData = {
 };
 
 export default function ForgotPassword(props: IForgotPasswordProps) {
+  const [successMessage, setSuccessMessage] = React.useState("");
   const onSubmit = React.useCallback(async (data: IForgotPasswordFormData) => {
     try {
-      await UserEndpoint.forgotPassword({
+      setSuccessMessage("");
+      const result = await UserEndpoint.forgotPassword({
         email: data.email,
       });
 
-      notification.success({
-        message: "Change password email sent",
-        // description: "",
-      });
+      if (result.errors) {
+        throw result.errors;
+      }
+
+      setSuccessMessage("Change password email sent");
+
+      // notification.success({
+      //   message: "Change password email sent",
+      //   // description: "",
+      // });
     } catch (error) {
       const errArray = toAppErrorsArray(error);
       const flattenedErrors = flattenErrorList(errArray);
@@ -87,29 +98,38 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
   );
 
   return (
-    <div className={formBodyClassName}>
-      <form onSubmit={formik.handleSubmit}>
-        <Typography.Title level={4}>Forgot Password</Typography.Title>
-        {globalError && (
-          <Form.Item>
-            <FormError error={globalError} />
+    <div className={formClasses.formBodyClassName}>
+      <Head>{getAppFonts()}</Head>
+      <WebHeader />
+      <div className={formClasses.formContentWrapperClassName}>
+        <form onSubmit={formik.handleSubmit}>
+          <Typography.Title level={4}>Forgot Password</Typography.Title>
+          {globalError && (
+            <Form.Item>
+              <Alert type="error" message={globalError} />
+            </Form.Item>
+          )}
+          {successMessage && (
+            <Form.Item>
+              <Alert type="success" message={successMessage} />
+            </Form.Item>
+          )}
+          {emailNode}
+          <Form.Item className={css({ marginTop: "16px" })}>
+            <Button
+              block
+              type="primary"
+              htmlType="submit"
+              loading={submitResult.loading}
+              onClick={() => preSubmitCheck(formik)}
+            >
+              {submitResult.loading
+                ? "Sending Change Password Email"
+                : "Send Change Password Email"}
+            </Button>
           </Form.Item>
-        )}
-        {emailNode}
-        <Form.Item className={css({ marginTop: "16px" })}>
-          <Button
-            block
-            type="primary"
-            htmlType="submit"
-            loading={submitResult.loading}
-            onClick={() => preSubmitCheck(formik)}
-          >
-            {submitResult.loading
-              ? "Sending Change Password Email"
-              : "Send Change Password Email"}
-          </Button>
-        </Form.Item>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

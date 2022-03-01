@@ -1,11 +1,12 @@
 import { OutgoingHttpHeaders } from "http";
 import isString from "lodash/isString";
+import { IAppError } from "../definitions/system";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionSelectors from "../store/session/selectors";
 import store from "../store/store";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
-import { IAppError, IEndpointResultBase } from "./types";
+import { IEndpointResultBase } from "./types";
 
 const isExpectedErrorType = (errors: Error[]) => {
   return Array.isArray(errors) && !!errors.find((e) => !!e.name);

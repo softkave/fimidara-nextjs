@@ -1,11 +1,11 @@
 import { css } from "@emotion/css";
-import { Button, Checkbox, Form, Input, Typography } from "antd";
+import { Alert, Button, Checkbox, Form, Input, Typography } from "antd";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
-import { formBodyClassName } from "../../components/form/classNames";
+import { formClasses } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { userConstants } from "../../lib/definitions/user";
 import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
@@ -16,6 +16,9 @@ import SessionActions from "../../lib/store/session/actions";
 import { appOrgPaths } from "../../lib/definitions/system";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
+import Head from "next/head";
+import getAppFonts from "../../components/utils/appFonts";
+import WebHeader from "../../components/web/WebHeader";
 
 export interface ILoginFormValues {
   email: string;
@@ -45,6 +48,10 @@ export default function Login(props: ILoginProps) {
         email: data.email,
         password: data.password,
       });
+
+      if (result.errors) {
+        throw result.errors;
+      }
 
       if (data.remember) {
         UserSessionStorageFns.saveUserToken(result.token);
@@ -145,29 +152,33 @@ export default function Login(props: ILoginProps) {
   );
 
   return (
-    <div className={formBodyClassName}>
-      <form onSubmit={formik.handleSubmit}>
-        <Typography.Title level={4}>Login</Typography.Title>
-        {globalError && (
-          <Form.Item>
-            <FormError error={globalError} />
+    <div className={formClasses.formBodyClassName}>
+      <Head>{getAppFonts()}</Head>
+      <WebHeader />
+      <div className={formClasses.formContentWrapperClassName}>
+        <form onSubmit={formik.handleSubmit}>
+          <Typography.Title level={4}>Login</Typography.Title>
+          {globalError && (
+            <Form.Item>
+              <Alert type="error" message={globalError} />
+            </Form.Item>
+          )}
+          {emailNode}
+          {passwordNode}
+          {rememberNode}
+          <Form.Item className={css({ marginTop: "16px" })}>
+            <Button
+              block
+              type="primary"
+              htmlType="submit"
+              loading={submitResult.loading}
+              onClick={() => preSubmitCheck(formik)}
+            >
+              {submitResult.loading ? "Logging In" : "Log In"}
+            </Button>
           </Form.Item>
-        )}
-        {emailNode}
-        {passwordNode}
-        {rememberNode}
-        <Form.Item className={css({ marginTop: "16px" })}>
-          <Button
-            block
-            type="primary"
-            htmlType="submit"
-            loading={submitResult.loading}
-            onClick={() => preSubmitCheck(formik)}
-          >
-            {submitResult.loading ? "Logging In" : "Log In"}
-          </Button>
-        </Form.Item>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

@@ -34,7 +34,6 @@ export interface IUserInput {
   firstName?: string;
   lastName?: string;
   email?: string;
-  phone?: string;
   password?: string;
 }
 
@@ -42,7 +41,6 @@ const userInputFields = getFields<IUserInput>({
   firstName: true,
   lastName: true,
   email: true,
-  phone: true,
   password: true,
 });
 

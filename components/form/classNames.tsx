@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 
 export const formBodyClassName = css({
-  padding: "16px 16px",
+  padding: "16px",
   width: "100%",
   display: "flex",
   flex: 1,
@@ -11,8 +11,8 @@ export const formBodyClassName = css({
 
 export const formContentWrapperClassName = css({
   width: "100%",
-  maxWidth: "520px",
-  padding: "16px",
+  maxWidth: "420px",
+  padding: "16px 0px",
   overflowY: "auto",
   flexDirection: "column",
   margin: "auto",

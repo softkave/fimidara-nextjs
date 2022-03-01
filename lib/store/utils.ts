@@ -1,9 +1,9 @@
 import isString from "lodash/isString";
-import { IAppError } from "../api/types";
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { IMergeDataMeta, mergeData } from "../utilities/utils";
 import SessionActions from "./session/actions";
 import { IAppState } from "./types";
+import { IAppError } from "../definitions/system";
 
 export const errorToAppError = (err: Error | IAppError | string): IAppError => {
   const error = isString(err) ? new Error(err) : err;

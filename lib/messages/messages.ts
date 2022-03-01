@@ -5,8 +5,8 @@ export const messages = {
   emailsDoNotMatch: "Email addresses do not match",
 
   // signup
-  signupPhoneAndEmailConsent:
-    "By registering, you agree to be contacted both by email.",
+  signupEmailConsent:
+    "By registering, you agree to be contacted by email with updates and reports.",
   firstNameRequired: "First name is required",
   lastNameRequired: "Last name is required",
   emailRequired: "Email address is required",

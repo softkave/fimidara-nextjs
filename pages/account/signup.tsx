@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Button, Form, Input, Typography } from "antd";
+import { Alert, Button, Form, Input, Typography } from "antd";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import React from "react";
@@ -17,10 +17,8 @@ import {
 } from "../../lib/definitions/user";
 import { messages } from "../../lib/messages/messages";
 import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
-import PhoneInput from "../../components/form/PhoneInput";
 import { signupValidationParts } from "../../lib/validation/user";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
-import { formatPhoneNumber } from "../../lib/utilities/fns";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import UserSessionStorageFns from "../../lib/storage/userSession";
 import SessionActions from "../../lib/store/session/actions";
@@ -29,7 +27,7 @@ import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
 import Head from "next/head";
 import getAppFonts from "../../components/utils/appFonts";
-import WebHeader from "../../components/page/WebHeader";
+import WebHeader from "../../components/web/WebHeader";
 
 interface ISignupFormInternalData extends Required<IUserInput> {
   // confirmEmail: string;
@@ -41,7 +39,6 @@ export interface ISignupProps {}
 const signupValidation = yup.object().shape({
   firstName: signupValidationParts.name.required(messages.firstNameRequired),
   lastName: signupValidationParts.name.required(messages.lastNameRequired),
-  phone: signupValidationParts.phone.required(messages.phoneRequired),
   email: signupValidationParts.email.required(messages.emailRequired),
   // confirmEmail: signupValidationParts.confirmEmail.required(),
   password: signupValidationParts.password.required(messages.passwordRequired),
@@ -52,7 +49,6 @@ const initialValues: ISignupFormInternalData = {
   firstName: "",
   lastName: "",
   email: "",
-  phone: "",
   password: "",
   // confirmEmail: "",
   // confirmPassword: "",
@@ -63,13 +59,12 @@ export default function Signup(props: ISignupProps) {
   const router = useRouter();
   const onSubmit = React.useCallback(async (data: ISignupFormInternalData) => {
     try {
-      const phone = formatPhoneNumber(data.phone);
+      const result = await UserEndpoint.signup(data);
 
-      if (!phone) {
-        throw new Error(messages.phoneNumberInvalid);
+      if (result.errors) {
+        throw result.errors;
       }
 
-      const result = await UserEndpoint.signup(data);
       UserSessionStorageFns.saveUserToken(result.token);
       dispatch(
         SessionActions.loginUser({
@@ -105,7 +100,6 @@ export default function Signup(props: ISignupProps) {
   });
 
   const globalError = getFormError(formik.errors);
-
   const firstNameNode = (
     <Form.Item
       required
@@ -160,32 +154,6 @@ export default function Signup(props: ISignupProps) {
         placeholder="Enter your last name"
         disabled={submitResult.loading}
         maxLength={userConstants.maxNameLength}
-      />
-    </Form.Item>
-  );
-
-  const phoneNode = (
-    <Form.Item
-      required
-      label="Phone Number"
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-      help={
-        formik.touched.phone &&
-        formik.errors.phone && (
-          <FormError
-            visible={formik.touched.phone}
-            error={formik.errors.phone}
-          />
-        )
-      }
-      style={{ width: "100%" }}
-    >
-      <PhoneInput
-        value={formik.values.phone}
-        onChange={(val) => formik.setFieldValue("phone", val)}
-        onError={(errorMsg) => formik.setFieldError("phone", errorMsg)}
-        disabled={submitResult.loading}
       />
     </Form.Item>
   );
@@ -256,7 +224,7 @@ export default function Signup(props: ISignupProps) {
       })}
     >
       <Typography.Text type="secondary">
-        {messages.signupPhoneAndEmailConsent}
+        {messages.signupEmailConsent}
       </Typography.Text>
     </Form.Item>
   );
@@ -270,13 +238,12 @@ export default function Signup(props: ISignupProps) {
           <Typography.Title level={4}>Signup</Typography.Title>
           {globalError && (
             <Form.Item>
-              <FormError error={globalError} />
+              <Alert type="error" message={globalError} />
             </Form.Item>
           )}
           {firstNameNode}
           {lastNameNode}
           {emailNode}
-          {phoneNode}
           {passwordNode}
           {consentNode}
           <Form.Item className={css({ marginTop: "16px" })}>

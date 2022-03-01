@@ -1,7 +1,7 @@
 import { Typography } from "antd";
 import Link from "next/link";
 
-export default function WebHeader() {
+export default function Homepage() {
   return (
     <div>
       <Link href="/">

@@ -1,9 +1,9 @@
-import { IAppError } from "../api/types";
 import getNewId from "./getNewId";
 import get from "lodash/get";
 import mergeWith from "lodash/mergeWith";
 import set from "lodash/set";
 import { getDate } from "./dateFns";
+import { IAppError } from "../definitions/system";
 
 const tempPrefix = "temp-";
 
