@@ -17,7 +17,7 @@ import UserEndpoint from "../../lib/api/endpoints/user";
 import UserSessionStorageFns from "../../lib/storage/userSession";
 import SessionActions from "../../lib/store/session/actions";
 import { appOrgPaths, systemConstants } from "../../lib/definitions/system";
-import { toAppErrorsArray } from "../../lib/api/utils";
+import { checkEndpointResult, toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
 import Head from "next/head";
 import getAppFonts from "../../components/utils/appFonts";
@@ -73,6 +73,7 @@ export default function ChangePassword(props: IChangePasswordProps) {
           password: data.password,
         });
 
+        checkEndpointResult(result);
         UserSessionStorageFns.saveUserToken(result.token);
         dispatch(
           SessionActions.loginUser({
@@ -150,7 +151,6 @@ export default function ChangePassword(props: IChangePasswordProps) {
               type="primary"
               htmlType="submit"
               loading={submitResult.loading}
-              onClick={() => preSubmitCheck(formik)}
             >
               {submitResult.loading ? "Changing Password" : "Change Password"}
             </Button>

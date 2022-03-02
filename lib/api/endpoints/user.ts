@@ -1,10 +1,22 @@
-import { IUser, IUserInput } from "../../definitions/user";
+import { IUser, IUserInput, IUserProfileInput } from "../../definitions/user";
 import {
   GetEndpointResult,
   GetEndpointResultError,
   IEndpointResultBase,
 } from "../types";
 import { invokeEndpoint, invokeEndpointWithAuth } from "../utils";
+
+const baseURL = "/account";
+const signupURL = `${baseURL}/signup`;
+const loginURL = `${baseURL}/login`;
+const updateUserURL = `${baseURL}/updateUser`;
+const changePasswordURL = `${baseURL}/changePassword`;
+const forgotPasswordURL = `${baseURL}/forgotPassword`;
+const userExistsURL = `${baseURL}/userExists`;
+const changePasswordWithTokenURL = `${baseURL}/changePasswordWithToken`;
+const getUserDataURL = `${baseURL}/getUserData`;
+const sendEmailVerificationCodeURL = `${baseURL}/sendEmailVerificationCode`;
+const confirmEmailAddressURL = `${baseURL}/confirmEmailAddress`;
 
 export type IUserLoginResult = GetEndpointResult<{
   user: IUser;
@@ -17,7 +29,7 @@ export type ISignupEndpointErrors = GetEndpointResultError<ISignupAPIProps>;
 
 async function signup(props: ISignupAPIProps) {
   const result = await invokeEndpoint<IUserLoginResult>({
-    path: "/account/signup",
+    path: signupURL,
     data: props,
   });
 
@@ -33,21 +45,21 @@ export type ILoginEndpointErrors = GetEndpointResultError<ILoginAPIProps>;
 
 async function login(props: ILoginAPIProps): Promise<IUserLoginResult> {
   const result = await invokeEndpoint<IUserLoginResult>({
-    path: "/account/login",
+    path: loginURL,
     data: props,
   });
 
   return result;
 }
 
-export interface IUpdateUserAPIProps extends IUserInput {}
+export interface IUpdateUserAPIProps extends IUserProfileInput {}
 
 export type IUpdateUserEndpointErrors =
   GetEndpointResultError<IUpdateUserAPIProps>;
 
 async function updateUser(props: IUpdateUserAPIProps) {
   return await invokeEndpointWithAuth<IUserLoginResult>({
-    path: "/account/updateUser",
+    path: updateUserURL,
     data: props,
   });
 }
@@ -58,7 +70,7 @@ export interface IChangePasswordAPIProps {
 
 async function changePassword(props: IChangePasswordAPIProps) {
   return await invokeEndpointWithAuth<IUserLoginResult>({
-    path: "/account/changePassword",
+    path: changePasswordURL,
     data: props,
   });
 }
@@ -72,7 +84,7 @@ export type IForgotPasswordEndpointErrors =
 
 async function forgotPassword(props: IForgotPasswordAPIProps) {
   const result = await invokeEndpoint<IEndpointResultBase>({
-    path: "/account/forgotPassword",
+    path: forgotPasswordURL,
     data: props,
   });
 
@@ -89,7 +101,7 @@ export type IUserExistsEndpointResult = GetEndpointResult<{
 
 async function userExists(props: IUserExistsEndpointParams) {
   const result = await invokeEndpoint<IUserExistsEndpointResult>({
-    path: "/account/accountExists",
+    path: userExistsURL,
     data: props,
   });
 
@@ -108,7 +120,7 @@ async function changePasswordWithToken(
   props: IChangePasswordWithTokenEndpointParams
 ) {
   return await invokeEndpointWithAuth<IUserLoginResult>({
-    path: "/account/changePasswordWithToken",
+    path: changePasswordWithTokenURL,
     data: {
       password: props.password,
     },
@@ -118,7 +130,7 @@ async function changePasswordWithToken(
 
 async function sendEmailVerificationCode() {
   return await invokeEndpointWithAuth<IUserLoginResult>({
-    path: "/account/sendEmailVerificationCode",
+    path: sendEmailVerificationCodeURL,
   });
 }
 
@@ -131,7 +143,7 @@ export type IConfirmEmailAddressErrors =
 
 async function confirmEmailAddress(props: IConfirmEmailAddressParams) {
   return await invokeEndpointWithAuth<IUserLoginResult>({
-    path: "/account/confirmEmailAddress",
+    path: confirmEmailAddressURL,
     token: props.token,
   });
 }
@@ -142,7 +154,7 @@ export interface IGetUserDataParams {
 
 async function getUserData(props: IGetUserDataParams) {
   return await invokeEndpointWithAuth<IUserLoginResult>({
-    path: "/account/getUserData",
+    path: getUserDataURL,
     token: props.token,
   });
 }
@@ -158,4 +170,17 @@ export default class UserAPI {
   public static getUserData = getUserData;
   public static sendEmailVerificationCode = sendEmailVerificationCode;
   public static confirmEmailAddress = confirmEmailAddress;
+}
+
+export class UserURLs {
+  public static signup = signupURL;
+  public static login = loginURL;
+  public static updateUser = updateUserURL;
+  public static changePassword = changePasswordURL;
+  public static forgotPassword = forgotPasswordURL;
+  public static userExists = userExistsURL;
+  public static changePasswordWithToken = changePasswordWithTokenURL;
+  public static getUserData = getUserDataURL;
+  public static sendEmailVerificationCode = sendEmailVerificationCodeURL;
+  public static confirmEmailAddress = confirmEmailAddressURL;
 }

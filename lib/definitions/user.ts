@@ -37,6 +37,12 @@ export interface IUserInput {
   password?: string;
 }
 
+export interface IUserProfileInput {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
+
 const userInputFields = getFields<IUserInput>({
   firstName: true,
   lastName: true,
