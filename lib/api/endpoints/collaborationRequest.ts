@@ -8,6 +8,14 @@ import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "collaborationRequests";
+const deleteRequestURL = `${baseURL}/deleteRequest`;
+const getOrganizationRequestsURL = `${baseURL}/getOrganizationRequests`;
+const getUserRequestsURL = `${baseURL}/getUserRequests`;
+const sendRequestURL = `${baseURL}/sendRequest`;
+const updateRequestURL = `${baseURL}/updateRequest`;
+const respondToRequestURL = `${baseURL}/respondToRequest`;
+const revokeRequestURL = `${baseURL}/revokeRequest`;
+const getRequestURL = `${baseURL}/getRequest`;
 
 export interface IDeleteCollaborationRequestEndpointParams {
   requestId: string;
@@ -15,7 +23,7 @@ export interface IDeleteCollaborationRequestEndpointParams {
 
 async function deleteRequest(props: IDeleteCollaborationRequestEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/deleteRequest`,
+    path: deleteRequestURL,
     data: props,
   });
 }
@@ -34,7 +42,7 @@ async function getOrganizationRequests(
 ) {
   return invokeEndpointWithAuth<IGetOrganizationCollaborationRequestsEndpointResult>(
     {
-      path: `${baseURL}/getOrganizationRequests`,
+      path: getOrganizationRequestsURL,
       data: props,
     }
   );
@@ -47,7 +55,7 @@ export type IGetUserCollaborationRequestsEndpointResult = GetEndpointResult<{
 async function getUserRequests() {
   return await invokeEndpointWithAuth<IGetUserCollaborationRequestsEndpointResult>(
     {
-      path: `${baseURL}/getUserRequests`,
+      path: getUserRequestsURL,
     }
   );
 }
@@ -66,7 +74,7 @@ async function respondToRequest(
 ) {
   return await invokeEndpointWithAuth<IRespondToCollaborationRequestEndpointResult>(
     {
-      path: `${baseURL}/respondToRequest`,
+      path: respondToRequestURL,
       data: props,
     }
   );
@@ -83,7 +91,7 @@ export type IRevokeCollaborationRequestEndpointResult = GetEndpointResult<{
 async function revokeRequest(props: IRevokeCollaborationRequestEndpointParams) {
   return await invokeEndpointWithAuth<IRevokeCollaborationRequestEndpointResult>(
     {
-      path: `${baseURL}/revokeRequest`,
+      path: revokeRequestURL,
       data: props,
     }
   );
@@ -100,7 +108,7 @@ export type ISendCollaborationRequestEndpointResult = GetEndpointResult<{
 
 async function sendRequest(props: ISendCollaborationRequestEndpointParams) {
   return await invokeEndpointWithAuth<ISendCollaborationRequestEndpointResult>({
-    path: `${baseURL}/sendRequest`,
+    path: sendRequestURL,
     data: props,
   });
 }
@@ -117,10 +125,25 @@ export type IUpdateCollaborationRequestEndpointResult = GetEndpointResult<{
 async function updateRequest(props: IUpdateCollaborationRequestEndpointParams) {
   return await invokeEndpointWithAuth<IUpdateCollaborationRequestEndpointResult>(
     {
-      path: `${baseURL}/updateRequest`,
+      path: updateRequestURL,
       data: props,
     }
   );
+}
+
+export interface IGetCollaborationRequestEndpointParams {
+  requestId: string;
+}
+
+export type IGetCollaborationRequestEndpointResult = GetEndpointResult<{
+  request: ICollaborationRequest;
+}>;
+
+async function getRequest(props: IGetCollaborationRequestEndpointParams) {
+  return await invokeEndpointWithAuth<IGetCollaborationRequestEndpointResult>({
+    path: getRequestURL,
+    data: props,
+  });
 }
 
 export default class CollaborationRequestAPI {
@@ -131,4 +154,16 @@ export default class CollaborationRequestAPI {
   public static updateRequest = updateRequest;
   public static respondToRequest = respondToRequest;
   public static revokeRequest = revokeRequest;
+  public static getRequest = getRequest;
+}
+
+export class CollaborationRequestURLs {
+  public static deleteRequest = deleteRequestURL;
+  public static getOrganizationRequests = getOrganizationRequestsURL;
+  public static getUserRequests = getUserRequestsURL;
+  public static sendRequest = sendRequestURL;
+  public static updateRequest = updateRequestURL;
+  public static respondToRequest = respondToRequestURL;
+  public static revokeRequest = revokeRequestURL;
+  public static getRequest = getRequestURL;
 }

@@ -1,5 +1,6 @@
 import { OutgoingHttpHeaders } from "http";
 import isString from "lodash/isString";
+import last from "lodash/last";
 import { IAppError } from "../definitions/system";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionSelectors from "../store/session/selectors";
@@ -133,4 +134,26 @@ export async function invokeEndpointWithAuth<T extends IEndpointResultBase>(
       ...props.headers,
     },
   });
+}
+
+export function checkEndpointResult<T extends IEndpointResultBase>(result: T) {
+  if (result.errors) {
+    throw result.errors;
+  }
+
+  return result;
+}
+
+export function withCheckEndpointResult<
+  R extends IEndpointResultBase,
+  P extends any[]
+>(fn: (...args: P) => Promise<R>) {
+  return async (...args: P): Promise<R> => {
+    const result = await fn(...args);
+    return checkEndpointResult(result);
+  };
+}
+
+export function getLastPath(p: string) {
+  return last(p.split("/"));
 }

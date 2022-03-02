@@ -1,4 +1,7 @@
 export const messages = {
+  // Request
+  requestError: "Error completing request",
+
   // TODO: Add minimum and maximum to input helper
   passwordMinChars: "Minimum of 7 characters",
   passwordsDoNotMatch: "Passwords do not match",
@@ -15,9 +18,6 @@ export const messages = {
   invalidEmailAddress: "Email address is invalid",
   emailMismatch: "The email addresses you entered do not match",
   passwordMismatch: "The passwords you entered do not match",
-
-  // phone number
-  enterValidPhoneNum: "Please enter a valid phone number",
 
   // form
   tooLong: "Input is too long",

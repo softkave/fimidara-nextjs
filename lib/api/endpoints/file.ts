@@ -3,10 +3,28 @@ import {
   INewFileInput,
   IUpdateFileDetailsInput,
 } from "../../definitions/file";
+import { systemConstants } from "../../definitions/system";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "files";
+const deleteFileURL = `${baseURL}/deleteFile`;
+const getFileDetailsURL = `${baseURL}/getFileDetails`;
+const updateFileDetailsURL = `${baseURL}/updateFileDetails`;
+const uploadFileURL = `${baseURL}/uploadFile`;
+const getFileURL = `${baseURL}/getFile`;
+
+export function getUserImagePath(
+  userId: string,
+  width: number,
+  height: number
+) {
+  const p = systemConstants.userImagesFolder + "/" + userId;
+  return (
+    getFileURL +
+    `?orgId=${systemConstants.organizationId}&p=${p}&w=${width}&h=${height}`
+  );
+}
 
 export interface IGetFileDetailsEndpointParams {
   path: string;
@@ -19,7 +37,7 @@ export type IGetFileDetailsEndpointResult = GetEndpointResult<{
 
 async function getFileDetails(props: IGetFileDetailsEndpointParams) {
   return invokeEndpointWithAuth<IGetFileDetailsEndpointResult>({
-    path: `${baseURL}/getFileDetails`,
+    path: getFileDetailsURL,
     data: props,
   });
 }
@@ -31,7 +49,7 @@ export interface IDeleteFileEndpointParams {
 
 async function deleteFile(props: IDeleteFileEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/deleteFile`,
+    path: deleteFileURL,
     data: props,
   });
 }
@@ -66,7 +84,7 @@ export type IUpdateFileDetailsEndpointResult = GetEndpointResult<{
 
 async function updateFileDetails(props: IUpdateFileDetailsEndpointParams) {
   return await invokeEndpointWithAuth<IUpdateFileDetailsEndpointResult>({
-    path: `${baseURL}/updateFileDetails`,
+    path: updateFileDetailsURL,
     data: props,
   });
 }
@@ -82,7 +100,7 @@ export type IUploadFileEndpointResult = GetEndpointResult<{
 
 async function uploadFile(props: IUploadFileEndpointParams) {
   return await invokeEndpointWithAuth<IUploadFileEndpointResult>({
-    path: `${baseURL}/uploadFile`,
+    path: uploadFileURL,
     data: props,
   });
 }
@@ -92,4 +110,11 @@ export default class FileAPI {
   public static getFileDetails = getFileDetails;
   public static updateFileDetails = updateFileDetails;
   public static uploadFile = uploadFile;
+}
+
+export class FileURLs {
+  public static deleteFile = deleteFileURL;
+  public static getFileDetails = getFileDetailsURL;
+  public static updateFileDetails = updateFileDetailsURL;
+  public static uploadFile = uploadFileURL;
 }

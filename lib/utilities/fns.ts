@@ -4,25 +4,6 @@ export function cast<ToType>(resource: any): ToType {
   return resource as unknown as ToType;
 }
 
-const nationalPhoneRegex = /(?<phone>\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$)/;
-
-export function formatPhoneNumber(phone: string) {
-  const result = phone.match(nationalPhoneRegex);
-
-  if (!result) {
-    return null;
-  }
-
-  let nationalPhoneNumber = result.groups?.phone;
-
-  if (!nationalPhoneNumber) {
-    return null;
-  }
-
-  nationalPhoneNumber = nationalPhoneNumber.replaceAll(/[\s.-]/g, "");
-  return `+1${nationalPhoneNumber}`;
-}
-
 const timeRegex =
   /^(?<hour>\d{1,2}):(?<minute>\d{1,2})[\s]?(?<meridian>am|pm)$/i;
 

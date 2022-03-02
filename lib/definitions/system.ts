@@ -7,17 +7,16 @@ export const systemConstants = {
   appShortName: "files",
   tokenQueryKey: "t",
   phoneQueryKey: "p",
+  organizationId: "files-by-softkave",
+  userImagesFolder:
+    process.env.NODE_ENV === "development"
+      ? "/files-dev/images/user"
+      : "/files/images/user",
 };
 
 export interface ISelectedIdRouteMatch {
   selected?: string;
 }
-
-export const appRootPaths = {
-  home: "/",
-  app: "/app",
-  account: "/account",
-};
 
 export function getSelectedItemPath(path: string) {
   return `${path}/:selected`;
@@ -61,6 +60,12 @@ export interface IAppError extends Error {
   value?: any;
 }
 
+export const appRootPaths = {
+  home: "/",
+  app: "/app",
+  account: "/account",
+};
+
 export const appOrgPaths = {
   orgs: appRootPaths.app + "/orgs",
 };
@@ -71,4 +76,13 @@ export const appAccountPaths = {
   verifyEmail: appRootPaths.account + "/verify-email",
   forgotPassword: appRootPaths.account + "/forgot-password",
   changePassword: appRootPaths.account + "/change-password",
+  settings: appRootPaths.account + "/settings",
+};
+
+export const appUserPaths = {
+  settings: appRootPaths.app + "/settings",
+};
+
+export const appRequestsPaths = {
+  requests: appRootPaths.app + "/requests",
 };
