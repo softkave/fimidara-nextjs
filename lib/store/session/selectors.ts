@@ -11,13 +11,18 @@ function isUserSignedIn(state: IAppState) {
 function assertUserSignedIn(state: IAppState) {
   if (!isUserSignedIn(state)) {
     // TODO: central error messages location
-    throw new Error("User is not signed in.");
+    throw new Error("Please sign in");
   }
 }
 
 function assertGetToken(state: IAppState) {
   assertUserSignedIn(state);
   return getUserToken(state)!;
+}
+
+function assertGetClientAssignedToken(state: IAppState) {
+  assertUserSignedIn(state);
+  return state.session.clientAssignedToken;
 }
 
 function getSessionType(state: IAppState) {
@@ -32,7 +37,7 @@ function assertGetUserId(state: IAppState) {
   const userId = state.session.userId;
 
   if (!userId) {
-    throw new Error("User is not signed in.");
+    throw new Error("Please sign in");
   }
 
   return userId;
@@ -45,4 +50,5 @@ export default class SessionSelectors {
   public static assertGetToken = assertGetToken;
   public static getSessionData = getSessionData;
   public static assertGetUserId = assertGetUserId;
+  public static assertGetClientAssignedToken = assertGetClientAssignedToken;
 }

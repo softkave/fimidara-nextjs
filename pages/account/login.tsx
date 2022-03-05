@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { formClasses } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { userConstants } from "../../lib/definitions/user";
-import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
+import { getFormError } from "../../components/form/formUtils";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import UserSessionStorageFns from "../../lib/storage/userSession";
@@ -59,8 +59,9 @@ export default function Login(props: ILoginProps) {
 
       dispatch(
         SessionActions.loginUser({
-          token: result.token,
+          userToken: result.token,
           userId: result.user.resourceId,
+          clientAssignedToken: result.clientAssignedToken,
         })
       );
 
@@ -172,7 +173,6 @@ export default function Login(props: ILoginProps) {
               type="primary"
               htmlType="submit"
               loading={submitResult.loading}
-              onClick={() => preSubmitCheck(formik)}
             >
               {submitResult.loading ? "Logging In" : "Log In"}
             </Button>

@@ -1,27 +1,29 @@
-import { getItem, removeItem, setItem } from "../utilities/storage";
+import {
+  makeGetFnForKey,
+  makeRemoveFnForKey,
+  makeSetFnForKey,
+  makeSetIfExistFnForKey,
+} from "../utilities/storage";
 import { StorageKeys } from "./types";
 
-function getUserToken() {
-    return getItem(StorageKeys.Token);
-}
-
-function saveUserToken(token: string) {
-    setItem(StorageKeys.Token, token);
-}
-
-function deleteUserToken() {
-    removeItem(StorageKeys.Token);
-}
-
-function saveTokenIfExists(token: string) {
-    if (getUserToken()) {
-        saveUserToken(token);
-    }
-}
-
 export default class UserSessionStorageFns {
-    public static getUserToken = getUserToken;
-    public static saveUserToken = saveUserToken;
-    public static deleteUserToken = deleteUserToken;
-    public static saveTokenIfExists = saveTokenIfExists;
+  public static getUserToken = makeGetFnForKey(StorageKeys.UserToken);
+  public static saveUserToken = makeSetFnForKey(StorageKeys.UserToken);
+  public static deleteUserToken = makeRemoveFnForKey(StorageKeys.UserToken);
+  public static saveUserTokenIfExists = makeSetIfExistFnForKey(
+    StorageKeys.UserToken
+  );
+
+  public static getClientAssignedToken = makeGetFnForKey(
+    StorageKeys.ClientAssignedToken
+  );
+  public static saveClientAssignedToken = makeSetFnForKey(
+    StorageKeys.ClientAssignedToken
+  );
+  public static deleteClientAssignedToken = makeRemoveFnForKey(
+    StorageKeys.ClientAssignedToken
+  );
+  public static saveClientAssignedTokenIfExists = makeSetIfExistFnForKey(
+    StorageKeys.ClientAssignedToken
+  );
 }

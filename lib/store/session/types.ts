@@ -8,5 +8,6 @@ export enum SessionType {
 export interface ISessionState {
   sessionType: SessionType;
   token?: string;
+  clientAssignedToken?: string;
   userId?: string;
 }

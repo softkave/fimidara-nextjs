@@ -1,3 +1,4 @@
+import { defaultTo } from "lodash";
 import { getClientAddr } from "../api/addr";
 
 export const systemConstants = {
@@ -7,11 +8,18 @@ export const systemConstants = {
   appShortName: "files",
   tokenQueryKey: "t",
   phoneQueryKey: "p",
-  organizationId: "files-by-softkave",
-  userImagesFolder:
-    process.env.NODE_ENV === "development"
-      ? "/files-dev/images/user"
-      : "/files/images/user",
+  organizationId: defaultTo(
+    process.env.ORGANIZATION_ID,
+    "<insert-organization-id>"
+  ),
+  userImagesFolder: defaultTo(
+    process.env.USER_IMAGES_FOLDER,
+    "/files/images/users"
+  ),
+  orgImagesFolder: defaultTo(
+    process.env.ORG_IMAGES_FOLDER,
+    "/files/images/orgs"
+  ),
 };
 
 export interface ISelectedIdRouteMatch {
@@ -68,6 +76,7 @@ export const appRootPaths = {
 
 export const appOrgPaths = {
   orgs: appRootPaths.app + "/orgs",
+  orgsForm: appRootPaths.app + "/orgs/form",
 };
 
 export const appAccountPaths = {

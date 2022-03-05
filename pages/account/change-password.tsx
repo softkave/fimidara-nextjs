@@ -11,7 +11,7 @@ import {
 } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { userConstants } from "../../lib/definitions/user";
-import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
+import { getFormError } from "../../components/form/formUtils";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import UserSessionStorageFns from "../../lib/storage/userSession";
@@ -77,8 +77,9 @@ export default function ChangePassword(props: IChangePasswordProps) {
         UserSessionStorageFns.saveUserToken(result.token);
         dispatch(
           SessionActions.loginUser({
-            token: result.token,
+            userToken: result.token,
             userId: result.user.resourceId,
+            clientAssignedToken: result.clientAssignedToken,
           })
         );
 

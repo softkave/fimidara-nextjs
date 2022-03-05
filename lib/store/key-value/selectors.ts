@@ -1,7 +1,7 @@
 import { IAppState } from "../types";
 import { KeyValueKeys } from "./types";
 
-function getKeyValue<T = any>(state: IAppState, key: KeyValueKeys): T {
+function getKeyValue<T = any>(state: IAppState, key: KeyValueKeys | string): T {
   return state.keyValue[key];
 }
 

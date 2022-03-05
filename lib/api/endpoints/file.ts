@@ -1,11 +1,18 @@
-import {
-  IFile,
-  INewFileInput,
-  IUpdateFileDetailsInput,
-} from "../../definitions/file";
+import { URLSearchParams } from "url";
+import { IFile, IUpdateFileDetailsInput } from "../../definitions/file";
 import { systemConstants } from "../../definitions/system";
+import SessionSelectors from "../../store/session/selectors";
+import store from "../../store/store";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
-import { invokeEndpointWithAuth } from "../utils";
+import {
+  HTTP_HEADER_CONTENT_TYPE as HTTP_HEADER_CONTENT_TYPE,
+  CONTENT_TYPE_MULTIPART_FORMDATA,
+  invokeEndpoint,
+  invokeEndpointWithAuth,
+  setEndpointFormData,
+  HTTP_HEADER_AUTHORIZATION,
+  setEndpointParam,
+} from "../utils";
 
 const baseURL = "files";
 const deleteFileURL = `${baseURL}/deleteFile`;
@@ -14,16 +21,56 @@ const updateFileDetailsURL = `${baseURL}/updateFileDetails`;
 const uploadFileURL = `${baseURL}/uploadFile`;
 const getFileURL = `${baseURL}/getFile`;
 
-export function getUserImagePath(
+export const UPLOAD_FILE_BLOB_FORMDATA_KEY = "data";
+export const PATH_QUERY_PARAMS_KEY = "p";
+export const ORG_ID_QUERY_PARAMS_KEY = "orgId";
+export const IMAGE_WIDTH_QUERY_PARAMS_KEY = "w";
+export const IMAGE_HEIGHT_QUERY_PARAMS_KEY = "h";
+
+export function getFetchImagePath(p: string, width: number, height: number) {
+  // TODO: Setup Sentry to find issues like URLSearchParams
+  // not polyfilled
+  const params = new URLSearchParams();
+  params.append(ORG_ID_QUERY_PARAMS_KEY, systemConstants.organizationId);
+  params.append(PATH_QUERY_PARAMS_KEY, p);
+  setEndpointParam(params, IMAGE_WIDTH_QUERY_PARAMS_KEY, width);
+  setEndpointParam(params, IMAGE_HEIGHT_QUERY_PARAMS_KEY, height);
+  return getFileURL + `?${params.toString}`;
+}
+
+export function getUploadFilePath(p: string) {
+  const params = new URLSearchParams();
+  params.append(ORG_ID_QUERY_PARAMS_KEY, systemConstants.organizationId);
+  params.append(PATH_QUERY_PARAMS_KEY, p);
+  return uploadFileURL + `?${params.toString}`;
+}
+
+export function getFetchUserImagePath(
   userId: string,
   width: number,
   height: number
 ) {
   const p = systemConstants.userImagesFolder + "/" + userId;
-  return (
-    getFileURL +
-    `?orgId=${systemConstants.organizationId}&p=${p}&w=${width}&h=${height}`
-  );
+  return getFetchImagePath(p, width, height);
+}
+
+export function getFetchOrgImagePath(
+  orgId: string,
+  width: number,
+  height: number
+) {
+  const p = systemConstants.orgImagesFolder + "/" + orgId;
+  return getFetchImagePath(p, width, height);
+}
+
+export function getUploadUserImagePath(userId: string) {
+  const p = systemConstants.userImagesFolder + "/" + userId;
+  return getUploadFilePath(p);
+}
+
+export function getUploadOrgImagePath(orgId: string) {
+  const p = systemConstants.orgImagesFolder + "/" + orgId;
+  return getUploadFilePath(p);
 }
 
 export interface IGetFileDetailsEndpointParams {
@@ -91,7 +138,12 @@ async function updateFileDetails(props: IUpdateFileDetailsEndpointParams) {
 
 export interface IUploadFileEndpointParams {
   organizationId?: string;
-  file: INewFileInput;
+  description?: string;
+  encoding?: string;
+  extension?: string;
+  mimetype?: string;
+  data: Blob;
+  path: string;
 }
 
 export type IUploadFileEndpointResult = GetEndpointResult<{
@@ -99,9 +151,26 @@ export type IUploadFileEndpointResult = GetEndpointResult<{
 }>;
 
 async function uploadFile(props: IUploadFileEndpointParams) {
-  return await invokeEndpointWithAuth<IUploadFileEndpointResult>({
+  const formData = new FormData();
+  formData.append("organizationId", systemConstants.organizationId);
+  formData.append(UPLOAD_FILE_BLOB_FORMDATA_KEY, props.data);
+  formData.append("path", props.path);
+  setEndpointFormData(formData, "description", props.description);
+  setEndpointFormData(formData, "encoding", props.encoding);
+  setEndpointFormData(formData, "extension", props.extension);
+  setEndpointFormData(formData, "mimetype", props.mimetype);
+
+  const clientAssignedToken = SessionSelectors.assertGetClientAssignedToken(
+    store.getState()
+  );
+
+  return await invokeEndpoint<IUploadFileEndpointResult>({
     path: uploadFileURL,
-    data: props,
+    data: formData,
+    headers: {
+      [HTTP_HEADER_CONTENT_TYPE]: CONTENT_TYPE_MULTIPART_FORMDATA,
+      [HTTP_HEADER_AUTHORIZATION]: `Bearer ${clientAssignedToken}`,
+    },
   });
 }
 

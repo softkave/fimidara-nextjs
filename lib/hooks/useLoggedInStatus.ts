@@ -7,7 +7,7 @@ import { appOrgPaths } from "../definitions/system";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionActions from "../store/session/actions";
 import SessionSelectors from "../store/session/selectors";
-import { getBaseError } from "../utilities/error";
+import { getBaseError } from "../utilities/errors";
 
 export default function useLoggedInStatus() {
   const dispatch = useDispatch();
@@ -26,8 +26,9 @@ export default function useLoggedInStatus() {
         UserSessionStorageFns.saveUserToken(result.token);
         dispatch(
           SessionActions.loginUser({
-            token: result.token,
+            userToken: result.token,
             userId: result.user.resourceId,
+            clientAssignedToken: result.clientAssignedToken,
           })
         );
 

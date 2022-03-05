@@ -3,7 +3,8 @@ import { IMergeDataMeta } from "../../utilities/utils";
 import { ISessionState } from "./types";
 
 const loginUser = createAction<{
-  token: string;
+  userToken: string;
+  clientAssignedToken: string;
   userId: string;
   isDemo?: boolean;
 }>("session/loginUser");

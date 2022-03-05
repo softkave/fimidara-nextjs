@@ -1,6 +1,7 @@
 export const messages = {
-  // Request
+  // Error
   requestError: "Error completing request",
+  errorOccurred: "An error occurred",
 
   // TODO: Add minimum and maximum to input helper
   passwordMinChars: "Minimum of 7 characters",

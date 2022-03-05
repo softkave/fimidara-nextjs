@@ -43,3 +43,42 @@ export function getItem(key: string, storageType = defaultStorageType) {
     return storageObject.getItem(key);
   }
 }
+
+export function setItemIfExist(
+  key: string,
+  data: string,
+  storageType = defaultStorageType
+) {
+  if (getItem(key, storageType)) {
+    setItem(key, data, storageType);
+  }
+}
+
+export function makeSetFnForKey(key: string) {
+  return (data: string, storageType = defaultStorageType) =>
+    setItem(key, data, storageType);
+}
+
+export function makeGetFnForKey(key: string) {
+  return (storageType = defaultStorageType) => getItem(key, storageType);
+}
+
+export function makeSetIfExistFnForKey(key: string) {
+  return (data: string, storageType = defaultStorageType) =>
+    setItemIfExist(key, data, storageType);
+}
+
+export function makeRemoveFnForKey(key: string) {
+  return (storageType = defaultStorageType) => removeItem(key, storageType);
+}
+
+export class StorageFns {
+  static setItem = setItem;
+  static removeItem = removeItem;
+  static getItem = getItem;
+  static setItemIfExist = setItemIfExist;
+  static makeSetFnForKey = makeSetFnForKey;
+  static makeGetFnForKey = makeGetFnForKey;
+  static makeSetIfExistFnForKey = makeSetIfExistFnForKey;
+  static makeRemoveFnForKey = makeRemoveFnForKey;
+}

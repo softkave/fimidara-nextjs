@@ -16,7 +16,7 @@ import {
   userConstants,
 } from "../../lib/definitions/user";
 import { messages } from "../../lib/messages/messages";
-import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
+import { getFormError } from "../../components/form/formUtils";
 import { signupValidationParts } from "../../lib/validation/user";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
@@ -68,8 +68,9 @@ export default function Signup(props: ISignupProps) {
       UserSessionStorageFns.saveUserToken(result.token);
       dispatch(
         SessionActions.loginUser({
-          token: result.token,
+          userToken: result.token,
           userId: result.user.resourceId,
+          clientAssignedToken: result.clientAssignedToken,
         })
       );
 
@@ -252,7 +253,6 @@ export default function Signup(props: ISignupProps) {
               type="primary"
               htmlType="submit"
               loading={submitResult.loading}
-              onClick={() => preSubmitCheck(formik)}
             >
               {submitResult.loading ? "Creating Account" : "Create Account"}
             </Button>

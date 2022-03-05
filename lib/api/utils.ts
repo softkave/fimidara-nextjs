@@ -5,6 +5,7 @@ import { IAppError } from "../definitions/system";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionSelectors from "../store/session/selectors";
 import store from "../store/store";
+import { flattenErrorList } from "../utilities/utils";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IEndpointResultBase } from "./types";
@@ -36,27 +37,38 @@ export const toAppErrorsArray = (err: any) => {
   }
 };
 
+export const HTTP_HEADER_CONTENT_TYPE = "Content-Type";
+export const HTTP_HEADER_AUTHORIZATION = "Authorization";
+export const CONTENT_TYPE_APPLICATION_JSON = "application/json";
+export const CONTENT_TYPE_MULTIPART_FORMDATA = "multipart/form-data";
+
 export interface IInvokeEndpointParams {
   data?: any;
   path: string;
   headers?: OutgoingHttpHeaders;
+  method?: "GET" | "POST";
 }
 
 export async function invokeEndpoint<T extends IEndpointResultBase>(
   props: IInvokeEndpointParams
 ): Promise<T> {
   const { data, path } = props;
+  const method = props.method || "POST";
+  const incomingHeaders = props.headers || {};
+  const contentType =
+    incomingHeaders[HTTP_HEADER_CONTENT_TYPE] || CONTENT_TYPE_APPLICATION_JSON;
+  const contentBody =
+    contentType === CONTENT_TYPE_APPLICATION_JSON ? JSON.stringify(data) : data;
+  const httpHeaders = {
+    [HTTP_HEADER_CONTENT_TYPE]: contentType,
+    ...incomingHeaders,
+  };
 
   try {
-    const headers = {
-      "Content-Type": "application/json",
-      ...(props.headers || {}),
-    };
-
     const result = await fetch(getServerAddr() + path, {
-      headers,
-      body: data ? JSON.stringify(data) : undefined,
-      method: "POST",
+      method,
+      headers: httpHeaders as HeadersInit,
+      body: contentBody,
       mode: "cors",
     });
 
@@ -130,7 +142,7 @@ export async function invokeEndpointWithAuth<T extends IEndpointResultBase>(
   return invokeEndpoint<T>({
     ...props,
     headers: {
-      Authorization: `Bearer ${requestToken}`,
+      [HTTP_HEADER_AUTHORIZATION]: `Bearer ${requestToken}`,
       ...props.headers,
     },
   });
@@ -142,6 +154,12 @@ export function checkEndpointResult<T extends IEndpointResultBase>(result: T) {
   }
 
   return result;
+}
+
+export function processEndpointError(error: any) {
+  const errArray = toAppErrorsArray(error);
+  const flattenedErrors = flattenErrorList(errArray);
+  throw flattenedErrors;
 }
 
 export function withCheckEndpointResult<
@@ -156,4 +174,24 @@ export function withCheckEndpointResult<
 
 export function getLastPath(p: string) {
   return last(p.split("/"));
+}
+
+export function setEndpointFormData(
+  formData: FormData,
+  name: string,
+  data?: string | Blob
+) {
+  if (data) {
+    formData.set(name, data);
+  }
+}
+
+export function setEndpointParam(
+  params: URLSearchParams,
+  name: string,
+  data: any
+) {
+  if (data) {
+    params.set(name, data);
+  }
 }

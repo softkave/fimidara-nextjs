@@ -1,13 +1,10 @@
 import { Button, message, Space, Typography } from "antd";
 import React from "react";
-import { matchPath } from "react-router-dom";
 import { formatRelative } from "date-fns";
 import { useSWRConfig } from "swr";
-import { appOrgPaths, appRequestsPaths } from "../../../lib/definitions/system";
 import useCollaborationRequest, {
   getUseCollaborationRequestHookKey,
 } from "../../../lib/hooks/requests/useRequest";
-import useRouteAway from "../../../lib/hooks/useRouteAway";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import {
@@ -17,19 +14,19 @@ import {
 import CollaborationRequestAPI from "../../../lib/api/endpoints/collaborationRequest";
 import assert from "assert";
 import { useRequest } from "ahooks";
-import { getBaseError } from "../../../lib/utilities/error";
+import { getBaseError } from "../../../lib/utilities/errors";
 import { messages } from "../../../lib/definitions/messages";
 import { checkEndpointResult } from "../../../lib/api/utils";
 
-export default function CollaborationRequest() {
-  const routeParams = matchPath(
-    appRequestsPaths.requests + "/:requestId",
-    window.location.pathname
-  );
+export interface IUserCollaborationRequestProps {
+  requestId: string;
+}
 
-  const requestId = routeParams?.params.requestId;
+export default function UserCollaborationRequest(
+  props: IUserCollaborationRequestProps
+) {
+  const { requestId } = props;
   const { error, isLoading, data } = useCollaborationRequest(requestId);
-  useRouteAway(appOrgPaths.orgs, !requestId);
   const { mutate } = useSWRConfig();
   const onRespond = React.useCallback(
     async (response: CollaborationRequestResponse) => {

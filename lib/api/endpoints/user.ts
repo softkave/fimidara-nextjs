@@ -21,6 +21,7 @@ const confirmEmailAddressURL = `${baseURL}/confirmEmailAddress`;
 export type IUserLoginResult = GetEndpointResult<{
   user: IUser;
   token: string;
+  clientAssignedToken: string;
 }>;
 
 export interface ISignupAPIProps extends Required<IUserInput> {}

@@ -1,29 +1,22 @@
 import { List } from "antd";
 import Link from "next/link";
 import React from "react";
-import { useSelector } from "react-redux";
+import { ICollaborationRequest } from "../../../lib/definitions/collaborationRequest";
 import { appRequestsPaths } from "../../../lib/definitions/system";
-import useUserRequests from "../../../lib/hooks/requests/useUserRequests";
-import SessionSelectors from "../../../lib/store/session/selectors";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
 
-export default function CollaborationRequestList() {
-  const userId = useSelector(SessionSelectors.assertGetUserId);
-  const { error, isLoading, data } = useUserRequests(userId);
+export interface ICollaborationRequestListProps {
+  requests: ICollaborationRequest[];
+}
 
-  if (isLoading) {
-    return <PageLoading messageText="Loading requests..." />;
-  } else if (error) {
-    return (
-      <PageError messageText={error?.message || "Error fetching requests"} />
-    );
-  }
+export default function CollaborationRequestList(
+  props: ICollaborationRequestListProps
+) {
+  const { requests } = props;
 
   return (
     <List
       itemLayout="horizontal"
-      dataSource={data?.requests}
+      dataSource={requests}
       renderItem={(item) => (
         <List.Item>
           <List.Item.Meta
