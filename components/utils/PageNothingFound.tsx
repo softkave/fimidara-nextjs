@@ -1,4 +1,4 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Button, Empty, Typography } from "antd";
 import React from "react";
 
@@ -11,6 +11,7 @@ export interface IPageNothingFoundProps {
   message?: React.ReactNode;
   messageText?: string;
   actions?: Array<IPageNothingFoundActions | React.ReactNode>;
+  className?: string;
 }
 
 const DEFAULT_MESSAGE_TEXT = "Nothing Found!";
@@ -20,6 +21,7 @@ const classes = {
     alignItems: "center",
     justifyContent: "center",
     display: "flex",
+    margin: "128px 0px",
   }),
 };
 
@@ -51,9 +53,9 @@ export const PageNothingFoundActions: React.FC<{
 };
 
 const PageNothingFound: React.FC<IPageNothingFoundProps> = (props) => {
-  const { message, messageText, actions } = props;
+  const { message, messageText, actions, className } = props;
   return (
-    <div className={classes.root}>
+    <div className={cx(classes.root, className)}>
       <Empty
         description={
           message || (

@@ -39,6 +39,7 @@ export default function ChangeUserPassword() {
 
       checkEndpointResult(result);
       UserSessionStorageFns.saveUserToken(result.token);
+      UserSessionStorageFns.saveClientAssignedToken(result.clientAssignedToken);
       dispatch(
         SessionActions.update({
           data: { token: result.token },

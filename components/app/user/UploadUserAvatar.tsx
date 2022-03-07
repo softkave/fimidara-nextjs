@@ -1,10 +1,16 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUploadUserImagePath } from "../../../lib/api/endpoints/file";
+import { withServerAddr } from "../../../lib/api/addr";
+import {
+  getFetchUserImagePath,
+  getUploadUserImagePath,
+} from "../../../lib/api/endpoints/file";
 import KeyValueActions from "../../../lib/store/key-value/actions";
 import { KeyValueKeys } from "../../../lib/store/key-value/types";
 import SessionSelectors from "../../../lib/store/session/selectors";
-import UploadAvatar from "../../utils/UploadAvatar";
+import { formClasses } from "../../form/classNames";
+import ImageAndUploadAvatar from "../../utils/ImageAndUploadAvatar";
+import { appDimensions } from "../../utils/theme";
 
 export default function UploadUserAvatar() {
   const userId = useSelector(SessionSelectors.assertGetUserId);
@@ -19,9 +25,19 @@ export default function UploadUserAvatar() {
   }, []);
 
   return (
-    <UploadAvatar
-      uploadPath={getUploadUserImagePath(userId)}
-      onCompleteUpload={onCompleteUpload}
-    />
+    <div className={formClasses.formContentWrapperClassName}>
+      <ImageAndUploadAvatar
+        uploadPath={withServerAddr(getUploadUserImagePath(userId))}
+        onCompleteUpload={onCompleteUpload}
+        src={withServerAddr(
+          getFetchUserImagePath(
+            userId,
+            appDimensions.avatar.width,
+            appDimensions.avatar.height
+          )
+        )}
+        alt="Your profile picture"
+      />
+    </div>
   );
 }

@@ -7,7 +7,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "folders";
+const baseURL = "/folders";
 
 export interface IAddFolderEndpointParams {
   organizationId?: string;

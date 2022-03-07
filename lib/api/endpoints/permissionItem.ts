@@ -6,7 +6,7 @@ import { AppResourceType } from "../../definitions/system";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "permissionItems";
+const baseURL = "/permissionItems";
 
 export interface IAddPermissionItemsEndpointParams {
   organizationId: string;

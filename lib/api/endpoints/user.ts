@@ -149,14 +149,9 @@ async function confirmEmailAddress(props: IConfirmEmailAddressParams) {
   });
 }
 
-export interface IGetUserDataParams {
-  token: string;
-}
-
-async function getUserData(props: IGetUserDataParams) {
+async function getUserData() {
   return await invokeEndpointWithAuth<IUserLoginResult>({
     path: getUserDataURL,
-    token: props.token,
   });
 }
 

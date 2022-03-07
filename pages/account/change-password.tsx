@@ -19,8 +19,6 @@ import SessionActions from "../../lib/store/session/actions";
 import { appOrgPaths, systemConstants } from "../../lib/definitions/system";
 import { checkEndpointResult, toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
-import Head from "next/head";
-import getAppFonts from "../../components/utils/appFonts";
 import WebHeader from "../../components/web/WebHeader";
 
 export interface IChangePasswordFormData {
@@ -75,6 +73,10 @@ export default function ChangePassword(props: IChangePasswordProps) {
 
         checkEndpointResult(result);
         UserSessionStorageFns.saveUserToken(result.token);
+        UserSessionStorageFns.saveClientAssignedToken(
+          result.clientAssignedToken
+        );
+
         dispatch(
           SessionActions.loginUser({
             userToken: result.token,
@@ -135,7 +137,6 @@ export default function ChangePassword(props: IChangePasswordProps) {
 
   return (
     <div className={formBodyClassName}>
-      <Head>{getAppFonts()}</Head>
       <WebHeader />
       <div className={formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>

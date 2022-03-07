@@ -3,25 +3,28 @@ import { css } from "@emotion/css";
 import { Button, Col, List, Row, Space, Typography } from "antd";
 import type { NextPage } from "next";
 import Link from "next/link";
-import { useSelector } from "react-redux";
 import AppHeader from "../../../components/app/AppHeader";
 import OrgAvatar from "../../../components/app/orgs/OrgAvatar";
+import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../components/utils/PageError";
 import PageLoading from "../../../components/utils/PageLoading";
+import PageNothingFound from "../../../components/utils/PageNothingFound";
+import { appClasses, appDimensions } from "../../../components/utils/theme";
+import { IUserLoginResult } from "../../../lib/api/endpoints/user";
 import { appOrgPaths } from "../../../lib/definitions/system";
 import useUserOrgs from "../../../lib/hooks/orgs/useUserOrgs";
-import SessionSelectors from "../../../lib/store/session/selectors";
 
 const classes = {
   sideLinks: css({
     display: "flex",
-    alignItems: "flex-end",
+    justifyContent: "flex-end",
   }),
 };
 
-const Orgs: NextPage = () => {
-  const userId = useSelector(SessionSelectors.assertGetUserId);
-  const { isLoading, error, data } = useUserOrgs(userId);
+export interface IOrgsPageProps extends IUserLoginResult {}
+
+const Orgs: NextPage<IOrgsPageProps> = () => {
+  const { isLoading, error, data } = useUserOrgs();
   let content: React.ReactNode = null;
 
   if (isLoading || !data) {
@@ -29,14 +32,23 @@ const Orgs: NextPage = () => {
   } else if (error) {
     content = (
       <PageError
+        className={appClasses.main}
         messageText={error?.message || "Error fetching organization"}
+      />
+    );
+  } else if (data.length === 0) {
+    content = (
+      <PageNothingFound
+        className={appClasses.main}
+        messageText="Create an organization to get started"
       />
     );
   } else {
     content = (
       <List
+        className={appClasses.main}
         itemLayout="horizontal"
-        dataSource={data?.organizations}
+        dataSource={data}
         renderItem={(item) => (
           <List.Item>
             <List.Item.Meta
@@ -60,11 +72,11 @@ const Orgs: NextPage = () => {
   }
 
   return (
-    <Space direction="vertical" size={"large"}>
+    <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
       <AppHeader />
-      <Row>
+      <Row className={appClasses.main}>
         <Col span={18}>
-          <Typography.Title>Organizations</Typography.Title>
+          <Typography.Title level={5}>Organizations</Typography.Title>
         </Col>
         <Col span={6} className={classes.sideLinks}>
           <Link href={appOrgPaths.orgsForm}>
@@ -77,4 +89,4 @@ const Orgs: NextPage = () => {
   );
 };
 
-export default Orgs;
+export default withPageAuthRequired(Orgs);

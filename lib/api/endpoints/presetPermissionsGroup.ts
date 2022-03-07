@@ -6,7 +6,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "presetPermissionsGroups";
+const baseURL = "/presetPermissionsGroups";
 
 export interface IAddPresetPermissionsGroupEndpointParams {
   organizationId: string;

@@ -1,4 +1,3 @@
-import { URLSearchParams } from "url";
 import { IFile, IUpdateFileDetailsInput } from "../../definitions/file";
 import { systemConstants } from "../../definitions/system";
 import SessionSelectors from "../../store/session/selectors";
@@ -14,7 +13,10 @@ import {
   setEndpointParam,
 } from "../utils";
 
-const baseURL = "files";
+const URLSearchParams =
+  require("core-js/features/url-search-params") as typeof globalThis["URLSearchParams"];
+
+const baseURL = "/files";
 const deleteFileURL = `${baseURL}/deleteFile`;
 const getFileDetailsURL = `${baseURL}/getFileDetails`;
 const updateFileDetailsURL = `${baseURL}/updateFileDetails`;
@@ -35,14 +37,14 @@ export function getFetchImagePath(p: string, width: number, height: number) {
   params.append(PATH_QUERY_PARAMS_KEY, p);
   setEndpointParam(params, IMAGE_WIDTH_QUERY_PARAMS_KEY, width);
   setEndpointParam(params, IMAGE_HEIGHT_QUERY_PARAMS_KEY, height);
-  return getFileURL + `?${params.toString}`;
+  return getFileURL + `?${params.toString()}`;
 }
 
 export function getUploadFilePath(p: string) {
   const params = new URLSearchParams();
   params.append(ORG_ID_QUERY_PARAMS_KEY, systemConstants.organizationId);
   params.append(PATH_QUERY_PARAMS_KEY, p);
-  return uploadFileURL + `?${params.toString}`;
+  return uploadFileURL + `?${params.toString()}`;
 }
 
 export function getFetchUserImagePath(

@@ -10,8 +10,6 @@ import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
-import Head from "next/head";
-import getAppFonts from "../../components/utils/appFonts";
 import WebHeader from "../../components/web/WebHeader";
 
 export interface IForgotPasswordFormData {
@@ -99,7 +97,6 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
 
   return (
     <div className={formClasses.formBodyClassName}>
-      <Head>{getAppFonts()}</Head>
       <WebHeader />
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>

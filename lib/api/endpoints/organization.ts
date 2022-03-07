@@ -7,7 +7,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "organizations";
+const baseURL = "/organizations";
 const addOrganizationURL = `${baseURL}/addOrganization`;
 const deleteOrganizationURL = `${baseURL}/deleteOrganization`;
 const getOrganizationURL = `${baseURL}/getOrganization`;

@@ -16,8 +16,6 @@ import SessionActions from "../../lib/store/session/actions";
 import { appOrgPaths } from "../../lib/definitions/system";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
-import Head from "next/head";
-import getAppFonts from "../../components/utils/appFonts";
 import WebHeader from "../../components/web/WebHeader";
 
 export interface ILoginFormValues {
@@ -55,6 +53,9 @@ export default function Login(props: ILoginProps) {
 
       if (data.remember) {
         UserSessionStorageFns.saveUserToken(result.token);
+        UserSessionStorageFns.saveClientAssignedToken(
+          result.clientAssignedToken
+        );
       }
 
       dispatch(
@@ -154,7 +155,6 @@ export default function Login(props: ILoginProps) {
 
   return (
     <div className={formClasses.formBodyClassName}>
-      <Head>{getAppFonts()}</Head>
       <WebHeader />
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>

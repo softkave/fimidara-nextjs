@@ -1,4 +1,4 @@
-import { List } from "antd";
+import { List, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
 import { ICollaborationRequest } from "../../../lib/definitions/collaborationRequest";
@@ -19,13 +19,12 @@ export default function CollaborationRequestList(
       dataSource={requests}
       renderItem={(item) => (
         <List.Item>
-          <List.Item.Meta
-            title={
-              <Link href={`${appRequestsPaths.requests}/${item.resourceId}`}>
-                Collaboration Request from {item.organizationName}
-              </Link>
-            }
-          />
+          <Link href={`${appRequestsPaths.requests}/${item.resourceId}`}>
+            <a>
+              Request from{" "}
+              <Typography.Text strong>{item.organizationName}</Typography.Text>
+            </a>
+          </Link>
         </List.Item>
       )}
     />

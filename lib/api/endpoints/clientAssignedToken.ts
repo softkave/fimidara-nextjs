@@ -6,7 +6,7 @@ import { IPresetInput } from "../../definitions/presets";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "clientAssignedTokens";
+const baseURL = "/clientAssignedTokens";
 
 export interface IAddClientAssignedTokenEndpointParams {
   organizationId?: string;

@@ -159,7 +159,11 @@ export function checkEndpointResult<T extends IEndpointResultBase>(result: T) {
 export function processEndpointError(error: any) {
   const errArray = toAppErrorsArray(error);
   const flattenedErrors = flattenErrorList(errArray);
-  throw flattenedErrors;
+  return flattenedErrors;
+}
+
+export function processAndThrowEndpointError(error: any) {
+  throw processEndpointError(error);
 }
 
 export function withCheckEndpointResult<

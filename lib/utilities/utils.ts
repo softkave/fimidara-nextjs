@@ -27,7 +27,7 @@ export const pluralize = (str: string, count: number = 2) => {
 
 export const flattenErrorList = (
   errors?: IAppError[]
-): { [key: string]: any } => {
+): { [key: string]: string[] } => {
   if (!errors) {
     return {};
   }

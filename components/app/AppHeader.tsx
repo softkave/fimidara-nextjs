@@ -1,15 +1,16 @@
-import { AlertOutlined } from "@ant-design/icons";
+import { AlertOutlined, ShopOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Button, Dropdown, Space, Typography } from "antd";
+import { Button, Dropdown, Popover, Space, Tooltip, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
 import { appOrgPaths } from "../../lib/definitions/system";
-import CollaborationRequestList from "./requests/CollaborationRequestList";
+import UserCollaborationRequestList from "./requests/UserCollaborationRequestList";
 import UserMenu from "./UserMenu";
 
 const classes = {
   root: css({
     display: "flex",
+    padding: "16px",
   }),
   sideLinks: css({
     display: "flex",
@@ -17,6 +18,7 @@ const classes = {
     marginLeft: "16px",
     justifyContent: "flex-end",
   }),
+  notifications: css({ minWidth: "260px", minHeight: "200px" }),
 };
 
 // TODO: implement unseen notifications chip
@@ -33,9 +35,25 @@ export default function AppHeader() {
       </div>
       <div className={classes.sideLinks}>
         <Space size="middle">
-          <Dropdown trigger={["click"]} overlay={<CollaborationRequestList />}>
-            <Button icon={<AlertOutlined />} />
-          </Dropdown>
+          <Link href={appOrgPaths.orgs}>
+            <Tooltip title="Organizations">
+              <Button icon={<ShopOutlined />} />
+            </Tooltip>
+          </Link>
+          <Popover
+            trigger={["click"]}
+            content={
+              <div className={classes.notifications}>
+                <UserCollaborationRequestList />
+              </div>
+            }
+            title="Collaboration Requests"
+            placement="bottomRight"
+          >
+            <Tooltip title="Collaboration requests">
+              <Button icon={<AlertOutlined />} />
+            </Tooltip>
+          </Popover>
           <UserMenu />
         </Space>
       </div>

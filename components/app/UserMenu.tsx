@@ -1,5 +1,5 @@
 import { CaretDownOutlined } from "@ant-design/icons";
-import { Dropdown, Menu, Space } from "antd";
+import { Button, Dropdown, Menu, Space } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -18,6 +18,7 @@ export default function UserMenu() {
 
   return (
     <Dropdown
+      trigger={["click"]}
       overlay={
         <Menu
           onSelect={async (info) => {
@@ -27,6 +28,7 @@ export default function UserMenu() {
               dispatch(SessionActions.logoutUser());
             }
           }}
+          style={{ minWidth: "150px" }}
         >
           <Menu.Item key={appUserPaths.settings}>
             <Link href={appUserPaths.settings}>Settings</Link>
@@ -36,10 +38,18 @@ export default function UserMenu() {
         </Menu>
       }
     >
-      <Space size={"middle"}>
-        <UserAvatar userId={userId} alt="Your profile picture" />
-        <CaretDownOutlined />
-      </Space>
+      <Button
+        style={{
+          padding: 0,
+          border: "none",
+          boxShadow: "none",
+        }}
+      >
+        <Space size={"small"}>
+          <UserAvatar userId={userId} alt="Your profile picture" />
+          <CaretDownOutlined />
+        </Space>
+      </Button>
     </Dropdown>
   );
 }

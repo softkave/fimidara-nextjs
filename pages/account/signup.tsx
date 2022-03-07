@@ -25,8 +25,6 @@ import SessionActions from "../../lib/store/session/actions";
 import { appOrgPaths } from "../../lib/definitions/system";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
-import Head from "next/head";
-import getAppFonts from "../../components/utils/appFonts";
 import WebHeader from "../../components/web/WebHeader";
 
 interface ISignupFormInternalData extends Required<IUserInput> {
@@ -66,6 +64,7 @@ export default function Signup(props: ISignupProps) {
       }
 
       UserSessionStorageFns.saveUserToken(result.token);
+      UserSessionStorageFns.saveClientAssignedToken(result.clientAssignedToken);
       dispatch(
         SessionActions.loginUser({
           userToken: result.token,
@@ -83,7 +82,7 @@ export default function Signup(props: ISignupProps) {
       });
 
       if (emailExistsErr) {
-        flattenedErrors["email"] = emailExistsErr.message;
+        flattenedErrors["email"] = [emailExistsErr.message];
       }
 
       throw flattenedErrors;
@@ -232,7 +231,6 @@ export default function Signup(props: ISignupProps) {
 
   return (
     <div className={formBodyClassName}>
-      <Head>{getAppFonts()}</Head>
       <WebHeader />
       <div className={formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>

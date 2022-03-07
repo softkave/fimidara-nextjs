@@ -2,13 +2,17 @@ import useSWR from "swr";
 import OrganizationAPI, {
   OrganizationURLs,
 } from "../../api/endpoints/organization";
-import { withCheckEndpointResult } from "../../api/utils";
+import { checkEndpointResult } from "../../api/utils";
 
-const fetcher = withCheckEndpointResult(OrganizationAPI.getUserOrganizations);
+const fetcher = async (p: string) => {
+  const result = await OrganizationAPI.getUserOrganizations();
+  checkEndpointResult(result);
+  return result.organizations;
+};
 
-export default function useUserOrgs(id?: string) {
+export default function useUserOrgs() {
   const { data, error } = useSWR(
-    id ? [OrganizationURLs.getUserOrganizations, id] : null,
+    [OrganizationURLs.getUserOrganizations],
     fetcher
   );
 

@@ -10,7 +10,7 @@ export const systemConstants = {
   phoneQueryKey: "p",
   organizationId: defaultTo(
     process.env.ORGANIZATION_ID,
-    "<insert-organization-id>"
+    "6LQ03cw7W06m_1bcARMb3"
   ),
   userImagesFolder: defaultTo(
     process.env.USER_IMAGES_FOLDER,
@@ -89,7 +89,7 @@ export const appAccountPaths = {
 };
 
 export const appUserPaths = {
-  settings: appRootPaths.app + "/settings",
+  settings: appRootPaths.app + "/user/settings",
 };
 
 export const appRequestsPaths = {

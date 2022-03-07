@@ -1,19 +1,25 @@
-import { Divider } from "antd";
+import { Divider, Space } from "antd";
 import React from "react";
 import UserProfile from "../../../components/app/user/UserProfile";
 import ChangeUserPassword from "../../../components/app/user/ChangeUserPassword";
 import UploadUserAvatar from "../../../components/app/user/UploadUserAvatar";
+import AppHeader from "../../../components/app/AppHeader";
+import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
 
 export interface IUserSettingsProps {}
 
-export default function UserSettings(props: IUserSettingsProps) {
+function UserSettings(props: IUserSettingsProps) {
   return (
-    <div>
+    <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+      <AppHeader />
+      <Divider orientation="left">Profile picture</Divider>
       <UploadUserAvatar />
-      <Divider>Details</Divider>
+      <Divider orientation="left">Profile</Divider>
       <UserProfile />
-      <Divider>Password</Divider>
+      <Divider orientation="left">Password</Divider>
       <ChangeUserPassword />
-    </div>
+    </Space>
   );
 }
+
+export default withPageAuthRequired(UserSettings);

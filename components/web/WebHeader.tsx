@@ -8,6 +8,7 @@ import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
 const classes = {
   root: css({
     display: "flex",
+    padding: "16px",
   }),
   sideLinks: css({
     display: "flex",

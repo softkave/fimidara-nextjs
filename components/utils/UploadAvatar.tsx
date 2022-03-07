@@ -2,8 +2,8 @@ import { Upload, message, Typography, Button } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import React from "react";
-import { defaultTo } from "lodash";
-import { css } from "@emotion/css";
+import { defaultTo, first } from "lodash";
+import { css, cx } from "@emotion/css";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import SessionSelectors from "../../lib/store/session/selectors";
@@ -17,12 +17,11 @@ export type IImageUploadMessages = Partial<{
 
 export interface IUploadAvatarProps {
   messages?: IImageUploadMessages;
+  className?: string;
   uploadPath: string;
   onCompleteUpload: () => void;
 }
 
-const IMAGE_JPEG = "image/jpeg";
-const IMAGE_PNG = "image/png";
 const DEFAULT_MESSAGES: IImageUploadMessages = {
   uploading: "Uploading image",
   successful: "Uploaded image successfully",
@@ -30,17 +29,22 @@ const DEFAULT_MESSAGES: IImageUploadMessages = {
 };
 
 function beforeUpload(file: RcFile) {
-  const isJpgOrPng = file.type === IMAGE_JPEG || file.type === IMAGE_PNG;
-
-  if (!isJpgOrPng) {
+  if (first(file.type.split("/")) !== "image") {
     message.error("Invalid image type");
   }
 
-  return isJpgOrPng;
+  return true;
 }
 
+const classes = {
+  root: css({
+    width: appDimensions.avatar.width,
+    height: appDimensions.avatar.height,
+  }),
+};
+
 const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
-  const { uploadPath, onCompleteUpload } = props;
+  const { uploadPath, className, onCompleteUpload } = props;
   const clientAssignedToken = useSelector(
     SessionSelectors.assertGetClientAssignedToken
   );
@@ -94,16 +98,14 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
 
   return (
     <Upload
-      name="image"
+      name="data"
       action={uploadPath}
       headers={{ authorization: `Bearer ${clientAssignedToken}` }}
       beforeUpload={beforeUpload}
       onChange={onChange}
       disabled={loading}
-      className={css({
-        width: appDimensions.avatar.width,
-        height: appDimensions.avatar.height,
-      })}
+      className={cx(classes.root, className)}
+      accept="image/*"
     >
       {uploadButton}
     </Upload>

@@ -10,6 +10,7 @@ import PageLoading from "../../utils/PageLoading";
 import {
   CollaborationRequestResponse,
   CollaborationRequestStatusType,
+  ICollaborationRequest,
 } from "../../../lib/definitions/collaborationRequest";
 import CollaborationRequestAPI from "../../../lib/api/endpoints/collaborationRequest";
 import assert from "assert";
@@ -17,90 +18,152 @@ import { useRequest } from "ahooks";
 import { getBaseError } from "../../../lib/utilities/errors";
 import { messages } from "../../../lib/definitions/messages";
 import { checkEndpointResult } from "../../../lib/api/utils";
+import AppHeader from "../AppHeader";
+import withPageAuthRequired from "../../hoc/withPageAuthRequired";
+import { appDimensions } from "../../utils/theme";
+import { css } from "@emotion/css";
+import { last } from "lodash";
+import InlineLoading from "../../utils/InlineLoading";
 
 export interface IUserCollaborationRequestProps {
   requestId: string;
 }
 
-export default function UserCollaborationRequest(
-  props: IUserCollaborationRequestProps
-) {
+const classes = {
+  main: css({
+    width: "100%",
+    maxWidth: appDimensions.app.maxWidth,
+    margin: "auto",
+  }),
+};
+
+function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
   const { requestId } = props;
   const { error, isLoading, data } = useCollaborationRequest(requestId);
   const { mutate } = useSWRConfig();
   const onRespond = React.useCallback(
     async (response: CollaborationRequestResponse) => {
       try {
-        assert(requestId, new Error("Request is invalid"));
+        assert(data);
+        // const updatedRequest: ICollaborationRequest = {
+        //   ...data.request,
+        //   statusHistory: data.request.statusHistory.concat({
+        //     status: response,
+        //     date: new Date().toISOString(),
+        //   }),
+        // };
+
+        // mutate(
+        //   getUseCollaborationRequestHookKey(requestId),
+        //   { request: updatedRequest },
+        //   false
+        // );
+
         const result = await CollaborationRequestAPI.respondToRequest({
-          requestId,
           response,
+          requestId: data.request.resourceId,
         });
 
         checkEndpointResult(result);
-        mutate(
-          getUseCollaborationRequestHookKey(requestId),
-          result.request,
-          false
-        );
-
+        mutate(getUseCollaborationRequestHookKey(requestId), result, false);
         message.success("Response submitted");
       } catch (error) {
         message.error(getBaseError(error) || messages.requestError);
       }
     },
-    [requestId]
+    [requestId, data]
   );
 
   const respondResult = useRequest(onRespond, { manual: true });
+  let content: React.ReactNode = null;
 
   if (isLoading || !data) {
-    return <PageLoading messageText="Loading request..." />;
+    content = <PageLoading messageText="Loading request..." />;
   } else if (error) {
-    return (
+    content = (
       <PageError messageText={error?.message || "Error fetching request"} />
+    );
+  } else {
+    const request = data.request;
+    const createdDate = formatRelative(new Date(request.createdAt), new Date());
+    const expirationDate =
+      request.expiresAt &&
+      formatRelative(new Date(request.expiresAt), new Date());
+    const status = last(request.statusHistory);
+    const statusDate =
+      status?.date && formatRelative(new Date(status.date), new Date());
+    const statusText =
+      status?.status === CollaborationRequestStatusType.Accepted
+        ? "accepted"
+        : status?.status === CollaborationRequestStatusType.Declined
+        ? "declined"
+        : status?.status === CollaborationRequestStatusType.Revoked
+        ? "revoked"
+        : "pending";
+
+    const actions =
+      status?.status === CollaborationRequestStatusType.Pending ? (
+        respondResult.loading ? (
+          <InlineLoading />
+        ) : (
+          <Space size={"middle"}>
+            <Button
+              danger
+              loading={respondResult.loading}
+              onClick={() =>
+                respondResult.run(CollaborationRequestStatusType.Declined)
+              }
+            >
+              Decline Request
+            </Button>
+            <Button
+              loading={respondResult.loading}
+              onClick={() =>
+                respondResult.run(CollaborationRequestStatusType.Accepted)
+              }
+            >
+              Accept Request
+            </Button>
+          </Space>
+        )
+      ) : (
+        <Typography.Text>
+          Collaboration request{" "}
+          <Typography.Text strong>{statusText}</Typography.Text> {statusDate}
+        </Typography.Text>
+      );
+
+    content = (
+      <div className={classes.main}>
+        <Space direction="vertical" size={"large"}>
+          <Space direction="vertical" size={2}>
+            <Typography.Title level={4} style={{ margin: 0 }}>
+              Collaboration Request from {request.organizationName}
+            </Typography.Title>
+            <Typography.Text type="secondary">
+              Sent {createdDate}
+            </Typography.Text>
+          </Space>
+          <Space direction="vertical" size={2}>
+            <Typography.Paragraph>{request.message}</Typography.Paragraph>
+            {expirationDate && (
+              <Typography.Text type="secondary">
+                Expires {expirationDate}
+              </Typography.Text>
+            )}
+          </Space>
+          {actions}
+        </Space>
+      </div>
     );
   }
 
-  const request = data.request;
-  const createdDate = formatRelative(new Date(request.createdAt), new Date());
-  const expirationDate =
-    request.expiresAt &&
-    formatRelative(new Date(request.expiresAt), new Date());
-
   return (
-    <Space direction="vertical">
-      <Typography.Title>
-        Collaboration Request from {request.organizationName}
-      </Typography.Title>
-      <Typography.Text type="secondary">Sent {createdDate}</Typography.Text>
-      <Typography.Paragraph>{request.message}</Typography.Paragraph>
-      {expirationDate && (
-        <Typography.Text type="secondary">
-          Expires {expirationDate}
-        </Typography.Text>
-      )}
-      <Space size={"middle"}>
-        <Button
-          loading={respondResult.loading}
-          type="primary"
-          onClick={() =>
-            respondResult.run(CollaborationRequestStatusType.Accepted)
-          }
-        >
-          Accept Request
-        </Button>
-        <Button
-          danger
-          loading={respondResult.loading}
-          type="primary"
-          onClick={() =>
-            respondResult.run(CollaborationRequestStatusType.Declined)
-          }
-        >
-          Decline Request
-        </Button>
-      </Space>
+    <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+      <AppHeader />
+      {content}
     </Space>
   );
 }
+
+export default withPageAuthRequired(UserCollaborationRequest);

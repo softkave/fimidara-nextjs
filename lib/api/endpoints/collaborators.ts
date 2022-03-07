@@ -3,7 +3,7 @@ import { ICollaborator } from "../../definitions/user";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "collaborators";
+const baseURL = "/collaborators";
 
 export interface IGetCollaboratorEndpointParams {
   organizationId: string;

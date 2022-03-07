@@ -6,7 +6,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "programAccessTokens";
+const baseURL = "/programAccessTokens";
 
 export interface IAddProgramAccessTokenEndpointParams {
   organizationId: string;

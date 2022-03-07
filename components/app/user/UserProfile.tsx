@@ -47,7 +47,7 @@ export default function UserProfile(props: IUserProfileProps) {
       const result = await UserEndpoint.updateUser(data);
       checkEndpointResult(result);
       const user = result.user;
-      mutate(getUseUserHookKey(user.resourceId), user, false);
+      mutate(getUseUserHookKey(), user, false);
       message.success("Profile updated");
     } catch (error) {
       const errArray = toAppErrorsArray(error);
@@ -57,7 +57,7 @@ export default function UserProfile(props: IUserProfileProps) {
       });
 
       if (emailExistsErr) {
-        flattenedErrors["email"] = emailExistsErr.message;
+        flattenedErrors["email"] = [emailExistsErr.message];
       }
 
       throw flattenedErrors;
@@ -181,8 +181,6 @@ export default function UserProfile(props: IUserProfileProps) {
 
   return (
     <div className={formBodyClassName}>
-      <Head>{getAppFonts()}</Head>
-      <WebHeader />
       <div className={formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
           {globalError && (

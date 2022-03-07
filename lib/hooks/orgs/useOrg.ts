@@ -14,7 +14,7 @@ export function getUseOrgHookKey(id: string) {
   return [OrganizationURLs.getOrganization, id];
 }
 
-export default function useUserOrgs(id?: string) {
+export default function useOrg(id?: string) {
   const { data, error } = useSWR(id ? getUseOrgHookKey(id) : null, fetcher);
   return {
     error,

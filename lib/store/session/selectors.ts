@@ -33,8 +33,12 @@ function getSessionData(state: IAppState) {
   return state.session;
 }
 
+function getUserId(state: IAppState) {
+  return state.session.userId;
+}
+
 function assertGetUserId(state: IAppState) {
-  const userId = state.session.userId;
+  const userId = getUserId(state);
 
   if (!userId) {
     throw new Error("Please sign in");
@@ -49,6 +53,7 @@ export default class SessionSelectors {
   public static getSessionType = getSessionType;
   public static assertGetToken = assertGetToken;
   public static getSessionData = getSessionData;
+  public static getUserId = getUserId;
   public static assertGetUserId = assertGetUserId;
   public static assertGetClientAssignedToken = assertGetClientAssignedToken;
 }

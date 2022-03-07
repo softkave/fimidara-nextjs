@@ -1,4 +1,4 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Alert, Button, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
@@ -12,7 +12,7 @@ import {
 import OrganizationAPI from "../../../lib/api/endpoints/organization";
 import {
   checkEndpointResult,
-  processEndpointError,
+  processAndThrowEndpointError,
 } from "../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { getUseOrgHookKey } from "../../../lib/hooks/orgs/useOrg";
@@ -35,10 +35,11 @@ const initialValues: INewOrganizationInput = { name: "", description: "" };
 
 export interface IOrganizationFormProps {
   org?: IOrganization;
+  className?: string;
 }
 
 export default function OrganizationForm(props: IOrganizationFormProps) {
-  const { org } = props;
+  const { org, className } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
@@ -65,7 +66,7 @@ export default function OrganizationForm(props: IOrganizationFormProps) {
 
         router.push(`${appOrgPaths.orgs}/${orgId}`);
       } catch (error) {
-        processEndpointError(error);
+        processAndThrowEndpointError(error);
       }
     },
     [org]
@@ -122,7 +123,7 @@ export default function OrganizationForm(props: IOrganizationFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input
+      <Input.TextArea
         name="description"
         value={formik.values.description}
         onBlur={formik.handleBlur}
@@ -130,14 +131,13 @@ export default function OrganizationForm(props: IOrganizationFormProps) {
         placeholder="Enter organization description"
         disabled={submitResult.loading}
         maxLength={systemConstants.maxDescriptionLength}
+        autoSize={{ minRows: 3 }}
       />
     </Form.Item>
   );
 
   return (
-    <div className={formClasses.formBodyClassName}>
-      <Head>{getAppFonts()}</Head>
-      <WebHeader />
+    <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
           <Typography.Title level={4}>Organization Form</Typography.Title>
