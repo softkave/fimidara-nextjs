@@ -6,6 +6,7 @@ import useOrgProgramTokenList from "../../../../lib/hooks/orgs/useOrgProgramToke
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
 import ProgramTokenList from "./ProgramTokenList";
 
@@ -29,12 +30,23 @@ const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
         messageText={error?.message || "Error fetching program access tokens"}
       />
     );
+  } else if (data.tokens.length === 0) {
+    content = (
+      <PageNothingFound
+        className={appClasses.maxWidth420}
+        messageText="No program access tokens yet. Create one using the plus button above."
+      />
+    );
   } else {
     content = <ProgramTokenList orgId={org.resourceId} tokens={data.tokens} />;
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <Space
+      direction="vertical"
+      style={{ width: "100%", padding: "16px" }}
+      size="large"
+    >
       <ListHeader
         title="Program Access Tokens"
         formLinkPath={appOrgPaths.createProgramTokenForm(org.resourceId)}

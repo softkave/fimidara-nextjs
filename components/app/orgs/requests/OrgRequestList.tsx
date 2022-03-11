@@ -8,7 +8,6 @@ import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
-import { EllipsisOutlined } from "@ant-design/icons";
 import {
   CollaborationRequestStatusType,
   ICollaborationRequest,
@@ -16,6 +15,8 @@ import {
 import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
 import { getUseOrgRequestListHookKey } from "../../../../lib/hooks/orgs/useOrgRequestList";
 import { last } from "lodash";
+import { BsThreeDots } from "react-icons/bs";
+import { css, cx } from "@emotion/css";
 
 export interface IOrgRequestListProps {
   orgId: string;
@@ -26,6 +27,14 @@ enum MenuKeys {
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
 }
+
+const classes = {
+  list: css({
+    "& .ant-list-item-action > li": {
+      padding: "0px",
+    },
+  }),
+};
 
 const OrgRequestList: React.FC<IOrgRequestListProps> = (props) => {
   const { orgId, requests } = props;
@@ -89,20 +98,22 @@ const OrgRequestList: React.FC<IOrgRequestListProps> = (props) => {
           </Menu>
         }
       >
-        <Button type="text">
-          <EllipsisOutlined />
-        </Button>
+        <Button
+          type="text"
+          className={appClasses.iconBtn}
+          icon={<BsThreeDots />}
+        ></Button>
       </Dropdown>
     );
   };
 
   return (
     <List
-      className={appClasses.main}
+      className={cx(appClasses.main, classes.list)}
       itemLayout="horizontal"
       dataSource={requests}
       renderItem={(item) => (
-        <List.Item actions={[renderMenu(item)]}>
+        <List.Item key={item.resourceId} actions={[renderMenu(item)]}>
           <List.Item.Meta
             title={
               <Link href={appOrgPaths.request(orgId, item.resourceId)}>

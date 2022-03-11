@@ -6,6 +6,7 @@ import useOrgClientTokenList from "../../../../lib/hooks/orgs/useOrgClientTokenL
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
 import ClientTokenList from "./ClientTokenList";
 
@@ -29,12 +30,26 @@ const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
         messageText={error?.message || "Error fetching client assigned tokens"}
       />
     );
+  } else if (data.tokens.length === 0) {
+    content = (
+      <PageNothingFound
+        className={appClasses.maxWidth420}
+        messageText={
+          "No client assigned tokens yet. " +
+          "You can create one using the plus button above or using a program access token."
+        }
+      />
+    );
   } else {
     content = <ClientTokenList orgId={org.resourceId} tokens={data.tokens} />;
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <Space
+      direction="vertical"
+      style={{ width: "100%", padding: "16px" }}
+      size="large"
+    >
       <ListHeader
         title="Client Assigned Tokens"
         formLinkPath={appOrgPaths.createClientTokenForm(org.resourceId)}

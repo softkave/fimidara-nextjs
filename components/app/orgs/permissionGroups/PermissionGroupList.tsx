@@ -8,10 +8,11 @@ import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
-import { EllipsisOutlined } from "@ant-design/icons";
+import { BsThreeDots } from "react-icons/bs";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getUseOrgPermissionGroupListHookKey } from "../../../../lib/hooks/orgs/useOrgPermissionGroupList";
+import { css, cx } from "@emotion/css";
 
 export interface IPermissionGroupListProps {
   orgId: string;
@@ -22,6 +23,14 @@ enum MenuKeys {
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
 }
+
+const classes = {
+  list: css({
+    "& .ant-list-item-action > li": {
+      padding: "0px",
+    },
+  }),
+};
 
 const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
   const { orgId, presets } = props;
@@ -82,19 +91,21 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
         </Menu>
       }
     >
-      <Button type="text">
-        <EllipsisOutlined />
-      </Button>
+      <Button
+        type="text"
+        className={appClasses.iconBtn}
+        icon={<BsThreeDots />}
+      ></Button>
     </Dropdown>
   );
 
   return (
     <List
-      className={appClasses.main}
+      className={cx(appClasses.main, classes.list)}
       itemLayout="horizontal"
       dataSource={presets}
       renderItem={(item) => (
-        <List.Item actions={[renderMenu(item)]}>
+        <List.Item key={item.resourceId} actions={[renderMenu(item)]}>
           <List.Item.Meta
             title={
               <Link href={appOrgPaths.permissionGroup(orgId, item.resourceId)}>

@@ -10,7 +10,7 @@ export const systemConstants = {
   phoneQueryKey: "p",
   organizationId: defaultTo(
     process.env.ORGANIZATION_ID,
-    "6LQ03cw7W06m_1bcARMb3"
+    "ZVNRnaTxI0HIUT74W14CZ"
   ),
   userImagesFolder: defaultTo(
     process.env.USER_IMAGES_FOLDER,

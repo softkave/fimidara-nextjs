@@ -21,4 +21,14 @@ export const appClasses = {
     marginLeft: "auto",
     marginRight: "auto",
   }),
+  iconBtn: css({
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }),
+  maxWidth420: css({
+    maxWidth: "420px",
+    marginLeft: "auto",
+    marginRight: "auto",
+  }),
 };

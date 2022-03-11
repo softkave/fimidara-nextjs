@@ -6,6 +6,7 @@ import useOrgPermissionGroupList from "../../../../lib/hooks/orgs/useOrgPermissi
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
 import PermissionGroupList from "./PermissionGroupList";
 
@@ -31,6 +32,13 @@ const OrganizationPermissionGroups: React.FC<
         }
       />
     );
+  } else if (data.presets.length === 0) {
+    content = (
+      <PageNothingFound
+        className={appClasses.maxWidth420}
+        messageText="No permission groups yet. Create one using the plus button above."
+      />
+    );
   } else {
     content = (
       <PermissionGroupList orgId={org.resourceId} presets={data.presets} />
@@ -38,7 +46,11 @@ const OrganizationPermissionGroups: React.FC<
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <Space
+      direction="vertical"
+      style={{ width: "100%", padding: "16px" }}
+      size="large"
+    >
       <ListHeader
         title="Preset Permission Groups"
         formLinkPath={appOrgPaths.createPermissionGroupForm(org.resourceId)}

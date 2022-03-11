@@ -30,7 +30,7 @@ const EditOrganizationPage: NextPage<IEditOrganizationPageProps> = (props) => {
   }
 
   return (
-    <Space direction="vertical" size={"large"}>
+    <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
       <OrgHeader org={data.organization} />
       <UploadOrgAvatar orgId={data.organization.resourceId} />
       <Divider orientation="left">Organization Details</Divider>

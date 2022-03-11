@@ -6,6 +6,7 @@ import useOrgCollaboratorList from "../../../../lib/hooks/orgs/useOrgCollaborato
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
 import CollaboratorList from "./CollaboratorList";
 
@@ -29,6 +30,13 @@ const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
         messageText={error?.message || "Error fetching collaborators"}
       />
     );
+  } else if (data.collaborators.length === 0) {
+    content = (
+      <PageNothingFound
+        className={appClasses.maxWidth420}
+        messageText="No collaborators yet. Create one using the plus button above."
+      />
+    );
   } else {
     content = (
       <CollaboratorList
@@ -39,7 +47,11 @@ const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <Space
+      direction="vertical"
+      style={{ width: "100%", padding: "16px" }}
+      size="large"
+    >
       <ListHeader
         title="Collaborators"
         formLinkPath={appOrgPaths.createRequestForm(org.resourceId)}

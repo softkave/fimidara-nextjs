@@ -5,7 +5,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        <title>Files by Softkave</title>
+        {/* <title>Files by Softkave</title> */}
         {getAppFonts()}
       </Head>
       <body>

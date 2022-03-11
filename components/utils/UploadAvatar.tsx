@@ -4,7 +4,6 @@ import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import React from "react";
 import { defaultTo, first } from "lodash";
 import { css, cx } from "@emotion/css";
-import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import SessionSelectors from "../../lib/store/session/selectors";
 import { appDimensions } from "./theme";
@@ -29,10 +28,13 @@ const DEFAULT_MESSAGES: IImageUploadMessages = {
 };
 
 function beforeUpload(file: RcFile) {
+  console.log(file);
+
   if (first(file.type.split("/")) !== "image") {
     message.error("Invalid image type");
   }
 
+  console.log("passed");
   return true;
 }
 
@@ -56,7 +58,6 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
 
   const [loading, setLoading] = React.useState(false);
   const [messageKey] = React.useState(() => Math.random().toString());
-  const token = Cookies.get("accessToken");
 
   const onChange = (info: UploadChangeParam) => {
     if (info.file.status === "uploading") {

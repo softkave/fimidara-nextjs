@@ -6,6 +6,7 @@ import useOrgRequestList from "../../../../lib/hooks/orgs/useOrgRequestList";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
 import OrgRequestList from "./OrgRequestList";
 
@@ -27,6 +28,13 @@ const OrganizationRequests: React.FC<IOrganizationRequestsProps> = (props) => {
         messageText={error?.message || "Error fetching collaboration requests"}
       />
     );
+  } else if (data.requests.length === 0) {
+    content = (
+      <PageNothingFound
+        className={appClasses.maxWidth420}
+        messageText="No collaborations requests yet. Create one using the plus button above."
+      />
+    );
   } else {
     content = (
       <OrgRequestList orgId={org.resourceId} requests={data.requests} />
@@ -34,7 +42,11 @@ const OrganizationRequests: React.FC<IOrganizationRequestsProps> = (props) => {
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <Space
+      direction="vertical"
+      style={{ width: "100%", padding: "16px" }}
+      size="large"
+    >
       <ListHeader
         title="Collaboration Requests"
         formLinkPath={appOrgPaths.createRequestForm(org.resourceId)}

@@ -53,7 +53,7 @@ const Orgs: NextPage<IOrgsPageProps> = () => {
           <List.Item>
             <List.Item.Meta
               title={
-                <Link href={`${appOrgPaths.orgs}/${item.resourceId}`}>
+                <Link href={appOrgPaths.files(item.resourceId)}>
                   {item.name}
                 </Link>
               }

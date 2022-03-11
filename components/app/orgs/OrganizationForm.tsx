@@ -25,7 +25,7 @@ import { useRouter } from "next/router";
 
 const organizationValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
-  description: systemValidation.description.required(messages.fieldIsRequired),
+  description: systemValidation.description,
 });
 
 const initialValues: INewOrganizationInput = { name: "", description: "" };

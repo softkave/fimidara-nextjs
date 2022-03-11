@@ -8,10 +8,11 @@ import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
-import { EllipsisOutlined } from "@ant-design/icons";
+import { BsThreeDots } from "react-icons/bs";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import { getUseOrgProgramTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgProgramTokenList";
+import { css, cx } from "@emotion/css";
 
 export interface IProgramTokenListProps {
   orgId: string;
@@ -22,6 +23,14 @@ enum MenuKeys {
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
 }
+
+const classes = {
+  list: css({
+    "& .ant-list-item-action > li": {
+      padding: "0px",
+    },
+  }),
+};
 
 const ProgramTokenList: React.FC<IProgramTokenListProps> = (props) => {
   const { orgId, tokens } = props;
@@ -80,19 +89,21 @@ const ProgramTokenList: React.FC<IProgramTokenListProps> = (props) => {
         </Menu>
       }
     >
-      <Button type="text">
-        <EllipsisOutlined />
-      </Button>
+      <Button
+        type="text"
+        className={appClasses.iconBtn}
+        icon={<BsThreeDots />}
+      ></Button>
     </Dropdown>
   );
 
   return (
     <List
-      className={appClasses.main}
+      className={cx(appClasses.main, classes.list)}
       itemLayout="horizontal"
       dataSource={tokens}
       renderItem={(item) => (
-        <List.Item actions={[renderMenu(item)]}>
+        <List.Item key={item.resourceId} actions={[renderMenu(item)]}>
           <List.Item.Meta
             title={
               <Link href={appOrgPaths.programToken(orgId, item.resourceId)}>

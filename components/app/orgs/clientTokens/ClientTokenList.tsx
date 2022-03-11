@@ -1,4 +1,4 @@
-import { Button, Dropdown, List, Menu, Modal, Space, Typography } from "antd";
+import { Button, Dropdown, List, Menu, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
@@ -11,9 +11,8 @@ import { useSWRConfig } from "swr";
 import { getUseOrgClientTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgClientTokenList";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
-import { EllipsisOutlined } from "@ant-design/icons";
-import formatRelative from "date-fns/formatRelative";
-import Middledot from "../../../utils/Middledot";
+import { BsThreeDots } from "react-icons/bs";
+import { css, cx } from "@emotion/css";
 
 export interface IClientTokenListProps {
   orgId: string;
@@ -24,6 +23,14 @@ enum MenuKeys {
   DeleteToken = "delete-token",
   UpdatePresets = "update-presets",
 }
+
+const classes = {
+  list: css({
+    "& .ant-list-item-action > li": {
+      padding: "0px",
+    },
+  }),
+};
 
 const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
   const { orgId, tokens } = props;
@@ -82,9 +89,11 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
         </Menu>
       }
     >
-      <Button type="text">
-        <EllipsisOutlined />
-      </Button>
+      <Button
+        type="text"
+        className={appClasses.iconBtn}
+        icon={<BsThreeDots />}
+      ></Button>
     </Dropdown>
   );
 
@@ -105,11 +114,11 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
 
   return (
     <List
-      className={appClasses.main}
+      className={cx(appClasses.main, classes.list)}
       itemLayout="horizontal"
       dataSource={tokens}
       renderItem={(item) => (
-        <List.Item actions={[renderMenu(item)]}>
+        <List.Item key={item.resourceId} actions={[renderMenu(item)]}>
           <List.Item.Meta
             title={
               <Link href={appOrgPaths.clientToken(orgId, item.resourceId)}>
