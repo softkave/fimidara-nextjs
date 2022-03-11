@@ -1,8 +1,11 @@
 import { RightOutlined } from "@ant-design/icons";
 import { Space, Tabs } from "antd";
 import React from "react";
-import { IOrganization } from "../../../lib/definitions/organization";
 import { appOrgPaths } from "../../../lib/definitions/system";
+import useOrg from "../../../lib/hooks/orgs/useOrg";
+import PageError from "../../utils/PageError";
+import PageLoading from "../../utils/PageLoading";
+import { appClasses } from "../../utils/theme";
 import OrganizationClientTokens from "./clientTokens/OrganizationClientTokens";
 import OrganizationCollaborators from "./collaborators/OrganizationCollaborators";
 import OrganizationFiles from "./files/OrganizationFiles";
@@ -12,7 +15,7 @@ import OrganizationProgramTokens from "./programTokens/OrganizationProgramTokens
 import OrganizationRequests from "./requests/OrganizationRequests";
 
 export interface IOrganizationProps {
-  org: IOrganization;
+  orgId: string;
 }
 
 enum Tabkeys {
@@ -25,18 +28,30 @@ enum Tabkeys {
 }
 
 const Organization: React.FC<IOrganizationProps> = (props) => {
-  const { org } = props;
+  const { orgId } = props;
+  const { data, error, isLoading } = useOrg(orgId);
+
+  if (isLoading || !data) {
+    return <PageLoading messageText="Loading organization..." />;
+  } else if (error) {
+    return (
+      <PageError
+        className={appClasses.main}
+        messageText={error?.message || "Error fetching organization"}
+      />
+    );
+  }
+
   const pathname = window.location.pathname;
-  const paths = React.useMemo(() => {
-    return {
-      files: appOrgPaths.files(org.resourceId),
-      collaborators: appOrgPaths.collaborators(org.resourceId),
-      requests: appOrgPaths.requests(org.resourceId),
-      programTokens: appOrgPaths.programTokens(org.resourceId),
-      clientTokens: appOrgPaths.clientTokens(org.resourceId),
-      permissionGroups: appOrgPaths.permissionGroups(org.resourceId),
-    };
-  }, [org]);
+  const org = data?.organization!;
+  const paths = {
+    files: appOrgPaths.files(org.resourceId),
+    collaborators: appOrgPaths.collaboratorList(org.resourceId),
+    requests: appOrgPaths.requestList(org.resourceId),
+    programTokens: appOrgPaths.programTokenList(org.resourceId),
+    clientTokens: appOrgPaths.clientTokenList(org.resourceId),
+    permissionGroups: appOrgPaths.permissionGroupList(org.resourceId),
+  };
 
   return (
     <Space direction="vertical" size={"large"}>

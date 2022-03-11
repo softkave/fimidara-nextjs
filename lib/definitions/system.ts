@@ -93,23 +93,77 @@ export const appOrgPaths = {
   editOrgForm(orgId: string) {
     return `${this.org(orgId)}/form`;
   },
+
+  // File
   files(orgId: string) {
     return `${this.org(orgId)}/files`;
   },
-  collaborators(orgId: string) {
+
+  // Collaborator
+  collaboratorList(orgId: string) {
     return `${this.org(orgId)}/collaborators`;
   },
-  requests(orgId: string) {
+  collaborator(orgId: string, collaboratorId: string) {
+    return `${this.collaboratorList(orgId)}/${collaboratorId}`;
+  },
+  collaboratorForm(orgId: string, collaboratorId: string) {
+    return `${this.collaborator(orgId, collaboratorId)}/form`;
+  },
+
+  // Request
+  requestList(orgId: string) {
     return `${this.org(orgId)}/requests`;
   },
-  programTokens(orgId: string) {
+  createRequestForm(orgId: string) {
+    return `${this.requestList(orgId)}/form`;
+  },
+  request(orgId: string, requestId: string) {
+    return `${this.requestList(orgId)}/${requestId}`;
+  },
+  requestForm(orgId: string, requestId: string) {
+    return `${this.request(orgId, requestId)}/form`;
+  },
+
+  // Program token
+  programTokenList(orgId: string) {
     return `${this.org(orgId)}/program-tokens`;
   },
-  clientTokens(orgId: string) {
+  createProgramTokenForm(orgId: string) {
+    return `${this.programTokenList(orgId)}/form`;
+  },
+  programToken(orgId: string, tokenId: string) {
+    return `${this.programTokenList(orgId)}/${tokenId}`;
+  },
+  programTokenForm(orgId: string, tokenId: string) {
+    return `${this.programToken(orgId, tokenId)}/form`;
+  },
+
+  // Client token
+  clientTokenList(orgId: string) {
     return `${this.org(orgId)}/client-tokens`;
   },
-  permissionGroups(orgId: string) {
+  createClientTokenForm(orgId: string) {
+    return `${this.clientTokenList(orgId)}/form`;
+  },
+  clientToken(orgId: string, tokenId: string) {
+    return `${this.clientTokenList(orgId)}/${tokenId}`;
+  },
+  clientTokenForm(orgId: string, tokenId: string) {
+    return `${this.clientToken(orgId, tokenId)}/form`;
+  },
+
+  // Preset
+  permissionGroupList(orgId: string) {
     return `${this.org(orgId)}/permission-groups`;
+  },
+  createPermissionGroupForm(orgId: string) {
+    return `${this.permissionGroupList(orgId)}/form`;
+  },
+  permissionGroup(orgId: string, presetId: string) {
+    return `${this.permissionGroupList(orgId)}/${presetId}`;
+  },
+  permissionGroupForm(orgId: string, presetId: string) {
+    return `${this.permissionGroup(orgId, presetId)}/form`;
   },
 };
 

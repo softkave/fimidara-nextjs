@@ -1,7 +1,16 @@
 import { EllipsisOutlined, LeftOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
+import {
+  Button,
+  Col,
+  Dropdown,
+  Menu,
+  Modal,
+  Row,
+  Space,
+  Typography,
+} from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -11,19 +20,22 @@ import { checkEndpointResult } from "../../../lib/api/utils";
 import { IOrganization } from "../../../lib/definitions/organization";
 import { appOrgPaths } from "../../../lib/definitions/system";
 import { getUseOrgHookKey } from "../../../lib/hooks/orgs/useOrg";
+import { appClasses } from "../../utils/theme";
+import { SelectInfo } from "../../utils/types";
 import OrgAvatar from "./OrgAvatar";
 
 export interface IOrgHeaderProps {
   org: IOrganization;
 }
 
-type SelectInfo = Parameters<
-  Required<React.ComponentProps<typeof Menu>>["onSelect"]
->[0];
-
 const DELETE_ORG_MENU_KEY = "delete-org";
 const classes = {
-  root: css({}),
+  sideLinks: css({
+    display: "flex",
+    flex: 1,
+    marginLeft: "16px",
+    justifyContent: "flex-end",
+  }),
 };
 
 const OrgHeader: React.FC<IOrgHeaderProps> = (props) => {
@@ -69,39 +81,80 @@ const OrgHeader: React.FC<IOrgHeaderProps> = (props) => {
   );
 
   const editOrgPath = appOrgPaths.editOrgForm(org.resourceId);
+
   return (
-    <Space style={{ width: "100%" }} size="middle">
-      <Button icon={<LeftOutlined />} onClick={onGoBack} />
-      <Space>
-        <OrgAvatar orgId={org.resourceId} alt={`${org.name} avatar`} />
-        <Typography.Text ellipsis>{org.name}</Typography.Text>
-      </Space>
-      <Dropdown
-        disabled={deleteOrgHelper.loading}
-        trigger={["click"]}
-        overlay={
-          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
-            <Menu.Item key={editOrgPath}>
-              <Link href={editOrgPath}>Edit</Link>
-            </Menu.Item>
-            <Menu.Divider key={"divider-01"} />
-            <Menu.Item key={DELETE_ORG_MENU_KEY}>Delete</Menu.Item>
-          </Menu>
-        }
-      >
-        <Button
-          // style={{
-          //   padding: 0,
-          //   border: "none",
-          //   boxShadow: "none",
-          // }}
-          type="text"
+    <Row className={appClasses.main}>
+      <Col span={2}>
+        <Button icon={<LeftOutlined />} onClick={onGoBack} />
+      </Col>
+      <Col span={20}>
+        <Space>
+          <OrgAvatar orgId={org.resourceId} alt={`${org.name} avatar`} />
+          <Typography.Text ellipsis>{org.name}</Typography.Text>
+        </Space>
+      </Col>
+      <Col span={2} className={classes.sideLinks}>
+        <Dropdown
+          disabled={deleteOrgHelper.loading}
+          trigger={["click"]}
+          overlay={
+            <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+              <Menu.Item key={editOrgPath}>
+                <Link href={editOrgPath}>Edit</Link>
+              </Menu.Item>
+              <Menu.Divider key={"divider-01"} />
+              <Menu.Item key={DELETE_ORG_MENU_KEY}>Delete</Menu.Item>
+            </Menu>
+          }
         >
-          <EllipsisOutlined />
-        </Button>
-      </Dropdown>
-    </Space>
+          <Button
+            // style={{
+            //   padding: 0,
+            //   border: "none",
+            //   boxShadow: "none",
+            // }}
+            type="text"
+          >
+            <EllipsisOutlined />
+          </Button>
+        </Dropdown>
+      </Col>
+    </Row>
   );
+
+  // return (
+  //   <Space style={{ width: "100%" }} size="middle">
+  //     <Button icon={<LeftOutlined />} onClick={onGoBack} />
+  //     <Space>
+  //       <OrgAvatar orgId={org.resourceId} alt={`${org.name} avatar`} />
+  //       <Typography.Text ellipsis>{org.name}</Typography.Text>
+  //     </Space>
+  //     <Dropdown
+  //       disabled={deleteOrgHelper.loading}
+  //       trigger={["click"]}
+  //       overlay={
+  //         <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+  //           <Menu.Item key={editOrgPath}>
+  //             <Link href={editOrgPath}>Edit</Link>
+  //           </Menu.Item>
+  //           <Menu.Divider key={"divider-01"} />
+  //           <Menu.Item key={DELETE_ORG_MENU_KEY}>Delete</Menu.Item>
+  //         </Menu>
+  //       }
+  //     >
+  //       <Button
+  //         // style={{
+  //         //   padding: 0,
+  //         //   border: "none",
+  //         //   boxShadow: "none",
+  //         // }}
+  //         type="text"
+  //       >
+  //         <EllipsisOutlined />
+  //       </Button>
+  //     </Dropdown>
+  //   </Space>
+  // );
 };
 
 export default OrgHeader;
