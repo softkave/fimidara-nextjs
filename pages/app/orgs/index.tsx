@@ -33,7 +33,7 @@ const Orgs: NextPage<IOrgsPageProps> = () => {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={error?.message || "Error fetching organization"}
+        messageText={error?.message || "Error fetching organizations"}
       />
     );
   } else if (data.length === 0) {
@@ -79,7 +79,7 @@ const Orgs: NextPage<IOrgsPageProps> = () => {
           <Typography.Title level={5}>Organizations</Typography.Title>
         </Col>
         <Col span={6} className={classes.sideLinks}>
-          <Link href={appOrgPaths.orgsForm}>
+          <Link href={appOrgPaths.createOrgForm}>
             <Button icon={<PlusOutlined />} />
           </Link>
         </Col>

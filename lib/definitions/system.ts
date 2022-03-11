@@ -76,7 +76,29 @@ export const appRootPaths = {
 
 export const appOrgPaths = {
   orgs: appRootPaths.app + "/orgs",
-  orgsForm: appRootPaths.app + "/orgs/form",
+  createOrgForm: appRootPaths.app + "/orgs/form",
+  org: (orgId: string) => appRootPaths.app + `/orgs/${orgId}`,
+  editOrgForm(orgId: string) {
+    return `${this.org(orgId)}/form`;
+  },
+  files(orgId: string) {
+    return `${this.org(orgId)}/files`;
+  },
+  collaborators(orgId: string) {
+    return `${this.org(orgId)}/collaborators`;
+  },
+  requests(orgId: string) {
+    return `${this.org(orgId)}/requests`;
+  },
+  programTokens(orgId: string) {
+    return `${this.org(orgId)}/program-tokens`;
+  },
+  clientTokens(orgId: string) {
+    return `${this.org(orgId)}/client-tokens`;
+  },
+  permissionGroups(orgId: string) {
+    return `${this.org(orgId)}/permission-groups`;
+  },
 };
 
 export const appAccountPaths = {

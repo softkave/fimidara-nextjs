@@ -2,6 +2,9 @@ import { DeleteFilled, LoadingOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { Button, Image, ImageProps, message } from "antd";
 import React from "react";
+import { useSelector } from "react-redux";
+import KeyValueSelectors from "../../lib/store/key-value/selectors";
+import { IAppState } from "../../lib/store/types";
 import { appDataImages } from "./theme";
 
 export interface IImageWithFallbackProps {
@@ -11,7 +14,7 @@ export interface IImageWithFallbackProps {
   fallbackNode?: React.ReactNode;
   fallbackSrc?: string;
   preview?: ImageProps["preview"];
-  imageKey?: string;
+  refreshKey?: string;
   src: string;
   alt: string;
   onClick?: (evt: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -65,13 +68,16 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
     fallbackNode,
     fallbackSrc,
     allowDelete,
-    imageKey,
+    refreshKey,
     onClick,
     onDelete,
   } = props;
 
   const [imageLoadFailed, setImageLoadFailed] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const imageKey = useSelector<IAppState, string | undefined>(
+    (state) => refreshKey && KeyValueSelectors.getKey(state, refreshKey)
+  );
 
   const onError = (evt: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("Image load failed", { props, evt });
