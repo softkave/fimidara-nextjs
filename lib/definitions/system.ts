@@ -36,6 +36,18 @@ export enum SessionAgentType {
   ClientAssignedToken = "client-assigned-token",
 }
 
+export interface IPublicAccessOpInput {
+  action: BasicCRUDActions;
+  resourceType: AppResourceType;
+}
+
+export interface IPublicAccessOp {
+  action: BasicCRUDActions;
+  resourceType: AppResourceType;
+  markedAt: Date | string;
+  markedBy: IAgent;
+}
+
 export interface IAgent {
   agentId: string;
   agentType: SessionAgentType;

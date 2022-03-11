@@ -1,4 +1,8 @@
-import { IFile, IUpdateFileDetailsInput } from "../../definitions/file";
+import {
+  IFile,
+  IUpdateFileDetailsInput,
+  UploadFilePublicAccessActions,
+} from "../../definitions/file";
 import { systemConstants } from "../../definitions/system";
 import SessionSelectors from "../../store/session/selectors";
 import store from "../../store/store";
@@ -146,6 +150,7 @@ export interface IUploadFileEndpointParams {
   mimetype?: string;
   data: Blob;
   path: string;
+  publicAccessActions?: UploadFilePublicAccessActions;
 }
 
 export type IUploadFileEndpointResult = GetEndpointResult<{

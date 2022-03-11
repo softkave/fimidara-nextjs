@@ -7,6 +7,9 @@ import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/permissionItems";
+const addItemsURL = `${baseURL}/addItems`;
+const deleteItemsURL = `${baseURL}/deleteItems`;
+const getEntityPermissionItemsURL = `${baseURL}/getEntityPermissionItems`;
 
 export interface IAddPermissionItemsEndpointParams {
   organizationId: string;
@@ -21,7 +24,7 @@ export type IAddPermissionItemsEndpointResult = GetEndpointResult<{
 
 async function addItems(props: IAddPermissionItemsEndpointParams) {
   return invokeEndpointWithAuth<IAddPermissionItemsEndpointResult>({
-    path: `${baseURL}/addItems`,
+    path: addItemsURL,
     data: props,
   });
 }
@@ -35,7 +38,7 @@ export interface IDeletePermissionItemsEndpointParams {
 
 async function deleteItems(props: IDeletePermissionItemsEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/deleteToken`,
+    path: deleteItemsURL,
     data: props,
   });
 }
@@ -54,7 +57,7 @@ async function getEntityPermissionItems(
   props: IGetEntityPermissionItemsEndpointParams
 ) {
   return await invokeEndpointWithAuth<IGetEntityPermissionItemsEndpointResult>({
-    path: `${baseURL}/getEntityPermissionItems`,
+    path: getEntityPermissionItemsURL,
     data: props,
   });
 }
@@ -63,4 +66,10 @@ export default class PermissionItemAPI {
   public static addItems = addItems;
   public static deleteItems = deleteItems;
   public static getEntityPermissionItems = getEntityPermissionItems;
+}
+
+export class PermissionItemURLs {
+  public static addItems = addItemsURL;
+  public static deleteItems = deleteItemsURL;
+  public static getEntityPermissionItems = getEntityPermissionItemsURL;
 }

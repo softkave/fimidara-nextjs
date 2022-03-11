@@ -7,6 +7,11 @@ import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/programAccessTokens";
+const addTokenURL = `${baseURL}/addToken`;
+const getOrganizationTokensURL = `${baseURL}/getOrganizationTokens`;
+const getTokenURL = `${baseURL}/getToken`;
+const deleteTokenURL = `${baseURL}/deleteToken`;
+const updateTokenURL = `${baseURL}/updateToken`;
 
 export interface IAddProgramAccessTokenEndpointParams {
   organizationId: string;
@@ -19,7 +24,7 @@ export type IAddProgramAccessTokenEndpointResult = GetEndpointResult<{
 
 async function addToken(props: IAddProgramAccessTokenEndpointParams) {
   return invokeEndpointWithAuth<IAddProgramAccessTokenEndpointResult>({
-    path: `${baseURL}/addToken`,
+    path: addTokenURL,
     data: props,
   });
 }
@@ -31,7 +36,7 @@ export interface IDeleteProgramAccessTokenEndpointParams {
 
 async function deleteToken(props: IDeleteProgramAccessTokenEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/deleteToken`,
+    path: deleteTokenURL,
     data: props,
   });
 }
@@ -50,7 +55,7 @@ async function getOrganizationTokens(
 ) {
   return await invokeEndpointWithAuth<IGetOrganizationProgramAccessTokenEndpointResult>(
     {
-      path: `${baseURL}/getOrganizationTokens`,
+      path: getOrganizationTokensURL,
       data: props,
     }
   );
@@ -66,7 +71,7 @@ export type IGetProgramAccessTokenEndpointResult = GetEndpointResult<{
 
 async function getToken(props: IGetProgramAccessTokenEndpointParams) {
   return await invokeEndpointWithAuth<IGetProgramAccessTokenEndpointResult>({
-    path: `${baseURL}/getToken`,
+    path: getTokenURL,
     data: props,
   });
 }
@@ -83,7 +88,7 @@ export type IUpdateProgramAccessTokenEndpointResult = GetEndpointResult<{
 
 async function updateToken(props: IUpdateProgramAccessTokenEndpointParams) {
   return await invokeEndpointWithAuth<IUpdateProgramAccessTokenEndpointResult>({
-    path: `${baseURL}/updateToken`,
+    path: updateTokenURL,
     data: props,
   });
 }
@@ -94,4 +99,12 @@ export default class ProgramAccessTokenAPI {
   public static getToken = getToken;
   public static deleteToken = deleteToken;
   public static updateToken = updateToken;
+}
+
+export class ProgramAccessTokenURLs {
+  public static addToken = addTokenURL;
+  public static getOrganizationTokens = getOrganizationTokensURL;
+  public static getToken = getTokenURL;
+  public static deleteToken = deleteTokenURL;
+  public static updateToken = updateTokenURL;
 }

@@ -7,6 +7,11 @@ import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/clientAssignedTokens";
+const addTokenURL = `${baseURL}/addToken`;
+const getOrganizationTokensURL = `${baseURL}/getOrganizationTokens`;
+const getTokenURL = `${baseURL}/getToken`;
+const deleteTokenURL = `${baseURL}/deleteToken`;
+const updatePresetsURL = `${baseURL}/updatePresets`;
 
 export interface IAddClientAssignedTokenEndpointParams {
   organizationId?: string;
@@ -20,7 +25,7 @@ export type IAddClientAssignedTokenEndpointResult = GetEndpointResult<{
 
 async function addToken(props: IAddClientAssignedTokenEndpointParams) {
   return invokeEndpointWithAuth<IAddClientAssignedTokenEndpointResult>({
-    path: `${baseURL}/addToken`,
+    path: addTokenURL,
     data: props,
   });
 }
@@ -32,7 +37,7 @@ export interface IDeleteClientAssignedTokenEndpointParams {
 
 async function deleteToken(props: IDeleteClientAssignedTokenEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/deleteToken`,
+    path: deleteTokenURL,
     data: props,
   });
 }
@@ -51,7 +56,7 @@ async function getOrganizationTokens(
 ) {
   return await invokeEndpointWithAuth<IGetOrganizationClientAssignedTokensEndpointResult>(
     {
-      path: `${baseURL}/getOrganizationTokens`,
+      path: getOrganizationTokensURL,
       data: props,
     }
   );
@@ -68,7 +73,7 @@ export type IGetClientAssignedTokenEndpointResult = GetEndpointResult<{
 
 async function getToken(props: IGetClientAssignedTokenEndpointParams) {
   return await invokeEndpointWithAuth<IGetClientAssignedTokenEndpointResult>({
-    path: `${baseURL}/getToken`,
+    path: getTokenURL,
     data: props,
   });
 }
@@ -89,7 +94,7 @@ async function updatePresets(
 ) {
   return await invokeEndpointWithAuth<IUpdateClientAssignedTokenPresetsEndpointResult>(
     {
-      path: `${baseURL}/updatePresets`,
+      path: updatePresetsURL,
       data: props,
     }
   );
@@ -101,4 +106,12 @@ export default class ClientAssignedTokenAPI {
   public static getToken = getToken;
   public static deleteToken = deleteToken;
   public static updatePresets = updatePresets;
+}
+
+export class ClientAssignedTokenURLs {
+  public static addToken = addTokenURL;
+  public static getOrganizationTokens = getOrganizationTokensURL;
+  public static getToken = getTokenURL;
+  public static deleteToken = deleteTokenURL;
+  public static updatePresets = updatePresetsURL;
 }

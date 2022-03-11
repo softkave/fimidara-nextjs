@@ -4,6 +4,10 @@ import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/collaborators";
+const removeCollaboratorURL = `${baseURL}/removeCollaborator`;
+const getOrganizationCollaboratorsURL = `${baseURL}/getOrganizationCollaborators`;
+const getCollaboratorURL = `${baseURL}/getCollaborator`;
+const updateCollaboratorPresetsURL = `${baseURL}/updateCollaboratorPresets`;
 
 export interface IGetCollaboratorEndpointParams {
   organizationId: string;
@@ -16,7 +20,7 @@ export type IGetCollaboratorEndpointResult = GetEndpointResult<{
 
 async function getCollaborator(props: IGetCollaboratorEndpointParams) {
   return invokeEndpointWithAuth<IGetCollaboratorEndpointResult>({
-    path: `${baseURL}/getCollaborator`,
+    path: getCollaboratorURL,
     data: props,
   });
 }
@@ -34,7 +38,7 @@ async function getOrganizationCollaborators(
 ) {
   return await invokeEndpointWithAuth<IGetOrganizationCollaboratorsEndpointResult>(
     {
-      path: `${baseURL}/getOrganizationCollaborators`,
+      path: getOrganizationCollaboratorsURL,
       data: props,
     }
   );
@@ -47,7 +51,7 @@ export interface IRemoveCollaboratorEndpointParams {
 
 async function removeCollaborator(props: IRemoveCollaboratorEndpointParams) {
   return await invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/removeCollaborator`,
+    path: removeCollaboratorURL,
     data: props,
   });
 }
@@ -67,7 +71,7 @@ async function updateCollaboratorPresets(
 ) {
   return await invokeEndpointWithAuth<IUpdateCollaboratorPresetsEndpointResult>(
     {
-      path: `${baseURL}/updateCollaboratorPresets`,
+      path: updateCollaboratorPresetsURL,
       data: props,
     }
   );
@@ -78,4 +82,11 @@ export default class CollaboratorAPI {
   public static getOrganizationCollaborators = getOrganizationCollaborators;
   public static getCollaborator = getCollaborator;
   public static updateCollaboratorPresets = updateCollaboratorPresets;
+}
+
+export class CollaboratorURLs {
+  public static removeCollaborator = removeCollaboratorURL;
+  public static getOrganizationCollaborators = getOrganizationCollaboratorsURL;
+  public static getCollaborator = getCollaboratorURL;
+  public static updateCollaboratorPresets = updateCollaboratorPresetsURL;
 }

@@ -1,4 +1,4 @@
-import { IAgent } from "./system";
+import { IAgent, IPublicAccessOp, IPublicAccessOpInput } from "./system";
 
 export interface IFolder {
   resourceId: string;
@@ -7,21 +7,20 @@ export interface IFolder {
   namePath: string[];
   parentId?: string;
   createdBy: IAgent;
-  createdAt: string;
+  createdAt: Date | string;
   maxFileSizeInBytes: number;
   lastUpdatedBy?: IAgent;
-  lastUpdatedAt?: string;
+  lastUpdatedAt?: Date | string;
   name: string;
   description?: string;
-  isPublic?: boolean;
-  markedPublicAt?: string; // ISO date string
-  markedPublicBy?: IAgent;
+  publicAccessOps: IPublicAccessOp[];
 }
 
 export interface INewFolderInput {
   path: string;
   description?: string;
   maxFileSizeInBytes?: number;
+  publicAccessOps?: IPublicAccessOpInput[];
 }
 
 export interface IUpdateFolderInput {

@@ -8,6 +8,11 @@ import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/folders";
+const addFolderURL = `${baseURL}/addFolder`;
+const listFolderContentURL = `${baseURL}/listFolderContent`;
+const getFolderURL = `${baseURL}/getFolder`;
+const deleteFolderURL = `${baseURL}/deleteFolder`;
+const updateFolderURL = `${baseURL}/updateFolder`;
 
 export interface IAddFolderEndpointParams {
   organizationId?: string;
@@ -20,7 +25,7 @@ export type IAddFolderEndpointResult = GetEndpointResult<{
 
 async function addFolder(props: IAddFolderEndpointParams) {
   return invokeEndpointWithAuth<IAddFolderEndpointResult>({
-    path: `${baseURL}/addFolder`,
+    path: addFolderURL,
     data: props,
   });
 }
@@ -32,7 +37,7 @@ export interface IDeleteFolderEndpointParams {
 
 async function deleteFolder(props: IDeleteFolderEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/deleteFolder`,
+    path: deleteFolderURL,
     data: props,
   });
 }
@@ -48,7 +53,7 @@ export type IGetFolderEndpointResult = GetEndpointResult<{
 
 async function getFolder(props: IGetFolderEndpointParams) {
   return await invokeEndpointWithAuth<IGetFolderEndpointResult>({
-    path: `${baseURL}/getFolder`,
+    path: getFolderURL,
     data: props,
   });
 }
@@ -65,7 +70,7 @@ export type IListFolderContentEndpointResult = GetEndpointResult<{
 
 async function listFolderContent(props: IListFolderContentEndpointParams) {
   return await invokeEndpointWithAuth<IListFolderContentEndpointResult>({
-    path: `${baseURL}/listFolderContent`,
+    path: listFolderContentURL,
     data: props,
   });
 }
@@ -82,7 +87,7 @@ export type IUpdateFolderEndpointResult = GetEndpointResult<{
 
 async function updateFolder(props: IUpdateFolderEndpointParams) {
   return await invokeEndpointWithAuth<IUpdateFolderEndpointResult>({
-    path: `${baseURL}/updateFolder`,
+    path: updateFolderURL,
     data: props,
   });
 }
@@ -93,4 +98,12 @@ export default class FolderAPI {
   public static getFolder = getFolder;
   public static deleteFolder = deleteFolder;
   public static updateFolder = updateFolder;
+}
+
+export class FolderURLs {
+  public static addFolder = addFolderURL;
+  public static listFolderContent = listFolderContentURL;
+  public static getFolder = getFolderURL;
+  public static deleteFolder = deleteFolderURL;
+  public static updateFolder = updateFolderURL;
 }

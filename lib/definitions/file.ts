@@ -1,4 +1,4 @@
-import { IAgent } from "./system";
+import { IAgent, IPublicAccessOp } from "./system";
 
 export interface IFile {
   resourceId: string;
@@ -10,15 +10,13 @@ export interface IFile {
   encoding?: string;
   size: number;
   createdBy: IAgent;
-  createdAt: string;
+  createdAt: Date | string;
   lastUpdatedBy?: IAgent;
-  lastUpdatedAt?: string;
+  lastUpdatedAt?: Date | string;
   name: string;
   extension: string;
   description?: string;
-  isPublic?: boolean;
-  markedPublicAt?: string; // ISO date string
-  markedPublicBy?: IAgent;
+  publicAccessOps: IPublicAccessOp[];
 }
 
 export interface IImageTransformationParams {
@@ -31,10 +29,9 @@ export interface IUpdateFileDetailsInput {
   mimetype?: string;
 }
 
-export interface INewFileInput {
-  description?: string;
-  mimetype: string;
-  encoding?: string;
-  data: Buffer;
-  path: string;
+export enum UploadFilePublicAccessActions {
+  None = "none",
+  Read = "read",
+  ReadAndUpdate = "read-update",
+  ReadUpdateAndDelete = "read-update-delete",
 }

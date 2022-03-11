@@ -7,6 +7,11 @@ import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/presetPermissionsGroups";
+const addPresetURL = `${baseURL}/addPreset`;
+const getOrganizationPresetsURL = `${baseURL}/getOrganizationPresets`;
+const getPresetURL = `${baseURL}/getPreset`;
+const deletePresetURL = `${baseURL}/deletePreset`;
+const updatePresetURL = `${baseURL}/updatePreset`;
 
 export interface IAddPresetPermissionsGroupEndpointParams {
   organizationId: string;
@@ -19,7 +24,7 @@ export type IAddPresetPermissionsGroupEndpointResult = GetEndpointResult<{
 
 async function addPreset(props: IAddPresetPermissionsGroupEndpointParams) {
   return invokeEndpointWithAuth<IAddPresetPermissionsGroupEndpointResult>({
-    path: `${baseURL}/addPreset`,
+    path: addPresetURL,
     data: props,
   });
 }
@@ -32,7 +37,7 @@ async function deletePreset(
   props: IDeletePresetPermissionsGroupEndpointParams
 ) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: `${baseURL}/deletePreset`,
+    path: deletePresetURL,
     data: props,
   });
 }
@@ -51,7 +56,7 @@ async function getOrganizationPresets(
 ) {
   return await invokeEndpointWithAuth<IGetOrganizationPresetPermissionsGroupEndpointResult>(
     {
-      path: `${baseURL}/getOrganizationPresets`,
+      path: getOrganizationPresetsURL,
       data: props,
     }
   );
@@ -68,7 +73,7 @@ export type IGetPresetPermissionsGroupEndpointResult = GetEndpointResult<{
 async function getPreset(props: IGetPresetPermissionsGroupEndpointParams) {
   return await invokeEndpointWithAuth<IGetPresetPermissionsGroupEndpointResult>(
     {
-      path: `${baseURL}/getPreset`,
+      path: getPresetURL,
       data: props,
     }
   );
@@ -88,7 +93,7 @@ async function updatePreset(
 ) {
   return await invokeEndpointWithAuth<IUpdatePresetPermissionsGroupEndpointResult>(
     {
-      path: `${baseURL}/updatePreset`,
+      path: updatePresetURL,
       data: props,
     }
   );
@@ -100,4 +105,12 @@ export default class PresetPermissionsGroupAPI {
   public static getPreset = getPreset;
   public static deletePreset = deletePreset;
   public static updatePreset = updatePreset;
+}
+
+export class PresetPermissionsGroupURL {
+  public static addPreset = addPresetURL;
+  public static getOrganizationPresets = getOrganizationPresetsURL;
+  public static getPreset = getPresetURL;
+  public static deletePreset = deletePresetURL;
+  public static updatePreset = updatePresetURL;
 }
