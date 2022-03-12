@@ -92,7 +92,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
   };
 
   const uploadButton = (
-    <Button icon={<CloudUploadOutlined />} loading={loading}>
+    <Button icon={<CloudUploadOutlined />} disabled={loading}>
       Upload image
     </Button>
   );

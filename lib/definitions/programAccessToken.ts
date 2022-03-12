@@ -17,7 +17,7 @@ export interface IProgramAccessToken {
 export interface INewProgramAccessTokenInput {
   name: string;
   description?: string;
-  presets: IPresetInput[];
+  presets?: IPresetInput[];
 }
 
 export type IUpdateProgramAccessTokenInput =

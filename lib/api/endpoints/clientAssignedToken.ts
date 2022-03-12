@@ -11,7 +11,7 @@ const addTokenURL = `${baseURL}/addToken`;
 const getOrganizationTokensURL = `${baseURL}/getOrganizationTokens`;
 const getTokenURL = `${baseURL}/getToken`;
 const deleteTokenURL = `${baseURL}/deleteToken`;
-const updatePresetsURL = `${baseURL}/updatePresets`;
+const updateTokenURL = `${baseURL}/updateToken`;
 
 export interface IAddClientAssignedTokenEndpointParams {
   organizationId?: string;
@@ -78,23 +78,20 @@ async function getToken(props: IGetClientAssignedTokenEndpointParams) {
   });
 }
 
-export interface IUpdateClientAssignedTokenPresetsEndpointParams {
+export interface IUpdateClientAssignedTokenEndpointParams {
   tokenId?: string;
   onReferenced?: boolean;
-  presets: IPresetInput[];
+  token: Partial<INewClientAssignedTokenInput>;
 }
 
-export type IUpdateClientAssignedTokenPresetsEndpointResult =
-  GetEndpointResult<{
-    token: IClientAssignedToken;
-  }>;
+export type IUpdateClientAssignedTokenEndpointResult = GetEndpointResult<{
+  token: IClientAssignedToken;
+}>;
 
-async function updatePresets(
-  props: IUpdateClientAssignedTokenPresetsEndpointParams
-) {
-  return await invokeEndpointWithAuth<IUpdateClientAssignedTokenPresetsEndpointResult>(
+async function updateToken(props: IUpdateClientAssignedTokenEndpointParams) {
+  return await invokeEndpointWithAuth<IUpdateClientAssignedTokenEndpointResult>(
     {
-      path: updatePresetsURL,
+      path: updateTokenURL,
       data: props,
     }
   );
@@ -105,7 +102,7 @@ export default class ClientAssignedTokenAPI {
   public static getOrganizationTokens = getOrganizationTokens;
   public static getToken = getToken;
   public static deleteToken = deleteToken;
-  public static updatePresets = updatePresets;
+  public static updateToken = updateToken;
 }
 
 export class ClientAssignedTokenURLs {
@@ -113,5 +110,5 @@ export class ClientAssignedTokenURLs {
   public static getOrganizationTokens = getOrganizationTokensURL;
   public static getToken = getTokenURL;
   public static deleteToken = deleteTokenURL;
-  public static updatePresets = updatePresetsURL;
+  public static updateToken = updateTokenURL;
 }

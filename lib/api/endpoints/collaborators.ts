@@ -15,7 +15,7 @@ export interface IGetCollaboratorEndpointParams {
 }
 
 export type IGetCollaboratorEndpointResult = GetEndpointResult<{
-  token: ICollaborator;
+  collaborator: ICollaborator;
 }>;
 
 async function getCollaborator(props: IGetCollaboratorEndpointParams) {

@@ -3,7 +3,6 @@ import { Alert, Button, Form, Input, message } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
-import { useSWRConfig } from "swr";
 import {
   formBodyClassName,
   formContentWrapperClassName,
@@ -24,7 +23,7 @@ import useFormHelpers from "../../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../../lib/api/endpoints/user";
 import { checkEndpointResult, toAppErrorsArray } from "../../../lib/api/utils";
 import { flattenErrorList } from "../../../lib/utilities/utils";
-import useUser, { getUseUserHookKey } from "../../../lib/hooks/useUser";
+import useUser from "../../../lib/hooks/useUser";
 import PageLoading from "../../utils/PageLoading";
 import PageError from "../../utils/PageError";
 
@@ -37,14 +36,12 @@ const userSettingsValidation = yup.object().shape({
 });
 
 export default function UserProfile(props: IUserProfileProps) {
-  const userResult = useUser();
-  const { mutate } = useSWRConfig();
+  const { isLoading, error, data, mutate } = useUser();
   const onSubmit = React.useCallback(async (data: IUserProfileInput) => {
     try {
       const result = await UserEndpoint.updateUser(data);
       checkEndpointResult(result);
-      const user = result.user;
-      mutate(getUseUserHookKey(), user, false);
+      mutate(result, false);
       message.success("Profile updated");
     } catch (error) {
       const errArray = toAppErrorsArray(error);
@@ -68,25 +65,21 @@ export default function UserProfile(props: IUserProfileProps) {
       validationSchema: userSettingsValidation,
 
       // Will be replaced in a useEffect when user loads
-      initialValues: userResult.data?.user as any,
+      initialValues: data?.user as any,
       onSubmit: submitResult.run,
     },
   });
 
   React.useEffect(() => {
-    if (userResult.data?.user) {
-      formik.setValues(userResult.data.user);
+    if (data?.user) {
+      formik.setValues(data.user);
     }
-  }, [userResult.data?.user]);
+  }, [data?.user]);
 
-  if (userResult.isLoading) {
+  if (isLoading) {
     return <PageLoading messageText="Loading user..." />;
-  } else if (userResult.error) {
-    return (
-      <PageError
-        messageText={userResult.error?.message || "Error fetching user"}
-      />
-    );
+  } else if (error) {
+    return <PageError messageText={error?.message || "Error fetching user"} />;
   }
 
   const globalError = getFormError(formik.errors);

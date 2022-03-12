@@ -17,5 +17,8 @@ export interface IClientAssignedToken {
 
 export interface INewClientAssignedTokenInput {
   expires?: number;
-  presets: IPresetInput[];
+  presets?: IPresetInput[];
+  providedResourceId?: string;
 }
+
+export const clientAssignedTokenConstants = { providedResourceMaxLength: 300 };

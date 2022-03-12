@@ -32,3 +32,7 @@ export interface INewPresetPermissionsGroupInput {
 
 export type IUpdatePresetPermissionsGroupInput =
   Partial<INewPresetPermissionsGroupInput>;
+
+export const presetPermissionsGroupConstants = {
+  maxAssignedPresets: 100,
+};
