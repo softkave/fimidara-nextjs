@@ -1,10 +1,8 @@
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import {
   checkEndpointResult,
   processEndpointError,
@@ -12,48 +10,53 @@ import {
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
+import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
+import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getFormError } from "../../../form/formUtils";
 
-export interface IClientTokenMenuProps {
-  token: IClientAssignedToken;
+export interface IPermissionGroupMenuProps {
+  preset: IPresetPermissionsGroup;
   onCompleteDelete: () => any;
 }
 
 enum MenuKeys {
-  DeleteToken = "delete-token",
-  UpdatePresets = "update-presets",
+  DeleteItem = "delete-item",
+  UpdateItem = "update-item",
 }
 
-const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
-  const { token, onCompleteDelete } = props;
-  const deleteToken = React.useCallback(async () => {
+const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
+  const { preset, onCompleteDelete } = props;
+  const deleteItem = React.useCallback(async () => {
     try {
-      const result = await ClientAssignedTokenAPI.deleteToken({
-        tokenId: token.resourceId,
+      // TODO: invalidate all the data that has assigned presets
+      // when request is successful
+
+      const result = await PresetPermissionsGroupAPI.deletePreset({
+        presetId: preset.resourceId,
       });
 
       checkEndpointResult(result);
-      message.success("Token deleted");
-      onCompleteDelete();
+      message.success("Permission group deleted");
     } catch (error: any) {
       message.error(
-        getFormError(processEndpointError(error)) || "Error deleting token"
+        getFormError(processEndpointError(error)) ||
+          "Error deleting permission group"
       );
     }
-  }, [token, onCompleteDelete]);
+  }, [onCompleteDelete]);
 
-  const deleteTokenHelper = useRequest(deleteToken, { manual: true });
+  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: SelectInfo) => {
-      if (info.key === MenuKeys.DeleteToken) {
+      if (info.key === MenuKeys.DeleteItem) {
         Modal.confirm({
-          title: "Are you sure you want to delete this token?",
+          title: "Are you sure you want to delete this permission group?",
           okText: "Yes",
           cancelText: "No",
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteTokenHelper.runAsync();
+            await deleteItemHelper.runAsync();
           },
           onCancel() {
             // do nothing
@@ -61,27 +64,27 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
         });
       }
     },
-    [deleteTokenHelper]
+    [deleteItemHelper]
   );
 
   return (
     <Dropdown
-      disabled={deleteTokenHelper.loading}
+      disabled={deleteItemHelper.loading}
       trigger={["click"]}
       overlay={
         <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
-          <Menu.Item key={MenuKeys.UpdatePresets}>
+          <Menu.Item key={MenuKeys.UpdateItem}>
             <Link
-              href={appOrgPaths.clientTokenForm(
-                token.organizationId,
-                token.resourceId
+              href={appOrgPaths.permissionGroupForm(
+                preset.organizationId,
+                preset.resourceId
               )}
             >
-              Update Permission Groups
+              Update Group
             </Link>
           </Menu.Item>
           <Menu.Divider key={"divider-01"} />
-          <Menu.Item key={MenuKeys.DeleteToken}>Delete Token</Menu.Item>
+          <Menu.Item key={MenuKeys.DeleteItem}>Delete Group</Menu.Item>
         </Menu>
       }
     >
@@ -94,4 +97,4 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
   );
 };
 
-export default ClientTokenMenu;
+export default PermissionGroupMenu;

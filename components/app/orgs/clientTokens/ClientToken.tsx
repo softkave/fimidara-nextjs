@@ -12,6 +12,8 @@ import ComponentHeader from "../../../utils/ComponentHeader";
 import ClientTokenMenu from "./ClientTokenMenu";
 import { useRouter } from "next/router";
 import { appOrgPaths } from "../../../../lib/definitions/system";
+import { useSWRConfig } from "swr";
+import { getUseOrgClientTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgClientTokenList";
 
 export interface IClientTokenProps {
   tokenId: string;
@@ -25,9 +27,10 @@ function ClientToken(props: IClientTokenProps) {
   const { tokenId } = props;
   const router = useRouter();
   const { error, isLoading, data, mutate } = useClientToken(tokenId);
+  const { mutate: cacheMutate } = useSWRConfig();
   const onRemovePermissionGroup = React.useCallback(
     async (presetId: string) => {
-      assert(data?.token, new Error("Token nto found"));
+      assert(data?.token, new Error("Token not found"));
       const updatedPresets = data?.token.presets.filter(
         (item) => item.presetId !== presetId
       );
@@ -37,12 +40,14 @@ function ClientToken(props: IClientTokenProps) {
         token: { presets: updatedPresets },
       });
 
-      mutate(result);
+      mutate(result, false);
     },
-    [data]
+    [data, tokenId]
   );
 
   const onCompeleteDeleteToken = React.useCallback(async () => {
+    assert(data?.token, new Error("Token not found"));
+    cacheMutate(getUseOrgClientTokenListHookKey(data.token.organizationId));
     router.push(
       data
         ? appOrgPaths.clientTokenList(data.token.organizationId)

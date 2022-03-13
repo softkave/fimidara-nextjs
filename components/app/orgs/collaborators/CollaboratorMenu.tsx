@@ -1,59 +1,62 @@
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import {
   checkEndpointResult,
   processEndpointError,
 } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
+import { ICollaborator } from "../../../../lib/definitions/user";
+import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
 
-export interface IClientTokenMenuProps {
-  token: IClientAssignedToken;
-  onCompleteDelete: () => any;
+export interface ICollaboratorMenuProps {
+  orgId: string;
+  collaborator: ICollaborator;
+  onCompleteRemove: () => any;
 }
 
 enum MenuKeys {
-  DeleteToken = "delete-token",
-  UpdatePresets = "update-presets",
+  DeleteItem = "delete-item",
+  UpdateItem = "update-item",
 }
 
-const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
-  const { token, onCompleteDelete } = props;
-  const deleteToken = React.useCallback(async () => {
+const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
+  const { orgId, collaborator, onCompleteRemove } = props;
+  const deleteItem = React.useCallback(async () => {
     try {
-      const result = await ClientAssignedTokenAPI.deleteToken({
-        tokenId: token.resourceId,
+      const result = await CollaboratorAPI.removeCollaborator({
+        organizationId: orgId,
+        collaboratorId: collaborator.resourceId,
       });
 
       checkEndpointResult(result);
-      message.success("Token deleted");
-      onCompleteDelete();
+      message.success("Collaborator removed");
+      onCompleteRemove();
     } catch (error: any) {
       message.error(
-        getFormError(processEndpointError(error)) || "Error deleting token"
+        getFormError(processEndpointError(error)) ||
+          "Error removing collaborator"
       );
     }
-  }, [token, onCompleteDelete]);
+  }, [orgId, collaborator, onCompleteRemove]);
 
-  const deleteTokenHelper = useRequest(deleteToken, { manual: true });
+  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: SelectInfo) => {
-      if (info.key === MenuKeys.DeleteToken) {
+      if (info.key === MenuKeys.DeleteItem) {
         Modal.confirm({
-          title: "Are you sure you want to delete this token?",
+          title: "Are you sure you want to remove this collaborator?",
           okText: "Yes",
           cancelText: "No",
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteTokenHelper.runAsync();
+            await deleteItemHelper.runAsync();
           },
           onCancel() {
             // do nothing
@@ -61,27 +64,27 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
         });
       }
     },
-    [deleteTokenHelper]
+    [deleteItemHelper]
   );
 
   return (
     <Dropdown
-      disabled={deleteTokenHelper.loading}
+      disabled={deleteItemHelper.loading}
       trigger={["click"]}
       overlay={
         <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
-          <Menu.Item key={MenuKeys.UpdatePresets}>
+          <Menu.Item key={MenuKeys.UpdateItem}>
             <Link
-              href={appOrgPaths.clientTokenForm(
-                token.organizationId,
-                token.resourceId
+              href={appOrgPaths.collaboratorForm(
+                orgId,
+                collaborator.resourceId
               )}
             >
               Update Permission Groups
             </Link>
           </Menu.Item>
           <Menu.Divider key={"divider-01"} />
-          <Menu.Item key={MenuKeys.DeleteToken}>Delete Token</Menu.Item>
+          <Menu.Item key={MenuKeys.DeleteItem}>Remove Collaborator</Menu.Item>
         </Menu>
       }
     >
@@ -94,4 +97,4 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
   );
 };
 
-export default ClientTokenMenu;
+export default CollaboratorMenu;

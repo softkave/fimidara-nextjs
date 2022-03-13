@@ -94,7 +94,7 @@ const CollaboratorList: React.FC<ICollaboratorListProps> = (props) => {
             style={{ minWidth: "150px" }}
           >
             <Menu.Item key={MenuKeys.UpdateItem}>
-              <Link href={appOrgPaths.collaborator(orgId, item.resourceId)}>
+              <Link href={appOrgPaths.collaboratorForm(orgId, item.resourceId)}>
                 Update Permission Groups
               </Link>
             </Menu.Item>

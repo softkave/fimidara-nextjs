@@ -5,7 +5,6 @@ export interface IProgramAccessToken {
   resourceId: string;
   name: string;
   description?: string;
-  hash: string;
   createdAt: string;
   createdBy: IAgent;
   organizationId: string;
