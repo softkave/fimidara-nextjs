@@ -1,10 +1,13 @@
-import { Button, Dropdown, List, Menu, Modal } from "antd";
+import { Button, Dropdown, List, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useAppResponsive from "../../../../lib/hooks/useAppResponsive";
 import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
+import {
+  checkEndpointResult,
+  processEndpointError,
+} from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
@@ -13,6 +16,7 @@ import { IProgramAccessToken } from "../../../../lib/definitions/programAccessTo
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import { getUseOrgProgramTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgProgramTokenList";
 import { css, cx } from "@emotion/css";
+import { getFormError } from "../../../form/formUtils";
 
 export interface IProgramTokenListProps {
   orgId: string;
@@ -38,12 +42,19 @@ const ProgramTokenList: React.FC<IProgramTokenListProps> = (props) => {
   const responsive = useAppResponsive();
   const deleteItem = React.useCallback(
     async (itemId: string) => {
-      const result = await ProgramAccessTokenAPI.deleteToken({
-        tokenId: itemId,
-      });
+      try {
+        const result = await ProgramAccessTokenAPI.deleteToken({
+          tokenId: itemId,
+        });
 
-      checkEndpointResult(result);
-      mutate(getUseOrgProgramTokenListHookKey(orgId));
+        checkEndpointResult(result);
+        mutate(getUseOrgProgramTokenListHookKey(orgId));
+        message.success("Token deleted");
+      } catch (error: any) {
+        message.error(
+          getFormError(processEndpointError(error)) || "Error deleting token"
+        );
+      }
     },
     [orgId, mutate]
   );

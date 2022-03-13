@@ -1,10 +1,13 @@
-import { Button, Dropdown, List, Menu, Modal } from "antd";
+import { Button, Dropdown, List, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useAppResponsive from "../../../../lib/hooks/useAppResponsive";
 import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
+import {
+  checkEndpointResult,
+  processEndpointError,
+} from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
@@ -13,6 +16,7 @@ import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getUseOrgPermissionGroupListHookKey } from "../../../../lib/hooks/orgs/useOrgPermissionGroupList";
 import { css, cx } from "@emotion/css";
+import { getFormError } from "../../../form/formUtils";
 
 export interface IPermissionGroupListProps {
   orgId: string;
@@ -38,12 +42,23 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
   const responsive = useAppResponsive();
   const deleteItem = React.useCallback(
     async (itemId: string) => {
-      const result = await PresetPermissionsGroupAPI.deletePreset({
-        presetId: itemId,
-      });
+      try {
+        // TODO: invalidate all the data that has assigned presets
+        // when request is successful
 
-      checkEndpointResult(result);
-      mutate(getUseOrgPermissionGroupListHookKey(orgId));
+        const result = await PresetPermissionsGroupAPI.deletePreset({
+          presetId: itemId,
+        });
+
+        checkEndpointResult(result);
+        mutate(getUseOrgPermissionGroupListHookKey(orgId));
+        message.success("Permission group deleted");
+      } catch (error: any) {
+        message.error(
+          getFormError(processEndpointError(error)) ||
+            "Error deleting permission group"
+        );
+      }
     },
     [orgId, mutate]
   );

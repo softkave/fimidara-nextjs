@@ -1,10 +1,13 @@
-import { Button, Dropdown, List, Menu, Modal } from "antd";
+import { Button, Dropdown, List, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useAppResponsive from "../../../../lib/hooks/useAppResponsive";
 import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
+import {
+  checkEndpointResult,
+  processEndpointError,
+} from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
@@ -13,6 +16,7 @@ import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { BsThreeDots } from "react-icons/bs";
 import { css, cx } from "@emotion/css";
+import { getFormError } from "../../../form/formUtils";
 
 export interface ICollaboratorListProps {
   orgId: string;
@@ -38,13 +42,21 @@ const CollaboratorList: React.FC<ICollaboratorListProps> = (props) => {
   const responsive = useAppResponsive();
   const deleteItem = React.useCallback(
     async (itemId: string) => {
-      const result = await CollaboratorAPI.removeCollaborator({
-        organizationId: orgId,
-        collaboratorId: itemId,
-      });
+      try {
+        const result = await CollaboratorAPI.removeCollaborator({
+          organizationId: orgId,
+          collaboratorId: itemId,
+        });
 
-      checkEndpointResult(result);
-      mutate(getUseOrgRequestListHookKey(orgId));
+        checkEndpointResult(result);
+        mutate(getUseOrgRequestListHookKey(orgId));
+        message.success("Collaborator removed");
+      } catch (error: any) {
+        message.error(
+          getFormError(processEndpointError(error)) ||
+            "Error removing collaborator"
+        );
+      }
     },
     [orgId, mutate]
   );

@@ -1,26 +1,22 @@
-import { Button, Dropdown, List, Menu, message, Modal } from "antd";
+import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
 import { appOrgPaths } from "../../../../lib/definitions/system";
-import useAppResponsive from "../../../../lib/hooks/useAppResponsive";
 import { appClasses } from "../../../utils/theme";
 import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import {
   checkEndpointResult,
   processEndpointError,
 } from "../../../../lib/api/utils";
-import { useSWRConfig } from "swr";
-import { getUseOrgClientTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgClientTokenList";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import { css, cx } from "@emotion/css";
 import { getFormError } from "../../../form/formUtils";
 
-export interface IClientTokenListProps {
-  orgId: string;
-  tokens: IClientAssignedToken[];
+export interface IClientTokenMenuProps {
+  token: IClientAssignedToken;
+  onCompleteDelete: () => any;
 }
 
 enum MenuKeys {
@@ -28,18 +24,8 @@ enum MenuKeys {
   UpdatePresets = "update-presets",
 }
 
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
-
-const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
-  const { orgId, tokens } = props;
-  const { mutate } = useSWRConfig();
-  const responsive = useAppResponsive();
+const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
+  const { token, onCompleteDelete } = props;
   const deleteToken = React.useCallback(
     async (tokenId: string) => {
       try {
@@ -48,15 +34,15 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
         });
 
         checkEndpointResult(result);
-        mutate(getUseOrgClientTokenListHookKey(orgId));
         message.success("Token deleted");
+        onCompleteDelete();
       } catch (error: any) {
         message.error(
           getFormError(processEndpointError(error)) || "Error deleting token"
         );
       }
     },
-    [orgId, mutate]
+    [onCompleteDelete]
   );
 
   const deleteTokenHelper = useRequest(deleteToken, { manual: true });
@@ -81,17 +67,22 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
     [deleteTokenHelper]
   );
 
-  const renderMenu = (item: IClientAssignedToken) => (
+  return (
     <Dropdown
       disabled={deleteTokenHelper.loading}
       trigger={["click"]}
       overlay={
         <Menu
-          onSelect={(info) => onSelectMenuItem(info, item.resourceId)}
+          onSelect={(info) => onSelectMenuItem(info, token.resourceId)}
           style={{ minWidth: "150px" }}
         >
           <Menu.Item key={MenuKeys.UpdatePresets}>
-            <Link href={appOrgPaths.clientTokenForm(orgId, item.resourceId)}>
+            <Link
+              href={appOrgPaths.clientTokenForm(
+                token.organizationId,
+                token.resourceId
+              )}
+            >
               Update Permission Groups
             </Link>
           </Menu.Item>
@@ -107,41 +98,6 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
       ></Button>
     </Dropdown>
   );
-
-  // TODO: add a way to differentiate between the provided ID
-  // and the resource ID
-
-  // const renderDateAndAgent = (item: IClientAssignedToken) => (
-  //   <Typography.Text>
-  //     <Space split={<Middledot />}>
-  //       {item.lastUpdatedAt
-  //         ? "Last updated " +
-  //           formatRelative(new Date(item.lastUpdatedAt), new Date())
-  //         : "Created " + formatRelative(new Date(item.createdAt), new Date())}
-  //       {item.lastUpdatedBy?.agentType || item.createdBy.agentType}
-  //     </Space>
-  //   </Typography.Text>
-  // );
-
-  return (
-    <List
-      className={cx(appClasses.main, classes.list)}
-      itemLayout="horizontal"
-      dataSource={tokens}
-      renderItem={(item) => (
-        <List.Item key={item.resourceId} actions={[renderMenu(item)]}>
-          <List.Item.Meta
-            title={
-              <Link href={appOrgPaths.clientToken(orgId, item.resourceId)}>
-                {item.providedResourceId || item.resourceId}
-              </Link>
-            }
-          />
-          {responsive.lg}
-        </List.Item>
-      )}
-    />
-  );
 };
 
-export default ClientTokenList;
+export default ClientTokenMenu;

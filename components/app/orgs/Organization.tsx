@@ -7,29 +7,15 @@ import useOrg from "../../../lib/hooks/orgs/useOrg";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import { appClasses } from "../../utils/theme";
-import OrganizationClientTokens from "./clientTokens/OrganizationClientTokens";
-import OrganizationCollaborators from "./collaborators/OrganizationCollaborators";
-import OrganizationFiles from "./files/OrganizationFiles";
 import OrgHeader from "./OrgHeader";
-import OrganizationPermissionGroups from "./permissionGroups/OrganizationPermissionGroups";
-import OrganizationProgramTokens from "./programTokens/OrganizationProgramTokens";
-import OrganizationRequests from "./requests/OrganizationRequests";
 
 export interface IOrganizationProps {
   orgId: string;
-}
-
-enum Tabkeys {
-  Files = "Files",
-  Collaborators = "Collaborators",
-  Requests = "Requests",
-  ProgramTokens = "ProgramTokens",
-  ClientTokens = "ClientTokens",
-  PermissionGroups = "PermissionGroups",
+  key: string;
 }
 
 const Organization: React.FC<IOrganizationProps> = (props) => {
-  const { orgId } = props;
+  const { orgId, key, children } = props;
   const { data, error, isLoading } = useOrg(orgId);
 
   if (isLoading || !data) {
@@ -73,7 +59,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.files}
         >
-          <OrganizationFiles org={org} />
+          {paths.files === key && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -83,7 +69,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.collaborators}
         >
-          <OrganizationCollaborators org={org} />
+          {paths.collaborators === key && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -93,7 +79,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.requests}
         >
-          <OrganizationRequests org={org} />
+          {paths.requests === key && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -103,7 +89,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.programTokens}
         >
-          <OrganizationProgramTokens org={org} />
+          {paths.programTokens === key && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -113,7 +99,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.clientTokens}
         >
-          <OrganizationClientTokens org={org} />
+          {paths.clientTokens === key && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -123,7 +109,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.permissionGroups}
         >
-          <OrganizationPermissionGroups org={org} />
+          {paths.permissionGroups === key && children}
         </Tabs.TabPane>
       </Tabs>
     </Space>

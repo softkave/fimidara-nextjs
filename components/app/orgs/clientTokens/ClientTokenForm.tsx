@@ -1,19 +1,22 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, Input, message, Typography } from "antd";
+import {
+  Alert,
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Typography,
+} from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
-import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/definitions/messages";
 import {
   checkEndpointResult,
   processAndThrowEndpointError,
 } from "../../../../lib/api/utils";
-import {
-  appOrgPaths,
-  systemConstants,
-} from "../../../../lib/definitions/system";
+import { appOrgPaths } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
@@ -27,6 +30,7 @@ import {
 import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import useClientToken from "../../../../lib/hooks/orgs/useClientToken";
 import SelectPresetInput from "../permissionGroups/SelectPresetInput";
+import moment from "moment";
 
 const clientTokenValidation = yup.object().shape({
   expires: yup.date(),
@@ -97,7 +101,7 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
   });
 
   const globalError = getFormError(formik.errors);
-  const nameNode = (
+  const expiresNode = (
     <Form.Item
       required
       label="Expires"
@@ -113,27 +117,26 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input
-        name="expires"
-        value={formik.values.expires}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter token name"
-        disabled={submitResult.loading}
-        maxLength={systemConstants.maxNameLength}
+      <DatePicker
+        showTime
+        value={
+          formik.values.expires ? moment(formik.values.expires) : undefined
+        }
+        onChange={(date) => formik.setFieldValue("expires", date?.valueOf())}
+        placeholder="Token expiration date"
       />
     </Form.Item>
   );
 
-  const descriptionNode = (
+  const providedResourceIdNode = (
     <Form.Item
-      label="Description"
+      label="Provided Resource ID"
       help={
-        formik.touched?.description &&
-        formik.errors?.description && (
+        formik.touched?.providedResourceId &&
+        formik.errors?.providedResourceId && (
           <FormError
-            visible={formik.touched.description}
-            error={formik.errors.description}
+            visible={formik.touched.providedResourceId}
+            error={formik.errors.providedResourceId}
           />
         )
       }
@@ -141,21 +144,21 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
       wrapperCol={{ span: 24 }}
     >
       <Input.TextArea
-        name="description"
-        value={formik.values.description}
+        name="providedResourceId"
+        value={formik.values.providedResourceId}
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        placeholder="Enter token description"
+        placeholder="Enter token provided resource ID"
         disabled={submitResult.loading}
-        maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
+        maxLength={clientAssignedTokenConstants.providedResourceMaxLength}
+        autoSize={{ minRows: 2 }}
       />
     </Form.Item>
   );
 
-  const assignedclientTokensNode = (
+  const assignedPresetsNode = (
     <Form.Item
-      label="Assigned presets"
+      label="Assigned Presets"
       help={
         formik.touched?.presets &&
         formik.errors?.presets && (
@@ -182,16 +185,16 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
           <Typography.Title level={4}>
-            Program Access Token Form
+            Client Assigned Token Form
           </Typography.Title>
           {globalError && (
             <Form.Item>
               <Alert type="error" message={globalError} />
             </Form.Item>
           )}
-          {nameNode}
-          {descriptionNode}
-          {assignedclientTokensNode}
+          {expiresNode}
+          {providedResourceIdNode}
+          {assignedPresetsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

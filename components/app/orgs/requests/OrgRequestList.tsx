@@ -1,10 +1,13 @@
-import { Button, Dropdown, List, Menu, Modal } from "antd";
+import { Button, Dropdown, List, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useAppResponsive from "../../../../lib/hooks/useAppResponsive";
 import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
+import {
+  checkEndpointResult,
+  processEndpointError,
+} from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
@@ -17,6 +20,7 @@ import { getUseOrgRequestListHookKey } from "../../../../lib/hooks/orgs/useOrgRe
 import { last } from "lodash";
 import { BsThreeDots } from "react-icons/bs";
 import { css, cx } from "@emotion/css";
+import { getFormError } from "../../../form/formUtils";
 
 export interface IOrgRequestListProps {
   orgId: string;
@@ -42,12 +46,19 @@ const OrgRequestList: React.FC<IOrgRequestListProps> = (props) => {
   const responsive = useAppResponsive();
   const deleteItem = React.useCallback(
     async (itemId: string) => {
-      const result = await CollaborationRequestAPI.deleteRequest({
-        requestId: itemId,
-      });
+      try {
+        const result = await CollaborationRequestAPI.deleteRequest({
+          requestId: itemId,
+        });
 
-      checkEndpointResult(result);
-      mutate(getUseOrgRequestListHookKey(orgId));
+        checkEndpointResult(result);
+        mutate(getUseOrgRequestListHookKey(orgId));
+        message.success("Request sent");
+      } catch (error: any) {
+        message.error(
+          getFormError(processEndpointError(error)) || "Error deleting request"
+        );
+      }
     },
     [orgId, mutate]
   );
