@@ -11,6 +11,7 @@ export interface IProgramAccessToken {
   presets: IAssignedPresetPermissionsGroup[];
   lastUpdatedAt?: string;
   lastUpdatedBy?: IAgent;
+  tokenStr: string;
 }
 
 export interface INewProgramAccessTokenInput {

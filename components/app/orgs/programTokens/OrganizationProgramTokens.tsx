@@ -1,6 +1,5 @@
 import { Space } from "antd";
 import React from "react";
-import { IOrganization } from "../../../../lib/definitions/organization";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useOrgProgramTokenList from "../../../../lib/hooks/orgs/useOrgProgramTokenList";
 import ListHeader from "../../../utils/ListHeader";
@@ -11,14 +10,14 @@ import { appClasses } from "../../../utils/theme";
 import ProgramTokenList from "./ProgramTokenList";
 
 export interface IOrganizationProgramTokensProps {
-  org: IOrganization;
+  orgId: string;
 }
 
 const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
   props
 ) => {
-  const { org } = props;
-  const { data, error, isLoading } = useOrgProgramTokenList(org.resourceId);
+  const { orgId } = props;
+  const { data, error, isLoading } = useOrgProgramTokenList(orgId);
   let content: React.ReactNode = null;
 
   if (isLoading || !data) {
@@ -38,7 +37,7 @@ const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
       />
     );
   } else {
-    content = <ProgramTokenList orgId={org.resourceId} tokens={data.tokens} />;
+    content = <ProgramTokenList orgId={orgId} tokens={data.tokens} />;
   }
 
   return (
@@ -49,7 +48,7 @@ const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
     >
       <ListHeader
         title="Program Access Tokens"
-        formLinkPath={appOrgPaths.createProgramTokenForm(org.resourceId)}
+        formLinkPath={appOrgPaths.createProgramTokenForm(orgId)}
       />
       {content}
     </Space>

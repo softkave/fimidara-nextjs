@@ -1,6 +1,5 @@
 import { Space } from "antd";
 import React from "react";
-import { IOrganization } from "../../../../lib/definitions/organization";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useOrgCollaboratorList from "../../../../lib/hooks/orgs/useOrgCollaboratorList";
 import ListHeader from "../../../utils/ListHeader";
@@ -11,14 +10,14 @@ import { appClasses } from "../../../utils/theme";
 import CollaboratorList from "./CollaboratorList";
 
 export interface IOrganizationCollaboratorsProps {
-  org: IOrganization;
+  orgId: string;
 }
 
 const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
   props
 ) => {
-  const { org } = props;
-  const { data, error, isLoading } = useOrgCollaboratorList(org.resourceId);
+  const { orgId } = props;
+  const { data, error, isLoading } = useOrgCollaboratorList(orgId);
   let content: React.ReactNode = null;
 
   if (isLoading || !data) {
@@ -39,10 +38,7 @@ const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
     );
   } else {
     content = (
-      <CollaboratorList
-        orgId={org.resourceId}
-        collaborators={data.collaborators}
-      />
+      <CollaboratorList orgId={orgId} collaborators={data.collaborators} />
     );
   }
 
@@ -54,7 +50,7 @@ const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
     >
       <ListHeader
         title="Collaborators"
-        formLinkPath={appOrgPaths.createRequestForm(org.resourceId)}
+        formLinkPath={appOrgPaths.createRequestForm(orgId)}
       />
       {content}
     </Space>

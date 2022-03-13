@@ -1,24 +1,24 @@
 import React from "react";
-import OrganizationCollaborators from "../../../../../components/app/orgs/collaborators/OrganizationCollaborators";
 import Organization from "../../../../../components/app/orgs/Organization";
-import { getOrgServerSideProps } from "../../../../../components/app/orgs/utils";
+import PresetForm from "../../../../../components/app/orgs/permissionGroups/PresetForm";
+import {
+  getOrgServerSideProps,
+  IOrgComponentProps,
+} from "../../../../../components/app/orgs/utils";
 import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
 import { appOrgPaths } from "../../../../../lib/definitions/system";
 
-export interface IOrganizationCollaboratorsPageProps {
-  orgId: string;
-}
-
-const OrganizationCollaboratorsPage: React.FC<
-  IOrganizationCollaboratorsPageProps
+const OrganizationCreatePermissionGroupFormPage: React.FC<
+  IOrgComponentProps
 > = (props) => {
   const { orgId } = props;
+
   return (
     <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
-      <OrganizationCollaborators orgId={orgId} />
+      <PresetForm orgId={orgId} />
     </Organization>
   );
 };
 
-export default withPageAuthRequired(OrganizationCollaboratorsPage);
+export default withPageAuthRequired(OrganizationCreatePermissionGroupFormPage);
 export const getServerSideProps = getOrgServerSideProps;

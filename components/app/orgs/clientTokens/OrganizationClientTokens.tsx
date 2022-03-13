@@ -1,6 +1,5 @@
 import { Space } from "antd";
 import React from "react";
-import { IOrganization } from "../../../../lib/definitions/organization";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useOrgClientTokenList from "../../../../lib/hooks/orgs/useOrgClientTokenList";
 import ListHeader from "../../../utils/ListHeader";
@@ -11,14 +10,14 @@ import { appClasses } from "../../../utils/theme";
 import ClientTokenList from "./ClientTokenList";
 
 export interface IOrganizationClientTokensProps {
-  org: IOrganization;
+  orgId: string;
 }
 
 const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
   props
 ) => {
-  const { org } = props;
-  const { data, error, isLoading } = useOrgClientTokenList(org.resourceId);
+  const { orgId } = props;
+  const { data, error, isLoading } = useOrgClientTokenList(orgId);
   let content: React.ReactNode = null;
 
   if (isLoading || !data) {
@@ -41,7 +40,7 @@ const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
       />
     );
   } else {
-    content = <ClientTokenList orgId={org.resourceId} tokens={data.tokens} />;
+    content = <ClientTokenList orgId={orgId} tokens={data.tokens} />;
   }
 
   return (
@@ -52,7 +51,7 @@ const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
     >
       <ListHeader
         title="Client Assigned Tokens"
-        formLinkPath={appOrgPaths.createClientTokenForm(org.resourceId)}
+        formLinkPath={appOrgPaths.createClientTokenForm(orgId)}
       />
       {content}
     </Space>

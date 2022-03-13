@@ -2,19 +2,17 @@ import { Space, Typography } from "antd";
 import React from "react";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
-import AssignedPresetList from "./AssignedPresetList";
 import assert from "assert";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import { useRouter } from "next/router";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
-import usePermissionGroup from "../../../../lib/hooks/orgs/usePermissionGroup";
-import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
-import { getUseOrgPermissionGroupListHookKey } from "../../../../lib/hooks/orgs/useOrgPermissionGroupList";
-import PermissionGroupMenu from "./PermissionGroupMenu";
 import useProgramToken from "../../../../lib/hooks/orgs/useProgramToken";
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import { getUseOrgProgramTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgProgramTokenList";
+import LabeledNode from "../../../utils/LabeledNode";
+import ProgramTokenMenu from "./ProgramTokenMenu";
+import AssignedPresetList from "../permissionGroups/AssignedPresetList";
 
 export interface IProgramTokenProps {
   tokenId: string;
@@ -42,18 +40,18 @@ function ProgramToken(props: IProgramTokenProps) {
     [data, tokenId]
   );
 
-  const onCompleteDeletePreset = React.useCallback(async () => {
+  const onCompleteDeleteToken = React.useCallback(async () => {
     assert(data?.token, new Error("Token not found"));
     cacheMutate(getUseOrgProgramTokenListHookKey(data.token.organizationId));
     router.push(appOrgPaths.collaboratorList(data.token.organizationId));
   }, [data]);
 
   if (isLoading || !data) {
-    return <PageLoading messageText="Loading program access tokens..." />;
+    return <PageLoading messageText="Loading program access token..." />;
   } else if (error) {
     return (
       <PageError
-        messageText={error?.message || "Error fetching program access tokens"}
+        messageText={error?.message || "Error fetching program access token"}
       />
     );
   }
@@ -62,12 +60,13 @@ function ProgramToken(props: IProgramTokenProps) {
   return (
     <Space direction="vertical" size={"large"}>
       <ComponentHeader title={token.name}>
-        <PermissionGroupMenu
-          preset={token}
-          onCompleteDelete={onCompleteDeletePreset}
+        <ProgramTokenMenu
+          token={token}
+          onCompleteDelete={onCompleteDeleteToken}
         />
       </ComponentHeader>
       <Typography.Paragraph>{token.description}</Typography.Paragraph>
+      <LabeledNode nodeIsText label="Token" node={token.tokenStr} />
       <AssignedPresetList
         orgId={token.organizationId}
         presets={token.presets}

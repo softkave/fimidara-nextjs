@@ -1,6 +1,5 @@
 import { Space } from "antd";
 import React from "react";
-import { IOrganization } from "../../../../lib/definitions/organization";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useOrgPermissionGroupList from "../../../../lib/hooks/orgs/useOrgPermissionGroupList";
 import ListHeader from "../../../utils/ListHeader";
@@ -11,14 +10,14 @@ import { appClasses } from "../../../utils/theme";
 import PermissionGroupList from "./PermissionGroupList";
 
 export interface IOrganizationPermissionGroupsProps {
-  org: IOrganization;
+  orgId: string;
 }
 
 const OrganizationPermissionGroups: React.FC<
   IOrganizationPermissionGroupsProps
 > = (props) => {
-  const { org } = props;
-  const { data, error, isLoading } = useOrgPermissionGroupList(org.resourceId);
+  const { orgId } = props;
+  const { data, error, isLoading } = useOrgPermissionGroupList(orgId);
   let content: React.ReactNode = null;
 
   if (isLoading || !data) {
@@ -40,9 +39,7 @@ const OrganizationPermissionGroups: React.FC<
       />
     );
   } else {
-    content = (
-      <PermissionGroupList orgId={org.resourceId} presets={data.presets} />
-    );
+    content = <PermissionGroupList orgId={orgId} presets={data.presets} />;
   }
 
   return (
@@ -53,7 +50,7 @@ const OrganizationPermissionGroups: React.FC<
     >
       <ListHeader
         title="Preset Permission Groups"
-        formLinkPath={appOrgPaths.createPermissionGroupForm(org.resourceId)}
+        formLinkPath={appOrgPaths.createPermissionGroupForm(orgId)}
       />
       {content}
     </Space>

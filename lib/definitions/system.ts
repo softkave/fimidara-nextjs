@@ -95,7 +95,7 @@ export const appOrgPaths = {
   },
 
   // File
-  files(orgId: string) {
+  fileList(orgId: string) {
     return `${this.org(orgId)}/files`;
   },
 

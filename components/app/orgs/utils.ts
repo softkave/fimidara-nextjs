@@ -1,8 +1,8 @@
 import { GetServerSideProps } from "next";
 
-export interface IOrgComponentProps {
+export type IOrgComponentProps = {
   orgId: string;
-}
+};
 
 export const getOrgServerSideProps: GetServerSideProps<
   IOrgComponentProps,

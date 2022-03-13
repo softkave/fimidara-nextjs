@@ -29,10 +29,9 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
     );
   }
 
-  const pathname = window.location.pathname;
   const org = data?.organization!;
   const paths = {
-    files: appOrgPaths.files(org.resourceId),
+    files: appOrgPaths.fileList(org.resourceId),
     collaborators: appOrgPaths.collaboratorList(org.resourceId),
     requests: appOrgPaths.requestList(org.resourceId),
     programTokens: appOrgPaths.programTokenList(org.resourceId),
@@ -45,7 +44,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
       <OrgHeader org={org} />
       <Tabs
         // centered
-        defaultActiveKey={pathname}
+        defaultActiveKey={key}
         moreIcon={<RightOutlined />}
         tabBarExtraContent={{
           left: <div style={{ marginLeft: "16px" }} />,
