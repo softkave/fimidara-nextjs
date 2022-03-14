@@ -13,6 +13,7 @@ import { getUseOrgProgramTokenListHookKey } from "../../../../lib/hooks/orgs/use
 import LabeledNode from "../../../utils/LabeledNode";
 import ProgramTokenMenu from "./ProgramTokenMenu";
 import AssignedPresetList from "../permissionGroups/AssignedPresetList";
+import { appClasses } from "../../../utils/theme";
 
 export interface IProgramTokenProps {
   tokenId: string;
@@ -58,21 +59,35 @@ function ProgramToken(props: IProgramTokenProps) {
 
   const token = data.token;
   return (
-    <Space direction="vertical" size={"large"}>
-      <ComponentHeader title={token.name}>
-        <ProgramTokenMenu
-          token={token}
-          onCompleteDelete={onCompleteDeleteToken}
+    <div className={appClasses.main}>
+      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <ComponentHeader title={token.name}>
+          <ProgramTokenMenu
+            token={token}
+            onCompleteDelete={onCompleteDeleteToken}
+          />
+        </ComponentHeader>
+        <LabeledNode
+          nodeIsText
+          copyable
+          direction="vertical"
+          label="Resource ID"
+          node={token.resourceId}
         />
-      </ComponentHeader>
-      <Typography.Paragraph>{token.description}</Typography.Paragraph>
-      <LabeledNode nodeIsText label="Token" node={token.tokenStr} />
-      <AssignedPresetList
-        orgId={token.organizationId}
-        presets={token.presets}
-        onRemoveItem={onRemovePermissionGroup}
-      />
-    </Space>
+        <Typography.Paragraph>{token.description}</Typography.Paragraph>
+        <LabeledNode
+          nodeIsText
+          direction="vertical"
+          label="Token"
+          node={token.tokenStr}
+        />
+        <AssignedPresetList
+          orgId={token.organizationId}
+          presets={token.presets}
+          onRemoveItem={onRemovePermissionGroup}
+        />
+      </Space>
+    </div>
   );
 }
 

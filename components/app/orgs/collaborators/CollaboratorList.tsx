@@ -15,7 +15,7 @@ import { getUseOrgRequestListHookKey } from "../../../../lib/hooks/orgs/useOrgRe
 import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { BsThreeDots } from "react-icons/bs";
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import { getFormError } from "../../../form/formUtils";
 
 export interface ICollaboratorListProps {
@@ -114,14 +114,14 @@ const CollaboratorList: React.FC<ICollaboratorListProps> = (props) => {
 
   return (
     <List
-      className={cx(appClasses.main, classes.list)}
+      className={classes.list}
       itemLayout="horizontal"
       dataSource={collaborators}
       renderItem={(item) => (
         <List.Item key={item.resourceId} actions={[renderMenu(item)]}>
           <List.Item.Meta
             title={
-              <Link href={appOrgPaths.request(orgId, item.resourceId)}>
+              <Link href={appOrgPaths.collaborator(orgId, item.resourceId)}>
                 {item.firstName + " " + item.lastName}
               </Link>
             }

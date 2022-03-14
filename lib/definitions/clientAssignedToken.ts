@@ -13,6 +13,7 @@ export interface IClientAssignedToken {
   presets: IAssignedPresetPermissionsGroup[];
   issuedAt: string;
   expires?: number;
+  tokenStr: string;
 }
 
 export interface INewClientAssignedTokenInput {

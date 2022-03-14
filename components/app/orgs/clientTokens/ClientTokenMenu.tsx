@@ -34,7 +34,7 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
 
       checkEndpointResult(result);
       message.success("Token deleted");
-      onCompleteDelete();
+      await onCompleteDelete();
     } catch (error: any) {
       message.error(
         getFormError(processEndpointError(error)) || "Error deleting token"

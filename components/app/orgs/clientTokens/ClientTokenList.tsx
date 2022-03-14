@@ -15,7 +15,7 @@ import { getUseOrgClientTokenListHookKey } from "../../../../lib/hooks/orgs/useO
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import { getFormError } from "../../../form/formUtils";
 
 export interface IClientTokenListProps {
@@ -125,7 +125,7 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
 
   return (
     <List
-      className={cx(appClasses.main, classes.list)}
+      className={classes.list}
       itemLayout="horizontal"
       dataSource={tokens}
       renderItem={(item) => (

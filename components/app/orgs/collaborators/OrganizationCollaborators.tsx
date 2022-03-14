@@ -43,17 +43,15 @@ const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
   }
 
   return (
-    <Space
-      direction="vertical"
-      style={{ width: "100%", padding: "16px" }}
-      size="large"
-    >
-      <ListHeader
-        title="Collaborators"
-        formLinkPath={appOrgPaths.createRequestForm(orgId)}
-      />
-      {content}
-    </Space>
+    <div className={appClasses.main}>
+      <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <ListHeader
+          title="Collaborators"
+          formLinkPath={appOrgPaths.createRequestForm(orgId)}
+        />
+        {content}
+      </Space>
+    </div>
   );
 };
 

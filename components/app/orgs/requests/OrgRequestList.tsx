@@ -19,7 +19,7 @@ import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaboration
 import { getUseOrgRequestListHookKey } from "../../../../lib/hooks/orgs/useOrgRequestList";
 import { last } from "lodash";
 import { BsThreeDots } from "react-icons/bs";
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import { getFormError } from "../../../form/formUtils";
 
 export interface IOrgRequestListProps {
@@ -120,7 +120,7 @@ const OrgRequestList: React.FC<IOrgRequestListProps> = (props) => {
 
   return (
     <List
-      className={cx(appClasses.main, classes.list)}
+      className={classes.list}
       itemLayout="horizontal"
       dataSource={requests}
       renderItem={(item) => (
@@ -131,6 +131,7 @@ const OrgRequestList: React.FC<IOrgRequestListProps> = (props) => {
                 {item.recipientEmail}
               </Link>
             }
+            description={last(item.statusHistory)?.status}
           />
         </List.Item>
       )}

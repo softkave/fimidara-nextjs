@@ -30,7 +30,10 @@ const OrganizationPresetFormPage: React.FC<IOrganizationPresetFormPageProps> = (
   }
 
   return (
-    <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
+    <Organization
+      orgId={orgId}
+      activeKey={appOrgPaths.permissionGroupList(orgId)}
+    >
       <PresetForm orgId={data.preset.organizationId} preset={data.preset} />
     </Organization>
   );

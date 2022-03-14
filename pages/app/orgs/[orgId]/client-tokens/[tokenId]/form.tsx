@@ -30,7 +30,7 @@ const OrganizationClientTokenFormPage: React.FC<
   }
 
   return (
-    <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.clientTokenList(orgId)}>
       <ClientTokenForm
         orgId={data.token.organizationId}
         clientToken={data.token}

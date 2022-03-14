@@ -13,6 +13,7 @@ import { getUseOrgRequestListHookKey } from "../../../../lib/hooks/orgs/useOrgRe
 import OrgRequestMenu from "./OrgRequestMenu";
 import { formatRelative } from "date-fns";
 import { last } from "lodash";
+import { appClasses } from "../../../utils/theme";
 
 export interface IOrgRequestProps {
   requestId: string;
@@ -41,29 +42,45 @@ function OrgRequest(props: IOrgRequestProps) {
 
   const request = data.request;
   return (
-    <Space direction="vertical" size={"large"}>
-      <ComponentHeader title={request.recipientEmail}>
-        <OrgRequestMenu
-          request={request}
-          onCompleteDeleteRequest={onCompleteDeleteRequest}
-        />
-      </ComponentHeader>
-      {request.message && (
-        <Typography.Paragraph>{request.message}</Typography.Paragraph>
-      )}
-      {request.expiresAt && (
+    <div className={appClasses.main}>
+      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <ComponentHeader title={request.recipientEmail}>
+          <OrgRequestMenu
+            request={request}
+            onCompleteDeleteRequest={onCompleteDeleteRequest}
+          />
+        </ComponentHeader>
         <LabeledNode
           nodeIsText
-          label="Expires"
-          node={formatRelative(new Date(request.expiresAt), new Date())}
+          copyable
+          direction="vertical"
+          label="Resource ID"
+          node={request.resourceId}
         />
-      )}
-      <LabeledNode
-        nodeIsText
-        label="Status"
-        node={last(request.statusHistory)?.status}
-      />
-    </Space>
+        {request.message && (
+          <LabeledNode
+            nodeIsText
+            label="Message"
+            direction="vertical"
+            node={request.message}
+          />
+        )}
+        {request.expiresAt && (
+          <LabeledNode
+            nodeIsText
+            label="Expires"
+            direction="vertical"
+            node={formatRelative(new Date(request.expiresAt), new Date())}
+          />
+        )}
+        <LabeledNode
+          nodeIsText
+          label="Status"
+          direction="vertical"
+          node={last(request.statusHistory)?.status}
+        />
+      </Space>
+    </div>
   );
 }
 

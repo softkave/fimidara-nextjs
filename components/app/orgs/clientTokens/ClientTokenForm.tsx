@@ -119,6 +119,8 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
     >
       <DatePicker
         showTime
+        use12Hours
+        format="h:mm A"
         value={
           formik.values.expires ? moment(formik.values.expires) : undefined
         }
@@ -184,9 +186,11 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <Typography.Title level={4}>
-            Client Assigned Token Form
-          </Typography.Title>
+          <Form.Item>
+            <Typography.Title level={4}>
+              Client Assigned Token Form
+            </Typography.Title>
+          </Form.Item>
           {globalError && (
             <Form.Item>
               <Alert type="error" message={globalError} />

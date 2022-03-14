@@ -158,7 +158,9 @@ export default function Login(props: ILoginProps) {
       <WebHeader />
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <Typography.Title level={4}>Login</Typography.Title>
+          <Form.Item>
+            <Typography.Title level={4}>Login</Typography.Title>
+          </Form.Item>
           {globalError && (
             <Form.Item>
               <Alert type="error" message={globalError} />

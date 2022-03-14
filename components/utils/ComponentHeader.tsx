@@ -4,6 +4,7 @@ import React from "react";
 
 export interface IComponentHeaderProps {
   title: string;
+  copyable?: boolean;
 }
 
 const classes = {
@@ -17,10 +18,10 @@ const classes = {
 };
 
 const ComponentHeader: React.FC<IComponentHeaderProps> = (props) => {
-  const { title, children } = props;
+  const { title, copyable, children } = props;
   return (
     <div className={classes.root}>
-      <Typography.Title level={5} className={classes.title}>
+      <Typography.Title copyable={copyable} level={4} className={classes.title}>
         {title}
       </Typography.Title>
       {children}

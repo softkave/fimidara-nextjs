@@ -3,7 +3,6 @@ import { css } from "@emotion/css";
 import { Row, Col, Typography, Button } from "antd";
 import Link from "next/link";
 import React from "react";
-import { appClasses } from "./theme";
 
 export interface IListHeaderProps {
   title: string;
@@ -20,7 +19,7 @@ const classes = {
 const ListHeader: React.FC<IListHeaderProps> = (props) => {
   const { title, formLinkPath } = props;
   return (
-    <Row className={appClasses.main}>
+    <Row>
       <Col span={18}>
         <Typography.Title level={5}>{title}</Typography.Title>
       </Col>

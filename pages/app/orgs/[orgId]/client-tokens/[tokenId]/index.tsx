@@ -15,7 +15,7 @@ const OrganizationClientTokenPage: React.FC<
 > = (props) => {
   const { orgId, tokenId } = props;
   return (
-    <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.clientTokenList(orgId)}>
       <ClientToken tokenId={tokenId} />
     </Organization>
   );

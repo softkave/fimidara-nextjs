@@ -36,7 +36,7 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
 
       checkEndpointResult(result);
       message.success("Collaborator removed");
-      onCompleteRemove();
+      await onCompleteRemove();
     } catch (error: any) {
       message.error(
         getFormError(processEndpointError(error)) ||

@@ -15,7 +15,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import { getUseOrgProgramTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgProgramTokenList";
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import { getFormError } from "../../../form/formUtils";
 
 export interface IProgramTokenListProps {
@@ -110,7 +110,7 @@ const ProgramTokenList: React.FC<IProgramTokenListProps> = (props) => {
 
   return (
     <List
-      className={cx(appClasses.main, classes.list)}
+      className={classes.list}
       itemLayout="horizontal"
       dataSource={tokens}
       renderItem={(item) => (

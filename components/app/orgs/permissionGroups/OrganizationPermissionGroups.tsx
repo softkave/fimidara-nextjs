@@ -43,17 +43,15 @@ const OrganizationPermissionGroups: React.FC<
   }
 
   return (
-    <Space
-      direction="vertical"
-      style={{ width: "100%", padding: "16px" }}
-      size="large"
-    >
-      <ListHeader
-        title="Preset Permission Groups"
-        formLinkPath={appOrgPaths.createPermissionGroupForm(orgId)}
-      />
-      {content}
-    </Space>
+    <div className={appClasses.main}>
+      <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <ListHeader
+          title="Preset Permission Groups"
+          formLinkPath={appOrgPaths.createPermissionGroupForm(orgId)}
+        />
+        {content}
+      </Space>
+    </div>
   );
 };
 

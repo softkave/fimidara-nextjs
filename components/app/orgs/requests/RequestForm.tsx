@@ -38,7 +38,7 @@ import moment from "moment";
 const requestValidation = yup.object().shape({
   email: signupValidationParts.email.required(messages.emailRequired),
   message: systemValidation.description,
-  expires: yup.date(),
+  expires: yup.string(),
 });
 
 const initialValues: ICollaborationRequestInput = {
@@ -176,6 +176,8 @@ export default function RequestForm(props: IRequestFormProps) {
     >
       <DatePicker
         showTime
+        use12Hours
+        format="h:mm A"
         value={
           formik.values.expires ? moment(formik.values.expires) : undefined
         }
@@ -189,9 +191,11 @@ export default function RequestForm(props: IRequestFormProps) {
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <Typography.Title level={4}>
-            Collaboration Request Form
-          </Typography.Title>
+          <Form.Item>
+            <Typography.Title level={4}>
+              Collaboration Request Form
+            </Typography.Title>
+          </Form.Item>
           {globalError && (
             <Form.Item>
               <Alert type="error" message={globalError} />

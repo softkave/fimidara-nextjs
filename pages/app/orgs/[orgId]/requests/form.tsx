@@ -14,7 +14,7 @@ const OrganizationCreateRequestFormPage: React.FC<IOrgComponentProps> = (
   const { orgId } = props;
 
   return (
-    <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.requestList(orgId)}>
       <RequestForm orgId={orgId} />
     </Organization>
   );

@@ -13,6 +13,8 @@ import { last } from "lodash";
 import { useSWRConfig } from "swr";
 import { getUseOrgCollaboratorListHookKey } from "../../../../lib/hooks/orgs/useOrgCollaboratorList";
 import CollaboratorMenu from "./CollaboratorMenu";
+import { appClasses } from "../../../utils/theme";
+import LabeledNode from "../../../utils/LabeledNode";
 
 export interface ICollaboratorProps {
   orgId: string;
@@ -22,7 +24,11 @@ export interface ICollaboratorProps {
 function Collaborator(props: ICollaboratorProps) {
   const { collaboratorId, orgId } = props;
   const router = useRouter();
-  const { error, isLoading, data, mutate } = useCollaborator(collaboratorId);
+  const { error, isLoading, data, mutate } = useCollaborator(
+    orgId,
+    collaboratorId
+  );
+
   const { mutate: cacheMutate } = useSWRConfig();
   const onRemovePermissionGroup = React.useCallback(
     async (presetId: string) => {
@@ -61,22 +67,31 @@ function Collaborator(props: ICollaboratorProps) {
 
   const collaborator = data.collaborator;
   return (
-    <Space direction="vertical" size={"large"}>
-      <ComponentHeader
-        title={collaborator.firstName + " " + collaborator.lastName}
-      >
-        <CollaboratorMenu
-          orgId={orgId}
-          collaborator={collaborator}
-          onCompleteRemove={onCompeleteRemoveCollaborator}
+    <div className={appClasses.main}>
+      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <ComponentHeader
+          title={collaborator.firstName + " " + collaborator.lastName}
+        >
+          <CollaboratorMenu
+            orgId={orgId}
+            collaborator={collaborator}
+            onCompleteRemove={onCompeleteRemoveCollaborator}
+          />
+        </ComponentHeader>
+        <LabeledNode
+          nodeIsText
+          copyable
+          direction="vertical"
+          label="Resource ID"
+          node={collaborator.resourceId}
         />
-      </ComponentHeader>
-      <AssignedPresetList
-        orgId={orgId}
-        presets={last(collaborator.organizations)?.presets || []}
-        onRemoveItem={onRemovePermissionGroup}
-      />
-    </Space>
+        <AssignedPresetList
+          orgId={orgId}
+          presets={last(collaborator.organizations)?.presets || []}
+          onRemoveItem={onRemovePermissionGroup}
+        />
+      </Space>
+    </div>
   );
 }
 

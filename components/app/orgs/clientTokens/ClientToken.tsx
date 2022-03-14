@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
 import { getUseOrgClientTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgClientTokenList";
+import { appClasses } from "../../../utils/theme";
 
 export interface IClientTokenProps {
   tokenId: string;
@@ -70,30 +71,52 @@ function ClientToken(props: IClientTokenProps) {
     token.expires && formatRelative(new Date(token.expires), new Date());
 
   return (
-    <Space direction="vertical" size={"large"}>
-      <ComponentHeader title={token.resourceId}>
-        <ClientTokenMenu
-          token={token}
-          onCompleteDelete={onCompeleteDeleteToken}
-        />
-      </ComponentHeader>
-      <LabeledNode nodeIsText label="Resource ID" node={token.resourceId} />
-      {token.providedResourceId && (
+    <div className={appClasses.main}>
+      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <ComponentHeader copyable title={token.resourceId}>
+          <ClientTokenMenu
+            token={token}
+            onCompleteDelete={onCompeleteDeleteToken}
+          />
+        </ComponentHeader>
         <LabeledNode
           nodeIsText
-          label="Provided Resource ID"
-          node={token.providedResourceId}
+          copyable
+          direction="vertical"
+          label="Resource ID"
+          node={token.resourceId}
         />
-      )}
-      {expirationDate && (
-        <LabeledNode nodeIsText label="Token Expires" node={expirationDate} />
-      )}
-      <AssignedPresetList
-        orgId={token.organizationId}
-        presets={token.presets}
-        onRemoveItem={onRemovePermissionGroup}
-      />
-    </Space>
+        {token.providedResourceId && (
+          <LabeledNode
+            nodeIsText
+            copyable
+            direction="vertical"
+            label="Provided Resource ID"
+            node={token.providedResourceId}
+          />
+        )}
+        <LabeledNode
+          nodeIsText
+          copyable
+          direction="vertical"
+          label="Token"
+          node={token.tokenStr}
+        />
+        {expirationDate && (
+          <LabeledNode
+            nodeIsText
+            direction="vertical"
+            label="Token Expires"
+            node={expirationDate}
+          />
+        )}
+        <AssignedPresetList
+          orgId={token.organizationId}
+          presets={token.presets}
+          onRemoveItem={onRemovePermissionGroup}
+        />
+      </Space>
+    </div>
   );
 }
 

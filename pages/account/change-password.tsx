@@ -140,7 +140,9 @@ export default function ChangePassword(props: IChangePasswordProps) {
       <WebHeader />
       <div className={formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <Typography.Title level={4}>Change Password</Typography.Title>
+          <Form.Item>
+            <Typography.Title level={4}>Change Password</Typography.Title>
+          </Form.Item>
           {globalError && (
             <Form.Item>
               <Alert type="error" message={globalError} />

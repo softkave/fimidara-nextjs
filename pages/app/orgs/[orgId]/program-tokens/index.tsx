@@ -14,7 +14,7 @@ const OrganizationProgramTokensPage: React.FC<
 > = (props) => {
   const { orgId } = props;
   return (
-    <Organization orgId={orgId} key={appOrgPaths.programTokenList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.programTokenList(orgId)}>
       <OrganizationProgramTokens orgId={orgId} />
     </Organization>
   );

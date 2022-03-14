@@ -175,7 +175,9 @@ export default function PresetForm(props: IPresetFormProps) {
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <Typography.Title level={4}>Preset Form</Typography.Title>
+          <Form.Item>
+            <Typography.Title level={4}>Preset Form</Typography.Title>
+          </Form.Item>
           {globalError && (
             <Form.Item>
               <Alert type="error" message={globalError} />

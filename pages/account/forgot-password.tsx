@@ -100,7 +100,9 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
       <WebHeader />
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <Typography.Title level={4}>Forgot Password</Typography.Title>
+          <Form.Item>
+            <Typography.Title level={4}>Forgot Password</Typography.Title>
+          </Form.Item>
           {globalError && (
             <Form.Item>
               <Alert type="error" message={globalError} />

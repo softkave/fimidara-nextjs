@@ -20,6 +20,7 @@ export const appClasses = {
     maxWidth: appDimensions.app.maxWidth,
     marginLeft: "auto",
     marginRight: "auto",
+    padding: "16px",
   }),
   iconBtn: css({
     display: "inline-flex",

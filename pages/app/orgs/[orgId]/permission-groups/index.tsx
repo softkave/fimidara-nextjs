@@ -14,7 +14,10 @@ const OrganizationPermissionGroupsPage: React.FC<
 > = (props) => {
   const { orgId } = props;
   return (
-    <Organization orgId={orgId} key={appOrgPaths.permissionGroupList(orgId)}>
+    <Organization
+      orgId={orgId}
+      activeKey={appOrgPaths.permissionGroupList(orgId)}
+    >
       <OrganizationPermissionGroups orgId={orgId} />
     </Organization>
   );

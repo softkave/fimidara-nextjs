@@ -17,7 +17,7 @@ const OrganizationPage: React.FC<IOrganizationPageProps> = (props) => {
     router.push(appOrgPaths.fileList(orgId));
   }, [orgId]);
 
-  return <Organization orgId={orgId} key="" />;
+  return <Organization orgId={orgId} activeKey="" />;
 };
 
 export default withPageAuthRequired(OrganizationPage);

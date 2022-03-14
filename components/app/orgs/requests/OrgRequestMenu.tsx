@@ -38,7 +38,7 @@ const OrgRequestMenu: React.FC<IOrgRequestMenuProps> = (props) => {
 
       checkEndpointResult(result);
       message.success("Request sent");
-      onCompleteDeleteRequest();
+      await onCompleteDeleteRequest();
     } catch (error: any) {
       message.error(
         getFormError(processEndpointError(error)) || "Error deleting request"

@@ -11,11 +11,11 @@ import OrgHeader from "./OrgHeader";
 
 export interface IOrganizationProps {
   orgId: string;
-  key: string;
+  activeKey: string;
 }
 
 const Organization: React.FC<IOrganizationProps> = (props) => {
-  const { orgId, key, children } = props;
+  const { orgId, activeKey, children } = props;
   const { data, error, isLoading } = useOrg(orgId);
 
   if (isLoading || !data) {
@@ -44,7 +44,8 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
       <OrgHeader org={org} />
       <Tabs
         // centered
-        defaultActiveKey={key}
+        animated={false}
+        defaultActiveKey={activeKey}
         moreIcon={<RightOutlined />}
         tabBarExtraContent={{
           left: <div style={{ marginLeft: "16px" }} />,
@@ -58,7 +59,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.files}
         >
-          {paths.files === key && children}
+          {paths.files === activeKey && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -68,7 +69,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.collaborators}
         >
-          {paths.collaborators === key && children}
+          {paths.collaborators === activeKey && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -78,7 +79,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.requests}
         >
-          {paths.requests === key && children}
+          {paths.requests === activeKey && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -88,7 +89,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.programTokens}
         >
-          {paths.programTokens === key && children}
+          {paths.programTokens === activeKey && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -98,7 +99,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.clientTokens}
         >
-          {paths.clientTokens === key && children}
+          {paths.clientTokens === activeKey && children}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -108,7 +109,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
           }
           key={paths.permissionGroups}
         >
-          {paths.permissionGroups === key && children}
+          {paths.permissionGroups === activeKey && children}
         </Tabs.TabPane>
       </Tabs>
     </Space>

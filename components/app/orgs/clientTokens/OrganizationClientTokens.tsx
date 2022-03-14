@@ -44,17 +44,15 @@ const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
   }
 
   return (
-    <Space
-      direction="vertical"
-      style={{ width: "100%", padding: "16px" }}
-      size="large"
-    >
-      <ListHeader
-        title="Client Assigned Tokens"
-        formLinkPath={appOrgPaths.createClientTokenForm(orgId)}
-      />
-      {content}
-    </Space>
+    <div className={appClasses.main}>
+      <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <ListHeader
+          title="Client Assigned Tokens"
+          formLinkPath={appOrgPaths.createClientTokenForm(orgId)}
+        />
+        {content}
+      </Space>
+    </div>
   );
 };
 

@@ -1,7 +1,7 @@
 import { Typography } from "antd";
 
 const Middledot: React.FC<{}> = () => {
-  return <Typography.Text>&#xB7;</Typography.Text>;
+  return <Typography.Text style={{ fontSize: "24px" }}>&#xB7;</Typography.Text>;
 };
 
 export default Middledot;

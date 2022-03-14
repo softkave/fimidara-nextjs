@@ -14,7 +14,7 @@ const OrganizationRequestsPage: React.FC<IOrganizationRequestsPageProps> = (
 ) => {
   const { orgId } = props;
   return (
-    <Organization orgId={orgId} key={appOrgPaths.requestList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.requestList(orgId)}>
       <OrganizationRequests orgId={orgId} />
     </Organization>
   );

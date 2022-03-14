@@ -10,7 +10,7 @@ export const systemConstants = {
   phoneQueryKey: "p",
   organizationId: defaultTo(
     process.env.ORGANIZATION_ID,
-    "ZVNRnaTxI0HIUT74W14CZ"
+    "Ugnf2S1p0guIhCRCaVQOv"
   ),
   userImagesFolder: defaultTo(
     process.env.USER_IMAGES_FOLDER,
@@ -54,6 +54,7 @@ export interface IAgent {
 }
 
 export enum AppResourceType {
+  All = "*",
   Organization = "organization",
   CollaborationRequest = "collaboration-request",
   ProgramAccessToken = "program-access-token",
@@ -66,6 +67,20 @@ export enum AppResourceType {
   User = "user",
 }
 
+export const appResourceTypeLabel: Record<AppResourceType, string> = {
+  [AppResourceType.All]: "Every resource",
+  [AppResourceType.Organization]: "Organization",
+  [AppResourceType.CollaborationRequest]: "Collaboration request",
+  [AppResourceType.ProgramAccessToken]: "Program access token",
+  [AppResourceType.ClientAssignedToken]: "Client assigned token",
+  [AppResourceType.UserToken]: "User token",
+  [AppResourceType.PresetPermissionsGroup]: "Preset permissions group",
+  [AppResourceType.PermissionItem]: "Permission item",
+  [AppResourceType.Folder]: "Folder",
+  [AppResourceType.File]: "File",
+  [AppResourceType.User]: "User",
+};
+
 export enum BasicCRUDActions {
   All = "*",
   Create = "create",
@@ -73,6 +88,14 @@ export enum BasicCRUDActions {
   Update = "update",
   Delete = "delete",
 }
+
+export const actionLabel: Record<BasicCRUDActions, string> = {
+  [BasicCRUDActions.All]: "Every action",
+  [BasicCRUDActions.Create]: "Create",
+  [BasicCRUDActions.Read]: "Read",
+  [BasicCRUDActions.Update]: "Update",
+  [BasicCRUDActions.Delete]: "Delete",
+};
 
 export interface IAppError extends Error {
   field?: string;

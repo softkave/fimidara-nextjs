@@ -1,4 +1,4 @@
-import { Space, Typography } from "antd";
+import { Space } from "antd";
 import React from "react";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
@@ -6,12 +6,18 @@ import AssignedPresetList from "./AssignedPresetList";
 import assert from "assert";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import { useRouter } from "next/router";
-import { appOrgPaths } from "../../../../lib/definitions/system";
+import {
+  appOrgPaths,
+  AppResourceType,
+} from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
 import usePermissionGroup from "../../../../lib/hooks/orgs/usePermissionGroup";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getUseOrgPermissionGroupListHookKey } from "../../../../lib/hooks/orgs/useOrgPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
+import { appClasses } from "../../../utils/theme";
+import LabeledNode from "../../../utils/LabeledNode";
+import EntityPermissionGroupList from "../permissionItems/EntityPermissionItemList";
 
 export interface IPermissionGroupProps {
   presetId: string;
@@ -59,20 +65,41 @@ function PermissionGroup(props: IPermissionGroupProps) {
 
   const preset = data.preset;
   return (
-    <Space direction="vertical" size={"large"}>
-      <ComponentHeader title={preset.name}>
-        <PermissionGroupMenu
-          preset={preset}
-          onCompleteDelete={onCompleteDeletePreset}
+    <div className={appClasses.main}>
+      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <ComponentHeader title={preset.name}>
+          <PermissionGroupMenu
+            preset={preset}
+            onCompleteDelete={onCompleteDeletePreset}
+          />
+        </ComponentHeader>
+        <LabeledNode
+          nodeIsText
+          copyable
+          direction="vertical"
+          label="Resource ID"
+          node={preset.resourceId}
         />
-      </ComponentHeader>
-      <Typography.Paragraph>{preset.description}</Typography.Paragraph>
-      <AssignedPresetList
-        orgId={preset.organizationId}
-        presets={preset.presets}
-        onRemoveItem={onRemovePermissionGroup}
-      />
-    </Space>
+        {preset.description && (
+          <LabeledNode
+            nodeIsText
+            label="Description"
+            node={preset.description}
+            direction="vertical"
+          />
+        )}
+        <AssignedPresetList
+          orgId={preset.organizationId}
+          presets={preset.presets}
+          onRemoveItem={onRemovePermissionGroup}
+        />
+        <EntityPermissionGroupList
+          orgId={preset.organizationId}
+          entityId={preset.resourceId}
+          entityType={AppResourceType.PresetPermissionsGroup}
+        />
+      </Space>
+    </div>
   );
 }
 

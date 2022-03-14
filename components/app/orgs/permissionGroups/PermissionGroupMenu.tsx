@@ -37,13 +37,14 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
 
       checkEndpointResult(result);
       message.success("Permission group deleted");
+      await onCompleteDelete();
     } catch (error: any) {
       message.error(
         getFormError(processEndpointError(error)) ||
           "Error deleting permission group"
       );
     }
-  }, [onCompleteDelete]);
+  }, [preset, onCompleteDelete]);
 
   const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(

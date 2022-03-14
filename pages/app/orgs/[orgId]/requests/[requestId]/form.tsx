@@ -30,7 +30,7 @@ const OrganizationRequestFormPage: React.FC<
   }
 
   return (
-    <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.requestList(orgId)}>
       <RequestForm orgId={data.request.organizationId} request={data.request} />
     </Organization>
   );

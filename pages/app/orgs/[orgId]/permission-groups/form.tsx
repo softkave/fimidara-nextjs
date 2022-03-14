@@ -14,7 +14,7 @@ const OrganizationCreatePermissionGroupFormPage: React.FC<
   const { orgId } = props;
 
   return (
-    <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.collaboratorList(orgId)}>
       <PresetForm orgId={orgId} />
     </Organization>
   );

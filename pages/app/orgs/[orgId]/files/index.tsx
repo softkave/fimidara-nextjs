@@ -13,7 +13,7 @@ const OrganizationFilePage: React.FC<IOrganizationFilesPageProps> = (props) => {
   return (
     <Organization
       orgId={orgId}
-      key={appOrgPaths.fileList(orgId)}
+      activeKey={appOrgPaths.fileList(orgId)}
     ></Organization>
   );
 };

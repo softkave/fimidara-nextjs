@@ -15,7 +15,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getUseOrgPermissionGroupListHookKey } from "../../../../lib/hooks/orgs/useOrgPermissionGroupList";
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import { getFormError } from "../../../form/formUtils";
 
 export interface IPermissionGroupListProps {
@@ -116,7 +116,7 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
 
   return (
     <List
-      className={cx(appClasses.main, classes.list)}
+      className={classes.list}
       itemLayout="horizontal"
       dataSource={presets}
       renderItem={(item) => (

@@ -1,5 +1,5 @@
 import { cx } from "@emotion/css";
-import { Col, Row, Space, Tooltip, Typography } from "antd";
+import { Col, Row, Space, Typography } from "antd";
 import React from "react";
 
 export interface ILabeledNodeProps {
@@ -16,6 +16,7 @@ export interface ILabeledNodeProps {
   nodeSpan?: number;
   colon?: boolean;
   textAlign?: "left" | "center" | "right";
+  copyable?: boolean;
 }
 
 const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
@@ -33,16 +34,18 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
     nodeSpan,
     colon,
     textAlign,
+    copyable,
   } = props;
   let internalNodeContent = null;
 
   if (node) {
     internalNodeContent = nodeIsText ? (
-      <Tooltip title={node}>
-        <Typography.Text style={{ fontSize: contentFontSize }}>
-          {node}
-        </Typography.Text>
-      </Tooltip>
+      <Typography.Text
+        copyable={copyable}
+        style={{ fontSize: contentFontSize }}
+      >
+        {node}
+      </Typography.Text>
     ) : (
       node
     );

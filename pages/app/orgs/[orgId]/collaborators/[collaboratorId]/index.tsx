@@ -15,7 +15,7 @@ const OrganizationCollaboratorPage: React.FC<
 > = (props) => {
   const { orgId, collaboratorId } = props;
   return (
-    <Organization orgId={orgId} key={appOrgPaths.collaboratorList(orgId)}>
+    <Organization orgId={orgId} activeKey={appOrgPaths.collaboratorList(orgId)}>
       <Collaborator collaboratorId={collaboratorId} orgId={orgId} />
     </Organization>
   );
