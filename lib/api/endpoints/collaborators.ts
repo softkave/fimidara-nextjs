@@ -19,6 +19,7 @@ export type IGetCollaboratorEndpointResult = GetEndpointResult<{
 }>;
 
 async function getCollaborator(props: IGetCollaboratorEndpointParams) {
+  console.log(props);
   return invokeEndpointWithAuth<IGetCollaboratorEndpointResult>({
     path: getCollaboratorURL,
     data: props,

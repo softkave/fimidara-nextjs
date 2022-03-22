@@ -1,7 +1,9 @@
 import { Space } from "antd";
 import React from "react";
 import { appOrgPaths } from "../../../../lib/definitions/system";
+import { ICollaborator } from "../../../../lib/definitions/user";
 import useOrgCollaboratorList from "../../../../lib/hooks/orgs/useOrgCollaboratorList";
+import { getBaseError } from "../../../../lib/utilities/errors";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -11,24 +13,27 @@ import CollaboratorList from "./CollaboratorList";
 
 export interface IOrganizationCollaboratorsProps {
   orgId: string;
+  renderItem?: (item: ICollaborator) => React.ReactNode;
+  renderList?: (items: ICollaborator[]) => React.ReactNode;
+  renderRoot?: (node: React.ReactNode) => React.ReactElement;
 }
 
 const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
   props
 ) => {
-  const { orgId } = props;
+  const { orgId, renderList, renderRoot, renderItem } = props;
   const { data, error, isLoading } = useOrgCollaboratorList(orgId);
   let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    content = <PageLoading messageText="Loading collaborators..." />;
-  } else if (error) {
+  if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={error?.message || "Error fetching collaborators"}
+        messageText={getBaseError(error) || "Error fetching collaborators"}
       />
     );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading collaborators..." />;
   } else if (data.collaborators.length === 0) {
     content = (
       <PageNothingFound
@@ -37,9 +42,19 @@ const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
       />
     );
   } else {
-    content = (
-      <CollaboratorList orgId={orgId} collaborators={data.collaborators} />
+    content = renderList ? (
+      renderList(data.collaborators)
+    ) : (
+      <CollaboratorList
+        orgId={orgId}
+        collaborators={data.collaborators}
+        renderItem={renderItem}
+      />
     );
+  }
+
+  if (renderRoot) {
+    return renderRoot(content);
   }
 
   return (

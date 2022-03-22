@@ -17,7 +17,9 @@ export function getUseOrgRequestListHookKey(orgId: string) {
 }
 
 export default function useOrgRequestList(orgId: string) {
-  const { data, error } = useSWR(getUseOrgRequestListHookKey(orgId), fetcher);
+  const { data, error } = useSWR(getUseOrgRequestListHookKey(orgId), fetcher, {
+    shouldRetryOnError: false,
+  });
 
   return {
     error,

@@ -15,6 +15,8 @@ import { appOrgPaths } from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
 import { getUseOrgClientTokenListHookKey } from "../../../../lib/hooks/orgs/useOrgClientTokenList";
 import { appClasses } from "../../../utils/theme";
+import { getBaseError } from "../../../../lib/utilities/errors";
+import { formatDateTime } from "../../../../lib/utilities/dateFns";
 
 export interface IClientTokenProps {
   tokenId: string;
@@ -56,19 +58,22 @@ function ClientToken(props: IClientTokenProps) {
     );
   }, [data]);
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading client assigned token..." />;
-  } else if (error) {
+  if (error) {
     return (
       <PageError
-        messageText={error?.message || "Error fetching client assigned token"}
+        messageText={
+          getBaseError(error) || "Error fetching client assigned token"
+        }
       />
     );
   }
 
+  if (isLoading || !data) {
+    return <PageLoading messageText="Loading client assigned token..." />;
+  }
+
   const token = data.token;
-  const expirationDate =
-    token.expires && formatRelative(new Date(token.expires), new Date());
+  const expirationDate = token.expires && formatDateTime(token.expires);
 
   return (
     <div className={appClasses.main}>

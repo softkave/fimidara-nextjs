@@ -20,7 +20,8 @@ export function getUseCollaboratorHookKey(orgId: string, id: string) {
 export default function useCollaborator(orgId: string, id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUseCollaboratorHookKey(orgId, id) : null,
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

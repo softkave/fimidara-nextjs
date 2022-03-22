@@ -14,6 +14,7 @@ import OrgRequestMenu from "./OrgRequestMenu";
 import { formatRelative } from "date-fns";
 import { last } from "lodash";
 import { appClasses } from "../../../utils/theme";
+import { getBaseError } from "../../../../lib/utilities/errors";
 
 export interface IOrgRequestProps {
   requestId: string;
@@ -30,14 +31,16 @@ function OrgRequest(props: IOrgRequestProps) {
     router.push(appOrgPaths.requestList(data.request.organizationId));
   }, [data]);
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading collaboration request..." />;
-  } else if (error) {
+  if (error) {
     return (
       <PageError
-        messageText={error?.message || "Error fetching collaboration request"}
+        messageText={
+          getBaseError(error) || "Error fetching collaboration request"
+        }
       />
     );
+  } else if (isLoading || !data) {
+    return <PageLoading messageText="Loading collaboration request..." />;
   }
 
   const request = data.request;

@@ -18,6 +18,7 @@ import PermissionGroupMenu from "./PermissionGroupMenu";
 import { appClasses } from "../../../utils/theme";
 import LabeledNode from "../../../utils/LabeledNode";
 import EntityPermissionGroupList from "../permissionItems/EntityPermissionItemList";
+import { getBaseError } from "../../../../lib/utilities/errors";
 
 export interface IPermissionGroupProps {
   presetId: string;
@@ -53,14 +54,16 @@ function PermissionGroup(props: IPermissionGroupProps) {
     router.push(appOrgPaths.collaboratorList(data.preset.organizationId));
   }, [data]);
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading permission group..." />;
-  } else if (error) {
+  if (error) {
     return (
       <PageError
-        messageText={error?.message || "Error fetching permission group"}
+        messageText={getBaseError(error) || "Error fetching permission group"}
       />
     );
+  }
+
+  if (isLoading || !data) {
+    return <PageLoading messageText="Loading permission group..." />;
   }
 
   const preset = data.preset;

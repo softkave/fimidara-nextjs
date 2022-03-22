@@ -9,10 +9,11 @@ import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../components/utils/PageError";
 import PageLoading from "../../../components/utils/PageLoading";
 import PageNothingFound from "../../../components/utils/PageNothingFound";
-import { appClasses, appDimensions } from "../../../components/utils/theme";
+import { appClasses } from "../../../components/utils/theme";
 import { IUserLoginResult } from "../../../lib/api/endpoints/user";
 import { appOrgPaths } from "../../../lib/definitions/system";
 import useUserOrgs from "../../../lib/hooks/orgs/useUserOrgs";
+import { getBaseError } from "../../../lib/utilities/errors";
 
 const classes = {
   sideLinks: css({
@@ -27,15 +28,15 @@ const Orgs: NextPage<IOrgsPageProps> = () => {
   const { isLoading, error, data } = useUserOrgs();
   let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    content = <PageLoading messageText="Loading organizations..." />;
-  } else if (error) {
+  if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={error?.message || "Error fetching organizations"}
+        messageText={getBaseError(error) || "Error fetching organizations"}
       />
     );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading organizations..." />;
   } else if (data.length === 0) {
     content = (
       <PageNothingFound

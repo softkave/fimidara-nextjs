@@ -1,7 +1,9 @@
 import { Space } from "antd";
 import React from "react";
+import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useOrgProgramTokenList from "../../../../lib/hooks/orgs/useOrgProgramTokenList";
+import { getBaseError } from "../../../../lib/utilities/errors";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -11,24 +13,29 @@ import ProgramTokenList from "./ProgramTokenList";
 
 export interface IOrganizationProgramTokensProps {
   orgId: string;
+  renderItem?: (item: IProgramAccessToken) => React.ReactNode;
+  renderList?: (items: IProgramAccessToken[]) => React.ReactNode;
+  renderRoot?: (node: React.ReactNode) => React.ReactElement;
 }
 
 const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
   props
 ) => {
-  const { orgId } = props;
+  const { orgId, renderItem, renderList, renderRoot } = props;
   const { data, error, isLoading } = useOrgProgramTokenList(orgId);
   let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    content = <PageLoading messageText="Loading program access tokens..." />;
-  } else if (error) {
+  if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={error?.message || "Error fetching program access tokens"}
+        messageText={
+          getBaseError(error) || "Error fetching program access tokens"
+        }
       />
     );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading program access tokens..." />;
   } else if (data.tokens.length === 0) {
     content = (
       <PageNothingFound
@@ -37,7 +44,19 @@ const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
       />
     );
   } else {
-    content = <ProgramTokenList orgId={orgId} tokens={data.tokens} />;
+    content = renderList ? (
+      renderList(data.tokens)
+    ) : (
+      <ProgramTokenList
+        orgId={orgId}
+        tokens={data.tokens}
+        renderItem={renderItem}
+      />
+    );
+  }
+
+  if (renderRoot) {
+    return renderRoot(content);
   }
 
   return (

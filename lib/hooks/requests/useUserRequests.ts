@@ -11,7 +11,8 @@ const fetcher = withCheckEndpointResult(
 export default function useUserRequests(id?: string) {
   const { data, error } = useSWR(
     id ? [CollaborationRequestURLs.getUserRequests, id] : null,
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

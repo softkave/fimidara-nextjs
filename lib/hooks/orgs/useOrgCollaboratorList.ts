@@ -19,7 +19,8 @@ export function getUseOrgCollaboratorListHookKey(orgId: string) {
 export default function useOrgCollaboratorList(orgId: string) {
   const { data, error } = useSWR(
     getUseOrgCollaboratorListHookKey(orgId),
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

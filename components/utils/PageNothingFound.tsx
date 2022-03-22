@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { Button, Empty, Typography } from "antd";
+import { Button, Empty, Space, Typography } from "antd";
 import React from "react";
 
 export interface IPageNothingFoundActions {
@@ -36,7 +36,7 @@ export const PageNothingFoundActions: React.FC<{
 }> = (props) => {
   const { actions } = props;
   return (
-    <div>
+    <Space>
       {actions?.map((action, i) => {
         if (isPageAction(action)) {
           return (
@@ -48,7 +48,7 @@ export const PageNothingFoundActions: React.FC<{
           return action;
         }
       })}
-    </div>
+    </Space>
   );
 };
 

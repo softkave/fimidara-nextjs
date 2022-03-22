@@ -77,12 +77,14 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
   const respondResult = useRequest(onRespond, { manual: true });
   let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    content = <PageLoading messageText="Loading request..." />;
-  } else if (error) {
+  if (error) {
     content = (
-      <PageError messageText={error?.message || "Error fetching request"} />
+      <PageError
+        messageText={getBaseError(error) || "Error fetching request"}
+      />
     );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading request..." />;
   } else {
     const request = data.request;
     const createdDate = formatRelative(new Date(request.createdAt), new Date());

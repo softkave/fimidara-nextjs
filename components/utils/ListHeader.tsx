@@ -1,12 +1,13 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Row, Col, Typography, Button } from "antd";
+import { Typography, Button, Space } from "antd";
 import Link from "next/link";
 import React from "react";
 
 export interface IListHeaderProps {
   title: string;
   formLinkPath: string;
+  actions?: React.ReactNode;
 }
 
 const classes = {
@@ -14,21 +15,28 @@ const classes = {
     display: "flex",
     justifyContent: "flex-end",
   }),
+  root: css({
+    display: "flex",
+  }),
+  title: css({
+    flex: 1,
+  }),
 };
 
 const ListHeader: React.FC<IListHeaderProps> = (props) => {
-  const { title, formLinkPath } = props;
+  const { title, formLinkPath, actions } = props;
   return (
-    <Row>
-      <Col span={18}>
-        <Typography.Title level={5}>{title}</Typography.Title>
-      </Col>
-      <Col span={6} className={classes.sideLinks}>
+    <div className={classes.root}>
+      <Typography.Title level={5} className={classes.title}>
+        {title}
+      </Typography.Title>
+      <Space className={classes.sideLinks}>
         <Link href={formLinkPath}>
           <Button icon={<PlusOutlined />} />
         </Link>
-      </Col>
-    </Row>
+        {actions}
+      </Space>
+    </div>
   );
 };
 

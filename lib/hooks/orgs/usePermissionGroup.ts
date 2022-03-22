@@ -17,7 +17,8 @@ export function getUsePermissionGroupHookKey(id: string) {
 export default function usePermissionGroup(id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUsePermissionGroupHookKey(id) : null,
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

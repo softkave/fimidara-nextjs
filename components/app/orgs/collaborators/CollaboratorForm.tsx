@@ -22,6 +22,7 @@ import SelectPresetInput from "../permissionGroups/SelectPresetInput";
 import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { first } from "lodash";
+import LabeledNode from "../../../utils/LabeledNode";
 
 const collaboratorValidation = yup.object().shape({
   presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
@@ -40,7 +41,7 @@ export interface ICollaboratorFormProps {
 export default function CollaboratorForm(props: ICollaboratorFormProps) {
   const { collaborator, className, orgId } = props;
   const router = useRouter();
-  const { mutate } = useCollaborator(collaborator?.resourceId);
+  const { mutate } = useCollaborator(orgId, collaborator.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaboratorFormValues) => {
       try {
@@ -75,19 +76,25 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
   });
 
   const globalError = getFormError(formik.errors);
-  const nameAndEmailNode = (
-    <Form.Item
-      required
-      label=""
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Space direction="vertical">
-        <Typography.Text>
-          {collaborator.firstName} {collaborator.lastName}
-        </Typography.Text>
-        <Typography.Text type="secondary">{collaborator.email}</Typography.Text>
-      </Space>
+  const nameNode = (
+    <Form.Item>
+      <LabeledNode
+        nodeIsText
+        label="Name"
+        direction="vertical"
+        node={collaborator.firstName + " " + collaborator.lastName}
+      />
+    </Form.Item>
+  );
+
+  const emailNode = (
+    <Form.Item>
+      <LabeledNode
+        nodeIsText
+        label="Email Address"
+        direction="vertical"
+        node={collaborator.email}
+      />
     </Form.Item>
   );
 
@@ -127,7 +134,8 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
               <Alert type="error" message={globalError} />
             </Form.Item>
           )}
-          {nameAndEmailNode}
+          {nameNode}
+          {emailNode}
           {assignedcollaboratorsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button

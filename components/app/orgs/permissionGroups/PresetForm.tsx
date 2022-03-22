@@ -39,6 +39,19 @@ const initialValues: INewPresetPermissionsGroupInput = {
   presets: [],
 };
 
+function getPresetFormInputFromPreset(
+  item: IPresetPermissionsGroup
+): INewPresetPermissionsGroupInput {
+  return {
+    name: item.name,
+    description: item.description,
+    presets: item.presets.map((item) => ({
+      presetId: item.presetId,
+      order: item.order,
+    })),
+  };
+}
+
 export interface IPresetFormProps {
   preset?: IPresetPermissionsGroup;
   className?: string;
@@ -88,7 +101,9 @@ export default function PresetForm(props: IPresetFormProps) {
     errors: submitResult.error,
     formikProps: {
       validationSchema: presetValidation,
-      initialValues: preset || initialValues,
+      initialValues: preset
+        ? getPresetFormInputFromPreset(preset)
+        : initialValues,
       onSubmit: submitResult.run,
     },
   });

@@ -15,7 +15,9 @@ export function getUseOrgHookKey(id: string) {
 }
 
 export default function useOrg(id?: string) {
-  const { data, error } = useSWR(id ? getUseOrgHookKey(id) : null, fetcher);
+  const { data, error } = useSWR(id ? getUseOrgHookKey(id) : null, fetcher, {
+    shouldRetryOnError: false,
+  });
   return {
     error,
     data,

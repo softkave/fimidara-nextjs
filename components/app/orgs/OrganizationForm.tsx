@@ -30,6 +30,13 @@ const organizationValidation = yup.object().shape({
 
 const initialValues: INewOrganizationInput = { name: "", description: "" };
 
+function getOrgFormInputFromOrg(item: IOrganization): INewOrganizationInput {
+  return {
+    name: item.name,
+    description: item.description,
+  };
+}
+
 export interface IOrganizationFormProps {
   org?: IOrganization;
   className?: string;
@@ -74,7 +81,7 @@ export default function OrganizationForm(props: IOrganizationFormProps) {
     errors: submitResult.error,
     formikProps: {
       validationSchema: organizationValidation,
-      initialValues: org || initialValues,
+      initialValues: org ? getOrgFormInputFromOrg(org) : initialValues,
       onSubmit: submitResult.run,
     },
   });

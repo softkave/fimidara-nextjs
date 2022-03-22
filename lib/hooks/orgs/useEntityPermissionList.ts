@@ -40,7 +40,8 @@ export default function useEntityPermissionList(
 ) {
   const { data, error, mutate } = useSWR(
     getUseEntityPermissionListHookKey(orgId, entityId, entityType),
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

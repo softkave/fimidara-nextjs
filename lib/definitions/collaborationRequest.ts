@@ -46,10 +46,10 @@ export interface ICollaborationRequest {
 export interface ICollaborationRequestInput {
   recipientEmail: string;
   message: string;
-  expires?: number;
+  expires?: string;
 }
 
 export interface IUpdateCollaborationRequestInput {
   message?: string;
-  expiresAt?: number;
+  expiresAt?: string;
 }

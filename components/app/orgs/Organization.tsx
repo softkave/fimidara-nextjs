@@ -1,12 +1,14 @@
 import { RightOutlined } from "@ant-design/icons";
-import { Space, Tabs } from "antd";
+import { Button, Space, Tabs } from "antd";
 import Link from "next/link";
 import React from "react";
 import { appOrgPaths } from "../../../lib/definitions/system";
 import useOrg from "../../../lib/hooks/orgs/useOrg";
+import { getBaseError } from "../../../lib/utilities/errors";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import { appClasses } from "../../utils/theme";
+import AppHeader from "../AppHeader";
 import OrgHeader from "./OrgHeader";
 
 export interface IOrganizationProps {
@@ -18,14 +20,24 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
   const { orgId, activeKey, children } = props;
   const { data, error, isLoading } = useOrg(orgId);
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading organization..." />;
-  } else if (error) {
+  if (error) {
     return (
-      <PageError
-        className={appClasses.main}
-        messageText={error?.message || "Error fetching organization"}
-      />
+      <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+        <AppHeader />
+        <PageError
+          className={appClasses.main}
+          messageText={getBaseError(error) || "Error fetching organization"}
+        />
+      </Space>
+    );
+  }
+
+  if (isLoading || !data) {
+    return (
+      <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+        <AppHeader />
+        <PageLoading messageText="Loading organization..." />
+      </Space>
     );
   }
 

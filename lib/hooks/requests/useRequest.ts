@@ -17,7 +17,8 @@ export function getUseCollaborationRequestHookKey(id: string) {
 export default function useCollaborationRequest(id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUseCollaborationRequestHookKey(id) : null,
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

@@ -32,4 +32,9 @@ export const appClasses = {
     marginLeft: "auto",
     marginRight: "auto",
   }),
+  selectSecondaryText: css({
+    overflow: "auto",
+    flex: 1,
+    whiteSpace: "normal",
+  }),
 };

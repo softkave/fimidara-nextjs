@@ -4,7 +4,7 @@ import UserCollaborationRequestList from "../../../components/app/requests/UserC
 
 export default function UserCollaborationRequestsPage() {
   return (
-    <Space direction="vertical" size={"large"}>
+    <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
       <AppHeader />
       <UserCollaborationRequestList />
     </Space>

@@ -1,4 +1,11 @@
-import { CloseCircleFilled, DownOutlined, UpOutlined } from "@ant-design/icons";
+import {
+  CloseCircleFilled,
+  CloseCircleOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  DownOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import { Button, List, Select, Space, Typography } from "antd";
 import React from "react";
 import { IPresetInput } from "../../../../lib/definitions/presets";
@@ -61,6 +68,11 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
     [value, onChange]
   );
 
+  const presetsMap = React.useMemo(
+    () => indexArray(data?.presets, { path: "resourceId" }),
+    [data]
+  );
+
   if (isLoading || !data) {
     return <InlineLoading messageText="Loading permission groups..." />;
   } else if (error) {
@@ -72,17 +84,12 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
     );
   }
 
-  const presetsMap = React.useMemo(
-    () => indexArray(data.presets, { path: "resourceId" }),
-    [data]
-  );
-
   const assignedPresets = value.filter((item) => !!presetsMap[item.presetId]);
-  const valueNode = (
+  const valueNode = assignedPresets.length > 0 && (
     <List
       itemLayout="horizontal"
       dataSource={assignedPresets}
-      renderItem={(item) => {
+      renderItem={(item, index) => {
         const preset = presetsMap[item.presetId];
         return (
           <List.Item
@@ -93,17 +100,19 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
                 className={appClasses.iconBtn}
                 icon={<UpOutlined />}
                 onClick={() => onMove(item.presetId, "up")}
+                disabled={index === 0}
               />,
               <Button
                 type="text"
                 className={appClasses.iconBtn}
                 icon={<DownOutlined />}
                 onClick={() => onMove(item.presetId, "down")}
+                disabled={index === assignedPresets.length - 1}
               />,
               <Button
                 type="text"
                 className={appClasses.iconBtn}
-                icon={<CloseCircleFilled />}
+                icon={<DeleteOutlined />}
                 onClick={() => onDeleteItem(item.presetId)}
               />,
             ]}
@@ -118,7 +127,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
     />
   );
 
-  return (
+  const selectNode = (
     <Select
       showSearch
       mode="multiple"
@@ -148,11 +157,23 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
         >
           <Space direction="vertical">
             <Typography.Text>{item.name}</Typography.Text>
-            <Typography.Text>{item.description}</Typography.Text>
+            <Typography.Text
+              type="secondary"
+              className={appClasses.selectSecondaryText}
+            >
+              {item.description}
+            </Typography.Text>
           </Space>
         </Select.Option>
       ))}
     </Select>
+  );
+
+  return (
+    <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
+      {valueNode}
+      {selectNode}
+    </Space>
   );
 };
 

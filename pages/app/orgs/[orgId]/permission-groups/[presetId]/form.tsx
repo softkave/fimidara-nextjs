@@ -7,6 +7,7 @@ import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appOrgPaths } from "../../../../../../lib/definitions/system";
 import usePermissionGroup from "../../../../../../lib/hooks/orgs/usePermissionGroup";
+import { getBaseError } from "../../../../../../lib/utilities/errors";
 
 export type IOrganizationPresetFormPageProps = {
   orgId: string;
@@ -18,14 +19,19 @@ const OrganizationPresetFormPage: React.FC<IOrganizationPresetFormPageProps> = (
 ) => {
   const { orgId, presetId } = props;
   const { error, isLoading, data } = usePermissionGroup(presetId);
+  let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading permission group..." />;
-  } else if (error) {
-    return (
+  if (error) {
+    content = (
       <PageError
-        messageText={error?.message || "Error fetching permission group"}
+        messageText={getBaseError(error) || "Error fetching permission group"}
       />
+    );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading permission group..." />;
+  } else {
+    content = (
+      <PresetForm orgId={data.preset.organizationId} preset={data.preset} />
     );
   }
 
@@ -34,7 +40,7 @@ const OrganizationPresetFormPage: React.FC<IOrganizationPresetFormPageProps> = (
       orgId={orgId}
       activeKey={appOrgPaths.permissionGroupList(orgId)}
     >
-      <PresetForm orgId={data.preset.organizationId} preset={data.preset} />
+      {content}
     </Organization>
   );
 };

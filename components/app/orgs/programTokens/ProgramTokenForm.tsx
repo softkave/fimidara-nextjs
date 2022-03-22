@@ -39,6 +39,19 @@ const initialValues: INewProgramAccessTokenInput = {
   presets: [],
 };
 
+function getProgramTokenFormInputFromToken(
+  item: IProgramAccessToken
+): INewProgramAccessTokenInput {
+  return {
+    name: item.name,
+    description: item.description,
+    presets: item.presets.map((item) => ({
+      presetId: item.presetId,
+      order: item.order,
+    })),
+  };
+}
+
 export interface IProgramTokenFormProps {
   programToken?: IProgramAccessToken;
   className?: string;
@@ -88,7 +101,9 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
     errors: submitResult.error,
     formikProps: {
       validationSchema: programTokenValidation,
-      initialValues: programToken || initialValues,
+      initialValues: programToken
+        ? getProgramTokenFormInputFromToken(programToken)
+        : initialValues,
       onSubmit: submitResult.run,
     },
   });

@@ -15,6 +15,7 @@ import { getUseOrgCollaboratorListHookKey } from "../../../../lib/hooks/orgs/use
 import CollaboratorMenu from "./CollaboratorMenu";
 import { appClasses } from "../../../utils/theme";
 import LabeledNode from "../../../utils/LabeledNode";
+import { getBaseError } from "../../../../lib/utilities/errors";
 
 export interface ICollaboratorProps {
   orgId: string;
@@ -55,14 +56,14 @@ function Collaborator(props: ICollaboratorProps) {
     router.push(appOrgPaths.collaboratorList(orgId));
   }, [orgId]);
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading collaborator..." />;
-  } else if (error) {
+  if (error) {
     return (
       <PageError
-        messageText={error?.message || "Error fetching collaborator"}
+        messageText={getBaseError(error) || "Error fetching collaborator"}
       />
     );
+  } else if (isLoading || !data) {
+    return <PageLoading messageText="Loading collaborator..." />;
   }
 
   const collaborator = data.collaborator;

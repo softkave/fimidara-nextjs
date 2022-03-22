@@ -26,6 +26,7 @@ import { flattenErrorList } from "../../../lib/utilities/utils";
 import useUser from "../../../lib/hooks/useUser";
 import PageLoading from "../../utils/PageLoading";
 import PageError from "../../utils/PageError";
+import { getBaseError } from "../../../lib/utilities/errors";
 
 export interface IUserProfileProps {}
 
@@ -76,10 +77,12 @@ export default function UserProfile(props: IUserProfileProps) {
     }
   }, [data?.user]);
 
-  if (isLoading) {
+  if (error) {
+    return (
+      <PageError messageText={getBaseError(error) || "Error fetching user"} />
+    );
+  } else if (isLoading) {
     return <PageLoading messageText="Loading user..." />;
-  } else if (error) {
-    return <PageError messageText={error?.message || "Error fetching user"} />;
   }
 
   const globalError = getFormError(formik.errors);

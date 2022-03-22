@@ -2,6 +2,7 @@ import { Space } from "antd";
 import React from "react";
 import { appOrgPaths } from "../../../../lib/definitions/system";
 import useOrgRequestList from "../../../../lib/hooks/orgs/useOrgRequestList";
+import { getBaseError } from "../../../../lib/utilities/errors";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -18,15 +19,17 @@ const OrganizationRequests: React.FC<IOrganizationRequestsProps> = (props) => {
   const { data, error, isLoading } = useOrgRequestList(orgId);
   let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    content = <PageLoading messageText="Loading collaboration requests..." />;
-  } else if (error) {
+  if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={error?.message || "Error fetching collaboration requests"}
+        messageText={
+          getBaseError(error) || "Error fetching collaboration requests"
+        }
       />
     );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading collaboration requests..." />;
   } else if (data.requests.length === 0) {
     content = (
       <PageNothingFound

@@ -18,7 +18,8 @@ export function getUseOrgFilesHookKey(orgId: string, folderPath: string) {
 export default function useOrgFiles(orgId: string, folderPath = "") {
   const { data, error } = useSWR(
     getUseOrgFilesHookKey(orgId, folderPath),
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

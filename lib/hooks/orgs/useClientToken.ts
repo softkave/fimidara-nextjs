@@ -17,7 +17,8 @@ export function getUseClientTokenHookKey(id: string) {
 export default function useClientToken(id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUseClientTokenHookKey(id) : null,
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

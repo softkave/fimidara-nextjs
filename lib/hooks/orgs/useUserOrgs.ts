@@ -13,7 +13,8 @@ const fetcher = async (p: string) => {
 export default function useUserOrgs() {
   const { data, error } = useSWR(
     [OrganizationURLs.getUserOrganizations],
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

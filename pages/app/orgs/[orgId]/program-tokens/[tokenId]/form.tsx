@@ -7,6 +7,7 @@ import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appOrgPaths } from "../../../../../../lib/definitions/system";
 import useProgramToken from "../../../../../../lib/hooks/orgs/useProgramToken";
+import { getBaseError } from "../../../../../../lib/utilities/errors";
 
 export type IOrganizationProgramTokenFormPageProps = {
   orgId: string;
@@ -18,23 +19,30 @@ const OrganizationProgramTokenFormPage: React.FC<
 > = (props) => {
   const { orgId, tokenId } = props;
   const { error, isLoading, data } = useProgramToken(tokenId);
+  let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading program access token..." />;
-  } else if (error) {
-    return (
+  if (error) {
+    content = (
       <PageError
-        messageText={error?.message || "Error fetching program access token"}
+        messageText={
+          getBaseError(error) || "Error fetching program access token"
+        }
+      />
+    );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading program access token..." />;
+  } else {
+    content = (
+      <ProgramTokenForm
+        orgId={data.token.organizationId}
+        programToken={data.token}
       />
     );
   }
 
   return (
     <Organization orgId={orgId} activeKey={appOrgPaths.programTokenList(orgId)}>
-      <ProgramTokenForm
-        orgId={data.token.organizationId}
-        programToken={data.token}
-      />
+      {content}
     </Organization>
   );
 };

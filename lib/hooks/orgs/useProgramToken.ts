@@ -17,7 +17,8 @@ export function getUseProgramTokenHookKey(id: string) {
 export default function useProgramToken(id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUseProgramTokenHookKey(id) : null,
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

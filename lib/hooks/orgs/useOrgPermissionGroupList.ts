@@ -19,7 +19,8 @@ export function getUseOrgPermissionGroupListHookKey(orgId: string) {
 export default function useOrgPermissionGroupList(orgId: string) {
   const { data, error, mutate } = useSWR(
     getUseOrgPermissionGroupListHookKey(orgId),
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

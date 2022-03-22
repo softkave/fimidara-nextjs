@@ -7,6 +7,7 @@ import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appOrgPaths } from "../../../../../../lib/definitions/system";
 import useClientToken from "../../../../../../lib/hooks/orgs/useClientToken";
+import { getBaseError } from "../../../../../../lib/utilities/errors";
 
 export type IOrganizationClientTokenFormPageProps = {
   orgId: string;
@@ -18,23 +19,30 @@ const OrganizationClientTokenFormPage: React.FC<
 > = (props) => {
   const { orgId, tokenId } = props;
   const { error, isLoading, data } = useClientToken(tokenId);
+  let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading client assigned token..." />;
-  } else if (error) {
-    return (
+  if (error) {
+    content = (
       <PageError
-        messageText={error?.message || "Error fetching client assigned token"}
+        messageText={
+          getBaseError(error) || "Error fetching client assigned token"
+        }
+      />
+    );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading client assigned token..." />;
+  } else {
+    content = (
+      <ClientTokenForm
+        orgId={data.token.organizationId}
+        clientToken={data.token}
       />
     );
   }
 
   return (
     <Organization orgId={orgId} activeKey={appOrgPaths.clientTokenList(orgId)}>
-      <ClientTokenForm
-        orgId={data.token.organizationId}
-        clientToken={data.token}
-      />
+      {content}
     </Organization>
   );
 };

@@ -8,6 +8,7 @@ import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appOrgPaths } from "../../../../../../lib/definitions/system";
 import useCollaborator from "../../../../../../lib/hooks/orgs/useCollaborator";
+import { getBaseError } from "../../../../../../lib/utilities/errors";
 
 export type IOrganizationCollaboratorFormPageProps = {
   orgId: string;
@@ -18,24 +19,29 @@ const OrganizationCollaboratorFormPage: React.FC<
   IOrganizationCollaboratorFormPageProps
 > = (props) => {
   const { orgId, collaboratorId } = props;
-  const { error, isLoading, data } = useCollaborator(collaboratorId);
+  const { error, isLoading, data } = useCollaborator(orgId, collaboratorId);
+  let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading collaborator..." />;
-  } else if (error) {
-    return (
+  if (error) {
+    content = (
       <PageError
-        messageText={error?.message || "Error fetching collaborator"}
+        messageText={getBaseError(error) || "Error fetching collaborator"}
+      />
+    );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading collaborator..." />;
+  } else {
+    content = (
+      <CollaboratorForm
+        orgId={last(data.collaborator.organizations)!.organizationId}
+        collaborator={data.collaborator}
       />
     );
   }
 
   return (
     <Organization orgId={orgId} activeKey={appOrgPaths.collaboratorList(orgId)}>
-      <CollaboratorForm
-        orgId={last(data.collaborator.organizations)!.organizationId}
-        collaborator={data.collaborator}
-      />
+      {content}
     </Organization>
   );
 };

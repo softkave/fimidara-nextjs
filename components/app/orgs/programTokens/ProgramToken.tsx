@@ -14,6 +14,7 @@ import LabeledNode from "../../../utils/LabeledNode";
 import ProgramTokenMenu from "./ProgramTokenMenu";
 import AssignedPresetList from "../permissionGroups/AssignedPresetList";
 import { appClasses } from "../../../utils/theme";
+import { getBaseError } from "../../../../lib/utilities/errors";
 
 export interface IProgramTokenProps {
   tokenId: string;
@@ -47,14 +48,16 @@ function ProgramToken(props: IProgramTokenProps) {
     router.push(appOrgPaths.collaboratorList(data.token.organizationId));
   }, [data]);
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading program access token..." />;
-  } else if (error) {
+  if (error) {
     return (
       <PageError
-        messageText={error?.message || "Error fetching program access token"}
+        messageText={
+          getBaseError(error) || "Error fetching program access token"
+        }
       />
     );
+  } else if (isLoading || !data) {
+    return <PageLoading messageText="Loading program access token..." />;
   }
 
   const token = data.token;
@@ -74,7 +77,14 @@ function ProgramToken(props: IProgramTokenProps) {
           label="Resource ID"
           node={token.resourceId}
         />
-        <Typography.Paragraph>{token.description}</Typography.Paragraph>
+        {token.description && (
+          <LabeledNode
+            nodeIsText
+            direction="vertical"
+            label="Description"
+            node={token.description}
+          />
+        )}
         <LabeledNode
           nodeIsText
           direction="vertical"

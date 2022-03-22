@@ -36,9 +36,9 @@ import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaboration
 import moment from "moment";
 
 const requestValidation = yup.object().shape({
-  email: signupValidationParts.email.required(messages.emailRequired),
+  recipientEmail: signupValidationParts.email.required(messages.emailRequired),
   message: systemValidation.description,
-  expires: yup.string(),
+  expires: yup.number(),
 });
 
 const initialValues: ICollaborationRequestInput = {
@@ -46,6 +46,18 @@ const initialValues: ICollaborationRequestInput = {
   message: "",
   expires: undefined,
 };
+
+function getRequestFormInputFromRequest(
+  item: ICollaborationRequest
+): ICollaborationRequestInput {
+  return {
+    recipientEmail: item.recipientEmail,
+    message: item.message,
+    expires: item.expiresAt
+      ? new Date(item.expiresAt).toISOString()
+      : undefined,
+  };
+}
 
 export interface IRequestFormProps {
   request?: ICollaborationRequest;
@@ -59,6 +71,8 @@ export default function RequestForm(props: IRequestFormProps) {
   const { mutate } = useCollaborationRequest(request?.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaborationRequestInput) => {
+      console.log({ data });
+
       try {
         let requestId: string | null = null;
 
@@ -96,7 +110,9 @@ export default function RequestForm(props: IRequestFormProps) {
     errors: submitResult.error,
     formikProps: {
       validationSchema: requestValidation,
-      initialValues: request || initialValues,
+      initialValues: request
+        ? getRequestFormInputFromRequest(request)
+        : initialValues,
       onSubmit: submitResult.run,
     },
   });
@@ -160,7 +176,6 @@ export default function RequestForm(props: IRequestFormProps) {
 
   const expiresNode = (
     <Form.Item
-      required
       label="Expires"
       help={
         formik.touched?.expires &&
@@ -177,11 +192,13 @@ export default function RequestForm(props: IRequestFormProps) {
       <DatePicker
         showTime
         use12Hours
-        format="h:mm A"
+        // format="h:mm A"
         value={
           formik.values.expires ? moment(formik.values.expires) : undefined
         }
-        onChange={(date) => formik.setFieldValue("expires", date?.valueOf())}
+        onChange={(date) =>
+          formik.setFieldValue("expires", date?.toISOString())
+        }
         placeholder="Request expiration date"
       />
     </Form.Item>

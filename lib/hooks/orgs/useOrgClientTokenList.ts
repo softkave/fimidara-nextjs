@@ -19,7 +19,8 @@ export function getUseOrgClientTokenListHookKey(orgId: string) {
 export default function useOrgClientTokenList(orgId: string) {
   const { data, error } = useSWR(
     getUseOrgClientTokenListHookKey(orgId),
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

@@ -13,6 +13,7 @@ import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
 import Middledot from "../../../utils/Middledot";
+import { getBaseError } from "../../../../lib/utilities/errors";
 
 export interface IEntityPermissionItemListProps {
   orgId: string;
@@ -46,15 +47,15 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
   );
   let content: React.ReactNode = null;
 
-  if (isLoading || !data) {
-    content = <PageLoading messageText="Loading permission items..." />;
-  } else if (error) {
+  if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={error?.message || "Error fetching permission items"}
+        messageText={getBaseError(error) || "Error fetching permission items"}
       />
     );
+  } else if (isLoading || !data) {
+    content = <PageLoading messageText="Loading permission items..." />;
   } else if (data.items.length === 0) {
     content = (
       <PageNothingFound

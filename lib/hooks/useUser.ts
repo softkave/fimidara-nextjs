@@ -41,7 +41,8 @@ export default function useUser() {
   const token = useSelector(SessionSelectors.getUserToken);
   const { data, error, mutate } = useSWR(
     [getUseUserHookKey(), dispatch, token],
-    fetcher
+    fetcher,
+    { shouldRetryOnError: false }
   );
 
   return {

@@ -33,7 +33,7 @@ import SelectPresetInput from "../permissionGroups/SelectPresetInput";
 import moment from "moment";
 
 const clientTokenValidation = yup.object().shape({
-  expires: yup.date(),
+  expires: yup.string(),
   presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
   providedResourceId: yup
     .string()
@@ -45,6 +45,19 @@ const initialValues: INewClientAssignedTokenInput = {
   presets: [],
   providedResourceId: undefined,
 };
+
+function getClientTokenFormInputFromToken(
+  item: IClientAssignedToken
+): INewClientAssignedTokenInput {
+  return {
+    expires: item.expires,
+    providedResourceId: item.providedResourceId,
+    presets: item.presets.map((item) => ({
+      presetId: item.presetId,
+      order: item.order,
+    })),
+  };
+}
 
 export interface IClientTokenFormProps {
   clientToken?: IClientAssignedToken;
@@ -95,7 +108,9 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
     errors: submitResult.error,
     formikProps: {
       validationSchema: clientTokenValidation,
-      initialValues: clientToken || initialValues,
+      initialValues: clientToken
+        ? getClientTokenFormInputFromToken(clientToken)
+        : initialValues,
       onSubmit: submitResult.run,
     },
   });
@@ -103,7 +118,6 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
   const globalError = getFormError(formik.errors);
   const expiresNode = (
     <Form.Item
-      required
       label="Expires"
       help={
         formik.touched?.expires &&
@@ -120,11 +134,13 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
       <DatePicker
         showTime
         use12Hours
-        format="h:mm A"
+        // format="h:mm A"
         value={
           formik.values.expires ? moment(formik.values.expires) : undefined
         }
-        onChange={(date) => formik.setFieldValue("expires", date?.valueOf())}
+        onChange={(date) => {
+          formik.setFieldValue("expires", date?.toISOString());
+        }}
         placeholder="Token expiration date"
       />
     </Form.Item>

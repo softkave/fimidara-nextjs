@@ -9,6 +9,7 @@ import PageError from "../../../../components/utils/PageError";
 import PageLoading from "../../../../components/utils/PageLoading";
 import { appClasses } from "../../../../components/utils/theme";
 import useOrg from "../../../../lib/hooks/orgs/useOrg";
+import { getBaseError } from "../../../../lib/utilities/errors";
 
 interface IEditOrganizationPageProps {
   orgId: string;
@@ -18,15 +19,15 @@ const EditOrganizationPage: NextPage<IEditOrganizationPageProps> = (props) => {
   const { orgId } = props;
   const { isLoading, error, data } = useOrg(orgId);
 
-  if (isLoading || !data) {
-    return <PageLoading messageText="Loading organization..." />;
-  } else if (error) {
+  if (error) {
     return (
       <PageError
         className={appClasses.main}
-        messageText={error?.message || "Error fetching organization"}
+        messageText={getBaseError(error) || "Error fetching organization"}
       />
     );
+  } else if (isLoading || !data) {
+    return <PageLoading messageText="Loading organization..." />;
   }
 
   return (
