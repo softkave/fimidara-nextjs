@@ -1,7 +1,10 @@
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import { appOrgPaths } from "../../../../lib/definitions/system";
+import {
+  appOrgPaths,
+  AppResourceType,
+} from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
 import {
   checkEndpointResult,
@@ -13,6 +16,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getFormError } from "../../../form/formUtils";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 
 export interface IPermissionGroupMenuProps {
   preset: IPresetPermissionsGroup;
@@ -22,10 +26,19 @@ export interface IPermissionGroupMenuProps {
 enum MenuKeys {
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
+  GrantPermission = "grant-permission",
 }
 
 const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
   const { preset, onCompleteDelete } = props;
+  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+    orgId: preset.organizationId,
+    itemResourceType: AppResourceType.PresetPermissionsGroup,
+    permissionOwnerId: preset.organizationId,
+    permissionOwnerType: AppResourceType.Organization,
+    itemResourceId: preset.resourceId,
+  });
+
   const deleteItem = React.useCallback(async () => {
     try {
       // TODO: invalidate all the data that has assigned presets
@@ -63,38 +76,47 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
             // do nothing
           },
         });
+      } else if (info.key === MenuKeys.GrantPermission) {
+        toggleVisibility();
       }
     },
-    [deleteItemHelper]
+    [deleteItemHelper, toggleVisibility]
   );
 
   return (
-    <Dropdown
-      disabled={deleteItemHelper.loading}
-      trigger={["click"]}
-      overlay={
-        <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
-          <Menu.Item key={MenuKeys.UpdateItem}>
-            <Link
-              href={appOrgPaths.permissionGroupForm(
-                preset.organizationId,
-                preset.resourceId
-              )}
-            >
-              Update Group
-            </Link>
-          </Menu.Item>
-          <Menu.Divider key={"divider-01"} />
-          <Menu.Item key={MenuKeys.DeleteItem}>Delete Group</Menu.Item>
-        </Menu>
-      }
-    >
-      <Button
-        type="text"
-        className={appClasses.iconBtn}
-        icon={<BsThreeDots />}
-      ></Button>
-    </Dropdown>
+    <React.Fragment>
+      <Dropdown
+        disabled={deleteItemHelper.loading}
+        trigger={["click"]}
+        overlay={
+          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+            <Menu.Item key={MenuKeys.UpdateItem}>
+              <Link
+                href={appOrgPaths.permissionGroupForm(
+                  preset.organizationId,
+                  preset.resourceId
+                )}
+              >
+                Update Group
+              </Link>
+            </Menu.Item>
+            <Menu.Divider key={"divider-01"} />{" "}
+            <Menu.Item key={MenuKeys.GrantPermission}>
+              Grant Permission
+            </Menu.Item>
+            <Menu.Divider key={"divider-02"} />
+            <Menu.Item key={MenuKeys.DeleteItem}>Delete Group</Menu.Item>
+          </Menu>
+        }
+      >
+        <Button
+          type="text"
+          className={appClasses.iconBtn}
+          icon={<BsThreeDots />}
+        ></Button>
+      </Dropdown>
+      {grantPermissionFormNode}
+    </React.Fragment>
   );
 };
 

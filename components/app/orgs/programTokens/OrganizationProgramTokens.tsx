@@ -1,7 +1,10 @@
 import { Space } from "antd";
 import React from "react";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
-import { appOrgPaths } from "../../../../lib/definitions/system";
+import {
+  appOrgPaths,
+  AppResourceType,
+} from "../../../../lib/definitions/system";
 import useOrgProgramTokenList from "../../../../lib/hooks/orgs/useOrgProgramTokenList";
 import { getBaseError } from "../../../../lib/utilities/errors";
 import ListHeader from "../../../utils/ListHeader";
@@ -9,6 +12,7 @@ import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
+import GrantPermissionMenu from "../permissionItems/GrantPermissionMenu";
 import ProgramTokenList from "./ProgramTokenList";
 
 export interface IOrganizationProgramTokensProps {
@@ -65,6 +69,14 @@ const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
         <ListHeader
           title="Program Access Tokens"
           formLinkPath={appOrgPaths.createProgramTokenForm(orgId)}
+          actions={
+            <GrantPermissionMenu
+              orgId={orgId}
+              itemResourceType={AppResourceType.ProgramAccessToken}
+              permissionOwnerId={orgId}
+              permissionOwnerType={AppResourceType.Organization}
+            />
+          }
         />
         {content}
       </Space>

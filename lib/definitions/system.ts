@@ -87,6 +87,8 @@ export enum BasicCRUDActions {
   Read = "read",
   Update = "update",
   Delete = "delete",
+
+  GrantPermission = "grant-permission",
 }
 
 export const actionLabel: Record<BasicCRUDActions, string> = {
@@ -95,6 +97,7 @@ export const actionLabel: Record<BasicCRUDActions, string> = {
   [BasicCRUDActions.Read]: "Read",
   [BasicCRUDActions.Update]: "Update",
   [BasicCRUDActions.Delete]: "Delete",
+  [BasicCRUDActions.GrantPermission]: "Grant permission",
 };
 
 export interface IAppError extends Error {

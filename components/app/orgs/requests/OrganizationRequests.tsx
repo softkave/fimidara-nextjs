@@ -1,6 +1,9 @@
 import { Space } from "antd";
 import React from "react";
-import { appOrgPaths } from "../../../../lib/definitions/system";
+import {
+  appOrgPaths,
+  AppResourceType,
+} from "../../../../lib/definitions/system";
 import useOrgRequestList from "../../../../lib/hooks/orgs/useOrgRequestList";
 import { getBaseError } from "../../../../lib/utilities/errors";
 import ListHeader from "../../../utils/ListHeader";
@@ -8,6 +11,7 @@ import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
+import GrantPermissionMenu from "../permissionItems/GrantPermissionMenu";
 import OrgRequestList from "./OrgRequestList";
 
 export interface IOrganizationRequestsProps {
@@ -47,6 +51,14 @@ const OrganizationRequests: React.FC<IOrganizationRequestsProps> = (props) => {
         <ListHeader
           title="Collaboration Requests"
           formLinkPath={appOrgPaths.createRequestForm(orgId)}
+          actions={
+            <GrantPermissionMenu
+              orgId={orgId}
+              itemResourceType={AppResourceType.CollaborationRequest}
+              permissionOwnerId={orgId}
+              permissionOwnerType={AppResourceType.Organization}
+            />
+          }
         />
         {content}
       </Space>

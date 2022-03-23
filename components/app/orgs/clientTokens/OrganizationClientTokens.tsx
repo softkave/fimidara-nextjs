@@ -1,7 +1,10 @@
 import { Space } from "antd";
 import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
-import { appOrgPaths } from "../../../../lib/definitions/system";
+import {
+  appOrgPaths,
+  AppResourceType,
+} from "../../../../lib/definitions/system";
 import useOrgClientTokenList from "../../../../lib/hooks/orgs/useOrgClientTokenList";
 import { getBaseError } from "../../../../lib/utilities/errors";
 import ListHeader from "../../../utils/ListHeader";
@@ -9,6 +12,7 @@ import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
+import GrantPermissionMenu from "../permissionItems/GrantPermissionMenu";
 import ClientTokenList from "./ClientTokenList";
 
 export interface IOrganizationClientTokensProps {
@@ -68,6 +72,14 @@ const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
         <ListHeader
           title="Client Assigned Tokens"
           formLinkPath={appOrgPaths.createClientTokenForm(orgId)}
+          actions={
+            <GrantPermissionMenu
+              orgId={orgId}
+              itemResourceType={AppResourceType.ClientAssignedToken}
+              permissionOwnerId={orgId}
+              permissionOwnerType={AppResourceType.Organization}
+            />
+          }
         />
         {content}
       </Space>

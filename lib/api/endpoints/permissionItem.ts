@@ -1,46 +1,44 @@
-import {
-  INewPermissionItemInput,
-  IPermissionItem,
-} from "../../definitions/permissionItem";
-import { AppResourceType } from "../../definitions/system";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import { IPermissionItem } from "../../definitions/permissionItem";
+import { AppResourceType, BasicCRUDActions } from "../../definitions/system";
+import { GetEndpointResult } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/permissionItems";
-const addItemsURL = `${baseURL}/addItems`;
-const deleteItemsURL = `${baseURL}/deleteItems`;
+const replaceItemsByResourceURL = `${baseURL}/replaceItemsByResource`;
 const getEntityPermissionItemsURL = `${baseURL}/getEntityPermissionItems`;
+const getResourcePermissionItemsURL = `${baseURL}/getResourcePermissionItems`;
 
-export interface IAddPermissionItemsEndpointParams {
-  organizationId: string;
+export interface INewPermissionItemInputByResource {
   permissionEntityId: string;
   permissionEntityType: AppResourceType;
-  items: INewPermissionItemInput[];
+  action: BasicCRUDActions;
+  isExclusion?: boolean;
+  isForPermissionOwnerOnly?: boolean;
 }
 
-export type IAddPermissionItemsEndpointResult = GetEndpointResult<{
-  items: IPermissionItem[];
-}>;
-
-async function addItems(props: IAddPermissionItemsEndpointParams) {
-  return invokeEndpointWithAuth<IAddPermissionItemsEndpointResult>({
-    path: addItemsURL,
-    data: props,
-  });
-}
-
-export interface IDeletePermissionItemsEndpointParams {
+export interface IReplacePermissionItemsByResourceEndpointParams {
+  permissionOwnerId: string;
+  permissionOwnerType: AppResourceType;
   organizationId: string;
-  permissionEntityId: string;
-  permissionEntityType: AppResourceType;
-  itemIds: string[];
+  itemResourceId?: string;
+  itemResourceType: AppResourceType;
+  items: INewPermissionItemInputByResource[];
 }
 
-async function deleteItems(props: IDeletePermissionItemsEndpointParams) {
-  return invokeEndpointWithAuth<IEndpointResultBase>({
-    path: deleteItemsURL,
-    data: props,
-  });
+export type IReplacePermissionItemsByResourceEndpointResult =
+  GetEndpointResult<{
+    items: IPermissionItem[];
+  }>;
+
+async function replaceItemsByResource(
+  props: IReplacePermissionItemsByResourceEndpointParams
+) {
+  return invokeEndpointWithAuth<IReplacePermissionItemsByResourceEndpointResult>(
+    {
+      path: replaceItemsByResourceURL,
+      data: props,
+    }
+  );
 }
 
 export interface IGetEntityPermissionItemsEndpointParams {
@@ -62,14 +60,35 @@ async function getEntityPermissionItems(
   });
 }
 
+export interface IGetResourcePermissionItemsEndpointParams {
+  organizationId: string;
+  itemResourceId?: string;
+  itemResourceType: AppResourceType;
+}
+
+export type IGetResourcePermissionItemsEndpointResult = GetEndpointResult<{
+  items: IPermissionItem[];
+}>;
+
+async function getResourcePermissionItems(
+  props: IGetResourcePermissionItemsEndpointParams
+) {
+  return await invokeEndpointWithAuth<IGetResourcePermissionItemsEndpointResult>(
+    {
+      path: getResourcePermissionItemsURL,
+      data: props,
+    }
+  );
+}
+
 export default class PermissionItemAPI {
-  public static addItems = addItems;
-  public static deleteItems = deleteItems;
+  public static replaceItemsByResource = replaceItemsByResource;
+  public static getResourcePermissionItems = getResourcePermissionItems;
   public static getEntityPermissionItems = getEntityPermissionItems;
 }
 
 export class PermissionItemURLs {
-  public static addItems = addItemsURL;
-  public static deleteItems = deleteItemsURL;
+  public static replaceItemsByResource = replaceItemsByResourceURL;
+  public static getResourcePermissionItems = getResourcePermissionItemsURL;
   public static getEntityPermissionItems = getEntityPermissionItemsURL;
 }

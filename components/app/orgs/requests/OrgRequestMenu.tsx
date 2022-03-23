@@ -1,7 +1,10 @@
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import { appOrgPaths } from "../../../../lib/definitions/system";
+import {
+  appOrgPaths,
+  AppResourceType,
+} from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
 import {
   checkEndpointResult,
@@ -17,6 +20,7 @@ import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaboration
 import { last } from "lodash";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 
 export interface IOrgRequestMenuProps {
   request: ICollaborationRequest;
@@ -26,10 +30,19 @@ export interface IOrgRequestMenuProps {
 enum MenuKeys {
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
+  GrantPermission = "grant-permission",
 }
 
 const OrgRequestMenu: React.FC<IOrgRequestMenuProps> = (props) => {
   const { request, onCompleteDeleteRequest } = props;
+  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+    orgId: request.organizationId,
+    itemResourceType: AppResourceType.CollaborationRequest,
+    permissionOwnerId: request.organizationId,
+    permissionOwnerType: AppResourceType.Organization,
+    itemResourceId: request.resourceId,
+  });
+
   const deleteItem = React.useCallback(async () => {
     try {
       const result = await CollaborationRequestAPI.deleteRequest({
@@ -63,42 +76,51 @@ const OrgRequestMenu: React.FC<IOrgRequestMenuProps> = (props) => {
             // do nothing
           },
         });
+      } else if (info.key === MenuKeys.GrantPermission) {
+        toggleVisibility();
       }
     },
-    [deleteItemHelper]
+    [deleteItemHelper, toggleVisibility]
   );
 
   const status = last(request.statusHistory);
   const isPending = status?.status === CollaborationRequestStatusType.Pending;
   return (
-    <Dropdown
-      disabled={deleteItemHelper.loading}
-      trigger={["click"]}
-      overlay={
-        <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
-          <Menu.Item key={MenuKeys.UpdateItem} disabled={!isPending}>
-            <Link
-              href={appOrgPaths.requestForm(
-                request.organizationId,
-                request.resourceId
-              )}
-            >
-              Update Request
-            </Link>
-          </Menu.Item>
-          <Menu.Divider key={"divider-01"} />
-          <Menu.Item key={MenuKeys.DeleteItem} disabled={!isPending}>
-            Delete Request
-          </Menu.Item>
-        </Menu>
-      }
-    >
-      <Button
-        type="text"
-        className={appClasses.iconBtn}
-        icon={<BsThreeDots />}
-      ></Button>
-    </Dropdown>
+    <React.Fragment>
+      <Dropdown
+        disabled={deleteItemHelper.loading}
+        trigger={["click"]}
+        overlay={
+          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+            <Menu.Item key={MenuKeys.UpdateItem} disabled={!isPending}>
+              <Link
+                href={appOrgPaths.requestForm(
+                  request.organizationId,
+                  request.resourceId
+                )}
+              >
+                Update Request
+              </Link>
+            </Menu.Item>
+            <Menu.Divider key={"divider-01"} />{" "}
+            <Menu.Item key={MenuKeys.GrantPermission}>
+              Grant Permission
+            </Menu.Item>
+            <Menu.Divider key={"divider-02"} />
+            <Menu.Item key={MenuKeys.DeleteItem} disabled={!isPending}>
+              Delete Request
+            </Menu.Item>
+          </Menu>
+        }
+      >
+        <Button
+          type="text"
+          className={appClasses.iconBtn}
+          icon={<BsThreeDots />}
+        ></Button>
+      </Dropdown>
+      {grantPermissionFormNode}
+    </React.Fragment>
   );
 };
 

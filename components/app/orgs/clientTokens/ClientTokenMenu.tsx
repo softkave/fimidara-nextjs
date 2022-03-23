@@ -2,7 +2,10 @@ import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
-import { appOrgPaths } from "../../../../lib/definitions/system";
+import {
+  appOrgPaths,
+  AppResourceType,
+} from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
 import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import {
@@ -13,6 +16,7 @@ import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 
 export interface IClientTokenMenuProps {
   token: IClientAssignedToken;
@@ -22,10 +26,19 @@ export interface IClientTokenMenuProps {
 enum MenuKeys {
   DeleteToken = "delete-token",
   UpdatePresets = "update-presets",
+  GrantPermission = "grant-permission",
 }
 
 const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
   const { token, onCompleteDelete } = props;
+  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+    orgId: token.organizationId,
+    itemResourceType: AppResourceType.ClientAssignedToken,
+    permissionOwnerId: token.organizationId,
+    permissionOwnerType: AppResourceType.Organization,
+    itemResourceId: token.resourceId,
+  });
+
   const deleteToken = React.useCallback(async () => {
     try {
       const result = await ClientAssignedTokenAPI.deleteToken({
@@ -59,38 +72,47 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
             // do nothing
           },
         });
+      } else if (info.key === MenuKeys.GrantPermission) {
+        toggleVisibility();
       }
     },
-    [deleteTokenHelper]
+    [deleteTokenHelper, toggleVisibility]
   );
 
   return (
-    <Dropdown
-      disabled={deleteTokenHelper.loading}
-      trigger={["click"]}
-      overlay={
-        <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
-          <Menu.Item key={MenuKeys.UpdatePresets}>
-            <Link
-              href={appOrgPaths.clientTokenForm(
-                token.organizationId,
-                token.resourceId
-              )}
-            >
-              Update Permission Groups
-            </Link>
-          </Menu.Item>
-          <Menu.Divider key={"divider-01"} />
-          <Menu.Item key={MenuKeys.DeleteToken}>Delete Token</Menu.Item>
-        </Menu>
-      }
-    >
-      <Button
-        type="text"
-        className={appClasses.iconBtn}
-        icon={<BsThreeDots />}
-      ></Button>
-    </Dropdown>
+    <React.Fragment>
+      {grantPermissionFormNode}
+      <Dropdown
+        disabled={deleteTokenHelper.loading}
+        trigger={["click"]}
+        overlay={
+          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+            <Menu.Item key={MenuKeys.UpdatePresets}>
+              <Link
+                href={appOrgPaths.clientTokenForm(
+                  token.organizationId,
+                  token.resourceId
+                )}
+              >
+                Update Permission Groups
+              </Link>
+            </Menu.Item>
+            <Menu.Divider key={"divider-01"} />
+            <Menu.Item key={MenuKeys.GrantPermission}>
+              Grant Permission
+            </Menu.Item>
+            <Menu.Divider key={"divider-02"} />
+            <Menu.Item key={MenuKeys.DeleteToken}>Delete Token</Menu.Item>
+          </Menu>
+        }
+      >
+        <Button
+          type="text"
+          className={appClasses.iconBtn}
+          icon={<BsThreeDots />}
+        ></Button>
+      </Dropdown>
+    </React.Fragment>
   );
 };
 

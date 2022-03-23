@@ -9,6 +9,7 @@ export interface IGrantPermissionActionProps {
   permitted?: boolean;
   isForOwner?: boolean;
   hasChildren?: boolean;
+  disabled?: boolean;
   label: string;
   onChange: (permitted: boolean, change?: IGrantPermissionActionChange) => void;
 }
@@ -21,12 +22,18 @@ enum RadioKeys {
 const GrantPermissionAction: React.FC<IGrantPermissionActionProps> = (
   props
 ) => {
-  const { permitted, isForOwner, label, hasChildren, onChange } = props;
+  const { permitted, isForOwner, label, hasChildren, disabled, onChange } =
+    props;
+
   return (
     <Space direction="vertical">
       <div>
         <Typography.Text>{label}</Typography.Text>
-        <Switch checked={permitted} onChange={(checked) => onChange(checked)} />
+        <Switch
+          disabled={disabled}
+          checked={permitted}
+          onChange={(checked) => onChange(checked)}
+        />
       </div>
       {hasChildren && (
         <Space>
@@ -37,7 +44,7 @@ const GrantPermissionAction: React.FC<IGrantPermissionActionProps> = (
                   evt.target.value === RadioKeys.ForResourceOnly ? true : false,
               })
             }
-            disabled={!permitted}
+            disabled={disabled || !permitted}
             value={
               isForOwner
                 ? RadioKeys.ForResourceOnly
