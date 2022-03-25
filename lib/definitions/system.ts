@@ -124,6 +124,31 @@ export const appOrgPaths = {
   fileList(orgId: string) {
     return `${this.org(orgId)}/files`;
   },
+  file(orgId: string, fileId: string) {
+    return `${this.fileList(orgId)}/${fileId}`;
+  },
+  fileForm(orgId: string, fileId: string) {
+    return `${this.file(orgId, fileId)}/form`;
+  },
+  createFileForm(orgId: string, folderId?: string) {
+    const formPath = `${this.fileList(orgId)}/form`;
+    return folderId ? `${formPath}/${folderId}` : formPath;
+  },
+
+  // Folder
+  rootFolderList(orgId: string) {
+    return `${this.org(orgId)}/folders`;
+  },
+  folder(orgId: string, folderId: string) {
+    return `${this.rootFolderList(orgId)}/${folderId}`;
+  },
+  folderForm(orgId: string, folderId: string) {
+    return `${this.folder(orgId, folderId)}/form`;
+  },
+  createFolderForm(orgId: string, folderId?: string) {
+    const formPath = `${this.rootFolderList(orgId)}/form`;
+    return folderId ? `${formPath}/${folderId}` : formPath;
+  },
 
   // Collaborator
   collaboratorList(orgId: string) {

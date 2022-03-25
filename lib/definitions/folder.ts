@@ -17,7 +17,7 @@ export interface IFolder {
 }
 
 export interface INewFolderInput {
-  path: string;
+  name: string;
   description?: string;
   maxFileSizeInBytes?: number;
   publicAccessOps?: IPublicAccessOpInput[];
@@ -26,4 +26,12 @@ export interface INewFolderInput {
 export interface IUpdateFolderInput {
   description?: string;
   maxFileSizeInBytes?: number;
+  publicAccessOps?: IPublicAccessOpInput[];
 }
+
+export const folderConstants = {
+  minFolderNameLength: 1,
+  maxFolderNameLength: 50,
+  maxFolderDepth: 10,
+  nameSeparator: "/",
+};

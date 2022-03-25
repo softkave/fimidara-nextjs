@@ -80,7 +80,8 @@ export function getUploadOrgImagePath(orgId: string) {
 }
 
 export interface IGetFileDetailsEndpointParams {
-  path: string;
+  filePath?: string;
+  fileId?: string;
   organizationId?: string;
 }
 
@@ -96,7 +97,8 @@ async function getFileDetails(props: IGetFileDetailsEndpointParams) {
 }
 
 export interface IDeleteFileEndpointParams {
-  path: string;
+  filePath?: string;
+  fileId?: string;
   organizationId?: string;
 }
 
@@ -127,7 +129,8 @@ async function deleteFile(props: IDeleteFileEndpointParams) {
 
 export interface IUpdateFileDetailsEndpointParams {
   organizationId?: string;
-  path: string;
+  filePath?: string;
+  fileId?: string;
   file: IUpdateFileDetailsInput;
 }
 
@@ -149,7 +152,10 @@ export interface IUploadFileEndpointParams {
   extension?: string;
   mimetype?: string;
   data: Blob;
-  path: string;
+  // path: string;
+  folderId?: string;
+  folderPath?: string;
+  name: string;
   publicAccessActions?: UploadFilePublicAccessActions;
 }
 
@@ -161,8 +167,10 @@ async function uploadFile(props: IUploadFileEndpointParams) {
   const formData = new FormData();
   formData.append("organizationId", systemConstants.organizationId);
   formData.append(UPLOAD_FILE_BLOB_FORMDATA_KEY, props.data);
-  formData.append("path", props.path);
+  formData.append("name", props.name);
   setEndpointFormData(formData, "description", props.description);
+  setEndpointFormData(formData, "folderId", props.folderId);
+  setEndpointFormData(formData, "folderPath", props.folderPath);
   setEndpointFormData(formData, "encoding", props.encoding);
   setEndpointFormData(formData, "extension", props.extension);
   setEndpointFormData(formData, "mimetype", props.mimetype);

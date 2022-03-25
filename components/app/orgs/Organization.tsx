@@ -43,7 +43,7 @@ const Organization: React.FC<IOrganizationProps> = (props) => {
 
   const org = data?.organization!;
   const paths = {
-    files: appOrgPaths.fileList(org.resourceId),
+    files: appOrgPaths.rootFolderList(org.resourceId),
     collaborators: appOrgPaths.collaboratorList(org.resourceId),
     requests: appOrgPaths.requestList(org.resourceId),
     programTokens: appOrgPaths.programTokenList(org.resourceId),

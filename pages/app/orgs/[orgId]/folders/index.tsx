@@ -5,11 +5,11 @@ import { getOrgServerSideProps } from "../../../../../components/app/orgs/utils"
 import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
 import { appOrgPaths } from "../../../../../lib/definitions/system";
 
-export interface IOrganizationFilesPageProps {
+export interface IRootLevelFilesPageProps {
   orgId: string;
 }
 
-const OrganizationFilePage: React.FC<IOrganizationFilesPageProps> = (props) => {
+const RootLevelFilesPage: React.FC<IRootLevelFilesPageProps> = (props) => {
   const { orgId } = props;
   return (
     <Organization orgId={orgId} activeKey={appOrgPaths.rootFolderList(orgId)}>
@@ -18,5 +18,5 @@ const OrganizationFilePage: React.FC<IOrganizationFilesPageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(OrganizationFilePage);
+export default withPageAuthRequired(RootLevelFilesPage);
 export const getServerSideProps = getOrgServerSideProps;

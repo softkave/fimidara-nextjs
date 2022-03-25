@@ -1,22 +1,22 @@
 import React from "react";
-import FileListContainer from "../../../../../components/app/orgs/files/FileListContainer";
+import FileForm from "../../../../../components/app/orgs/files/FileForm";
 import Organization from "../../../../../components/app/orgs/Organization";
-import { getOrgServerSideProps } from "../../../../../components/app/orgs/utils";
+import {
+  getOrgServerSideProps,
+  IOrgComponentProps,
+} from "../../../../../components/app/orgs/utils";
 import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
 import { appOrgPaths } from "../../../../../lib/definitions/system";
 
-export interface IOrganizationFilesPageProps {
-  orgId: string;
-}
-
-const OrganizationFilePage: React.FC<IOrganizationFilesPageProps> = (props) => {
+const CreateRootLevelFileFormPage: React.FC<IOrgComponentProps> = (props) => {
   const { orgId } = props;
+
   return (
     <Organization orgId={orgId} activeKey={appOrgPaths.rootFolderList(orgId)}>
-      <FileListContainer orgId={orgId} />
+      <FileForm orgId={orgId} />
     </Organization>
   );
 };
 
-export default withPageAuthRequired(OrganizationFilePage);
+export default withPageAuthRequired(CreateRootLevelFileFormPage);
 export const getServerSideProps = getOrgServerSideProps;

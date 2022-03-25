@@ -95,7 +95,7 @@ const ProgramTokenMenu: React.FC<IProgramTokenMenuProps> = (props) => {
                 Update Token
               </Link>
             </Menu.Item>
-            <Menu.Divider key={"divider-01"} />{" "}
+            <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
               Grant Permission
             </Menu.Item>

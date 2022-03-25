@@ -14,7 +14,7 @@ const OrganizationPage: React.FC<IOrganizationPageProps> = (props) => {
   const router = useRouter();
 
   React.useEffect(() => {
-    router.push(appOrgPaths.fileList(orgId));
+    router.push(appOrgPaths.rootFolderList(orgId));
   }, [orgId]);
 
   return <Organization orgId={orgId} activeKey="" />;

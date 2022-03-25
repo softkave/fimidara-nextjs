@@ -12,16 +12,18 @@ import {
 } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
-import { ICollaborator } from "../../../../lib/definitions/user";
-import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import { IFile } from "../../../../lib/definitions/file";
+import FileAPI from "../../../../lib/api/endpoints/file";
+import { folderConstants } from "../../../../lib/definitions/folder";
+import { useSWRConfig } from "swr";
+import { getUseFileListHookKey } from "../../../../lib/hooks/orgs/useFileList";
+import { getUseFileHookKey } from "../../../../lib/hooks/orgs/useFile";
 
-export interface ICollaboratorMenuProps {
-  orgId: string;
-  collaborator: ICollaborator;
-  onCompleteRemove: () => any;
+export interface IFileMenuProps {
+  file: IFile;
 }
 
 enum MenuKeys {
@@ -30,40 +32,54 @@ enum MenuKeys {
   GrantPermission = "grant-permission",
 }
 
-const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
-  const { orgId, collaborator, onCompleteRemove } = props;
+const FileMenu: React.FC<IFileMenuProps> = (props) => {
+  const { file } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
-    orgId,
-    itemResourceType: AppResourceType.User,
-    permissionOwnerId: orgId,
-    permissionOwnerType: AppResourceType.Organization,
-    itemResourceId: collaborator.resourceId,
+    orgId: file.organizationId,
+    itemResourceType: AppResourceType.File,
+    permissionOwnerId: file.folderId || file.organizationId,
+    permissionOwnerType: file.folderId
+      ? AppResourceType.Folder
+      : AppResourceType.Organization,
+    itemResourceId: file.resourceId,
   });
 
+  const { mutate: cacheMutate } = useSWRConfig();
   const deleteItem = React.useCallback(async () => {
     try {
-      const result = await CollaboratorAPI.removeCollaborator({
-        organizationId: orgId,
-        collaboratorId: collaborator.resourceId,
+      const result = await FileAPI.deleteFile({
+        organizationId: file.organizationId,
+        filePath: file.namePath.join(folderConstants.nameSeparator),
       });
 
       checkEndpointResult(result);
-      message.success("Collaborator removed");
-      await onCompleteRemove();
+      message.success("File deleted");
+      cacheMutate(
+        getUseFileListHookKey({
+          organizationId: file.organizationId,
+          folderId: file.folderId,
+        })
+      );
+
+      cacheMutate(
+        getUseFileHookKey({
+          organizationId: file.organizationId,
+          fileId: file.resourceId,
+        })
+      );
     } catch (error: any) {
       message.error(
-        getFormError(processEndpointError(error)) ||
-          "Error removing collaborator"
+        getFormError(processEndpointError(error)) || "Error deleting file"
       );
     }
-  }, [orgId, collaborator, onCompleteRemove]);
+  }, [file, cacheMutate]);
 
   const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: SelectInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
         Modal.confirm({
-          title: "Are you sure you want to remove this collaborator?",
+          title: "Are you sure you want to delete this file?",
           okText: "Yes",
           cancelText: "No",
           okType: "primary",
@@ -91,12 +107,12 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
           <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={MenuKeys.UpdateItem}>
               <Link
-                href={appOrgPaths.collaboratorForm(
-                  orgId,
-                  collaborator.resourceId
+                href={appOrgPaths.fileForm(
+                  file.organizationId,
+                  file.resourceId
                 )}
               >
-                Update Permission Groups
+                Update File
               </Link>
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
@@ -104,7 +120,7 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
               Grant Permission
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
-            <Menu.Item key={MenuKeys.DeleteItem}>Remove Collaborator</Menu.Item>
+            <Menu.Item key={MenuKeys.DeleteItem}>Delete File</Menu.Item>
           </Menu>
         }
       >
@@ -119,4 +135,4 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
   );
 };
 
-export default CollaboratorMenu;
+export default FileMenu;

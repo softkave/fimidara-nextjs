@@ -102,7 +102,7 @@ const OrgRequestMenu: React.FC<IOrgRequestMenuProps> = (props) => {
                 Update Request
               </Link>
             </Menu.Item>
-            <Menu.Divider key={"divider-01"} />{" "}
+            <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
               Grant Permission
             </Menu.Item>

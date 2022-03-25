@@ -24,6 +24,7 @@ export interface IGrantPermissionFormProps {
   loading?: boolean;
   orgId: string;
   itemResourceType: AppResourceType;
+  permissionOwnerType: AppResourceType;
   existingPermissionItems: IPermissionItem[];
   onSave: (items: INewPermissionItemInputByResource[]) => void;
   onCancel: () => void;
@@ -36,26 +37,11 @@ enum TabKey {
   PermissionGroup = "permission-group",
 }
 
-function getActions(type: AppResourceType) {
-  const actions = [
-    BasicCRUDActions.All,
-    BasicCRUDActions.Create,
-    BasicCRUDActions.Read,
-    BasicCRUDActions.Update,
-    BasicCRUDActions.Delete,
-  ];
-
-  if (type === AppResourceType.Organization) {
-    return actions.concat(BasicCRUDActions.GrantPermission);
-  }
-
-  return actions;
-}
-
 const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
   const {
     orgId,
     itemResourceType,
+    permissionOwnerType,
     existingPermissionItems,
     loading,
     onSave,
@@ -130,6 +116,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
         <GrantPermissionFormItem
           id={permissionEntityId}
           itemResourceType={itemResourceType}
+          permissionOwnerType={permissionOwnerType}
           name={name}
           onChange={(item, action, permitted, update) =>
             updateItem(
@@ -148,7 +135,13 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
         />
       );
     },
-    [permissionItems, itemResourceType, loading, updateItem]
+    [
+      permissionItems,
+      itemResourceType,
+      loading,
+      permissionOwnerType,
+      updateItem,
+    ]
   );
 
   const renderPreset = React.useCallback(

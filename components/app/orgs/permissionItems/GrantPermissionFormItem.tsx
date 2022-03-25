@@ -16,6 +16,7 @@ export interface IGrantPermissionFormItemProps {
   name: string;
   permissionEntityType: AppResourceType;
   permissionItems: Record<string, INewPermissionItemInputByResource>;
+  permissionOwnerType: AppResourceType;
   itemResourceType: AppResourceType;
   onChange: (
     item: INewPermissionItemInputByResource,
@@ -59,6 +60,7 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
   props
 ) => {
   const {
+    permissionOwnerType,
     itemResourceType,
     loading,
     name,
@@ -87,7 +89,7 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
             onChange={(permitted, update) =>
               onChange(item, action, permitted, update)
             }
-            hasChildren={itemResourceType === AppResourceType.Folder}
+            hasChildren={!!(permissionOwnerType === AppResourceType.Folder)}
             isForOwner={item?.isForPermissionOwnerOnly}
             permitted={!!item && !item.isExclusion}
             disabled={loading}
