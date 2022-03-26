@@ -7,3 +7,4 @@
 - Call mutate to invalidate lists when item is updated
 - How to add public permissions for files and folder through grant permission and update it in the file and folder too
 - Add public access ops to files and folders forms
+- Add public access ops to file and folder forms

@@ -1,8 +1,10 @@
 import {
   IFile,
+  IFileMatcher,
   IUpdateFileDetailsInput,
   UploadFilePublicAccessActions,
 } from "../../definitions/file";
+import { IFolderMatcher } from "../../definitions/folder";
 import { systemConstants } from "../../definitions/system";
 import SessionSelectors from "../../store/session/selectors";
 import store from "../../store/store";
@@ -79,12 +81,7 @@ export function getUploadOrgImagePath(orgId: string) {
   return getUploadFilePath(p);
 }
 
-export interface IGetFileDetailsEndpointParams {
-  filePath?: string;
-  fileId?: string;
-  organizationId?: string;
-}
-
+export interface IGetFileDetailsEndpointParams extends IFileMatcher {}
 export type IGetFileDetailsEndpointResult = GetEndpointResult<{
   file: IFile;
 }>;
@@ -96,12 +93,7 @@ async function getFileDetails(props: IGetFileDetailsEndpointParams) {
   });
 }
 
-export interface IDeleteFileEndpointParams {
-  filePath?: string;
-  fileId?: string;
-  organizationId?: string;
-}
-
+export interface IDeleteFileEndpointParams extends IFileMatcher {}
 async function deleteFile(props: IDeleteFileEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deleteFileURL,
@@ -127,10 +119,7 @@ async function deleteFile(props: IDeleteFileEndpointParams) {
 //   });
 // }
 
-export interface IUpdateFileDetailsEndpointParams {
-  organizationId?: string;
-  filePath?: string;
-  fileId?: string;
+export interface IUpdateFileDetailsEndpointParams extends IFileMatcher {
   file: IUpdateFileDetailsInput;
 }
 
@@ -145,17 +134,12 @@ async function updateFileDetails(props: IUpdateFileDetailsEndpointParams) {
   });
 }
 
-export interface IUploadFileEndpointParams {
-  organizationId?: string;
+export interface IUploadFileEndpointParams extends IFileMatcher {
   description?: string;
   encoding?: string;
   extension?: string;
   mimetype?: string;
   data: Blob;
-  // path: string;
-  folderId?: string;
-  folderPath?: string;
-  name: string;
   publicAccessActions?: UploadFilePublicAccessActions;
 }
 
@@ -167,10 +151,9 @@ async function uploadFile(props: IUploadFileEndpointParams) {
   const formData = new FormData();
   formData.append("organizationId", systemConstants.organizationId);
   formData.append(UPLOAD_FILE_BLOB_FORMDATA_KEY, props.data);
-  formData.append("name", props.name);
   setEndpointFormData(formData, "description", props.description);
-  setEndpointFormData(formData, "folderId", props.folderId);
-  setEndpointFormData(formData, "folderPath", props.folderPath);
+  setEndpointFormData(formData, "fileId", props.fileId);
+  setEndpointFormData(formData, "filePath", props.filePath);
   setEndpointFormData(formData, "encoding", props.encoding);
   setEndpointFormData(formData, "extension", props.extension);
   setEndpointFormData(formData, "mimetype", props.mimetype);

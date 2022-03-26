@@ -36,6 +36,12 @@ export enum UploadFilePublicAccessActions {
   ReadUpdateAndDelete = "read-update-delete",
 }
 
+export interface IFileMatcher {
+  filePath?: string;
+  fileId?: string;
+  organizationId?: string;
+}
+
 export const fileConstants = {
   maxFileSizeInBytes: 10 * 1024 ** 3, // 10Gb
   fileNameAndExtensionSeparator: ".",

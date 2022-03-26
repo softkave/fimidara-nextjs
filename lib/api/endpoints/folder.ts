@@ -1,6 +1,7 @@
 import { IFile } from "../../definitions/file";
 import {
   IFolder,
+  IFolderMatcher,
   INewFolderInput,
   IUpdateFolderInput,
 } from "../../definitions/folder";
@@ -16,8 +17,6 @@ const updateFolderURL = `${baseURL}/updateFolder`;
 
 export interface IAddFolderEndpointParams {
   organizationId?: string;
-  parentFolderId?: string;
-  parentFolderPath?: string;
   folder: INewFolderInput;
 }
 
@@ -32,11 +31,7 @@ async function addFolder(props: IAddFolderEndpointParams) {
   });
 }
 
-export interface IDeleteFolderEndpointParams {
-  organizationId?: string;
-  folderPath?: string;
-  folderId?: string;
-}
+export interface IDeleteFolderEndpointParams extends IFolderMatcher {}
 
 async function deleteFolder(props: IDeleteFolderEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
@@ -45,12 +40,7 @@ async function deleteFolder(props: IDeleteFolderEndpointParams) {
   });
 }
 
-export interface IGetFolderEndpointParams {
-  organizationId?: string;
-  folderPath?: string;
-  folderId?: string;
-}
-
+export interface IGetFolderEndpointParams extends IFolderMatcher {}
 export type IGetFolderEndpointResult = GetEndpointResult<{
   folder: IFolder;
 }>;
@@ -62,12 +52,7 @@ async function getFolder(props: IGetFolderEndpointParams) {
   });
 }
 
-export interface IListFolderContentEndpointParams {
-  organizationId?: string;
-  folderPath?: string;
-  folderId?: string;
-}
-
+export interface IListFolderContentEndpointParams extends IFolderMatcher {}
 export type IListFolderContentEndpointResult = GetEndpointResult<{
   folders: IFolder[];
   files: IFile[];
@@ -80,10 +65,7 @@ async function listFolderContent(props: IListFolderContentEndpointParams) {
   });
 }
 
-export interface IUpdateFolderEndpointParams {
-  organizationId?: string;
-  folderPath?: string;
-  folderId?: string;
+export interface IUpdateFolderEndpointParams extends IFolderMatcher {
   folder: IUpdateFolderInput;
 }
 

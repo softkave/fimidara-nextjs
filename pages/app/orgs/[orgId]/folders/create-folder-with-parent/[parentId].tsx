@@ -1,8 +1,13 @@
 import { GetServerSideProps } from "next";
 import React from "react";
+import FolderContainer from "../../../../../../components/app/orgs/files/FolderContainer";
 import FolderForm from "../../../../../../components/app/orgs/files/FolderForm";
 import Organization from "../../../../../../components/app/orgs/Organization";
 import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import {
+  folderConstants,
+  IFolder,
+} from "../../../../../../lib/definitions/folder";
 import { appOrgPaths } from "../../../../../../lib/definitions/system";
 
 export type ICreateFolderWithParentFormPageProps = {
@@ -14,10 +19,19 @@ const CreateFolderWithParentFormPage: React.FC<
   ICreateFolderWithParentFormPageProps
 > = (props) => {
   const { orgId, parentId } = props;
+  const renderForm = React.useCallback((folder: IFolder) => {
+    return (
+      <FolderForm
+        orgId={orgId}
+        parentId={parentId}
+        parentPath={folder.namePath.join(folderConstants.nameSeparator)}
+      />
+    );
+  }, []);
 
   return (
     <Organization orgId={orgId} activeKey={appOrgPaths.rootFolderList(orgId)}>
-      <FolderForm orgId={orgId} parentId={parentId} />
+      <FolderContainer orgId={orgId} folderId={parentId} render={renderForm} />
     </Organization>
   );
 };

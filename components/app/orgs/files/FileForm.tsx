@@ -39,6 +39,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { first } from "lodash";
 import { IEndpointResultBase } from "../../../../lib/api/types";
 import { getUseFileHookKey } from "../../../../lib/hooks/orgs/useFile";
+import { folderConstants } from "../../../../lib/definitions/folder";
 
 export interface IFileFormValue {
   description?: string;
@@ -68,11 +69,12 @@ export interface IFileFormProps {
   file?: IFile;
   className?: string;
   folderId?: string;
+  folderPath?: string;
   orgId: string;
 }
 
 export default function FileForm(props: IFileFormProps) {
-  const { file, className, orgId, folderId } = props;
+  const { file, className, orgId, folderId, folderPath } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
@@ -86,9 +88,8 @@ export default function FileForm(props: IFileFormProps) {
 
           if (inputFile) {
             result = await FileAPI.uploadFile({
-              folderId,
               organizationId: orgId,
-              name: data.name,
+              fileId: file.resourceId,
               description: data.description,
               data: inputFile.originFileObj!,
               mimetype: inputFile.type,
@@ -120,9 +121,10 @@ export default function FileForm(props: IFileFormProps) {
           }
 
           const result = await FileAPI.uploadFile({
-            folderId,
             organizationId: orgId,
-            name: data.name,
+            filePath: folderPath
+              ? `${folderPath}${folderConstants.nameSeparator}${data.name}`
+              : data.name,
             description: data.description,
             data: inputFile.originFileObj!,
             mimetype: inputFile.type,
@@ -169,9 +171,10 @@ export default function FileForm(props: IFileFormProps) {
       required
       label="File Name"
       help={
-        formik.touched?.name &&
-        formik.errors?.name && (
+        formik.touched?.name && formik.errors?.name ? (
           <FormError visible={formik.touched.name} error={formik.errors.name} />
+        ) : (
+          "Name can include the file's extension, e.g image.png"
         )
       }
       labelCol={{ span: 24 }}
@@ -191,7 +194,10 @@ export default function FileForm(props: IFileFormProps) {
           <Button
             type="text"
             onClick={() => {
-              formik.setFieldValue("name", first(formik.values.file)?.fileName);
+              formik.setFieldValue(
+                "name",
+                first(formik.values.file)?.originFileObj?.name
+              );
             }}
           >
             Auto-fill from selected file

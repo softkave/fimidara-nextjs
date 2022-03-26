@@ -27,11 +27,12 @@ import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { getUseFolderHookKey } from "../../../../lib/hooks/orgs/useFolder";
-import { IFolder, INewFolderInput } from "../../../../lib/definitions/folder";
+import { IFolder } from "../../../../lib/definitions/folder";
 import { useSWRConfig } from "swr";
 import FolderAPI from "../../../../lib/api/endpoints/folder";
 import { getUseFileListHookKey } from "../../../../lib/hooks/orgs/useFileList";
 import { fileConstants } from "../../../../lib/definitions/file";
+import { folderConstants } from "../../../../lib/definitions/folder";
 
 const folderValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -42,19 +43,25 @@ const folderValidation = yup.object().shape({
     .nullable(),
 });
 
-const initialValues: INewFolderInput = {
+export interface IFolderFormValues {
+  name: string;
+  description?: string;
+  maxFileSizeInBytes?: number;
+}
+
+const initialValues: IFolderFormValues = {
   name: "",
 };
 
-function getFolderFormInputFromFolder(item: IFolder): INewFolderInput {
+function getFolderFormInputFromFolder(item: IFolder): IFolderFormValues {
   return {
     name: item.name,
     description: item.description,
     maxFileSizeInBytes: item.maxFileSizeInBytes,
-    publicAccessOps: item.publicAccessOps.map((op) => ({
-      action: op.action,
-      resourceType: op.resourceType,
-    })),
+    // publicAccessOps: item.publicAccessOps.map((op) => ({
+    //   action: op.action,
+    //   resourceType: op.resourceType,
+    // })),
   };
 }
 
@@ -62,17 +69,18 @@ export interface IFolderFormProps {
   folder?: IFolder;
   className?: string;
   parentId?: string;
+  parentPath?: string;
   orgId: string;
 }
 
 // TODO: show path to parent folder
 
 export default function FolderForm(props: IFolderFormProps) {
-  const { folder, className, orgId, parentId } = props;
+  const { folder, className, orgId, parentId, parentPath } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
-    async (data: INewFolderInput) => {
+    async (data: IFolderFormValues) => {
       try {
         let folderId: string | null = null;
 
@@ -83,7 +91,7 @@ export default function FolderForm(props: IFolderFormProps) {
             folder: {
               description: data.description,
               maxFileSizeInBytes: data.maxFileSizeInBytes,
-              publicAccessOps: data.publicAccessOps,
+              // publicAccessOps: data.publicAccessOps,
             },
           });
 
@@ -104,14 +112,17 @@ export default function FolderForm(props: IFolderFormProps) {
             })
           );
         } else {
+          const folderPath = parentPath
+            ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
+            : data.name;
+
           const result = await FolderAPI.addFolder({
             organizationId: orgId,
-            parentFolderId: parentId,
             folder: {
-              name: data.name,
+              folderPath,
               description: data.description,
               maxFileSizeInBytes: data.maxFileSizeInBytes,
-              publicAccessOps: data.publicAccessOps,
+              // publicAccessOps: data.publicAccessOps,
             },
           });
 
