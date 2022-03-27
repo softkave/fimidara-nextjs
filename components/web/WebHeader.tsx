@@ -1,9 +1,10 @@
 import React from "react";
 import { Typography, Space, Dropdown, Menu, Button } from "antd";
-import { EllipsisOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { css } from "@emotion/css";
 import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
+import { BsThreeDots } from "react-icons/bs";
+import { appClasses } from "../utils/theme";
 
 const classes = {
   root: css({
@@ -83,7 +84,7 @@ export default function WebHeader() {
         }
         trigger={["click"]}
       >
-        <Button icon={<EllipsisOutlined />} />
+        <Button icon={<BsThreeDots />} className={appClasses.iconBtn} />
       </Dropdown>
     </Space>
   );

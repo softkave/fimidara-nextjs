@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { ComponentType, useEffect } from "react";
+import { SWRConfiguration } from "swr";
 import { IUserLoginResult } from "../../lib/api/endpoints/user";
 import { appAccountPaths } from "../../lib/definitions/system";
 import useUser from "../../lib/hooks/useUser";
@@ -11,6 +12,7 @@ export interface WithPageAuthRequiredOptions {
   returnTo?: string;
   onRedirecting?: () => React.ReactElement;
   onError?: (error: Error) => React.ReactElement;
+  swrConfig?: SWRConfiguration;
 }
 
 export interface IWithPageAuthRequiredProps {
@@ -34,7 +36,7 @@ const withPageAuthRequired: WithPageAuthRequired = (
     } = options;
 
     const router = useRouter();
-    const { data, error, isLoading } = useUser();
+    const { data, error, isLoading } = useUser(options.swrConfig);
 
     useEffect(() => {
       if ((data && !error) || isLoading) return;

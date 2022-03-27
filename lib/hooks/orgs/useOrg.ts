@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import OrganizationAPI, {
   OrganizationURLs,
 } from "../../api/endpoints/organization";
@@ -14,9 +14,10 @@ export function getUseOrgHookKey(id: string) {
   return [OrganizationURLs.getOrganization, id];
 }
 
-export default function useOrg(id?: string) {
+export default function useOrg(id?: string, swrConfig: SWRConfiguration = {}) {
   const { data, error } = useSWR(id ? getUseOrgHookKey(id) : null, fetcher, {
     shouldRetryOnError: false,
+    ...swrConfig,
   });
   return {
     error,

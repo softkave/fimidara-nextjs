@@ -158,17 +158,15 @@ async function uploadFile(props: IUploadFileEndpointParams) {
   setEndpointFormData(formData, "extension", props.extension);
   setEndpointFormData(formData, "mimetype", props.mimetype);
 
-  const clientAssignedToken = SessionSelectors.assertGetClientAssignedToken(
-    store.getState()
-  );
-
+  const clientAssignedToken = SessionSelectors.assertGetToken(store.getState());
   return await invokeEndpoint<IUploadFileEndpointResult>({
     path: uploadFileURL,
     data: formData,
     headers: {
-      [HTTP_HEADER_CONTENT_TYPE]: CONTENT_TYPE_MULTIPART_FORMDATA,
+      // [HTTP_HEADER_CONTENT_TYPE]: CONTENT_TYPE_MULTIPART_FORMDATA,
       [HTTP_HEADER_AUTHORIZATION]: `Bearer ${clientAssignedToken}`,
     },
+    omitContentTypeHeader: true,
   });
 }
 

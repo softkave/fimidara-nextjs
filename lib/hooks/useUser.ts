@@ -1,6 +1,6 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import UserAPI, { UserURLs } from "../api/endpoints/user";
 import { checkEndpointResult } from "../api/utils";
 import UserSessionStorageFns from "../storage/userSession";
@@ -36,13 +36,13 @@ export function getUseUserHookKey() {
   return [UserURLs.getUserData];
 }
 
-export default function useUser() {
+export default function useUser(swrConfig: SWRConfiguration = {}) {
   const dispatch = useDispatch();
   const token = useSelector(SessionSelectors.getUserToken);
   const { data, error, mutate } = useSWR(
     [getUseUserHookKey(), dispatch, token],
     fetcher,
-    { shouldRetryOnError: false }
+    { shouldRetryOnError: false, ...swrConfig }
   );
 
   return {

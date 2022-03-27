@@ -10,7 +10,7 @@ export const systemConstants = {
   phoneQueryKey: "p",
   organizationId: defaultTo(
     process.env.ORGANIZATION_ID,
-    "P84nBNHPBOUEJhqHoLLRT"
+    "l3n_9IE3mZgdB9PEBVXcw"
   ),
   userImagesFolder: defaultTo(
     process.env.USER_IMAGES_FOLDER,
@@ -128,11 +128,14 @@ export const appOrgPaths = {
     return `${this.fileList(orgId)}/${fileId}`;
   },
   fileForm(orgId: string, fileId: string) {
-    return `${this.file(orgId, fileId)}/form`;
+    return `${this.file(orgId, fileId)}/update-file`;
   },
   createFileForm(orgId: string, folderId?: string) {
-    const formPath = `${this.fileList(orgId)}/form`;
-    return folderId ? `${formPath}/${folderId}` : formPath;
+    if (folderId) {
+      return `${this.fileList(orgId)}/create-file-in-folder/${folderId}`;
+    } else {
+      return `${this.fileList(orgId)}/create-file`;
+    }
   },
 
   // Folder
@@ -142,12 +145,20 @@ export const appOrgPaths = {
   folder(orgId: string, folderId: string) {
     return `${this.rootFolderList(orgId)}/${folderId}`;
   },
+  folderPage(orgId: string, folderId: string) {
+    return `${this.org(orgId)}/folder-page/${folderId}`;
+  },
   folderForm(orgId: string, folderId: string) {
-    return `${this.folder(orgId, folderId)}/form`;
+    return `${this.folder(orgId, folderId)}/update-folder`;
   },
   createFolderForm(orgId: string, folderId?: string) {
-    const formPath = `${this.rootFolderList(orgId)}/form`;
-    return folderId ? `${formPath}/${folderId}` : formPath;
+    if (folderId) {
+      return `${this.rootFolderList(
+        orgId
+      )}/create-folder-with-parent/${folderId}`;
+    } else {
+      return `${this.rootFolderList(orgId)}/create-folder`;
+    }
   },
 
   // Collaborator

@@ -1,4 +1,4 @@
-import { Space } from "antd";
+import { Button, Space, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
 import { IFile } from "../../../../lib/definitions/file";
@@ -41,6 +41,27 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
   });
 
   let content: React.ReactNode = null;
+  const getParentHref = () => {
+    if (!folder) {
+      return "";
+    }
+
+    return folder.parentId
+      ? appOrgPaths.folder(orgId, folder.parentId)
+      : appOrgPaths.rootFolderList(orgId);
+  };
+
+  const renderGotoParentList = () => {
+    return (
+      folder && (
+        <Link href={getParentHref()}>
+          <a>
+            <span style={{ fontSize: "20px" }}>..</span> {folder.name}
+          </a>
+        </Link>
+      )
+    );
+  };
 
   if (error) {
     content = (
@@ -53,42 +74,46 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
     content = <PageLoading messageText="Loading files and folders..." />;
   } else if (data.files.length === 0 && data.folders.length === 0) {
     content = (
-      <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText="No files and folders yet. Create one using the plus button above."
-      />
+      <Space direction="vertical" style={{ width: "100%" }}>
+        {renderGotoParentList()}
+        <PageNothingFound
+          className={appClasses.maxWidth420}
+          messageText="No files and folders yet. Create one using the plus button above."
+          actions={
+            folder
+              ? [
+                  <Link href={getParentHref()}>
+                    <Button type="link">Go to parent list</Button>
+                  </Link>,
+                ]
+              : undefined
+          }
+        />
+      </Space>
     );
   } else {
-    const folderNode =
-      data.folders && renderFolderList ? (
+    const folderNode = data.folders.length ? (
+      renderFolderList ? (
         renderFolderList(data.folders)
       ) : (
         <FolderList
           folders={data.folders}
           renderFolderItem={renderFolderItem}
         />
-      );
+      )
+    ) : null;
 
-    const fileNode =
-      data.files && renderFileList ? (
+    const fileNode = data.files.length ? (
+      renderFileList ? (
         renderFileList(data.files)
       ) : (
         <AppFileList files={data.files} renderFileItem={renderFileItem} />
-      );
+      )
+    ) : null;
 
     content = (
-      <Space direction="vertical">
-        {folder && (
-          <Link
-            href={
-              folder.parentId
-                ? appOrgPaths.folder(orgId, folder.parentId)
-                : appOrgPaths.rootFolderList(orgId)
-            }
-          >
-            ..
-          </Link>
-        )}
+      <Space direction="vertical" style={{ width: "100%" }}>
+        {renderGotoParentList()}
         {folderNode}
         {fileNode}
       </Space>

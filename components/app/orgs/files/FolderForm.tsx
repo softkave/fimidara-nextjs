@@ -1,13 +1,5 @@
 import { css, cx } from "@emotion/css";
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Typography,
-} from "antd";
+import { Alert, Button, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
@@ -211,32 +203,33 @@ export default function FolderForm(props: IFolderFormProps) {
     </Form.Item>
   );
 
-  const maxFileSizeInBytesNode = (
-    <Form.Item
-      label="Max File Size"
-      help={
-        formik.touched?.maxFileSizeInBytes &&
-        formik.errors?.maxFileSizeInBytes && (
-          <FormError
-            visible={formik.touched.maxFileSizeInBytes}
-            error={formik.errors.maxFileSizeInBytes}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <InputNumber
-        name="maxFileSizeInBytes"
-        value={formik.values.maxFileSizeInBytes}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter max file size"
-        disabled={submitResult.loading}
-        max={fileConstants.maxFileSizeInBytes}
-      />
-    </Form.Item>
-  );
+  // const maxFileSizeInBytesNode = (
+  //   <Form.Item
+  //     label="Max File Size in Bytes"
+  //     help={
+  //       formik.touched?.maxFileSizeInBytes &&
+  //       formik.errors?.maxFileSizeInBytes && (
+  //         <FormError
+  //           visible={formik.touched.maxFileSizeInBytes}
+  //           error={formik.errors.maxFileSizeInBytes}
+  //         />
+  //       )
+  //     }
+  //     labelCol={{ span: 24 }}
+  //     wrapperCol={{ span: 24 }}
+  //   >
+  //     <InputNumber
+  //       name="maxFileSizeInBytes"
+  //       value={formik.values.maxFileSizeInBytes}
+  //       onBlur={formik.handleBlur}
+  //       onChange={formik.handleChange}
+  //       placeholder="Enter max file size"
+  //       disabled={submitResult.loading}
+  //       max={fileConstants.maxFileSizeInBytes}
+  //       style={{ minWidth: "120px" }}
+  //     />
+  //   </Form.Item>
+  // );
 
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
@@ -252,7 +245,7 @@ export default function FolderForm(props: IFolderFormProps) {
           )}
           {nameNode}
           {descriptionNode}
-          {maxFileSizeInBytesNode}
+          {/* {maxFileSizeInBytesNode} */}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

@@ -2,6 +2,7 @@ import { RightOutlined } from "@ant-design/icons";
 import { Button, Space, Tabs } from "antd";
 import Link from "next/link";
 import React from "react";
+import { SWRConfiguration } from "swr";
 import { appOrgPaths } from "../../../lib/definitions/system";
 import useOrg from "../../../lib/hooks/orgs/useOrg";
 import { getBaseError } from "../../../lib/utilities/errors";
@@ -14,11 +15,12 @@ import OrgHeader from "./OrgHeader";
 export interface IOrganizationProps {
   orgId: string;
   activeKey: string;
+  swrConfig?: SWRConfiguration;
 }
 
 const Organization: React.FC<IOrganizationProps> = (props) => {
-  const { orgId, activeKey, children } = props;
-  const { data, error, isLoading } = useOrg(orgId);
+  const { orgId, activeKey, swrConfig, children } = props;
+  const { data, error, isLoading } = useOrg(orgId, swrConfig);
 
   if (error) {
     return (

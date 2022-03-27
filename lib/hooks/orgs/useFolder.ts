@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import FolderAPI, {
   FolderURLs,
   IGetFolderEndpointParams,
@@ -13,11 +13,14 @@ export function getUseFolderHookKey(params: IGetFolderEndpointParams) {
   return [FolderURLs.getFolder, params];
 }
 
-export default function useFolder(params?: IGetFolderEndpointParams) {
+export default function useFolder(
+  params?: IGetFolderEndpointParams,
+  config: SWRConfiguration = {}
+) {
   const { data, error, mutate } = useSWR(
     params ? getUseFolderHookKey(params) : null,
     fetcher,
-    { shouldRetryOnError: false }
+    { shouldRetryOnError: false, ...config }
   );
 
   return {

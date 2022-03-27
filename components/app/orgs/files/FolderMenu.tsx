@@ -27,6 +27,7 @@ export interface IFolderMenuProps {
 }
 
 enum MenuKeys {
+  ViewItem = "view-item",
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
   GrantPermission = "grant-permission",
@@ -130,6 +131,17 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
         trigger={["click"]}
         overlay={
           <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+            <Menu.Item key={MenuKeys.ViewItem}>
+              <Link
+                href={appOrgPaths.folderPage(
+                  folder.organizationId,
+                  folder.resourceId
+                )}
+              >
+                View Folder
+              </Link>
+            </Menu.Item>
+            <Menu.Divider key={"divider-00"} />
             <Menu.Item key={MenuKeys.UpdateItem}>
               <Link
                 href={appOrgPaths.folderForm(

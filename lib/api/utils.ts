@@ -47,22 +47,27 @@ export interface IInvokeEndpointParams {
   path: string;
   headers?: OutgoingHttpHeaders;
   method?: "GET" | "POST";
+  omitContentTypeHeader?: boolean;
 }
 
 export async function invokeEndpoint<T extends IEndpointResultBase>(
   props: IInvokeEndpointParams
 ): Promise<T> {
-  const { data, path } = props;
+  const { data, path, omitContentTypeHeader } = props;
   const method = props.method || "POST";
   const incomingHeaders = props.headers || {};
-  const contentType =
-    incomingHeaders[HTTP_HEADER_CONTENT_TYPE] || CONTENT_TYPE_APPLICATION_JSON;
+  const contentType = !omitContentTypeHeader
+    ? incomingHeaders[HTTP_HEADER_CONTENT_TYPE] || CONTENT_TYPE_APPLICATION_JSON
+    : undefined;
   const contentBody =
     contentType === CONTENT_TYPE_APPLICATION_JSON ? JSON.stringify(data) : data;
   const httpHeaders = {
-    [HTTP_HEADER_CONTENT_TYPE]: contentType,
     ...incomingHeaders,
   };
+
+  if (!omitContentTypeHeader) {
+    httpHeaders[HTTP_HEADER_CONTENT_TYPE] = contentType;
+  }
 
   try {
     const result = await fetch(getServerAddr() + path, {

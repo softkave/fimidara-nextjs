@@ -1,5 +1,6 @@
 import { GetServerSideProps } from "next";
 import React from "react";
+import { SWRConfiguration } from "swr";
 import FileContainer from "../../../../../../components/app/orgs/files/FileContainer";
 import FileForm from "../../../../../../components/app/orgs/files/FileForm";
 import Organization from "../../../../../../components/app/orgs/Organization";
@@ -12,6 +13,12 @@ export type IUpdateFileFormPageProps = {
   fileId: string;
 };
 
+const swrConfig: SWRConfiguration = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+};
+
 const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
   const { orgId, fileId } = props;
   const renderForm = React.useCallback(
@@ -22,13 +29,23 @@ const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
   );
 
   return (
-    <Organization orgId={orgId} activeKey={appOrgPaths.rootFolderList(orgId)}>
-      <FileContainer fileId={fileId} orgId={orgId} render={renderForm} />;
+    <Organization
+      orgId={orgId}
+      activeKey={appOrgPaths.rootFolderList(orgId)}
+      swrConfig={swrConfig}
+    >
+      <FileContainer
+        fileId={fileId}
+        orgId={orgId}
+        render={renderForm}
+        swrConfig={swrConfig}
+      />
+      ;
     </Organization>
   );
 };
 
-export default withPageAuthRequired(UpdateFileFormPage);
+export default withPageAuthRequired(UpdateFileFormPage, { swrConfig });
 
 export const getServerSideProps: GetServerSideProps<
   IUpdateFileFormPageProps,

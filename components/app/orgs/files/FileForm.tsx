@@ -57,6 +57,16 @@ const initialValues: IFileFormValue = {
   file: [],
 };
 
+const classes = {
+  fileInput: css({
+    position: "absolute",
+    height: "1px",
+    width: "1px",
+    overflow: "hidden",
+    clip: "rect(1px, 1px, 1px, 1px)",
+  }),
+};
+
 function getFileFormInputFromFile(item: IFile): IFileFormValue {
   return {
     name: item.name,
@@ -77,6 +87,7 @@ export default function FileForm(props: IFileFormProps) {
   const { file, className, orgId, folderId, folderPath } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
+
   const onSubmit = React.useCallback(
     async (data: IFileFormValue) => {
       try {
@@ -91,7 +102,7 @@ export default function FileForm(props: IFileFormProps) {
               organizationId: orgId,
               fileId: file.resourceId,
               description: data.description,
-              data: inputFile.originFileObj!,
+              data: inputFile as any,
               mimetype: inputFile.type,
             });
           } else {
@@ -126,7 +137,7 @@ export default function FileForm(props: IFileFormProps) {
               ? `${folderPath}${folderConstants.nameSeparator}${data.name}`
               : data.name,
             description: data.description,
-            data: inputFile.originFileObj!,
+            data: inputFile as any,
             mimetype: inputFile.type,
           });
 
@@ -165,6 +176,8 @@ export default function FileForm(props: IFileFormProps) {
     },
   });
 
+  console.log(formik);
+
   const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
@@ -180,7 +193,7 @@ export default function FileForm(props: IFileFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Space direction="vertical">
+      <Space direction="vertical" style={{ width: "100%" }}>
         <Input
           name="name"
           value={formik.values.name}
@@ -190,15 +203,13 @@ export default function FileForm(props: IFileFormProps) {
           disabled={submitResult.loading || !!file}
           maxLength={systemConstants.maxNameLength}
         />
-        {first(formik.values.file) && (
+        {!file && first(formik.values.file) && (
           <Button
-            type="text"
+            type="link"
             onClick={() => {
-              formik.setFieldValue(
-                "name",
-                first(formik.values.file)?.originFileObj?.name
-              );
+              formik.setFieldValue("name", first(formik.values.file)?.name);
             }}
+            style={{ paddingLeft: 0, paddingRight: 0 }}
           >
             Auto-fill from selected file
           </Button>
@@ -243,15 +254,30 @@ export default function FileForm(props: IFileFormProps) {
       wrapperCol={{ span: 24 }}
     >
       <Upload
+        multiple={false}
         fileList={formik.values.file}
-        beforeUpload={(file) => {
-          formik.setFieldValue("file", file);
+        beforeUpload={(file, fileList) => {
+          console.log(file, fileList);
+          formik.setFieldValue("file", fileList);
           return false;
         }}
-        onRemove={() => formik.setFieldValue("file", [])}
+        onRemove={() => {
+          formik.setFieldValue("file", []);
+        }}
       >
         <Button icon={<UploadOutlined />}>Select File</Button>
       </Upload>
+
+      {/* <label>
+        <input
+          type="file"
+          onChange={(evt) => {
+            console.log(evt.target.files);
+            formik.setFieldValue("file", [(evt.target.files || [])[0]]);
+          }}
+        />
+
+      </label> */}
     </Form.Item>
   );
 

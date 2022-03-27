@@ -1,5 +1,5 @@
 import React from "react";
-import { KeyedMutator } from "swr";
+import { KeyedMutator, SWRConfiguration } from "swr";
 import { IGetFolderEndpointResult } from "../../../../lib/api/endpoints/folder";
 import { IFolder } from "../../../../lib/definitions/folder";
 import useFolder from "../../../../lib/hooks/orgs/useFolder";
@@ -15,14 +15,18 @@ export interface IFolderContainerProps {
     folder: IFolder,
     mutate: KeyedMutator<IGetFolderEndpointResult>
   ) => React.ReactElement;
+  fetchConfig?: SWRConfiguration;
 }
 
 const FolderContainer: React.FC<IFolderContainerProps> = (props) => {
-  const { orgId, folderId, render } = props;
-  const { data, error, isLoading, mutate } = useFolder({
-    folderId,
-    organizationId: orgId,
-  });
+  const { orgId, folderId, fetchConfig, render } = props;
+  const { data, error, isLoading, mutate } = useFolder(
+    {
+      folderId,
+      organizationId: orgId,
+    },
+    fetchConfig
+  );
 
   if (error) {
     return (

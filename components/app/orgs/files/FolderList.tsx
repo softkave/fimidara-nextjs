@@ -5,6 +5,7 @@ import { appOrgPaths } from "../../../../lib/definitions/system";
 import { css } from "@emotion/css";
 import { IFolder } from "../../../../lib/definitions/folder";
 import FolderMenu from "./FolderMenu";
+import { FolderOutlined } from "@ant-design/icons";
 
 export interface IFolderListProps {
   folders: IFolder[];
@@ -33,6 +34,7 @@ const FolderList: React.FC<IFolderListProps> = (props) => {
             </Link>
           }
           description={item.description}
+          avatar={<FolderOutlined />}
         />
       </List.Item>
     ),

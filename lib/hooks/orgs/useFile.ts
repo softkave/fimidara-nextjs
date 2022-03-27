@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import FileAPI, {
   FileURLs,
   IGetFileDetailsEndpointParams,
@@ -13,11 +13,14 @@ export function getUseFileHookKey(params: IGetFileDetailsEndpointParams) {
   return [FileURLs.getFileDetails, params];
 }
 
-export default function useFile(params?: IGetFileDetailsEndpointParams) {
+export default function useFile(
+  params?: IGetFileDetailsEndpointParams,
+  config: SWRConfiguration = {}
+) {
   const { data, error, mutate } = useSWR(
     params ? getUseFileHookKey(params) : null,
     fetcher,
-    { shouldRetryOnError: false }
+    { shouldRetryOnError: false, ...config }
   );
 
   return {

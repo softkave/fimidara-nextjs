@@ -1,5 +1,5 @@
 import React from "react";
-import { KeyedMutator } from "swr";
+import { KeyedMutator, SWRConfiguration } from "swr";
 import { IGetFileDetailsEndpointResult } from "../../../../lib/api/endpoints/file";
 import { IFile } from "../../../../lib/definitions/file";
 import useFile from "../../../../lib/hooks/orgs/useFile";
@@ -15,14 +15,18 @@ export interface IFileContainerProps {
     file: IFile,
     mutate: KeyedMutator<IGetFileDetailsEndpointResult>
   ) => React.ReactElement;
+  swrConfig?: SWRConfiguration;
 }
 
 const FileContainer: React.FC<IFileContainerProps> = (props) => {
-  const { orgId, fileId, render } = props;
-  const { data, error, isLoading, mutate } = useFile({
-    fileId,
-    organizationId: orgId,
-  });
+  const { orgId, fileId, swrConfig, render } = props;
+  const { data, error, isLoading, mutate } = useFile(
+    {
+      fileId,
+      organizationId: orgId,
+    },
+    swrConfig
+  );
 
   if (error) {
     return (

@@ -5,6 +5,7 @@ import { appOrgPaths } from "../../../../lib/definitions/system";
 import { css } from "@emotion/css";
 import { IFile } from "../../../../lib/definitions/file";
 import FileMenu from "./FileMenu";
+import { FileOutlined } from "@ant-design/icons";
 
 export interface IAppFileListProps {
   files: IFile[];
@@ -31,6 +32,7 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
             </Link>
           }
           description={item.description}
+          avatar={<FileOutlined />}
         />
       </List.Item>
     ),
