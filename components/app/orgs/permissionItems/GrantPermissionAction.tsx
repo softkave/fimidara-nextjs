@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import { Radio, Space, Switch, Typography } from "antd";
 import React from "react";
 
@@ -19,6 +20,11 @@ enum RadioKeys {
   ForResourceAndChildren,
 }
 
+const classes = {
+  labelRoot: css({ display: "flex" }),
+  label: css({ flex: 1, textTransform: "capitalize" }),
+};
+
 const GrantPermissionAction: React.FC<IGrantPermissionActionProps> = (
   props
 ) => {
@@ -26,9 +32,9 @@ const GrantPermissionAction: React.FC<IGrantPermissionActionProps> = (
     props;
 
   return (
-    <Space direction="vertical">
-      <div>
-        <Typography.Text>{label}</Typography.Text>
+    <Space direction="vertical" style={{ width: "100%" }}>
+      <div className={classes.labelRoot}>
+        <Typography.Text className={classes.label}>{label}</Typography.Text>
         <Switch
           disabled={disabled}
           checked={permitted}
@@ -51,9 +57,9 @@ const GrantPermissionAction: React.FC<IGrantPermissionActionProps> = (
                 : RadioKeys.ForResourceAndChildren
             }
           >
-            <Radio value={RadioKeys.ForResourceOnly}>For resource only</Radio>
+            <Radio value={RadioKeys.ForResourceOnly}>For folder only</Radio>
             <Radio value={RadioKeys.ForResourceAndChildren}>
-              For resource and children
+              For folder and children folders
             </Radio>
           </Radio.Group>
         </Space>

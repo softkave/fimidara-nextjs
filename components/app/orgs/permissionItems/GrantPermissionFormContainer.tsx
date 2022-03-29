@@ -39,11 +39,11 @@ const GrantPermissionFormContainer: React.FC<
     onCancel,
   } = props;
 
-  const { data, error, isLoading, mutate } = useResourcePermissionList(
-    orgId,
+  const { data, error, isLoading, mutate } = useResourcePermissionList({
     itemResourceType,
-    itemResourceId
-  );
+    itemResourceId,
+    organizationId: orgId,
+  });
 
   const onSave = React.useCallback(
     async (items: INewPermissionItemInputByResource[]) => {
@@ -55,8 +55,6 @@ const GrantPermissionFormContainer: React.FC<
           itemResourceType,
           itemResourceId,
           items,
-          permissionOwnerId,
-          permissionOwnerType,
           organizationId: orgId,
         });
 

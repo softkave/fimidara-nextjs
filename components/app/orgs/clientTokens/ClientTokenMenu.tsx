@@ -13,7 +13,7 @@ import {
   processEndpointError,
 } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
-import { SelectInfo } from "../../../utils/types";
+import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
@@ -57,7 +57,7 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
 
   const deleteTokenHelper = useRequest(deleteToken, { manual: true });
   const onSelectMenuItem = React.useCallback(
-    (info: SelectInfo) => {
+    (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteToken) {
         Modal.confirm({
           title: "Are you sure you want to delete this token?",
@@ -86,7 +86,7 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
         disabled={deleteTokenHelper.loading}
         trigger={["click"]}
         overlay={
-          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={MenuKeys.UpdatePresets}>
               <Link
                 href={appOrgPaths.clientTokenForm(

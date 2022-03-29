@@ -28,7 +28,7 @@ export default function useGrantPermission(props: IUseGrantPermissionProps) {
     } else {
       return null;
     }
-  }, [toggleVisibility]);
+  }, [visible, toggleVisibility]);
 
   return {
     grantPermissionFormNode,

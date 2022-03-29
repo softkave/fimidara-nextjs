@@ -1,4 +1,5 @@
 import { Space } from "antd";
+import { isUndefined } from "lodash";
 import React from "react";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import {
@@ -20,12 +21,13 @@ export interface IOrganizationPermissionGroupsProps {
   renderItem?: (item: IPresetPermissionsGroup) => React.ReactNode;
   renderList?: (items: IPresetPermissionsGroup[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
+  menu?: React.ReactNode;
 }
 
 const OrganizationPermissionGroups: React.FC<
   IOrganizationPermissionGroupsProps
 > = (props) => {
-  const { orgId, renderItem, renderList, renderRoot } = props;
+  const { orgId, menu, renderItem, renderList, renderRoot } = props;
   const { data, error, isLoading } = useOrgPermissionGroupList(orgId);
   let content: React.ReactNode = null;
 
@@ -70,12 +72,16 @@ const OrganizationPermissionGroups: React.FC<
           title="Preset Permission Groups"
           formLinkPath={appOrgPaths.createPermissionGroupForm(orgId)}
           actions={
-            <GrantPermissionMenu
-              orgId={orgId}
-              itemResourceType={AppResourceType.PresetPermissionsGroup}
-              permissionOwnerId={orgId}
-              permissionOwnerType={AppResourceType.Organization}
-            />
+            !isUndefined(menu) ? (
+              menu
+            ) : (
+              <GrantPermissionMenu
+                orgId={orgId}
+                itemResourceType={AppResourceType.PresetPermissionsGroup}
+                permissionOwnerId={orgId}
+                permissionOwnerType={AppResourceType.Organization}
+              />
+            )
           }
         />
         {content}

@@ -1,4 +1,5 @@
 import { Space } from "antd";
+import { isUndefined } from "lodash";
 import React from "react";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import {
@@ -20,12 +21,13 @@ export interface IOrganizationProgramTokensProps {
   renderItem?: (item: IProgramAccessToken) => React.ReactNode;
   renderList?: (items: IProgramAccessToken[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
+  menu?: React.ReactNode;
 }
 
 const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
   props
 ) => {
-  const { orgId, renderItem, renderList, renderRoot } = props;
+  const { orgId, menu, renderItem, renderList, renderRoot } = props;
   const { data, error, isLoading } = useOrgProgramTokenList(orgId);
   let content: React.ReactNode = null;
 
@@ -70,12 +72,16 @@ const OrganizationProgramTokens: React.FC<IOrganizationProgramTokensProps> = (
           title="Program Access Tokens"
           formLinkPath={appOrgPaths.createProgramTokenForm(orgId)}
           actions={
-            <GrantPermissionMenu
-              orgId={orgId}
-              itemResourceType={AppResourceType.ProgramAccessToken}
-              permissionOwnerId={orgId}
-              permissionOwnerType={AppResourceType.Organization}
-            />
+            !isUndefined(menu) ? (
+              menu
+            ) : (
+              <GrantPermissionMenu
+                orgId={orgId}
+                itemResourceType={AppResourceType.ProgramAccessToken}
+                permissionOwnerId={orgId}
+                permissionOwnerType={AppResourceType.Organization}
+              />
+            )
           }
         />
         {content}

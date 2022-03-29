@@ -11,7 +11,7 @@ import {
   processEndpointError,
 } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
-import { SelectInfo } from "../../../utils/types";
+import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
@@ -61,7 +61,7 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
 
   const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
-    (info: SelectInfo) => {
+    (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
         Modal.confirm({
           title: "Are you sure you want to delete this permission group?",
@@ -89,7 +89,7 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
         disabled={deleteItemHelper.loading}
         trigger={["click"]}
         overlay={
-          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={MenuKeys.UpdateItem}>
               <Link
                 href={appOrgPaths.permissionGroupForm(

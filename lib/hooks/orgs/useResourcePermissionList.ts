@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import PermissionItemAPI, {
+  IGetResourcePermissionItemsEndpointParams,
   PermissionItemURLs,
 } from "../../api/endpoints/permissionItem";
 import { checkEndpointResult } from "../../api/utils";
@@ -7,39 +8,24 @@ import { AppResourceType } from "../../definitions/system";
 
 const fetcher = async (
   p: string,
-  orgId: string,
-  resourceType: AppResourceType,
-  resourceId?: string
+  params: IGetResourcePermissionItemsEndpointParams
 ) => {
   return checkEndpointResult(
-    await PermissionItemAPI.getResourcePermissionItems({
-      organizationId: orgId,
-      itemResourceId: resourceId,
-      itemResourceType: resourceType,
-    })
+    await PermissionItemAPI.getResourcePermissionItems(params)
   );
 };
 
 export function getUseResourcePermissionListHookKey(
-  orgId: string,
-  resourceType: AppResourceType,
-  resourceId?: string
+  params: IGetResourcePermissionItemsEndpointParams
 ) {
-  return [
-    PermissionItemURLs.getResourcePermissionItems,
-    orgId,
-    resourceId,
-    resourceType,
-  ];
+  return [PermissionItemURLs.getResourcePermissionItems, params];
 }
 
 export default function useResourcePermissionList(
-  orgId: string,
-  resourceType: AppResourceType,
-  resourceId?: string
+  params: IGetResourcePermissionItemsEndpointParams
 ) {
   const { data, error, mutate } = useSWR(
-    getUseResourcePermissionListHookKey(orgId, resourceType, resourceId),
+    getUseResourcePermissionListHookKey(params),
     fetcher,
     { shouldRetryOnError: false }
   );

@@ -1,4 +1,5 @@
 import { Space } from "antd";
+import { isUndefined } from "lodash";
 import React from "react";
 import {
   appOrgPaths,
@@ -20,12 +21,13 @@ export interface IOrganizationCollaboratorsProps {
   renderItem?: (item: ICollaborator) => React.ReactNode;
   renderList?: (items: ICollaborator[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
+  menu?: React.ReactNode;
 }
 
 const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
   props
 ) => {
-  const { orgId, renderList, renderRoot, renderItem } = props;
+  const { orgId, menu, renderList, renderRoot, renderItem } = props;
   const { data, error, isLoading } = useOrgCollaboratorList(orgId);
   let content: React.ReactNode = null;
 
@@ -68,12 +70,16 @@ const OrganizationCollaborators: React.FC<IOrganizationCollaboratorsProps> = (
           title="Collaborators"
           formLinkPath={appOrgPaths.createRequestForm(orgId)}
           actions={
-            <GrantPermissionMenu
-              orgId={orgId}
-              itemResourceType={AppResourceType.User}
-              permissionOwnerId={orgId}
-              permissionOwnerType={AppResourceType.Organization}
-            />
+            !isUndefined(menu) ? (
+              menu
+            ) : (
+              <GrantPermissionMenu
+                orgId={orgId}
+                itemResourceType={AppResourceType.User}
+                permissionOwnerId={orgId}
+                permissionOwnerType={AppResourceType.Organization}
+              />
+            )
           }
         />
         {content}

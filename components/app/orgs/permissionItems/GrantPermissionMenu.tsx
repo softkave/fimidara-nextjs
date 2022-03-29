@@ -1,7 +1,7 @@
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { appClasses } from "../../../utils/theme";
-import { SelectInfo } from "../../../utils/types";
+import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import useGrantPermission, {
   GrantPermissionKey,
@@ -13,7 +13,7 @@ const GrantPermissionMenu: React.FC<IUseGrantPermissionProps> = (props) => {
     useGrantPermission(props);
 
   const onSelectMenuItem = React.useCallback(
-    (info: SelectInfo) => {
+    (info: MenuInfo) => {
       if (info.key === GrantPermissionKey.GrantPermission) {
         toggleVisibility();
       }
@@ -27,7 +27,7 @@ const GrantPermissionMenu: React.FC<IUseGrantPermissionProps> = (props) => {
       <Dropdown
         trigger={["click"]}
         overlay={
-          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={GrantPermissionKey.GrantPermission}>
               Grant Permission
             </Menu.Item>

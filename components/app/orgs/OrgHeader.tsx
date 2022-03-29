@@ -11,7 +11,7 @@ import { checkEndpointResult } from "../../../lib/api/utils";
 import { IOrganization } from "../../../lib/definitions/organization";
 import { appOrgPaths, AppResourceType } from "../../../lib/definitions/system";
 import { getUseOrgHookKey } from "../../../lib/hooks/orgs/useOrg";
-import { SelectInfo } from "../../utils/types";
+import { MenuInfo } from "../../utils/types";
 import OrgAvatar from "./OrgAvatar";
 import { BsThreeDots } from "react-icons/bs";
 import { appClasses } from "../../utils/theme";
@@ -68,7 +68,7 @@ const OrgHeader: React.FC<IOrgHeaderProps> = (props) => {
 
   const deleteOrgHelper = useRequest(deleteOrg, { manual: true });
   const onSelectMenuItem = React.useCallback(
-    (info: SelectInfo) => {
+    (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteOrg) {
         Modal.confirm({
           title: "Are you sure you want to delete this organization?",
@@ -105,7 +105,7 @@ const OrgHeader: React.FC<IOrgHeaderProps> = (props) => {
         disabled={deleteOrgHelper.loading}
         trigger={["click"]}
         overlay={
-          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={editOrgPath}>
               <Link href={editOrgPath}>Edit</Link>
             </Menu.Item>

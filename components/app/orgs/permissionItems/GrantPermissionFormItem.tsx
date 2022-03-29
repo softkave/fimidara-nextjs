@@ -1,22 +1,21 @@
-import { Collapse } from "antd";
+import { List } from "antd";
 import React from "react";
 import { INewPermissionItemInputByResource } from "../../../../lib/api/endpoints/permissionItem";
 import {
+  actionLabel,
   AppResourceType,
   BasicCRUDActions,
 } from "../../../../lib/definitions/system";
+import { makeKey } from "../../../../lib/utilities/fns";
 import GrantPermissionAction, {
   IGrantPermissionActionChange,
 } from "./GrantPermissionAction";
 
 export interface IGrantPermissionFormItemProps {
   loading?: boolean;
-  id: string;
   permissionEntityId: string;
-  name: string;
   permissionEntityType: AppResourceType;
   permissionItems: Record<string, INewPermissionItemInputByResource>;
-  permissionOwnerType: AppResourceType;
   itemResourceType: AppResourceType;
   onChange: (
     item: INewPermissionItemInputByResource,
@@ -31,13 +30,11 @@ export function getItemKeyByEntity(item: {
   permissionEntityType: AppResourceType;
   action: BasicCRUDActions;
 }) {
-  return (
-    item.permissionEntityId +
-    "-" +
-    item.permissionEntityType +
-    "-" +
-    item.action
-  );
+  return makeKey([
+    item.permissionEntityId,
+    item.permissionEntityType,
+    item.action,
+  ]);
 }
 
 function getActions(type: AppResourceType) {
@@ -60,20 +57,27 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
   props
 ) => {
   const {
-    permissionOwnerType,
     itemResourceType,
     loading,
-    name,
     permissionEntityId,
     permissionEntityType,
     permissionItems,
-    id,
     onChange,
   } = props;
 
+  const everyActionItem =
+    permissionItems[
+      getItemKeyByEntity({
+        permissionEntityId,
+        permissionEntityType,
+        action: BasicCRUDActions.All,
+      })
+    ];
+
   return (
-    <Collapse.Panel key={id} header={name}>
-      {getActions(itemResourceType).map((action) => {
+    <List
+      dataSource={getActions(itemResourceType)}
+      renderItem={(action) => {
         const item =
           permissionItems[
             getItemKeyByEntity({
@@ -84,19 +88,22 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
           ];
 
         return (
-          <GrantPermissionAction
-            label={action}
-            onChange={(permitted, update) =>
-              onChange(item, action, permitted, update)
-            }
-            hasChildren={!!(permissionOwnerType === AppResourceType.Folder)}
-            isForOwner={item?.isForPermissionOwnerOnly}
-            permitted={!!item && !item.isExclusion}
-            disabled={loading}
-          />
+          <List.Item>
+            <GrantPermissionAction
+              key={action}
+              label={actionLabel[action]}
+              onChange={(permitted, update) =>
+                onChange(item, action, permitted, update)
+              }
+              // hasChildren={!!(permissionOwnerType === AppResourceType.Folder)}
+              isForOwner={item?.isForPermissionOwnerOnly}
+              permitted={!!everyActionItem || (!!item && !item.isExclusion)}
+              disabled={loading}
+            />
+          </List.Item>
         );
-      })}
-    </Collapse.Panel>
+      }}
+    />
   );
 };
 

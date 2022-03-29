@@ -1,4 +1,5 @@
 import { Space } from "antd";
+import { isUndefined } from "lodash";
 import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
 import {
@@ -20,12 +21,13 @@ export interface IOrganizationClientTokensProps {
   renderItem?: (item: IClientAssignedToken) => React.ReactNode;
   renderList?: (items: IClientAssignedToken[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
+  menu?: React.ReactNode;
 }
 
 const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
   props
 ) => {
-  const { orgId, renderList, renderRoot, renderItem } = props;
+  const { orgId, menu, renderList, renderRoot, renderItem } = props;
   const { data, error, isLoading } = useOrgClientTokenList(orgId);
   let content: React.ReactNode = null;
 
@@ -73,12 +75,16 @@ const OrganizationClientTokens: React.FC<IOrganizationClientTokensProps> = (
           title="Client Assigned Tokens"
           formLinkPath={appOrgPaths.createClientTokenForm(orgId)}
           actions={
-            <GrantPermissionMenu
-              orgId={orgId}
-              itemResourceType={AppResourceType.ClientAssignedToken}
-              permissionOwnerId={orgId}
-              permissionOwnerType={AppResourceType.Organization}
-            />
+            !isUndefined(menu) ? (
+              menu
+            ) : (
+              <GrantPermissionMenu
+                orgId={orgId}
+                itemResourceType={AppResourceType.ClientAssignedToken}
+                permissionOwnerId={orgId}
+                permissionOwnerType={AppResourceType.Organization}
+              />
+            )
           }
         />
         {content}

@@ -11,3 +11,4 @@
 - Group and better render permission items
 - Icons
 - Better max file size where you select type and enter number
+- File anad folder breadcrumbs

@@ -2,7 +2,7 @@ import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { AppResourceType } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import { SelectInfo } from "../../../utils/types";
+import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 
@@ -32,7 +32,7 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
   });
 
   const onSelectMenuItem = React.useCallback(
-    (info: SelectInfo) => {
+    (info: MenuInfo) => {
       if (info.key === MenuKeys.ChildrenFoldersGrantPermission) {
         childrenFoldersGrantPermission.toggleVisibility();
       } else if (info.key === MenuKeys.ChildrenFilesGrantPermission) {
@@ -47,7 +47,7 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
       <Dropdown
         trigger={["click"]}
         overlay={
-          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={MenuKeys.ChildrenFoldersGrantPermission}>
               Grant Permission To Children Folders
             </Menu.Item>

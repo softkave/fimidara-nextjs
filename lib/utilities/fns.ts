@@ -1,3 +1,4 @@
+import { compact } from "lodash";
 import moment from "moment";
 
 export function cast<ToType>(resource: any): ToType {
@@ -34,4 +35,12 @@ export function getMomentFromTime(time: string) {
 
 export function toBoolean(...args: any[]) {
   return !!args.find((arg) => !!arg);
+}
+
+export function makeKey(fields: any[], separator = "-", omitFalsy = true) {
+  if (omitFalsy) {
+    fields = compact(fields);
+  }
+
+  return fields.join(separator);
 }

@@ -11,7 +11,7 @@ import {
   processEndpointError,
 } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
-import { SelectInfo } from "../../../utils/types";
+import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
@@ -93,7 +93,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
 
   const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
-    (info: SelectInfo) => {
+    (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
         Modal.confirm({
           title: "Are you sure you want to delete this folder?",
@@ -109,6 +109,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
+        console.log(MenuKeys.GrantPermission);
         folderGrantPermission.toggleVisibility();
       } else if (info.key === MenuKeys.ChildrenFoldersGrantPermission) {
         childrenFoldersGrantPermission.toggleVisibility();
@@ -130,7 +131,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
         disabled={deleteItemHelper.loading}
         trigger={["click"]}
         overlay={
-          <Menu onSelect={onSelectMenuItem} style={{ minWidth: "150px" }}>
+          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={MenuKeys.ViewItem}>
               <Link
                 href={appOrgPaths.folderPage(
