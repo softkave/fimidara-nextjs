@@ -109,7 +109,6 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        console.log(MenuKeys.GrantPermission);
         folderGrantPermission.toggleVisibility();
       } else if (info.key === MenuKeys.ChildrenFoldersGrantPermission) {
         childrenFoldersGrantPermission.toggleVisibility();

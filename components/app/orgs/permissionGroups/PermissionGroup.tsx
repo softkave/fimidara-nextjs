@@ -12,7 +12,6 @@ import {
 } from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
 import usePermissionGroup from "../../../../lib/hooks/orgs/usePermissionGroup";
-import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getUseOrgPermissionGroupListHookKey } from "../../../../lib/hooks/orgs/useOrgPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 import { appClasses } from "../../../utils/theme";
@@ -27,24 +26,24 @@ export interface IPermissionGroupProps {
 function PermissionGroup(props: IPermissionGroupProps) {
   const { presetId } = props;
   const router = useRouter();
-  const { error, isLoading, data, mutate } = usePermissionGroup(presetId);
+  const { error, isLoading, data } = usePermissionGroup(presetId);
   const { mutate: cacheMutate } = useSWRConfig();
-  const onRemovePermissionGroup = React.useCallback(
-    async (presetId: string) => {
-      assert(data?.preset, new Error("Permission group not found"));
-      const updatedPresets = data.preset.presets.filter(
-        (item) => item.presetId !== presetId
-      );
+  // const onRemovePermissionGroup = React.useCallback(
+  //   async (presetId: string) => {
+  //     assert(data?.preset, new Error("Permission group not found"));
+  //     const updatedPresets = data.preset.presets.filter(
+  //       (item) => item.presetId !== presetId
+  //     );
 
-      const result = await PresetPermissionsGroupAPI.updatePreset({
-        presetId,
-        data: { presets: updatedPresets },
-      });
+  //     const result = await PresetPermissionsGroupAPI.updatePreset({
+  //       presetId,
+  //       data: { presets: updatedPresets },
+  //     });
 
-      mutate(result, false);
-    },
-    [data, presetId]
-  );
+  //     mutate(result, false);
+  //   },
+  //   [data, presetId]
+  // );
 
   const onCompleteDeletePreset = React.useCallback(async () => {
     assert(data?.preset, new Error("Permission group not found"));
@@ -68,9 +67,16 @@ function PermissionGroup(props: IPermissionGroupProps) {
 
   const preset = data.preset;
   return (
-    <div className={appClasses.main}>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
-        <ComponentHeader title={preset.name}>
+    <div>
+      <Space
+        direction="vertical"
+        size={32}
+        style={{ width: "100%", padding: "16px" }}
+      >
+        <ComponentHeader
+          title={preset.name}
+          className={appClasses.mainNoPadding}
+        >
           <PermissionGroupMenu
             preset={preset}
             onCompleteDelete={onCompleteDeletePreset}
@@ -82,6 +88,7 @@ function PermissionGroup(props: IPermissionGroupProps) {
           direction="vertical"
           label="Resource ID"
           node={preset.resourceId}
+          className={appClasses.mainNoPadding}
         />
         {preset.description && (
           <LabeledNode
@@ -89,13 +96,15 @@ function PermissionGroup(props: IPermissionGroupProps) {
             label="Description"
             node={preset.description}
             direction="vertical"
+            className={appClasses.mainNoPadding}
           />
         )}
-        <AssignedPresetList
-          orgId={preset.organizationId}
-          presets={preset.presets}
-          onRemoveItem={onRemovePermissionGroup}
-        />
+        <div className={appClasses.mainNoPadding}>
+          <AssignedPresetList
+            orgId={preset.organizationId}
+            presets={preset.presets}
+          />
+        </div>
         <EntityPermissionGroupList
           orgId={preset.organizationId}
           entityId={preset.resourceId}

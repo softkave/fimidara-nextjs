@@ -22,6 +22,11 @@ export const appClasses = {
     marginRight: "auto",
     padding: "16px",
   }),
+  mainNoPadding: css({
+    maxWidth: appDimensions.app.maxWidth,
+    marginLeft: "auto",
+    marginRight: "auto",
+  }),
   iconBtn: css({
     display: "inline-flex",
     alignItems: "center",

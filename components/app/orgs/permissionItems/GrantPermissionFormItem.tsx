@@ -1,40 +1,25 @@
 import { List } from "antd";
 import React from "react";
-import { INewPermissionItemInputByResource } from "../../../../lib/api/endpoints/permissionItem";
 import {
   actionLabel,
   AppResourceType,
   BasicCRUDActions,
 } from "../../../../lib/definitions/system";
-import { makeKey } from "../../../../lib/utilities/fns";
-import GrantPermissionAction, {
-  IGrantPermissionActionChange,
-} from "./GrantPermissionAction";
+import GrantPermissionAction from "./GrantPermissionAction";
+import PermissionItemsController from "./PermissionItemsController";
 
 export interface IGrantPermissionFormItemProps {
   loading?: boolean;
   permissionEntityId: string;
   permissionEntityType: AppResourceType;
-  permissionItems: Record<string, INewPermissionItemInputByResource>;
   itemResourceType: AppResourceType;
+  controller: PermissionItemsController;
   onChange: (
-    item: INewPermissionItemInputByResource,
+    permissionEntityId: string,
+    permissionEntityType: AppResourceType,
     action: BasicCRUDActions,
-    permitted: boolean,
-    change?: IGrantPermissionActionChange
+    permitted: boolean
   ) => void;
-}
-
-export function getItemKeyByEntity(item: {
-  permissionEntityId: string;
-  permissionEntityType: AppResourceType;
-  action: BasicCRUDActions;
-}) {
-  return makeKey([
-    item.permissionEntityId,
-    item.permissionEntityType,
-    item.action,
-  ]);
 }
 
 function getActions(type: AppResourceType) {
@@ -61,43 +46,34 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
     loading,
     permissionEntityId,
     permissionEntityType,
-    permissionItems,
+    controller,
     onChange,
   } = props;
-
-  const everyActionItem =
-    permissionItems[
-      getItemKeyByEntity({
-        permissionEntityId,
-        permissionEntityType,
-        action: BasicCRUDActions.All,
-      })
-    ];
 
   return (
     <List
       dataSource={getActions(itemResourceType)}
       renderItem={(action) => {
-        const item =
-          permissionItems[
-            getItemKeyByEntity({
-              permissionEntityId,
-              permissionEntityType,
-              action,
-            })
-          ];
+        let actionPermitted = controller.canPerformAction(
+          permissionEntityId,
+          permissionEntityType,
+          action
+        );
 
         return (
           <List.Item>
             <GrantPermissionAction
               key={action}
               label={actionLabel[action]}
-              onChange={(permitted, update) =>
-                onChange(item, action, permitted, update)
+              onChange={(permitted) =>
+                onChange(
+                  permissionEntityId,
+                  permissionEntityType,
+                  action,
+                  permitted
+                )
               }
-              // hasChildren={!!(permissionOwnerType === AppResourceType.Folder)}
-              isForOwner={item?.isForPermissionOwnerOnly}
-              permitted={!!everyActionItem || (!!item && !item.isExclusion)}
+              permitted={actionPermitted}
               disabled={loading}
             />
           </List.Item>

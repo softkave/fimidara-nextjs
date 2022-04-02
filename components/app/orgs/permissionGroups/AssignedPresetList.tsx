@@ -12,7 +12,7 @@ import { getBaseError } from "../../../../lib/utilities/errors";
 export interface IAssignedPresetListProps {
   orgId: string;
   presets: IAssignedPresetPermissionsGroup[];
-  onRemoveItem: (id: string) => Promise<void>;
+  className?: string;
 }
 
 const classes = {
@@ -33,7 +33,7 @@ const classes = {
 // TODO: add bulk remove, and add bulk actions to other lists
 
 const AssignedPresetList: React.FC<IAssignedPresetListProps> = (props) => {
-  const { orgId, presets } = props;
+  const { orgId, presets, className } = props;
   const { isLoading, error, data } = useOrgPermissionGroupList(orgId);
   let content: React.ReactNode = null;
   const presetsMap = React.useMemo(() => {
@@ -79,7 +79,12 @@ const AssignedPresetList: React.FC<IAssignedPresetListProps> = (props) => {
   }
 
   return (
-    <Space direction="vertical" size={"small"} style={{ width: "100%" }}>
+    <Space
+      direction="vertical"
+      size={"small"}
+      style={{ width: "100%" }}
+      className={className}
+    >
       <Typography.Title level={5} style={{ margin: 0 }}>
         Assigned Permission Groups
       </Typography.Title>

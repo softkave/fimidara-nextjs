@@ -94,7 +94,12 @@ const PermissionItemListResourcesContainer: React.FC<
       />
     );
   } else if (isLoading || !data) {
-    content = <PageLoading messageText="Loading resources..." />;
+    content = (
+      <PageLoading
+        className={appClasses.main}
+        messageText="Loading resources..."
+      />
+    );
   }
 
   return render(resourcesMap, items);

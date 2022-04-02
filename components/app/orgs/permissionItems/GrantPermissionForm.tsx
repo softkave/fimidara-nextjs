@@ -16,10 +16,8 @@ import OrganizationClientTokens from "../clientTokens/OrganizationClientTokens";
 import OrganizationCollaborators from "../collaborators/OrganizationCollaborators";
 import OrganizationPermissionGroups from "../permissionGroups/OrganizationPermissionGroups";
 import OrganizationProgramTokens from "../programTokens/OrganizationProgramTokens";
-import { IGrantPermissionActionChange } from "./GrantPermissionAction";
-import GrantPermissionFormItem, {
-  getItemKeyByEntity,
-} from "./GrantPermissionFormItem";
+import GrantPermissionFormItem from "./GrantPermissionFormItem";
+import PermissionItemsController from "./PermissionItemsController";
 
 export interface IGrantPermissionFormProps {
   loading?: boolean;
@@ -64,25 +62,13 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
   } = props;
 
   const [activeKey] = React.useState(TabKey.PermissionGroup);
-  const [permissionItems, setPermissionItems] = React.useState<
-    Record<string, INewPermissionItemInputByResource>
-  >(() =>
-    existingPermissionItems.reduce((map, itemInput) => {
-      const item: INewPermissionItemInputByResource = {
-        permissionEntityId: itemInput.permissionEntityId,
-        permissionEntityType: itemInput.permissionEntityType,
-        action: itemInput.action,
-        isExclusion: itemInput.isExclusion,
-        isForPermissionOwnerOnly: itemInput.isForPermissionOwnerOnly,
-        permissionOwnerId: itemInput.permissionOwnerId,
-        permissionOwnerType: itemInput.permissionOwnerType,
-        isWildcardResourceType:
-          itemInput.itemResourceType === AppResourceType.All,
-      };
-
-      map[getItemKeyByEntity(item)] = item;
-      return map;
-    }, {} as Record<string, INewPermissionItemInputByResource>)
+  const [controller, setController] = React.useState<PermissionItemsController>(
+    () =>
+      PermissionItemsController.fromPermissionItems(
+        existingPermissionItems,
+        permissionOwnerId,
+        permissionOwnerType
+      )
   );
 
   const updateItem = React.useCallback(
@@ -90,45 +76,18 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
       permissionEntityId: string,
       permissionEntityType: AppResourceType,
       action: BasicCRUDActions,
-      item: INewPermissionItemInputByResource | null,
-      permitted: boolean,
-      update: IGrantPermissionActionChange = {}
+      permitted: boolean
     ) => {
-      let newItems = { ...permissionItems };
+      const newController = controller.togglePermission(
+        permissionEntityId,
+        permissionEntityType,
+        action,
+        permitted
+      );
 
-      if (!item) {
-        // Create new item
-        item = {
-          permissionEntityId,
-          permissionEntityType,
-          permissionOwnerId,
-          permissionOwnerType,
-          action,
-          isExclusion: false,
-        };
-
-        const key = getItemKeyByEntity(item);
-        newItems[key] = item;
-      } else if (!permitted) {
-        // Delete existing permission item for entity
-        newItems = Object.values(newItems).reduce((map, item) => {
-          if (
-            item.permissionEntityId !== permissionEntityId &&
-            item.permissionEntityType !== permissionEntityType
-          ) {
-            map[getItemKeyByEntity(item)] = item;
-          }
-
-          return map;
-        }, {} as Record<string, INewPermissionItemInputByResource>);
-      } else {
-        // Update permission item
-        // do nothing, we don't need it yet
-      }
-
-      setPermissionItems(newItems);
+      setController(newController);
     },
-    [permissionItems]
+    [controller]
   );
 
   const renderItem = React.useCallback(
@@ -142,25 +101,16 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
           <GrantPermissionFormItem
             key={permissionEntityId}
             itemResourceType={itemResourceType}
-            onChange={(item, action, permitted, update) =>
-              updateItem(
-                permissionEntityId,
-                permissionEntityType,
-                action,
-                item,
-                permitted,
-                update
-              )
-            }
+            onChange={updateItem}
             permissionEntityId={permissionEntityId}
             permissionEntityType={permissionEntityType}
-            permissionItems={permissionItems}
             loading={loading}
+            controller={controller}
           />
         </Collapse.Panel>
       );
     },
-    [permissionItems, itemResourceType, loading, updateItem]
+    [controller, itemResourceType, loading, updateItem]
   );
 
   const renderPreset = React.useCallback(
@@ -236,8 +186,8 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
   );
 
   const internalOnSave = React.useCallback(() => {
-    onSave(Object.values(permissionItems));
-  }, [permissionItems]);
+    onSave(controller.getItems());
+  }, [controller]);
 
   const tabsNode = (
     <Tabs

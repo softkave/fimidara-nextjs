@@ -1,10 +1,11 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Typography } from "antd";
 import React from "react";
 
 export interface IComponentHeaderProps {
   title: string;
   copyable?: boolean;
+  className?: string;
 }
 
 const classes = {
@@ -18,9 +19,9 @@ const classes = {
 };
 
 const ComponentHeader: React.FC<IComponentHeaderProps> = (props) => {
-  const { title, copyable, children } = props;
+  const { title, copyable, className, children } = props;
   return (
-    <div className={classes.root}>
+    <div className={cx(classes.root, className)}>
       <Typography.Title copyable={copyable} level={4} className={classes.title}>
         {title}
       </Typography.Title>

@@ -42,6 +42,8 @@ const GrantPermissionFormContainer: React.FC<
   const { data, error, isLoading, mutate } = useResourcePermissionList({
     itemResourceType,
     itemResourceId,
+    permissionOwnerId,
+    permissionOwnerType,
     organizationId: orgId,
   });
 
@@ -80,10 +82,9 @@ const GrantPermissionFormContainer: React.FC<
   );
 
   const saveItemsHelper = useRequest(onSave, { manual: true });
-  let content: React.ReactNode = null;
 
   if (error) {
-    content = (
+    return (
       <PageError
         className={appClasses.main}
         messageText={
@@ -92,9 +93,7 @@ const GrantPermissionFormContainer: React.FC<
       />
     );
   } else if (isLoading || !data) {
-    content = (
-      <PageLoading messageText="Loading resource permission items..." />
-    );
+    return <PageLoading messageText="Loading resource permission items..." />;
   }
 
   return (
