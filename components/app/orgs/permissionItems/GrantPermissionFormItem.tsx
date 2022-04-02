@@ -6,14 +6,14 @@ import {
   BasicCRUDActions,
 } from "../../../../lib/definitions/system";
 import GrantPermissionAction from "./GrantPermissionAction";
-import PermissionItemsController from "./PermissionItemsController";
+import PermissionItemsByResourceController from "./PermissionItemsController";
 
 export interface IGrantPermissionFormItemProps {
   loading?: boolean;
   permissionEntityId: string;
   permissionEntityType: AppResourceType;
   itemResourceType: AppResourceType;
-  controller: PermissionItemsController;
+  controller: PermissionItemsByResourceController;
   onChange: (
     permissionEntityId: string,
     permissionEntityType: AppResourceType,

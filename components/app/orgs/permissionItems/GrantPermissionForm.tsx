@@ -1,10 +1,13 @@
 import { RightOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Collapse, Modal, Tabs } from "antd";
+import { omit } from "lodash";
 import React from "react";
-import { INewPermissionItemInputByResource } from "../../../../lib/api/endpoints/permissionItem";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
-import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
+import {
+  INewPermissionItemInput,
+  IPermissionItem,
+} from "../../../../lib/definitions/permissionItem";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import {
@@ -17,16 +20,20 @@ import OrganizationCollaborators from "../collaborators/OrganizationCollaborator
 import OrganizationPermissionGroups from "../permissionGroups/OrganizationPermissionGroups";
 import OrganizationProgramTokens from "../programTokens/OrganizationProgramTokens";
 import GrantPermissionFormItem from "./GrantPermissionFormItem";
-import PermissionItemsController from "./PermissionItemsController";
+import PermissionItemsByResourceController from "./PermissionItemsController";
 
 export interface IGrantPermissionFormProps {
   loading?: boolean;
   orgId: string;
+  itemResourceId?: string;
   itemResourceType: AppResourceType;
   permissionOwnerId: string;
   permissionOwnerType: AppResourceType;
   existingPermissionItems: IPermissionItem[];
-  onSave: (items: INewPermissionItemInputByResource[]) => void;
+  onSave: (
+    newItems: INewPermissionItemInput[],
+    deletedItemIds: string[]
+  ) => void;
   onCancel: () => void;
 }
 
@@ -52,6 +59,7 @@ const classes = {
 const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
   const {
     orgId,
+    itemResourceId,
     itemResourceType,
     permissionOwnerType,
     permissionOwnerId,
@@ -62,14 +70,16 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
   } = props;
 
   const [activeKey] = React.useState(TabKey.PermissionGroup);
-  const [controller, setController] = React.useState<PermissionItemsController>(
-    () =>
-      PermissionItemsController.fromPermissionItems(
+  const [controller, setController] =
+    React.useState<PermissionItemsByResourceController>(() =>
+      PermissionItemsByResourceController.fromPermissionItems(
         existingPermissionItems,
         permissionOwnerId,
-        permissionOwnerType
+        permissionOwnerType,
+        itemResourceType,
+        itemResourceId
       )
-  );
+    );
 
   const updateItem = React.useCallback(
     (
@@ -186,7 +196,10 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
   );
 
   const internalOnSave = React.useCallback(() => {
-    onSave(controller.getItems());
+    const newItems = controller
+      .getItems()
+      .map((item) => omit(item, ["resourceId", "isNew"]));
+    onSave(newItems, controller.getDeletedItemIds());
   }, [controller]);
 
   const tabsNode = (

@@ -17,11 +17,13 @@ export interface IPermissionItem {
 }
 
 export interface INewPermissionItemInput {
+  permissionEntityId: string;
+  permissionEntityType: AppResourceType;
+  action: BasicCRUDActions;
+  isExclusion?: boolean;
+  isForPermissionOwnerOnly?: boolean;
   permissionOwnerId: string;
   permissionOwnerType: AppResourceType;
   itemResourceId?: string;
   itemResourceType: AppResourceType;
-  action: BasicCRUDActions;
-  isExclusion?: boolean;
-  isForPermissionOwnerOnly?: boolean;
 }

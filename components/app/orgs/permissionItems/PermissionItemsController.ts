@@ -1,6 +1,8 @@
 import { first, flattenDeep } from "lodash";
-import { INewPermissionItemInputByResource } from "../../../../lib/api/endpoints/permissionItem";
-import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
+import {
+  INewPermissionItemInput,
+  IPermissionItem,
+} from "../../../../lib/definitions/permissionItem";
 import {
   AppResourceType,
   BasicCRUDActions,
@@ -9,23 +11,27 @@ import { makeKey } from "../../../../lib/utilities/fns";
 
 /**
  * map: entity ID, type, and action -> item[]
- * sort: exclusion, resource ID & type, wildcard
+ * sort: exclusion, everything else
  * can perform action: checks first of action and wildcard action
- *   and ensures they are exclusion if true
+ *   and ensures they are not exclusion
  * grant permission: if can't perform action cause no item,
- *   add input item with resource ID, type, action, entity ID, type,
- *   permission owner ID, and type. if can't perform action cause of
+ *   add input item. if can't perform action cause of
  *   exclusion, delete exclusion and add item for access.
  * remove permission: delete all items for entity ID, type and action
  *   check for wildcard resource type and add exclusion item if found.
  */
 
-export type NewPermissionItemInputByResourceMap = Record<
+export interface INewPermissionItemInputExt extends INewPermissionItemInput {
+  isNew: boolean;
+  resourceId?: string;
+}
+
+export type NewPermissionItemInputMap = Record<
   string,
-  INewPermissionItemInputByResource[]
+  INewPermissionItemInputExt[]
 >;
 
-export default class PermissionItemsController {
+export default class PermissionItemsByResourceController {
   static getEntityActionKey(
     permissionEntityId: string,
     permissionEntityType: AppResourceType,
@@ -34,7 +40,7 @@ export default class PermissionItemsController {
     return makeKey([permissionEntityId, permissionEntityType, action]);
   }
 
-  static makeInputList(item: IPermissionItem) {
+  static makeInputList(item: IPermissionItem): INewPermissionItemInputExt {
     return {
       permissionEntityId: item.permissionEntityId,
       permissionEntityType: item.permissionEntityType,
@@ -43,12 +49,15 @@ export default class PermissionItemsController {
       isForPermissionOwnerOnly: item.isForPermissionOwnerOnly,
       permissionOwnerId: item.permissionOwnerId,
       permissionOwnerType: item.permissionOwnerType,
-      isWildcardResourceType: item.itemResourceType === AppResourceType.All,
+      itemResourceType: item.itemResourceType,
+      itemResourceId: item.itemResourceId,
+      isNew: false,
+      resourceId: item.resourceId,
     };
   }
 
   static indexItems(items: IPermissionItem[]) {
-    const itemsMap: NewPermissionItemInputByResourceMap = {};
+    const itemsMap: NewPermissionItemInputMap = {};
     items.forEach((item) => {
       const key = this.getEntityActionKey(
         item.permissionEntityId,
@@ -57,14 +66,17 @@ export default class PermissionItemsController {
       );
 
       const actionItemList = itemsMap[key] || [];
-      actionItemList.push(PermissionItemsController.makeInputList(item));
+      actionItemList.push(
+        PermissionItemsByResourceController.makeInputList(item)
+      );
+
       itemsMap[key] = actionItemList;
     });
 
     return itemsMap;
   }
 
-  static sortItems(itemsMap: NewPermissionItemInputByResourceMap) {
+  static sortItems(itemsMap: NewPermissionItemInputMap) {
     for (const key in itemsMap) {
       const actionItemList = itemsMap[key];
       actionItemList.sort((item01, item02) => {
@@ -82,29 +94,42 @@ export default class PermissionItemsController {
   static fromPermissionItems(
     inputItems: IPermissionItem[],
     permissionOwnerId: string,
-    permissionOwnerType: AppResourceType
+    permissionOwnerType: AppResourceType,
+    itemResourceType: AppResourceType,
+    itemResourceId?: string
   ) {
-    const itemsMap = PermissionItemsController.indexItems(inputItems);
-    PermissionItemsController.sortItems(itemsMap);
-    return new PermissionItemsController(
+    const itemsMap = PermissionItemsByResourceController.indexItems(inputItems);
+    PermissionItemsByResourceController.sortItems(itemsMap);
+    return new PermissionItemsByResourceController(
       itemsMap,
       permissionOwnerId,
-      permissionOwnerType
+      permissionOwnerType,
+      itemResourceType,
+      itemResourceId
     );
   }
 
-  private itemsMap: NewPermissionItemInputByResourceMap;
+  private itemsMap: NewPermissionItemInputMap;
   private permissionOwnerId: string;
   private permissionOwnerType: AppResourceType;
+  private itemResourceId?: string;
+  private itemResourceType: AppResourceType;
+  private deletedItemIds: string[] = [];
 
   constructor(
-    inputItems: NewPermissionItemInputByResourceMap,
+    inputItems: NewPermissionItemInputMap,
     permissionOwnerId: string,
-    permissionOwnerType: AppResourceType
+    permissionOwnerType: AppResourceType,
+    itemResourceType: AppResourceType,
+    itemResourceId?: string,
+    deletedItemIds: string[] = []
   ) {
     this.itemsMap = inputItems;
     this.permissionOwnerId = permissionOwnerId;
     this.permissionOwnerType = permissionOwnerType;
+    this.itemResourceId = itemResourceId;
+    this.itemResourceType = itemResourceType;
+    this.deletedItemIds = deletedItemIds;
   }
 
   public canPerformAction(
@@ -160,17 +185,22 @@ export default class PermissionItemsController {
         permissionEntityType,
         permissionOwnerId: this.permissionOwnerId,
         permissionOwnerType: this.permissionOwnerType,
-        isWildcardResourceType: true,
+        isNew: true,
+        itemResourceType: this.itemResourceType,
+        itemResourceId: this.itemResourceId,
       });
     }
 
-    const newItemsMap: NewPermissionItemInputByResourceMap = {};
+    const newItemsMap: NewPermissionItemInputMap = {};
     newItemsMap[actionItemKey] = newActionItemList;
     newItemsMap[wildcardActionItemKey] = newWildcardActionItemList;
-    return new PermissionItemsController(
+    return new PermissionItemsByResourceController(
       newItemsMap,
       this.permissionOwnerId,
-      this.permissionOwnerType
+      this.permissionOwnerType,
+      this.itemResourceType,
+      this.itemResourceId,
+      this.deletedItemIds
     );
   }
 
@@ -200,25 +230,35 @@ export default class PermissionItemsController {
     const newWildcardActionItemList =
       action === BasicCRUDActions.All
         ? this.removeItemsForResource(wildcardActionItemList)
-        : [...wildcardActionItemList];
+        : wildcardActionItemList;
 
-    newActionItemList.unshift({
-      action,
-      permissionEntityId,
-      permissionEntityType,
-      permissionOwnerId: this.permissionOwnerId,
-      permissionOwnerType: this.permissionOwnerType,
-      isWildcardResourceType: false,
-      isExclusion: true,
-    });
+    if (
+      newActionItemList.length !== 0 ||
+      newWildcardActionItemList.length !== 0
+    ) {
+      newActionItemList.unshift({
+        action,
+        permissionEntityId,
+        permissionEntityType,
+        permissionOwnerId: this.permissionOwnerId,
+        permissionOwnerType: this.permissionOwnerType,
+        isExclusion: true,
+        isNew: true,
+        itemResourceType: this.itemResourceType,
+        itemResourceId: this.itemResourceId,
+      });
+    }
 
-    const newItemsMap: NewPermissionItemInputByResourceMap = {};
+    const newItemsMap: NewPermissionItemInputMap = {};
     newItemsMap[actionItemKey] = newActionItemList;
     newItemsMap[wildcardActionItemKey] = newWildcardActionItemList;
-    return new PermissionItemsController(
+    return new PermissionItemsByResourceController(
       newItemsMap,
       this.permissionOwnerId,
-      this.permissionOwnerType
+      this.permissionOwnerType,
+      this.itemResourceType,
+      this.itemResourceId,
+      this.deletedItemIds
     );
   }
 
@@ -237,14 +277,32 @@ export default class PermissionItemsController {
     return flattenDeep(Object.values(this.itemsMap));
   }
 
-  private removeExclusions(itemList: INewPermissionItemInputByResource[]) {
-    return itemList.filter((item) => !item.isExclusion);
+  public getDeletedItemIds() {
+    return this.deletedItemIds;
   }
 
-  private removeItemsForResource(
-    itemList: INewPermissionItemInputByResource[]
-  ) {
-    return itemList.filter((item) => item.isWildcardResourceType);
+  private removeExclusions(itemList: INewPermissionItemInputExt[]) {
+    return itemList.filter((item) => {
+      if (!item.isExclusion) {
+        return true;
+      } else if (item.resourceId) {
+        this.deletedItemIds.push(item.resourceId);
+      }
+    });
+  }
+
+  private removeItemsForResource(itemList: INewPermissionItemInputExt[]) {
+    return itemList.filter((item) => {
+      const isForResource =
+        item.itemResourceId == this.itemResourceId && // we want null == undefined
+        item.itemResourceType === this.itemResourceType;
+
+      if (!isForResource) {
+        return true;
+      } else if (item.resourceId) {
+        this.deletedItemIds.push(item.resourceId);
+      }
+    });
   }
 
   private getEntityActionItemList(
@@ -252,17 +310,19 @@ export default class PermissionItemsController {
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
   ) {
-    const actionItemKey = PermissionItemsController.getEntityActionKey(
-      permissionEntityId,
-      permissionEntityType,
-      action
-    );
+    const actionItemKey =
+      PermissionItemsByResourceController.getEntityActionKey(
+        permissionEntityId,
+        permissionEntityType,
+        action
+      );
 
-    const wildcardActionItemKey = PermissionItemsController.getEntityActionKey(
-      permissionEntityId,
-      permissionEntityType,
-      BasicCRUDActions.All
-    );
+    const wildcardActionItemKey =
+      PermissionItemsByResourceController.getEntityActionKey(
+        permissionEntityId,
+        permissionEntityType,
+        BasicCRUDActions.All
+      );
 
     const actionItemList = this.itemsMap[actionItemKey] || [];
     const wildcardActionItemList = this.itemsMap[wildcardActionItemKey] || [];

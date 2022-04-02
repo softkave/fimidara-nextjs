@@ -1,13 +1,13 @@
 import { useRequest } from "ahooks";
 import { message } from "antd";
 import React from "react";
-import PermissionItemAPI, {
-  INewPermissionItemInputByResource,
-} from "../../../../lib/api/endpoints/permissionItem";
+import PermissionItemAPI from "../../../../lib/api/endpoints/permissionItem";
+import { IEndpointResultBase } from "../../../../lib/api/types";
 import {
   checkEndpointResult,
   processEndpointError,
 } from "../../../../lib/api/utils";
+import { INewPermissionItemInput } from "../../../../lib/definitions/permissionItem";
 import { AppResourceType } from "../../../../lib/definitions/system";
 import useResourcePermissionList from "../../../../lib/hooks/orgs/useResourcePermissionList";
 import { getBaseError } from "../../../../lib/utilities/errors";
@@ -48,19 +48,31 @@ const GrantPermissionFormContainer: React.FC<
   });
 
   const onSave = React.useCallback(
-    async (items: INewPermissionItemInputByResource[]) => {
+    async (newItems: INewPermissionItemInput[], deletedItemIds: string[]) => {
       try {
         // TODO: invalidate all the data that has assigned presets
         // when request is successful
 
-        const result = await PermissionItemAPI.replaceItemsByResource({
-          itemResourceType,
-          itemResourceId,
-          items,
-          organizationId: orgId,
-        });
+        let result: IEndpointResultBase;
 
-        checkEndpointResult(result);
+        if (deletedItemIds.length) {
+          result = await PermissionItemAPI.deleteItemsById({
+            itemIds: deletedItemIds,
+            organizationId: orgId,
+          });
+
+          checkEndpointResult(result);
+        }
+
+        if (newItems.length) {
+          result = await PermissionItemAPI.addItems({
+            items: newItems,
+            organizationId: orgId,
+          });
+
+          checkEndpointResult(result);
+        }
+
         message.success("Resource permissions updated");
         mutate();
       } catch (error: any) {

@@ -1,5 +1,8 @@
-import { IPermissionItem } from "../../definitions/permissionItem";
-import { AppResourceType, BasicCRUDActions } from "../../definitions/system";
+import {
+  INewPermissionItemInput,
+  IPermissionItem,
+} from "../../definitions/permissionItem";
+import { AppResourceType } from "../../definitions/system";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
@@ -8,19 +11,6 @@ const addItemsURL = `${baseURL}/addItems`;
 const deleteItemsByIdURL = `${baseURL}/deleteItemsById`;
 const getEntityPermissionItemsURL = `${baseURL}/getEntityPermissionItems`;
 const getResourcePermissionItemsURL = `${baseURL}/getResourcePermissionItems`;
-
-export interface INewPermissionItemInput {
-  permissionEntityId: string;
-  permissionEntityType: AppResourceType;
-  action: BasicCRUDActions;
-  isExclusion?: boolean;
-  isForPermissionOwnerOnly?: boolean;
-  permissionOwnerId: string;
-  permissionOwnerType: AppResourceType;
-  isWildcardResourceType: boolean;
-  itemResourceId?: string;
-  itemResourceType: AppResourceType;
-}
 
 export interface IAddPermissionItemsEndpointParams {
   organizationId: string;
