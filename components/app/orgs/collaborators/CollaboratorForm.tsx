@@ -69,7 +69,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
     formikProps: {
       validationSchema: collaboratorValidation,
       initialValues: {
-        presets: first(collaborator.organizations)?.presets || [],
+        presets: collaborator.presets,
       },
       onSubmit: submitResult.run,
     },

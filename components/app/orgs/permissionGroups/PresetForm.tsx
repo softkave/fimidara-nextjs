@@ -69,7 +69,7 @@ export default function PresetForm(props: IPresetFormProps) {
 
         if (preset) {
           const result = await PresetPermissionsGroupAPI.updatePreset({
-            data,
+            preset: data,
             presetId: preset.resourceId,
           });
 

@@ -1,6 +1,6 @@
 # TODOs
 
-- Checkbox in lists like client assigned tokens
+- Multiselect and batch actions in lists like client assigned tokens
 - Test that people who shouldn't have access can't access the presets, also that they can't do what they shouldn't be able to, like removing an admin
 - Move title tag to the pages
 - Add more information to all the pages and lists
@@ -10,8 +10,8 @@
 - Group and better render permission items
 - Icons
 - Better max file size where you select type and enter number
-- File anad folder breadcrumbs
-- mutate
+- File and folder breadcrumbs
+- Ensure mutations are called after updates
 - color
 - remove revalidate on focus for all swr hooks for and look for an alternative
 - move tabs more to the center
@@ -20,3 +20,5 @@
 - auto log in when token is present
 - wildcard permission for entity
 - create and update forms should be modals instead of pages
+- webpage
+- chip if the user has unattended collaboration requests or new ones

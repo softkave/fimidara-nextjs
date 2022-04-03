@@ -22,12 +22,11 @@ export interface IUser {
   organizations: IUserOrganization[];
 }
 
-export interface ICollaborator {
+export interface ICollaborator extends IUserOrganization {
   resourceId: string;
   firstName: string;
   lastName: string;
   email: string;
-  organizations: IUserOrganization[];
 }
 
 export interface IUserInput {

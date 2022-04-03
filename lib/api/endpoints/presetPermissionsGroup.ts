@@ -81,7 +81,7 @@ async function getPreset(props: IGetPresetPermissionsGroupEndpointParams) {
 
 export interface IUpdatePresetPermissionsGroupEndpointParams {
   presetId: string;
-  data: IUpdatePresetPermissionsGroupInput;
+  preset: IUpdatePresetPermissionsGroupInput;
 }
 
 export type IUpdatePresetPermissionsGroupEndpointResult = GetEndpointResult<{
