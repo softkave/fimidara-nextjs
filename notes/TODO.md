@@ -19,3 +19,4 @@
 - better way to revalidate data
 - auto log in when token is present
 - wildcard permission for entity
+- create and update forms should be modals instead of pages

@@ -121,7 +121,7 @@ export default class PermissionItemsByResourceController {
     this.itemResourceId = itemResourceId;
     this.itemResourceType = itemResourceType;
     this.deletedItemIds = deletedItemIds || [];
-    this.isForPermissionOwnerChildren = permissionOwnerId === itemResourceId;
+    this.isForPermissionOwnerChildren = permissionOwnerId !== itemResourceId;
   }
 
   public canPerformAction(
