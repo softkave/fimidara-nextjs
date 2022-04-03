@@ -96,21 +96,21 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
             key={item.presetId}
             actions={[
               <Button
-                type="text"
+                // type="text"
                 className={appClasses.iconBtn}
                 icon={<UpOutlined />}
                 onClick={() => onMove(item.presetId, "up")}
                 disabled={index === 0}
               />,
               <Button
-                type="text"
+                // type="text"
                 className={appClasses.iconBtn}
                 icon={<DownOutlined />}
                 onClick={() => onMove(item.presetId, "down")}
                 disabled={index === assignedPresets.length - 1}
               />,
               <Button
-                type="text"
+                // type="text"
                 className={appClasses.iconBtn}
                 icon={<DeleteOutlined />}
                 onClick={() => onDeleteItem(item.presetId)}

@@ -4,6 +4,7 @@ import {
   actionLabel,
   AppResourceType,
   BasicCRUDActions,
+  getActions,
 } from "../../../../lib/definitions/system";
 import GrantPermissionAction from "./GrantPermissionAction";
 import PermissionItemsByResourceController from "./PermissionItemsController";
@@ -22,22 +23,6 @@ export interface IGrantPermissionFormItemProps {
   ) => void;
 }
 
-function getActions(type: AppResourceType) {
-  const actions = [
-    BasicCRUDActions.All,
-    BasicCRUDActions.Create,
-    BasicCRUDActions.Read,
-    BasicCRUDActions.Update,
-    BasicCRUDActions.Delete,
-  ];
-
-  if (type === AppResourceType.Organization) {
-    return actions.concat(BasicCRUDActions.GrantPermission);
-  }
-
-  return actions;
-}
-
 const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
   props
 ) => {
@@ -52,7 +37,7 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
 
   return (
     <List
-      dataSource={getActions(itemResourceType)}
+      dataSource={getActions(itemResourceType, true)}
       renderItem={(action) => {
         let actionPermitted = controller.canPerformAction(
           permissionEntityId,
@@ -64,7 +49,7 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
           <List.Item>
             <GrantPermissionAction
               key={action}
-              label={actionLabel[action]}
+              label={action !== BasicCRUDActions.All ? actionLabel[action] : ""}
               onChange={(permitted) =>
                 onChange(
                   permissionEntityId,

@@ -61,7 +61,7 @@ const PermissionItemMenu: React.FC<IPermissionItemMenuProps> = (props) => {
 
   return (
     <Button
-      type="text"
+      // type="text"
       className={appClasses.iconBtn}
       icon={<DeleteOutlined />}
       onClick={onDeleteItem}

@@ -28,13 +28,10 @@ const DEFAULT_MESSAGES: IImageUploadMessages = {
 };
 
 function beforeUpload(file: RcFile) {
-  console.log(file);
-
   if (first(file.type.split("/")) !== "image") {
     message.error("Invalid image type");
   }
 
-  console.log("passed");
   return true;
 }
 

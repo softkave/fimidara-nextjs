@@ -10,7 +10,7 @@ export const systemConstants = {
   phoneQueryKey: "p",
   organizationId: defaultTo(
     process.env.ORGANIZATION_ID,
-    "8k4hfTVXx7c46jo6Q-IyD"
+    "E1Z3_HbCvx103vlMCTm_L"
   ),
   userImagesFolder: defaultTo(
     process.env.USER_IMAGES_FOLDER,
@@ -89,6 +89,28 @@ export enum BasicCRUDActions {
   Delete = "delete",
 
   GrantPermission = "grant-permission",
+}
+
+export function getActions(type: AppResourceType, includeWildcard = false) {
+  const actions = [
+    BasicCRUDActions.Create,
+    BasicCRUDActions.Read,
+    BasicCRUDActions.Update,
+    BasicCRUDActions.Delete,
+  ];
+
+  if (includeWildcard) {
+    // unshift instead of push for ordered rendering
+    // in grant permission form. it may just be better to
+    // sort in there, but until then, we unshift.
+    actions.unshift(BasicCRUDActions.All);
+  }
+
+  if (type === AppResourceType.Organization || type === AppResourceType.All) {
+    actions.push(BasicCRUDActions.GrantPermission);
+  }
+
+  return actions;
 }
 
 export const actionLabel: Record<BasicCRUDActions, string> = {

@@ -71,8 +71,6 @@ export default function RequestForm(props: IRequestFormProps) {
   const { mutate } = useCollaborationRequest(request?.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaborationRequestInput) => {
-      console.log({ data });
-
       try {
         let requestId: string | null = null;
 

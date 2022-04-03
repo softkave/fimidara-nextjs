@@ -21,9 +21,9 @@ const classes = {
       padding: "0px",
     },
 
-    "& .ant-list-item": {
-      padding: "0px !important",
-    },
+    // "& .ant-list-item": {
+    //   padding: "0px !important",
+    // },
   }),
   noPresets: css({
     margin: "64px auto !important",

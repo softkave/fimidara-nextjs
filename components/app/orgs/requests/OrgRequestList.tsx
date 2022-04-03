@@ -110,7 +110,7 @@ const OrgRequestList: React.FC<IOrgRequestListProps> = (props) => {
         }
       >
         <Button
-          type="text"
+          // type="text"
           className={appClasses.iconBtn}
           icon={<BsThreeDots />}
         ></Button>

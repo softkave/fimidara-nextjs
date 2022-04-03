@@ -6,6 +6,7 @@ import {
 import {
   AppResourceType,
   BasicCRUDActions,
+  getActions,
 } from "../../../../lib/definitions/system";
 import { makeKey } from "../../../../lib/utilities/fns";
 
@@ -128,26 +129,31 @@ export default class PermissionItemsByResourceController {
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
   ) {
-    const { actionItemList } = this.getActionItemList(
-      permissionEntityId,
-      permissionEntityType,
-      action
-    );
+    if (action === BasicCRUDActions.All) {
+      for (const nextAction of getActions(this.itemResourceType)) {
+        if (nextAction === BasicCRUDActions.All) {
+          continue;
+        }
 
-    const { actionItemList: wildcardActionItemList } = this.getActionItemList(
-      permissionEntityId,
-      permissionEntityType,
-      BasicCRUDActions.All
-    );
+        const hasAccess = this.actionCheckFunc(
+          permissionEntityId,
+          permissionEntityType,
+          nextAction
+        );
 
-    const actionItem = first(actionItemList);
-    const wildcardActionItem = first(wildcardActionItemList);
+        if (!hasAccess) {
+          return false;
+        }
+      }
 
-    if (actionItem?.isExclusion || wildcardActionItem?.isExclusion) {
-      return false;
+      return true;
+    } else {
+      return this.actionCheckFunc(
+        permissionEntityId,
+        permissionEntityType,
+        action
+      );
     }
-
-    return !!(actionItem || wildcardActionItem);
   }
 
   public grantPermission(
@@ -198,7 +204,7 @@ export default class PermissionItemsByResourceController {
       };
 
       const addPermissionForEveryActionFunc = () => {
-        Object.values(BasicCRUDActions).forEach((nextAction) => {
+        getActions(this.itemResourceType).forEach((nextAction) => {
           if (nextAction !== BasicCRUDActions.All) {
             addPermissionFunc(nextAction);
           }
@@ -209,7 +215,7 @@ export default class PermissionItemsByResourceController {
         actionRemoveExclusionFunc(nextAction);
       });
 
-      Object.values(BasicCRUDActions).forEach((nextAction) => {
+      getActions(this.itemResourceType, true).forEach((nextAction) => {
         if (
           !this.actionCheckFunc(
             permissionEntityId,
@@ -318,7 +324,7 @@ export default class PermissionItemsByResourceController {
       };
 
       const addExclusionForAllActionsFunc = () => {
-        Object.values(BasicCRUDActions).forEach((nextAction) => {
+        getActions(this.itemResourceType).forEach((nextAction) => {
           if (action !== BasicCRUDActions.All) {
             addExclusionFunc(nextAction);
           }
@@ -329,7 +335,7 @@ export default class PermissionItemsByResourceController {
         actionClearFunc(nextAction);
       });
 
-      Object.values(BasicCRUDActions).forEach((nextAction) => {
+      getActions(this.itemResourceType, true).forEach((nextAction) => {
         if (
           this.actionCheckFunc(
             permissionEntityId,

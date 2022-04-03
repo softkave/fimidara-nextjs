@@ -66,7 +66,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
           }
         >
           <Button
-            type="text"
+            // type="text"
             className={appClasses.iconBtn}
             icon={<PlusOutlined />}
           ></Button>

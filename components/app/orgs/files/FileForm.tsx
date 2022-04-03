@@ -176,8 +176,6 @@ export default function FileForm(props: IFileFormProps) {
     },
   });
 
-  console.log(formik);
-
   const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
@@ -257,7 +255,6 @@ export default function FileForm(props: IFileFormProps) {
         multiple={false}
         fileList={formik.values.file}
         beforeUpload={(file, fileList) => {
-          console.log(file, fileList);
           formik.setFieldValue("file", fileList);
           return false;
         }}
@@ -267,17 +264,6 @@ export default function FileForm(props: IFileFormProps) {
       >
         <Button icon={<UploadOutlined />}>Select File</Button>
       </Upload>
-
-      {/* <label>
-        <input
-          type="file"
-          onChange={(evt) => {
-            console.log(evt.target.files);
-            formik.setFieldValue("file", [(evt.target.files || [])[0]]);
-          }}
-        />
-
-      </label> */}
     </Form.Item>
   );
 

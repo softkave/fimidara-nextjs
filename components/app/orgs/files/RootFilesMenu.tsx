@@ -59,7 +59,7 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
         }
       >
         <Button
-          type="text"
+          // type="text"
           className={appClasses.iconBtn}
           icon={<BsThreeDots />}
         ></Button>

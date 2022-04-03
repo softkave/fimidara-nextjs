@@ -105,7 +105,7 @@ const ProgramTokenMenu: React.FC<IProgramTokenMenuProps> = (props) => {
         }
       >
         <Button
-          type="text"
+          // type="text"
           className={appClasses.iconBtn}
           icon={<BsThreeDots />}
         ></Button>

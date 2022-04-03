@@ -51,8 +51,6 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
   let content: React.ReactNode = null;
   const renderItems = React.useCallback(
     (resources: Record<string, IResource>, items: IPermissionItem[]) => {
-      console.log({ resources, items });
-
       const columns: ColumnsType<IPermissionItem> = [
         {
           title: "ID",
@@ -80,7 +78,17 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           key: "isExclusion",
           render: (text, item) => (
             <Typography.Text className={classes.cell70px}>
-              {item.isExclusion ? "Deny" : "Grant"}
+              {item.isExclusion ? "Deny" : "Allow"}
+            </Typography.Text>
+          ),
+        },
+        {
+          title: "Type",
+          dataIndex: "itemResourceType",
+          key: "itemResourceType",
+          render: (text, item) => (
+            <Typography.Text className={classes.cell200px}>
+              {appResourceTypeLabel[item.itemResourceType]}
             </Typography.Text>
           ),
         },
@@ -117,16 +125,6 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
               </Typography.Text>
             );
           },
-        },
-        {
-          title: "Type",
-          dataIndex: "itemResourceType",
-          key: "itemResourceType",
-          render: (text, item) => (
-            <Typography.Text className={classes.cell200px}>
-              {appResourceTypeLabel[item.itemResourceType]}
-            </Typography.Text>
-          ),
         },
         {
           title: "Permission Owner ID",

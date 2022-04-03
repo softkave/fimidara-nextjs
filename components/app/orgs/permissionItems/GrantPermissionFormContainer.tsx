@@ -53,27 +53,27 @@ const GrantPermissionFormContainer: React.FC<
         // TODO: invalidate all the data that has assigned presets
         // when request is successful
 
-        console.log({ newItems, deletedItemIds });
+        // console.log({ newItems, deletedItemIds });
 
-        // let result: IEndpointResultBase;
+        let result: IEndpointResultBase;
 
-        // if (deletedItemIds.length) {
-        //   result = await PermissionItemAPI.deleteItemsById({
-        //     itemIds: deletedItemIds,
-        //     organizationId: orgId,
-        //   });
+        if (deletedItemIds.length) {
+          result = await PermissionItemAPI.deleteItemsById({
+            itemIds: deletedItemIds,
+            organizationId: orgId,
+          });
 
-        //   checkEndpointResult(result);
-        // }
+          checkEndpointResult(result);
+        }
 
-        // if (newItems.length) {
-        //   result = await PermissionItemAPI.addItems({
-        //     items: newItems,
-        //     organizationId: orgId,
-        //   });
+        if (newItems.length) {
+          result = await PermissionItemAPI.addItems({
+            items: newItems,
+            organizationId: orgId,
+          });
 
-        //   checkEndpointResult(result);
-        // }
+          checkEndpointResult(result);
+        }
 
         message.success("Resource permissions updated");
         mutate();
