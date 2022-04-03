@@ -197,7 +197,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
 
   const internalOnSave = React.useCallback(() => {
     const newItems = controller
-      .getItems()
+      .getNewItems()
       .map((item) => omit(item, ["resourceId", "isNew"]));
     onSave(newItems, controller.getDeletedItemIds());
   }, [controller]);

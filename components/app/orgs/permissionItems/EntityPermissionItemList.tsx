@@ -75,7 +75,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           ),
         },
         {
-          title: "Permission Type",
+          title: "Permission",
           dataIndex: "isExclusion",
           key: "isExclusion",
           render: (text, item) => (

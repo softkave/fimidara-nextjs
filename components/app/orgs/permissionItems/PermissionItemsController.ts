@@ -9,18 +9,6 @@ import {
 } from "../../../../lib/definitions/system";
 import { makeKey } from "../../../../lib/utilities/fns";
 
-/**
- * map: entity ID, type, and action -> item[]
- * sort: exclusion, everything else
- * can perform action: checks first of action and wildcard action
- *   and ensures they are not exclusion
- * grant permission: if can't perform action cause no item,
- *   add input item. if can't perform action cause of
- *   exclusion, delete exclusion and add item for access.
- * remove permission: delete all items for entity ID, type and action
- *   check for wildcard resource type and add exclusion item if found.
- */
-
 export interface INewPermissionItemInputExt extends INewPermissionItemInput {
   isNew: boolean;
   resourceId?: string;
@@ -46,13 +34,14 @@ export default class PermissionItemsByResourceController {
       permissionEntityType: item.permissionEntityType,
       action: item.action,
       isExclusion: item.isExclusion,
-      isForPermissionOwnerOnly: item.isForPermissionOwnerOnly,
+      isForPermissionOwner: item.isForPermissionOwner,
       permissionOwnerId: item.permissionOwnerId,
       permissionOwnerType: item.permissionOwnerType,
       itemResourceType: item.itemResourceType,
       itemResourceId: item.itemResourceId,
       isNew: false,
       resourceId: item.resourceId,
+      isForPermissionOwnerChildren: item.isForPermissionOwnerChildren,
     };
   }
 
@@ -115,6 +104,7 @@ export default class PermissionItemsByResourceController {
   private itemResourceId?: string;
   private itemResourceType: AppResourceType;
   private deletedItemIds: string[] = [];
+  private isForPermissionOwnerChildren: boolean;
 
   constructor(
     inputItems: NewPermissionItemInputMap,
@@ -122,14 +112,15 @@ export default class PermissionItemsByResourceController {
     permissionOwnerType: AppResourceType,
     itemResourceType: AppResourceType,
     itemResourceId?: string,
-    deletedItemIds: string[] = []
+    deletedItemIds?: string[]
   ) {
     this.itemsMap = inputItems;
     this.permissionOwnerId = permissionOwnerId;
     this.permissionOwnerType = permissionOwnerType;
     this.itemResourceId = itemResourceId;
     this.itemResourceType = itemResourceType;
-    this.deletedItemIds = deletedItemIds;
+    this.deletedItemIds = deletedItemIds || [];
+    this.isForPermissionOwnerChildren = permissionOwnerId === itemResourceId;
   }
 
   public canPerformAction(
@@ -137,12 +128,17 @@ export default class PermissionItemsByResourceController {
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
   ) {
-    const { actionItemList, wildcardActionItemList } =
-      this.getEntityActionItemList(
-        permissionEntityId,
-        permissionEntityType,
-        action
-      );
+    const { actionItemList } = this.getActionItemList(
+      permissionEntityId,
+      permissionEntityType,
+      action
+    );
+
+    const { actionItemList: wildcardActionItemList } = this.getActionItemList(
+      permissionEntityId,
+      permissionEntityType,
+      BasicCRUDActions.All
+    );
 
     const actionItem = first(actionItemList);
     const wildcardActionItem = first(wildcardActionItemList);
@@ -159,49 +155,114 @@ export default class PermissionItemsByResourceController {
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
   ) {
-    const {
-      actionItemList,
-      wildcardActionItemList,
-      actionItemKey,
-      wildcardActionItemKey,
-    } = this.getEntityActionItemList(
+    let hasAccess = this.canPerformAction(
       permissionEntityId,
       permissionEntityType,
       action
     );
 
-    const newActionItemList = this.removeExclusions(actionItemList);
-    const newWildcardActionItemList = this.removeExclusions(
-      wildcardActionItemList
-    );
-
-    const actionItem = first(actionItemList);
-    const wildcardActionItem = first(wildcardActionItemList);
-
-    if (!actionItem && !wildcardActionItem) {
-      newActionItemList.unshift({
-        action,
-        permissionEntityId,
-        permissionEntityType,
-        permissionOwnerId: this.permissionOwnerId,
-        permissionOwnerType: this.permissionOwnerType,
-        isNew: true,
-        itemResourceType: this.itemResourceType,
-        itemResourceId: this.itemResourceId,
-      });
+    if (hasAccess) {
+      return this;
     }
 
-    const newItemsMap: NewPermissionItemInputMap = {};
-    newItemsMap[actionItemKey] = newActionItemList;
-    newItemsMap[wildcardActionItemKey] = newWildcardActionItemList;
-    return new PermissionItemsByResourceController(
-      newItemsMap,
-      this.permissionOwnerId,
-      this.permissionOwnerType,
-      this.itemResourceType,
-      this.itemResourceId,
-      this.deletedItemIds
-    );
+    if (action === BasicCRUDActions.All) {
+      const actionRemoveExclusionFunc = (actionParam: BasicCRUDActions) => {
+        const { actionItemList, actionItemKey } = this.getActionItemList(
+          permissionEntityId,
+          permissionEntityType,
+          actionParam
+        );
+
+        const newActionItemList = this.removeExclusions(actionItemList);
+        this.itemsMap[actionItemKey] = newActionItemList;
+      };
+
+      const addPermissionFunc = (actionParam: BasicCRUDActions) => {
+        const { actionItemList } = this.getActionItemList(
+          permissionEntityId,
+          permissionEntityType,
+          actionParam
+        );
+
+        actionItemList.unshift({
+          permissionEntityId,
+          permissionEntityType,
+          action: actionParam,
+          permissionOwnerId: this.permissionOwnerId,
+          permissionOwnerType: this.permissionOwnerType,
+          isNew: true,
+          itemResourceType: this.itemResourceType,
+          itemResourceId: this.itemResourceId,
+          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+        });
+      };
+
+      const addPermissionForEveryActionFunc = () => {
+        Object.values(BasicCRUDActions).forEach((nextAction) => {
+          if (nextAction !== BasicCRUDActions.All) {
+            addPermissionFunc(nextAction);
+          }
+        });
+      };
+
+      Object.values(BasicCRUDActions).forEach((nextAction) => {
+        actionRemoveExclusionFunc(nextAction);
+      });
+
+      Object.values(BasicCRUDActions).forEach((nextAction) => {
+        if (
+          !this.actionCheckFunc(
+            permissionEntityId,
+            permissionEntityType,
+            nextAction
+          )
+        ) {
+          if (nextAction === BasicCRUDActions.All) {
+            addPermissionForEveryActionFunc();
+          } else {
+            addPermissionFunc(nextAction);
+          }
+        }
+      });
+    } else {
+      const {
+        actionItemList,
+        wildcardActionItemList,
+        actionItemKey,
+        wildcardActionItemKey,
+      } = this.getEntityActionItemList(
+        permissionEntityId,
+        permissionEntityType,
+        action
+      );
+
+      const newActionItemList = this.removeExclusions(actionItemList);
+      const newWildcardActionItemList = this.removeExclusions(
+        wildcardActionItemList
+      );
+
+      const actionItem = first(actionItemList);
+      const wildcardActionItem = first(wildcardActionItemList);
+
+      if (!actionItem && !wildcardActionItem) {
+        newActionItemList.unshift({
+          action,
+          permissionEntityId,
+          permissionEntityType,
+          permissionOwnerId: this.permissionOwnerId,
+          permissionOwnerType: this.permissionOwnerType,
+          isNew: true,
+          itemResourceType: this.itemResourceType,
+          itemResourceId: this.itemResourceId,
+          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+        });
+      }
+
+      this.itemsMap[wildcardActionItemKey] = newWildcardActionItemList;
+      this.itemsMap[actionItemKey] = newActionItemList;
+    }
+
+    return this.getNewController();
   }
 
   public removePermission(
@@ -209,57 +270,125 @@ export default class PermissionItemsByResourceController {
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
   ) {
-    if (
-      !this.canPerformAction(permissionEntityId, permissionEntityType, action)
-    ) {
-      return this;
-    }
-
-    const {
-      actionItemList,
-      wildcardActionItemList,
-      actionItemKey,
-      wildcardActionItemKey,
-    } = this.getEntityActionItemList(
+    let hasAccess = this.canPerformAction(
       permissionEntityId,
       permissionEntityType,
       action
     );
 
-    const newActionItemList = this.removeItemsForResource(actionItemList);
-    const newWildcardActionItemList =
-      action === BasicCRUDActions.All
-        ? this.removeItemsForResource(wildcardActionItemList)
-        : wildcardActionItemList;
-
-    if (
-      newActionItemList.length !== 0 ||
-      newWildcardActionItemList.length !== 0
-    ) {
-      newActionItemList.unshift({
-        action,
-        permissionEntityId,
-        permissionEntityType,
-        permissionOwnerId: this.permissionOwnerId,
-        permissionOwnerType: this.permissionOwnerType,
-        isExclusion: true,
-        isNew: true,
-        itemResourceType: this.itemResourceType,
-        itemResourceId: this.itemResourceId,
-      });
+    if (!hasAccess) {
+      return this;
     }
 
-    const newItemsMap: NewPermissionItemInputMap = {};
-    newItemsMap[actionItemKey] = newActionItemList;
-    newItemsMap[wildcardActionItemKey] = newWildcardActionItemList;
-    return new PermissionItemsByResourceController(
-      newItemsMap,
-      this.permissionOwnerId,
-      this.permissionOwnerType,
-      this.itemResourceType,
-      this.itemResourceId,
-      this.deletedItemIds
-    );
+    if (action === BasicCRUDActions.All) {
+      const actionClearFunc = (actionParam: BasicCRUDActions) => {
+        const { actionItemList, actionItemKey } = this.getActionItemList(
+          permissionEntityId,
+          permissionEntityType,
+          actionParam
+        );
+
+        const newActionItemList = this.removePermissionsForResource(
+          actionItemList,
+          actionParam
+        );
+
+        this.itemsMap[actionItemKey] = newActionItemList;
+      };
+
+      const addExclusionFunc = (actionParam: BasicCRUDActions) => {
+        const { actionItemList } = this.getActionItemList(
+          permissionEntityId,
+          permissionEntityType,
+          actionParam
+        );
+
+        actionItemList.unshift({
+          permissionEntityId,
+          permissionEntityType,
+          action: actionParam,
+          permissionOwnerId: this.permissionOwnerId,
+          permissionOwnerType: this.permissionOwnerType,
+          isExclusion: true,
+          isNew: true,
+          itemResourceType: this.itemResourceType,
+          itemResourceId: this.itemResourceId,
+          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+        });
+      };
+
+      const addExclusionForAllActionsFunc = () => {
+        Object.values(BasicCRUDActions).forEach((nextAction) => {
+          if (action !== BasicCRUDActions.All) {
+            addExclusionFunc(nextAction);
+          }
+        });
+      };
+
+      Object.values(BasicCRUDActions).forEach((nextAction) => {
+        actionClearFunc(nextAction);
+      });
+
+      Object.values(BasicCRUDActions).forEach((nextAction) => {
+        if (
+          this.actionCheckFunc(
+            permissionEntityId,
+            permissionEntityType,
+            nextAction
+          )
+        ) {
+          if (nextAction === BasicCRUDActions.All) {
+            addExclusionForAllActionsFunc();
+          } else {
+            addExclusionFunc(nextAction);
+          }
+        }
+      });
+    } else {
+      const {
+        actionItemList,
+        wildcardActionItemList,
+        actionItemKey,
+        wildcardActionItemKey,
+      } = this.getEntityActionItemList(
+        permissionEntityId,
+        permissionEntityType,
+        action
+      );
+
+      const newActionItemList = this.removePermissionsForResource(
+        actionItemList,
+        action
+      );
+
+      const newWildcardActionItemList = this.removePermissionsForResource(
+        wildcardActionItemList,
+        action
+      );
+
+      if (
+        newActionItemList.length !== 0 ||
+        newWildcardActionItemList.length !== 0
+      ) {
+        newActionItemList.unshift({
+          action,
+          permissionEntityId,
+          permissionEntityType,
+          permissionOwnerId: this.permissionOwnerId,
+          permissionOwnerType: this.permissionOwnerType,
+          isExclusion: true,
+          isNew: true,
+          itemResourceType: this.itemResourceType,
+          itemResourceId: this.itemResourceId,
+          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+        });
+      }
+
+      this.itemsMap[wildcardActionItemKey] = newWildcardActionItemList;
+      this.itemsMap[actionItemKey] = newActionItemList;
+    }
+
+    return this.getNewController();
   }
 
   public togglePermission(
@@ -277,27 +406,42 @@ export default class PermissionItemsByResourceController {
     return flattenDeep(Object.values(this.itemsMap));
   }
 
+  public getNewItems() {
+    return this.getItems().filter((item) => item.isNew);
+  }
+
   public getDeletedItemIds() {
     return this.deletedItemIds;
   }
 
   private removeExclusions(itemList: INewPermissionItemInputExt[]) {
     return itemList.filter((item) => {
-      if (!item.isExclusion) {
-        return true;
-      } else if (item.resourceId) {
-        this.deletedItemIds.push(item.resourceId);
+      const isForResource =
+        item.itemResourceId == this.itemResourceId && // we want null == undefined
+        item.itemResourceType === this.itemResourceType;
+
+      if (item.isExclusion && isForResource) {
+        if (item.resourceId) {
+          this.deletedItemIds.push(item.resourceId);
+        }
+
+        return false;
       }
+
+      return true;
     });
   }
 
-  private removeItemsForResource(itemList: INewPermissionItemInputExt[]) {
+  private removePermissionsForResource(
+    itemList: INewPermissionItemInputExt[],
+    action: BasicCRUDActions
+  ) {
     return itemList.filter((item) => {
       const isForResource =
         item.itemResourceId == this.itemResourceId && // we want null == undefined
         item.itemResourceType === this.itemResourceType;
 
-      if (!isForResource) {
+      if (!isForResource || item.action !== action) {
         return true;
       } else if (item.resourceId) {
         this.deletedItemIds.push(item.resourceId);
@@ -332,5 +476,52 @@ export default class PermissionItemsByResourceController {
       actionItemKey,
       wildcardActionItemKey,
     };
+  }
+
+  private getActionItemList(
+    permissionEntityId: string,
+    permissionEntityType: AppResourceType,
+    actionParam: BasicCRUDActions
+  ) {
+    const actionItemKey =
+      PermissionItemsByResourceController.getEntityActionKey(
+        permissionEntityId,
+        permissionEntityType,
+        actionParam
+      );
+
+    const actionItemList = this.itemsMap[actionItemKey] || [];
+    return { actionItemList, actionItemKey };
+  }
+
+  private actionCheckFunc(
+    permissionEntityId: string,
+    permissionEntityType: AppResourceType,
+    actionParam: BasicCRUDActions
+  ) {
+    const { actionItemList } = this.getActionItemList(
+      permissionEntityId,
+      permissionEntityType,
+      actionParam
+    );
+
+    const actionItem = first(actionItemList);
+
+    if (actionItem?.isExclusion) {
+      return false;
+    }
+
+    return !!actionItem;
+  }
+
+  private getNewController() {
+    return new PermissionItemsByResourceController(
+      this.itemsMap,
+      this.permissionOwnerId,
+      this.permissionOwnerType,
+      this.itemResourceType,
+      this.itemResourceId,
+      this.deletedItemIds
+    );
   }
 }
