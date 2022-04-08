@@ -66,7 +66,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
     try {
       const result = await FolderAPI.deleteFolder({
         organizationId: folder.organizationId,
-        folderPath: folder.namePath.join(folderConstants.nameSeparator),
+        folderpath: folder.namePath.join(folderConstants.nameSeparator),
       });
 
       checkEndpointResult(result);

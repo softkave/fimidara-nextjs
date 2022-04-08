@@ -104,14 +104,14 @@ export default function FolderForm(props: IFolderFormProps) {
             })
           );
         } else {
-          const folderPath = parentPath
+          const folderpath = parentPath
             ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
             : data.name;
 
           const result = await FolderAPI.addFolder({
             organizationId: orgId,
             folder: {
-              folderPath,
+              folderpath,
               description: data.description,
               maxFileSizeInBytes: data.maxFileSizeInBytes,
               // publicAccessOps: data.publicAccessOps,

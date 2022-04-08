@@ -17,7 +17,7 @@ export interface IFolder {
 }
 
 export interface INewFolderInput {
-  folderPath: string;
+  folderpath: string;
   description?: string;
   maxFileSizeInBytes?: number;
   publicAccessOps?: IPublicAccessOpInput[];
@@ -30,7 +30,7 @@ export interface IUpdateFolderInput {
 }
 
 export interface IFolderMatcher {
-  folderPath?: string;
+  folderpath?: string;
   folderId?: string;
   organizationId?: string;
 }

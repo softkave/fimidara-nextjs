@@ -79,12 +79,12 @@ export interface IFileFormProps {
   file?: IFile;
   className?: string;
   folderId?: string;
-  folderPath?: string;
+  folderpath?: string;
   orgId: string;
 }
 
 export default function FileForm(props: IFileFormProps) {
-  const { file, className, orgId, folderId, folderPath } = props;
+  const { file, className, orgId, folderId, folderpath } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
 
@@ -133,8 +133,8 @@ export default function FileForm(props: IFileFormProps) {
 
           const result = await FileAPI.uploadFile({
             organizationId: orgId,
-            filePath: folderPath
-              ? `${folderPath}${folderConstants.nameSeparator}${data.name}`
+            filepath: folderpath
+              ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
               : data.name,
             description: data.description,
             data: inputFile as any,

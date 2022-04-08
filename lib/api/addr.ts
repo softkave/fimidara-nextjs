@@ -1,12 +1,12 @@
 const serverAddr =
   process.env.NODE_ENV === "development"
     ? `http://localhost:5000`
-    : "https://api.shops.softkave.com";
+    : "https://api.files.softkave.com";
 
 const clientAddr =
   process.env.NODE_ENV === "development"
     ? `http://localhost:3000`
-    : "https://shops.softkave.com";
+    : "https://files.softkave.com";
 
 export function getServerAddr() {
   return serverAddr;

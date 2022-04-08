@@ -31,7 +31,7 @@ const CreateFileInFolderParentFormPage: React.FC<
       <FileForm
         orgId={orgId}
         folderId={folderId}
-        folderPath={folder.namePath.join(folderConstants.nameSeparator)}
+        folderpath={folder.namePath.join(folderConstants.nameSeparator)}
         key="file-form"
       />
     );

@@ -46,7 +46,7 @@ export function getFetchImagePath(p: string, width: number, height: number) {
   return getFileURL + `?${params.toString()}`;
 }
 
-export function getUploadFilePath(p: string) {
+export function getUploadfilepath(p: string) {
   const params = new URLSearchParams();
   params.append(ORG_ID_QUERY_PARAMS_KEY, systemConstants.organizationId);
   params.append(PATH_QUERY_PARAMS_KEY, p);
@@ -73,12 +73,12 @@ export function getFetchOrgImagePath(
 
 export function getUploadUserImagePath(userId: string) {
   const p = systemConstants.userImagesFolder + "/" + userId;
-  return getUploadFilePath(p);
+  return getUploadfilepath(p);
 }
 
 export function getUploadOrgImagePath(orgId: string) {
   const p = systemConstants.orgImagesFolder + "/" + orgId;
-  return getUploadFilePath(p);
+  return getUploadfilepath(p);
 }
 
 export interface IGetFileDetailsEndpointParams extends IFileMatcher {}
@@ -153,7 +153,7 @@ async function uploadFile(props: IUploadFileEndpointParams) {
   formData.append(UPLOAD_FILE_BLOB_FORMDATA_KEY, props.data);
   setEndpointFormData(formData, "description", props.description);
   setEndpointFormData(formData, "fileId", props.fileId);
-  setEndpointFormData(formData, "filePath", props.filePath);
+  setEndpointFormData(formData, "filepath", props.filepath);
   setEndpointFormData(formData, "encoding", props.encoding);
   setEndpointFormData(formData, "extension", props.extension);
   setEndpointFormData(formData, "mimetype", props.mimetype);

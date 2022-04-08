@@ -49,7 +49,7 @@ const FileMenu: React.FC<IFileMenuProps> = (props) => {
     try {
       const result = await FileAPI.deleteFile({
         organizationId: file.organizationId,
-        filePath: file.namePath.join(folderConstants.nameSeparator),
+        filepath: file.namePath.join(folderConstants.nameSeparator),
       });
 
       checkEndpointResult(result);

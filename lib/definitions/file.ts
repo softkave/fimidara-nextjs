@@ -37,7 +37,7 @@ export enum UploadFilePublicAccessActions {
 }
 
 export interface IFileMatcher {
-  filePath?: string;
+  filepath?: string;
   fileId?: string;
   organizationId?: string;
 }
