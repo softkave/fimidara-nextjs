@@ -21,6 +21,7 @@ import { folderConstants } from "../../../../lib/definitions/folder";
 import { useSWRConfig } from "swr";
 import { getUseFileListHookKey } from "../../../../lib/hooks/orgs/useFileList";
 import { getUseFolderHookKey } from "../../../../lib/hooks/orgs/useFolder";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IFolderMenuProps {
   folder: IFolder;
@@ -45,6 +46,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
       ? AppResourceType.Folder
       : AppResourceType.Organization,
     itemResourceId: folder.resourceId,
+    appliesTo: PermissionItemAppliesTo.Owner,
   });
 
   const childrenFoldersGrantPermission = useGrantPermission({
@@ -52,6 +54,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
     itemResourceType: AppResourceType.Folder,
     permissionOwnerId: folder.resourceId,
     permissionOwnerType: AppResourceType.Folder,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const childrenFilesGrantPermission = useGrantPermission({
@@ -59,6 +62,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
     itemResourceType: AppResourceType.File,
     permissionOwnerId: folder.resourceId,
     permissionOwnerType: AppResourceType.Folder,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const { mutate: cacheMutate } = useSWRConfig();

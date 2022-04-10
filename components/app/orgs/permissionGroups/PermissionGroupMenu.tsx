@@ -17,6 +17,7 @@ import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IPermissionGroupMenuProps {
   preset: IPresetPermissionsGroup;
@@ -37,6 +38,7 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
     permissionOwnerId: preset.organizationId,
     permissionOwnerType: AppResourceType.Organization,
     itemResourceId: preset.resourceId,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const deleteItem = React.useCallback(async () => {

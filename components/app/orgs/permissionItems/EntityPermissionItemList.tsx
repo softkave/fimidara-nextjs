@@ -1,4 +1,4 @@
-import { List, Space, Table, Typography } from "antd";
+import { Space, Table, Typography } from "antd";
 import React from "react";
 import {
   actionLabel,
@@ -7,12 +7,10 @@ import {
 } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
 import { css, cx } from "@emotion/css";
-import PermissionItemMenu from "./PermissionItemMenu";
 import useEntityPermissionList from "../../../../lib/hooks/orgs/useEntityPermissionList";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
-import Middledot from "../../../utils/Middledot";
 import { getBaseError } from "../../../../lib/utilities/errors";
 import { IResource, IResourceBase } from "../../../../lib/definitions/resource";
 import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
@@ -74,11 +72,11 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
         },
         {
           title: "Permission",
-          dataIndex: "isExclusion",
-          key: "isExclusion",
+          dataIndex: "grantAccess",
+          key: "grantAccess",
           render: (text, item) => (
             <Typography.Text className={classes.cell70px}>
-              {item.isExclusion ? "Deny" : "Allow"}
+              {item.grantAccess ? "Deny" : "Allow"}
             </Typography.Text>
           ),
         },

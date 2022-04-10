@@ -16,6 +16,7 @@ import OrgAvatar from "./OrgAvatar";
 import { BsThreeDots } from "react-icons/bs";
 import { appClasses } from "../../utils/theme";
 import useGrantPermission from "../../hooks/useGrantPermission";
+import { PermissionItemAppliesTo } from "../../../lib/definitions/permissionItem";
 
 export interface IOrgHeaderProps {
   org: IOrganization;
@@ -48,6 +49,7 @@ const OrgHeader: React.FC<IOrgHeaderProps> = (props) => {
     permissionOwnerId: org.resourceId,
     permissionOwnerType: AppResourceType.Organization,
     itemResourceId: org.resourceId,
+    appliesTo: PermissionItemAppliesTo.Owner,
   });
 
   const onGoBack = React.useCallback(() => {

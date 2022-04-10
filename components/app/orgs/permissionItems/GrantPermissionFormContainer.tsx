@@ -7,7 +7,10 @@ import {
   checkEndpointResult,
   processEndpointError,
 } from "../../../../lib/api/utils";
-import { INewPermissionItemInput } from "../../../../lib/definitions/permissionItem";
+import {
+  INewPermissionItemInput,
+  PermissionItemAppliesTo,
+} from "../../../../lib/definitions/permissionItem";
 import { AppResourceType } from "../../../../lib/definitions/system";
 import useResourcePermissionList from "../../../../lib/hooks/orgs/useResourcePermissionList";
 import { getBaseError } from "../../../../lib/utilities/errors";
@@ -24,6 +27,7 @@ export interface IGrantPermissionFormContainerProps {
   permissionOwnerType: AppResourceType;
   itemResourceId?: string;
   itemResourceType: AppResourceType;
+  appliesTo: PermissionItemAppliesTo;
   onCancel: () => void;
 }
 

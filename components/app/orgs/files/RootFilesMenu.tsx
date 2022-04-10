@@ -5,6 +5,7 @@ import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IRootFilesMenuProps {
   orgId: string;
@@ -22,6 +23,7 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
     itemResourceType: AppResourceType.Folder,
     permissionOwnerId: orgId,
     permissionOwnerType: AppResourceType.Organization,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const childrenFilesGrantPermission = useGrantPermission({
@@ -29,6 +31,7 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
     itemResourceType: AppResourceType.File,
     permissionOwnerId: orgId,
     permissionOwnerType: AppResourceType.Organization,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const onSelectMenuItem = React.useCallback(

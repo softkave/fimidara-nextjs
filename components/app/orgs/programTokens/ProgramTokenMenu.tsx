@@ -16,6 +16,7 @@ import { IProgramAccessToken } from "../../../../lib/definitions/programAccessTo
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IProgramTokenMenuProps {
   token: IProgramAccessToken;
@@ -36,6 +37,7 @@ const ProgramTokenMenu: React.FC<IProgramTokenMenuProps> = (props) => {
     permissionOwnerId: token.organizationId,
     permissionOwnerType: AppResourceType.Organization,
     itemResourceId: token.resourceId,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const deleteItem = React.useCallback(async () => {

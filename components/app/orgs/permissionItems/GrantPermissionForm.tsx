@@ -7,6 +7,7 @@ import { IClientAssignedToken } from "../../../../lib/definitions/clientAssigned
 import {
   INewPermissionItemInput,
   IPermissionItem,
+  PermissionItemAppliesTo,
 } from "../../../../lib/definitions/permissionItem";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
@@ -30,6 +31,7 @@ export interface IGrantPermissionFormProps {
   permissionOwnerId: string;
   permissionOwnerType: AppResourceType;
   existingPermissionItems: IPermissionItem[];
+  appliesTo: PermissionItemAppliesTo;
   onSave: (
     newItems: INewPermissionItemInput[],
     deletedItemIds: string[]
@@ -65,6 +67,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
     permissionOwnerId,
     existingPermissionItems,
     loading,
+    appliesTo,
     onSave,
     onCancel,
   } = props;
@@ -77,6 +80,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
         permissionOwnerId,
         permissionOwnerType,
         itemResourceType,
+        appliesTo,
         itemResourceId
       )
     );

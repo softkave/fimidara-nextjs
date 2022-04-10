@@ -17,6 +17,7 @@ import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IClientTokenMenuProps {
   token: IClientAssignedToken;
@@ -37,6 +38,7 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
     permissionOwnerId: token.organizationId,
     permissionOwnerType: AppResourceType.Organization,
     itemResourceId: token.resourceId,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const deleteToken = React.useCallback(async () => {

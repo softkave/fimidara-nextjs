@@ -1,5 +1,11 @@
 import { AppResourceType, BasicCRUDActions, IAgent } from "./system";
 
+export enum PermissionItemAppliesTo {
+  Owner = "owner",
+  OwnerAndChildren = "owner-and-children",
+  Children = "children",
+}
+
 export interface IPermissionItem {
   resourceId: string;
   organizationId: string;
@@ -12,20 +18,18 @@ export interface IPermissionItem {
   itemResourceId?: string;
   itemResourceType: AppResourceType;
   action: BasicCRUDActions;
-  isExclusion?: boolean;
-  isForPermissionOwner?: boolean;
-  isForPermissionOwnerChildren?: boolean;
+  grantAccess: boolean;
+  appliesTo: PermissionItemAppliesTo;
 }
 
 export interface INewPermissionItemInput {
   permissionEntityId: string;
   permissionEntityType: AppResourceType;
   action: BasicCRUDActions;
-  isExclusion?: boolean;
-  isForPermissionOwner?: boolean;
   permissionOwnerId: string;
   permissionOwnerType: AppResourceType;
   itemResourceId?: string;
   itemResourceType: AppResourceType;
-  isForPermissionOwnerChildren?: boolean;
+  grantAccess: boolean;
+  appliesTo: PermissionItemAppliesTo;
 }

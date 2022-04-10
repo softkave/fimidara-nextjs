@@ -21,7 +21,6 @@ import useCollaborator from "../../../../lib/hooks/orgs/useCollaborator";
 import SelectPresetInput from "../permissionGroups/SelectPresetInput";
 import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
-import { first } from "lodash";
 import LabeledNode from "../../../utils/LabeledNode";
 
 const collaboratorValidation = yup.object().shape({

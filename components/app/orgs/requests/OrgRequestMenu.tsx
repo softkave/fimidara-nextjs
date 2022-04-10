@@ -21,6 +21,7 @@ import { last } from "lodash";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IOrgRequestMenuProps {
   request: ICollaborationRequest;
@@ -41,6 +42,7 @@ const OrgRequestMenu: React.FC<IOrgRequestMenuProps> = (props) => {
     permissionOwnerId: request.organizationId,
     permissionOwnerType: AppResourceType.Organization,
     itemResourceId: request.resourceId,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const deleteItem = React.useCallback(async () => {

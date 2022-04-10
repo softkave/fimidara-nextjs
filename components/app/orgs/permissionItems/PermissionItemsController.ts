@@ -2,6 +2,7 @@ import { first, flattenDeep } from "lodash";
 import {
   INewPermissionItemInput,
   IPermissionItem,
+  PermissionItemAppliesTo,
 } from "../../../../lib/definitions/permissionItem";
 import {
   AppResourceType,
@@ -34,15 +35,14 @@ export default class PermissionItemsByResourceController {
       permissionEntityId: item.permissionEntityId,
       permissionEntityType: item.permissionEntityType,
       action: item.action,
-      isExclusion: item.isExclusion,
-      isForPermissionOwner: item.isForPermissionOwner,
+      grantAccess: item.grantAccess,
+      appliesTo: item.appliesTo,
       permissionOwnerId: item.permissionOwnerId,
       permissionOwnerType: item.permissionOwnerType,
       itemResourceType: item.itemResourceType,
       itemResourceId: item.itemResourceId,
       isNew: false,
       resourceId: item.resourceId,
-      isForPermissionOwnerChildren: item.isForPermissionOwnerChildren,
     };
   }
 
@@ -70,9 +70,9 @@ export default class PermissionItemsByResourceController {
     for (const key in itemsMap) {
       const actionItemList = itemsMap[key];
       actionItemList.sort((item01, item02) => {
-        if (item01.isExclusion) {
+        if (item01.grantAccess) {
           return -1;
-        } else if (item02.isExclusion) {
+        } else if (item02.grantAccess) {
           return 1;
         }
 
@@ -86,6 +86,7 @@ export default class PermissionItemsByResourceController {
     permissionOwnerId: string,
     permissionOwnerType: AppResourceType,
     itemResourceType: AppResourceType,
+    appliesTo: PermissionItemAppliesTo,
     itemResourceId?: string
   ) {
     const itemsMap = PermissionItemsByResourceController.indexItems(inputItems);
@@ -95,6 +96,7 @@ export default class PermissionItemsByResourceController {
       permissionOwnerId,
       permissionOwnerType,
       itemResourceType,
+      appliesTo,
       itemResourceId
     );
   }
@@ -105,13 +107,14 @@ export default class PermissionItemsByResourceController {
   private itemResourceId?: string;
   private itemResourceType: AppResourceType;
   private deletedItemIds: string[] = [];
-  private isForPermissionOwnerChildren: boolean;
+  private appliesTo: PermissionItemAppliesTo;
 
   constructor(
     inputItems: NewPermissionItemInputMap,
     permissionOwnerId: string,
     permissionOwnerType: AppResourceType,
     itemResourceType: AppResourceType,
+    appliesTo: PermissionItemAppliesTo,
     itemResourceId?: string,
     deletedItemIds?: string[]
   ) {
@@ -121,7 +124,7 @@ export default class PermissionItemsByResourceController {
     this.itemResourceId = itemResourceId;
     this.itemResourceType = itemResourceType;
     this.deletedItemIds = deletedItemIds || [];
-    this.isForPermissionOwnerChildren = permissionOwnerId !== itemResourceId;
+    this.appliesTo = appliesTo;
   }
 
   public canPerformAction(
@@ -199,7 +202,8 @@ export default class PermissionItemsByResourceController {
           isNew: true,
           itemResourceType: this.itemResourceType,
           itemResourceId: this.itemResourceId,
-          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+          appliesTo: this.appliesTo,
+          grantAccess: true,
         });
       };
 
@@ -260,7 +264,8 @@ export default class PermissionItemsByResourceController {
           isNew: true,
           itemResourceType: this.itemResourceType,
           itemResourceId: this.itemResourceId,
-          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+          appliesTo: this.appliesTo,
+          grantAccess: true,
         });
       }
 
@@ -315,11 +320,11 @@ export default class PermissionItemsByResourceController {
           action: actionParam,
           permissionOwnerId: this.permissionOwnerId,
           permissionOwnerType: this.permissionOwnerType,
-          isExclusion: true,
+          grantAccess: false,
           isNew: true,
           itemResourceType: this.itemResourceType,
           itemResourceId: this.itemResourceId,
-          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+          appliesTo: this.appliesTo,
         });
       };
 
@@ -382,11 +387,11 @@ export default class PermissionItemsByResourceController {
           permissionEntityType,
           permissionOwnerId: this.permissionOwnerId,
           permissionOwnerType: this.permissionOwnerType,
-          isExclusion: true,
+          grantAccess: false,
           isNew: true,
           itemResourceType: this.itemResourceType,
           itemResourceId: this.itemResourceId,
-          isForPermissionOwnerChildren: this.isForPermissionOwnerChildren,
+          appliesTo: this.appliesTo,
         });
       }
 
@@ -426,7 +431,7 @@ export default class PermissionItemsByResourceController {
         item.itemResourceId == this.itemResourceId && // we want null == undefined
         item.itemResourceType === this.itemResourceType;
 
-      if (item.isExclusion && isForResource) {
+      if (item.grantAccess && isForResource) {
         if (item.resourceId) {
           this.deletedItemIds.push(item.resourceId);
         }
@@ -513,7 +518,7 @@ export default class PermissionItemsByResourceController {
 
     const actionItem = first(actionItemList);
 
-    if (actionItem?.isExclusion) {
+    if (actionItem?.grantAccess) {
       return false;
     }
 
@@ -526,6 +531,7 @@ export default class PermissionItemsByResourceController {
       this.permissionOwnerId,
       this.permissionOwnerType,
       this.itemResourceType,
+      this.appliesTo,
       this.itemResourceId,
       this.deletedItemIds
     );

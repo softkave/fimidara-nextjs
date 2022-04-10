@@ -17,6 +17,7 @@ import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { BsThreeDots } from "react-icons/bs";
 import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface ICollaboratorMenuProps {
   orgId: string;
@@ -38,6 +39,7 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
     permissionOwnerId: orgId,
     permissionOwnerType: AppResourceType.Organization,
     itemResourceId: collaborator.resourceId,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const deleteItem = React.useCallback(async () => {

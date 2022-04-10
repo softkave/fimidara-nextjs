@@ -21,6 +21,7 @@ import { folderConstants } from "../../../../lib/definitions/folder";
 import { useSWRConfig } from "swr";
 import { getUseFileListHookKey } from "../../../../lib/hooks/orgs/useFileList";
 import { getUseFileHookKey } from "../../../../lib/hooks/orgs/useFile";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IFileMenuProps {
   file: IFile;
@@ -42,6 +43,7 @@ const FileMenu: React.FC<IFileMenuProps> = (props) => {
       ? AppResourceType.Folder
       : AppResourceType.Organization,
     itemResourceId: file.resourceId,
+    appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const { mutate: cacheMutate } = useSWRConfig();
