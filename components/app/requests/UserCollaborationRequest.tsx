@@ -140,7 +140,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
         <Space direction="vertical" size={"large"}>
           <Space direction="vertical" size={2}>
             <Typography.Title level={4} style={{ margin: 0 }}>
-              Collaboration Request from {request.organizationName}
+              Collaboration Request from {request.workspaceName}
             </Typography.Title>
             <Typography.Text type="secondary">
               Sent {createdDate}

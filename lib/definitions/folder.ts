@@ -2,7 +2,7 @@ import { IAgent, IPublicAccessOp, IPublicAccessOpInput } from "./system";
 
 export interface IFolder {
   resourceId: string;
-  organizationId: string;
+  workspaceId: string;
   idPath: string[];
   namePath: string[];
   parentId?: string;
@@ -32,7 +32,7 @@ export interface IUpdateFolderInput {
 export interface IFolderMatcher {
   folderpath?: string;
   folderId?: string;
-  organizationId?: string;
+  workspaceId?: string;
 }
 
 export const folderConstants = {

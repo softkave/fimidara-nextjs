@@ -9,7 +9,7 @@ import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/requests";
 const deleteRequestURL = `${baseURL}/deleteRequest`;
-const getOrganizationRequestsURL = `${baseURL}/getOrganizationRequests`;
+const getWorkspaceRequestsURL = `${baseURL}/getWorkspaceRequests`;
 const getUserRequestsURL = `${baseURL}/getUserRequests`;
 const sendRequestURL = `${baseURL}/sendRequest`;
 const updateRequestURL = `${baseURL}/updateRequest`;
@@ -28,21 +28,21 @@ async function deleteRequest(props: IDeleteCollaborationRequestEndpointParams) {
   });
 }
 
-export interface IGetOrganizationCollaborationRequestsEndpointParams {
-  organizationId: string;
+export interface IGetWorkspaceCollaborationRequestsEndpointParams {
+  workspaceId: string;
 }
 
-export type IGetOrganizationCollaborationRequestsEndpointResult =
+export type IGetWorkspaceCollaborationRequestsEndpointResult =
   GetEndpointResult<{
     requests: ICollaborationRequest[];
   }>;
 
-async function getOrganizationRequests(
-  props: IGetOrganizationCollaborationRequestsEndpointParams
+async function getWorkspaceRequests(
+  props: IGetWorkspaceCollaborationRequestsEndpointParams
 ) {
-  return invokeEndpointWithAuth<IGetOrganizationCollaborationRequestsEndpointResult>(
+  return invokeEndpointWithAuth<IGetWorkspaceCollaborationRequestsEndpointResult>(
     {
-      path: getOrganizationRequestsURL,
+      path: getWorkspaceRequestsURL,
       data: props,
     }
   );
@@ -98,7 +98,7 @@ async function revokeRequest(props: IRevokeCollaborationRequestEndpointParams) {
 }
 
 export interface ISendCollaborationRequestEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   request: ICollaborationRequestInput;
 }
 
@@ -148,7 +148,7 @@ async function getRequest(props: IGetCollaborationRequestEndpointParams) {
 
 export default class CollaborationRequestAPI {
   public static deleteRequest = deleteRequest;
-  public static getOrganizationRequests = getOrganizationRequests;
+  public static getWorkspaceRequests = getWorkspaceRequests;
   public static getUserRequests = getUserRequests;
   public static sendRequest = sendRequest;
   public static updateRequest = updateRequest;
@@ -159,7 +159,7 @@ export default class CollaborationRequestAPI {
 
 export class CollaborationRequestURLs {
   public static deleteRequest = deleteRequestURL;
-  public static getOrganizationRequests = getOrganizationRequestsURL;
+  public static getWorkspaceRequests = getWorkspaceRequestsURL;
   public static getUserRequests = getUserRequestsURL;
   public static sendRequest = sendRequestURL;
   public static updateRequest = updateRequestURL;

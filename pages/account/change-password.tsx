@@ -16,7 +16,10 @@ import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import UserSessionStorageFns from "../../lib/storage/userSession";
 import SessionActions from "../../lib/store/session/actions";
-import { appOrgPaths, systemConstants } from "../../lib/definitions/system";
+import {
+  appWorkspacePaths,
+  systemConstants,
+} from "../../lib/definitions/system";
 import { checkEndpointResult, toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
 import WebHeader from "../../components/web/WebHeader";
@@ -85,7 +88,7 @@ export default function ChangePassword(props: IChangePasswordProps) {
           })
         );
 
-        router.push(appOrgPaths.orgs);
+        router.push(appWorkspacePaths.workspaces);
       } catch (error) {
         const errArray = toAppErrorsArray(error);
         const flattenedErrors = flattenErrorList(errArray);

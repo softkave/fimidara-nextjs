@@ -8,7 +8,7 @@ export interface IClientAssignedToken {
   createdBy: IAgent;
   lastUpdatedBy?: IAgent;
   lastUpdatedAt?: string;
-  organizationId: string;
+  workspaceId: string;
   version: number;
   presets: IAssignedPresetPermissionsGroup[];
   issuedAt: string;

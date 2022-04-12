@@ -5,7 +5,10 @@ import { formBodyClassName } from "../../components/form/classNames";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
-import { appOrgPaths, systemConstants } from "../../lib/definitions/system";
+import {
+  appWorkspacePaths,
+  systemConstants,
+} from "../../lib/definitions/system";
 import { useRouter } from "next/router";
 import { getFormError } from "../../components/form/formUtils";
 
@@ -38,7 +41,7 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
         message: "Email address verified.",
       });
 
-      router.push(appOrgPaths.orgs);
+      router.push(appWorkspacePaths.workspaces);
     } catch (error) {
       const errArray = toAppErrorsArray(error);
       const flattenedErrors = flattenErrorList(errArray);

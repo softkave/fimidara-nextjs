@@ -7,7 +7,7 @@ export interface IProgramAccessToken {
   description?: string;
   createdAt: string;
   createdBy: IAgent;
-  organizationId: string;
+  workspaceId: string;
   presets: IAssignedPresetPermissionsGroup[];
   lastUpdatedAt?: string;
   lastUpdatedBy?: IAgent;

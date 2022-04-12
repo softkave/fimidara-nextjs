@@ -8,17 +8,14 @@ export const systemConstants = {
   appShortName: "files",
   tokenQueryKey: "t",
   phoneQueryKey: "p",
-  organizationId: defaultTo(
-    process.env.ORGANIZATION_ID,
-    "E1Z3_HbCvx103vlMCTm_L"
-  ),
+  workspaceId: defaultTo(process.env.WORKSPACE_ID, "E1Z3_HbCvx103vlMCTm_L"),
   userImagesFolder: defaultTo(
     process.env.USER_IMAGES_FOLDER,
     "/files/images/users"
   ),
-  orgImagesFolder: defaultTo(
-    process.env.ORG_IMAGES_FOLDER,
-    "/files/images/orgs"
+  workspaceImagesFolder: defaultTo(
+    process.env.WORKSPACE_IMAGES_FOLDER,
+    "/files/images/workspaces"
   ),
 };
 
@@ -55,7 +52,7 @@ export interface IAgent {
 
 export enum AppResourceType {
   All = "*",
-  Organization = "organization",
+  Workspace = "workspace",
   CollaborationRequest = "collaboration-request",
   ProgramAccessToken = "program-access-token",
   ClientAssignedToken = "client-assigned-token",
@@ -69,7 +66,7 @@ export enum AppResourceType {
 
 export const appResourceTypeLabel: Record<AppResourceType, string> = {
   [AppResourceType.All]: "Every resource",
-  [AppResourceType.Organization]: "Organization",
+  [AppResourceType.Workspace]: "Workspace",
   [AppResourceType.CollaborationRequest]: "Collaboration request",
   [AppResourceType.ProgramAccessToken]: "Program access token",
   [AppResourceType.ClientAssignedToken]: "Client assigned token",
@@ -106,7 +103,7 @@ export function getActions(type: AppResourceType, includeWildcard = false) {
     actions.unshift(BasicCRUDActions.All);
   }
 
-  if (type === AppResourceType.Organization || type === AppResourceType.All) {
+  if (type === AppResourceType.Workspace || type === AppResourceType.All) {
     actions.push(BasicCRUDActions.GrantPermission);
   }
 
@@ -134,120 +131,121 @@ export const appRootPaths = {
   account: "/account",
 };
 
-export const appOrgPaths = {
-  orgs: appRootPaths.app + "/orgs",
-  createOrgForm: appRootPaths.app + "/orgs/form",
-  org: (orgId: string) => appRootPaths.app + `/orgs/${orgId}`,
-  editOrgForm(orgId: string) {
-    return `${this.org(orgId)}/form`;
+export const appWorkspacePaths = {
+  workspaces: appRootPaths.app + "/workspaces",
+  createWorkspaceForm: appRootPaths.app + "/workspaces/form",
+  workspace: (workspaceId: string) =>
+    appRootPaths.app + `/workspaces/${workspaceId}`,
+  editWorkspaceForm(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/form`;
   },
 
   // File
-  fileList(orgId: string) {
-    return `${this.org(orgId)}/files`;
+  fileList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/files`;
   },
-  file(orgId: string, fileId: string) {
-    return `${this.fileList(orgId)}/${fileId}`;
+  file(workspaceId: string, fileId: string) {
+    return `${this.fileList(workspaceId)}/${fileId}`;
   },
-  fileForm(orgId: string, fileId: string) {
-    return `${this.file(orgId, fileId)}/update-file`;
+  fileForm(workspaceId: string, fileId: string) {
+    return `${this.file(workspaceId, fileId)}/update-file`;
   },
-  createFileForm(orgId: string, folderId?: string) {
+  createFileForm(workspaceId: string, folderId?: string) {
     if (folderId) {
-      return `${this.fileList(orgId)}/create-file-in-folder/${folderId}`;
+      return `${this.fileList(workspaceId)}/create-file-in-folder/${folderId}`;
     } else {
-      return `${this.fileList(orgId)}/create-file`;
+      return `${this.fileList(workspaceId)}/create-file`;
     }
   },
 
   // Folder
-  rootFolderList(orgId: string) {
-    return `${this.org(orgId)}/folders`;
+  rootFolderList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/folders`;
   },
-  folder(orgId: string, folderId: string) {
-    return `${this.rootFolderList(orgId)}/${folderId}`;
+  folder(workspaceId: string, folderId: string) {
+    return `${this.rootFolderList(workspaceId)}/${folderId}`;
   },
-  folderPage(orgId: string, folderId: string) {
-    return `${this.org(orgId)}/folder-page/${folderId}`;
+  folderPage(workspaceId: string, folderId: string) {
+    return `${this.workspace(workspaceId)}/folder-page/${folderId}`;
   },
-  folderForm(orgId: string, folderId: string) {
-    return `${this.folder(orgId, folderId)}/update-folder`;
+  folderForm(workspaceId: string, folderId: string) {
+    return `${this.folder(workspaceId, folderId)}/update-folder`;
   },
-  createFolderForm(orgId: string, folderId?: string) {
+  createFolderForm(workspaceId: string, folderId?: string) {
     if (folderId) {
       return `${this.rootFolderList(
-        orgId
+        workspaceId
       )}/create-folder-with-parent/${folderId}`;
     } else {
-      return `${this.rootFolderList(orgId)}/create-folder`;
+      return `${this.rootFolderList(workspaceId)}/create-folder`;
     }
   },
 
   // Collaborator
-  collaboratorList(orgId: string) {
-    return `${this.org(orgId)}/collaborators`;
+  collaboratorList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/collaborators`;
   },
-  collaborator(orgId: string, collaboratorId: string) {
-    return `${this.collaboratorList(orgId)}/${collaboratorId}`;
+  collaborator(workspaceId: string, collaboratorId: string) {
+    return `${this.collaboratorList(workspaceId)}/${collaboratorId}`;
   },
-  collaboratorForm(orgId: string, collaboratorId: string) {
-    return `${this.collaborator(orgId, collaboratorId)}/form`;
+  collaboratorForm(workspaceId: string, collaboratorId: string) {
+    return `${this.collaborator(workspaceId, collaboratorId)}/form`;
   },
 
   // Request
-  requestList(orgId: string) {
-    return `${this.org(orgId)}/requests`;
+  requestList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/requests`;
   },
-  createRequestForm(orgId: string) {
-    return `${this.requestList(orgId)}/form`;
+  createRequestForm(workspaceId: string) {
+    return `${this.requestList(workspaceId)}/form`;
   },
-  request(orgId: string, requestId: string) {
-    return `${this.requestList(orgId)}/${requestId}`;
+  request(workspaceId: string, requestId: string) {
+    return `${this.requestList(workspaceId)}/${requestId}`;
   },
-  requestForm(orgId: string, requestId: string) {
-    return `${this.request(orgId, requestId)}/form`;
+  requestForm(workspaceId: string, requestId: string) {
+    return `${this.request(workspaceId, requestId)}/form`;
   },
 
   // Program token
-  programTokenList(orgId: string) {
-    return `${this.org(orgId)}/program-tokens`;
+  programTokenList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/program-tokens`;
   },
-  createProgramTokenForm(orgId: string) {
-    return `${this.programTokenList(orgId)}/form`;
+  createProgramTokenForm(workspaceId: string) {
+    return `${this.programTokenList(workspaceId)}/form`;
   },
-  programToken(orgId: string, tokenId: string) {
-    return `${this.programTokenList(orgId)}/${tokenId}`;
+  programToken(workspaceId: string, tokenId: string) {
+    return `${this.programTokenList(workspaceId)}/${tokenId}`;
   },
-  programTokenForm(orgId: string, tokenId: string) {
-    return `${this.programToken(orgId, tokenId)}/form`;
+  programTokenForm(workspaceId: string, tokenId: string) {
+    return `${this.programToken(workspaceId, tokenId)}/form`;
   },
 
   // Client token
-  clientTokenList(orgId: string) {
-    return `${this.org(orgId)}/client-tokens`;
+  clientTokenList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/client-tokens`;
   },
-  createClientTokenForm(orgId: string) {
-    return `${this.clientTokenList(orgId)}/form`;
+  createClientTokenForm(workspaceId: string) {
+    return `${this.clientTokenList(workspaceId)}/form`;
   },
-  clientToken(orgId: string, tokenId: string) {
-    return `${this.clientTokenList(orgId)}/${tokenId}`;
+  clientToken(workspaceId: string, tokenId: string) {
+    return `${this.clientTokenList(workspaceId)}/${tokenId}`;
   },
-  clientTokenForm(orgId: string, tokenId: string) {
-    return `${this.clientToken(orgId, tokenId)}/form`;
+  clientTokenForm(workspaceId: string, tokenId: string) {
+    return `${this.clientToken(workspaceId, tokenId)}/form`;
   },
 
   // Preset
-  permissionGroupList(orgId: string) {
-    return `${this.org(orgId)}/permission-groups`;
+  permissionGroupList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/permission-groups`;
   },
-  createPermissionGroupForm(orgId: string) {
-    return `${this.permissionGroupList(orgId)}/form`;
+  createPermissionGroupForm(workspaceId: string) {
+    return `${this.permissionGroupList(workspaceId)}/form`;
   },
-  permissionGroup(orgId: string, presetId: string) {
-    return `${this.permissionGroupList(orgId)}/${presetId}`;
+  permissionGroup(workspaceId: string, presetId: string) {
+    return `${this.permissionGroupList(workspaceId)}/${presetId}`;
   },
-  permissionGroupForm(orgId: string, presetId: string) {
-    return `${this.permissionGroup(orgId, presetId)}/form`;
+  permissionGroupForm(workspaceId: string, presetId: string) {
+    return `${this.permissionGroup(workspaceId, presetId)}/form`;
   },
 };
 

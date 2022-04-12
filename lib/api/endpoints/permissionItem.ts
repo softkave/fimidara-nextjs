@@ -13,7 +13,7 @@ const getEntityPermissionItemsURL = `${baseURL}/getEntityPermissionItems`;
 const getResourcePermissionItemsURL = `${baseURL}/getResourcePermissionItems`;
 
 export interface IAddPermissionItemsEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   items: INewPermissionItemInput[];
 }
 
@@ -29,7 +29,7 @@ async function addItems(props: IAddPermissionItemsEndpointParams) {
 }
 
 export interface IDeletePermissionItemsByIdEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   itemIds: string[];
 }
 
@@ -43,7 +43,7 @@ async function deleteItemsById(
 }
 
 export interface IGetEntityPermissionItemsEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   permissionEntityId: string;
   permissionEntityType: AppResourceType;
 }
@@ -62,7 +62,7 @@ async function getEntityPermissionItems(
 }
 
 export interface IGetResourcePermissionItemsEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   itemResourceId?: string;
   itemResourceType: AppResourceType;
   permissionOwnerId?: string;

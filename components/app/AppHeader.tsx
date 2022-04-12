@@ -3,7 +3,7 @@ import { css } from "@emotion/css";
 import { Button, Dropdown, Popover, Space, Tooltip, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
-import { appOrgPaths } from "../../lib/definitions/system";
+import { appWorkspacePaths } from "../../lib/definitions/system";
 import UserCollaborationRequestList from "./requests/UserCollaborationRequestList";
 import UserMenu from "./UserMenu";
 
@@ -27,7 +27,7 @@ export default function AppHeader() {
   return (
     <div className={classes.root}>
       <div>
-        <Link href={appOrgPaths.orgs}>
+        <Link href={appWorkspacePaths.workspaces}>
           <Typography.Title level={5} style={{ margin: 0 }}>
             Files Backend
           </Typography.Title>
@@ -35,8 +35,8 @@ export default function AppHeader() {
       </div>
       <div className={classes.sideLinks}>
         <Space size="middle">
-          <Link href={appOrgPaths.orgs}>
-            <Tooltip title="Organizations">
+          <Link href={appWorkspacePaths.workspaces}>
+            <Tooltip title="Workspaces">
               <Button icon={<ShopOutlined />} />
             </Tooltip>
           </Link>

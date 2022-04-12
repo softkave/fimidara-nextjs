@@ -8,13 +8,13 @@ import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/programAccessTokens";
 const addTokenURL = `${baseURL}/addToken`;
-const getOrganizationTokensURL = `${baseURL}/getOrganizationTokens`;
+const getWorkspaceTokensURL = `${baseURL}/getWorkspaceTokens`;
 const getTokenURL = `${baseURL}/getToken`;
 const deleteTokenURL = `${baseURL}/deleteToken`;
 const updateTokenURL = `${baseURL}/updateToken`;
 
 export interface IAddProgramAccessTokenEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   token: INewProgramAccessTokenInput;
 }
 
@@ -41,21 +41,20 @@ async function deleteToken(props: IDeleteProgramAccessTokenEndpointParams) {
   });
 }
 
-export interface IGetOrganizationProgramAccessTokenEndpointParams {
-  organizationId: string;
+export interface IGetWorkspaceProgramAccessTokenEndpointParams {
+  workspaceId: string;
 }
 
-export type IGetOrganizationProgramAccessTokenEndpointResult =
-  GetEndpointResult<{
-    tokens: IProgramAccessToken[];
-  }>;
+export type IGetWorkspaceProgramAccessTokenEndpointResult = GetEndpointResult<{
+  tokens: IProgramAccessToken[];
+}>;
 
-async function getOrganizationTokens(
-  props: IGetOrganizationProgramAccessTokenEndpointParams
+async function getWorkspaceTokens(
+  props: IGetWorkspaceProgramAccessTokenEndpointParams
 ) {
-  return await invokeEndpointWithAuth<IGetOrganizationProgramAccessTokenEndpointResult>(
+  return await invokeEndpointWithAuth<IGetWorkspaceProgramAccessTokenEndpointResult>(
     {
-      path: getOrganizationTokensURL,
+      path: getWorkspaceTokensURL,
       data: props,
     }
   );
@@ -95,7 +94,7 @@ async function updateToken(props: IUpdateProgramAccessTokenEndpointParams) {
 
 export default class ProgramAccessTokenAPI {
   public static addToken = addToken;
-  public static getOrganizationTokens = getOrganizationTokens;
+  public static getWorkspaceTokens = getWorkspaceTokens;
   public static getToken = getToken;
   public static deleteToken = deleteToken;
   public static updateToken = updateToken;
@@ -103,7 +102,7 @@ export default class ProgramAccessTokenAPI {
 
 export class ProgramAccessTokenURLs {
   public static addToken = addTokenURL;
-  public static getOrganizationTokens = getOrganizationTokensURL;
+  public static getWorkspaceTokens = getWorkspaceTokensURL;
   public static getToken = getTokenURL;
   public static deleteToken = deleteTokenURL;
   public static updateToken = updateTokenURL;

@@ -9,7 +9,7 @@ export interface IAssignedPresetPermissionsGroup {
 
 export interface IPresetPermissionsGroup {
   resourceId: string;
-  organizationId: string;
+  workspaceId: string;
   createdAt: string;
   createdBy: IAgent;
   lastUpdatedAt?: string;

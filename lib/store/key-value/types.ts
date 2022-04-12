@@ -1,7 +1,7 @@
 export enum KeyValueKeys {
   LoginAgain = "LoginAgain",
   UserImageLastUpdateTime = "UserImageLastUpdateTime",
-  OrgImageLastUpdateTime = "OrgImageLastUpdateTime",
+  WorkspaceImageLastUpdateTime = "WorkspaceImageLastUpdateTime",
 }
 
 export type IKeyValueState = Partial<Record<KeyValueKeys | string, any>>;

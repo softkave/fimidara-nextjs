@@ -1,10 +1,10 @@
 import React from "react";
 import { PermissionItemAppliesTo } from "../../lib/definitions/permissionItem";
 import { AppResourceType } from "../../lib/definitions/system";
-import GrantPermissionFormContainer from "../app/orgs/permissionItems/GrantPermissionFormContainer";
+import GrantPermissionFormContainer from "../app/workspaces/permissionItems/GrantPermissionFormContainer";
 
 export interface IUseGrantPermissionProps {
-  orgId: string;
+  workspaceId: string;
   permissionOwnerId: string;
   permissionOwnerType: AppResourceType;
   itemResourceId?: string;

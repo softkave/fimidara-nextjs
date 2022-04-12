@@ -1,0 +1,128 @@
+import { Space } from "antd";
+import React from "react";
+import { formatRelative } from "date-fns";
+import useClientToken from "../../../../lib/hooks/workspaces/useClientToken";
+import PageLoading from "../../../utils/PageLoading";
+import PageError from "../../../utils/PageError";
+import LabeledNode from "../../../utils/LabeledNode";
+import AssignedPresetList from "../permissionGroups/AssignedPresetList";
+import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
+import assert from "assert";
+import ComponentHeader from "../../../utils/ComponentHeader";
+import ClientTokenMenu from "./ClientTokenMenu";
+import { useRouter } from "next/router";
+import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import { useSWRConfig } from "swr";
+import { getUseWorkspaceClientTokenListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceClientTokenList";
+import { appClasses } from "../../../utils/theme";
+import { getBaseError } from "../../../../lib/utilities/errors";
+import { formatDateTime } from "../../../../lib/utilities/dateFns";
+
+export interface IClientTokenProps {
+  tokenId: string;
+}
+
+/**
+ * TODO: add created/last updated date and who, same for other pages
+ */
+
+function ClientToken(props: IClientTokenProps) {
+  const { tokenId } = props;
+  const router = useRouter();
+  const { error, isLoading, data, mutate } = useClientToken(tokenId);
+  const { mutate: cacheMutate } = useSWRConfig();
+  const onRemovePermissionGroup = React.useCallback(
+    async (presetId: string) => {
+      assert(data?.token, new Error("Token not found"));
+      const updatedPresets = data?.token.presets.filter(
+        (item) => item.presetId !== presetId
+      );
+
+      const result = await ClientAssignedTokenAPI.updateToken({
+        tokenId,
+        token: { presets: updatedPresets },
+      });
+
+      mutate(result, false);
+    },
+    [data, tokenId]
+  );
+
+  const onCompeleteDeleteToken = React.useCallback(async () => {
+    assert(data?.token, new Error("Token not found"));
+    cacheMutate(getUseWorkspaceClientTokenListHookKey(data.token.workspaceId));
+    router.push(
+      data
+        ? appWorkspacePaths.clientTokenList(data.token.workspaceId)
+        : appWorkspacePaths.workspaces
+    );
+  }, [data]);
+
+  if (error) {
+    return (
+      <PageError
+        messageText={
+          getBaseError(error) || "Error fetching client assigned token"
+        }
+      />
+    );
+  }
+
+  if (isLoading || !data) {
+    return <PageLoading messageText="Loading client assigned token..." />;
+  }
+
+  const token = data.token;
+  const expirationDate = token.expires && formatDateTime(token.expires);
+
+  return (
+    <div className={appClasses.main}>
+      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <ComponentHeader copyable title={token.resourceId}>
+          <ClientTokenMenu
+            token={token}
+            onCompleteDelete={onCompeleteDeleteToken}
+          />
+        </ComponentHeader>
+        <LabeledNode
+          nodeIsText
+          copyable
+          direction="vertical"
+          label="Resource ID"
+          node={token.resourceId}
+        />
+        {token.providedResourceId && (
+          <LabeledNode
+            nodeIsText
+            copyable
+            direction="vertical"
+            label="Provided Resource ID"
+            node={token.providedResourceId}
+          />
+        )}
+        <LabeledNode
+          nodeIsText
+          copyable
+          direction="vertical"
+          label="Token"
+          node={token.tokenStr}
+        />
+        {expirationDate && (
+          <LabeledNode
+            nodeIsText
+            direction="vertical"
+            label="Token Expires"
+            node={expirationDate}
+          />
+        )}
+        <AssignedPresetList
+          workspaceId={token.workspaceId}
+          presets={token.presets}
+          onRemoveItem={onRemovePermissionGroup}
+        />
+      </Space>
+    </div>
+  );
+}
+
+export default ClientToken;

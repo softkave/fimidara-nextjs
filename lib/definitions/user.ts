@@ -2,8 +2,8 @@ import { getFields, makeExtract } from "../utilities/extract";
 import OperationError from "../utilities/OperationError";
 import { IAssignedPresetPermissionsGroup } from "./presets";
 
-export interface IUserOrganization {
-  organizationId: string;
+export interface IUserWorkspace {
+  workspaceId: string;
   joinedAt: string;
   presets: IAssignedPresetPermissionsGroup[];
 }
@@ -19,10 +19,10 @@ export interface IUser {
   isEmailVerified: boolean;
   emailVerifiedAt?: string | null;
   emailVerificationEmailSentAt?: string | null;
-  organizations: IUserOrganization[];
+  workspaces: IUserWorkspace[];
 }
 
-export interface ICollaborator extends IUserOrganization {
+export interface ICollaborator extends IUserWorkspace {
   resourceId: string;
   firstName: string;
   lastName: string;

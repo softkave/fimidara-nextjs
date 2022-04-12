@@ -22,7 +22,7 @@ export default function CollaborationRequestList(
           <Link href={`${appRequestsPaths.requests}/${item.resourceId}`}>
             <a>
               Request from{" "}
-              <Typography.Text strong>{item.organizationName}</Typography.Text>
+              <Typography.Text strong>{item.workspaceName}</Typography.Text>
             </a>
           </Link>
         </List.Item>

@@ -2,7 +2,7 @@ import { IAgent, IPublicAccessOp } from "./system";
 
 export interface IFile {
   resourceId: string;
-  organizationId: string;
+  workspaceId: string;
   folderId?: string;
   idPath: string[];
   namePath: string[];
@@ -39,7 +39,7 @@ export enum UploadFilePublicAccessActions {
 export interface IFileMatcher {
   filepath?: string;
   fileId?: string;
-  organizationId?: string;
+  workspaceId?: string;
 }
 
 export const fileConstants = {

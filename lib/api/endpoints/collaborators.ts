@@ -5,12 +5,12 @@ import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/collaborators";
 const removeCollaboratorURL = `${baseURL}/removeCollaborator`;
-const getOrganizationCollaboratorsURL = `${baseURL}/getOrganizationCollaborators`;
+const getWorkspaceCollaboratorsURL = `${baseURL}/getWorkspaceCollaborators`;
 const getCollaboratorURL = `${baseURL}/getCollaborator`;
 const updateCollaboratorPresetsURL = `${baseURL}/updateCollaboratorPresets`;
 
 export interface IGetCollaboratorEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   collaboratorId: string;
 }
 
@@ -25,27 +25,27 @@ async function getCollaborator(props: IGetCollaboratorEndpointParams) {
   });
 }
 
-export interface IGetOrganizationCollaboratorsEndpointParams {
-  organizationId: string;
+export interface IGetWorkspaceCollaboratorsEndpointParams {
+  workspaceId: string;
 }
 
-export type IGetOrganizationCollaboratorsEndpointResult = GetEndpointResult<{
+export type IGetWorkspaceCollaboratorsEndpointResult = GetEndpointResult<{
   collaborators: ICollaborator[];
 }>;
 
-async function getOrganizationCollaborators(
-  props: IGetOrganizationCollaboratorsEndpointParams
+async function getWorkspaceCollaborators(
+  props: IGetWorkspaceCollaboratorsEndpointParams
 ) {
-  return await invokeEndpointWithAuth<IGetOrganizationCollaboratorsEndpointResult>(
+  return await invokeEndpointWithAuth<IGetWorkspaceCollaboratorsEndpointResult>(
     {
-      path: getOrganizationCollaboratorsURL,
+      path: getWorkspaceCollaboratorsURL,
       data: props,
     }
   );
 }
 
 export interface IRemoveCollaboratorEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   collaboratorId: string;
 }
 
@@ -57,7 +57,7 @@ async function removeCollaborator(props: IRemoveCollaboratorEndpointParams) {
 }
 
 export interface IUpdateCollaboratorPresetsEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   collaboratorId: string;
   presets: IPresetInput[];
 }
@@ -79,14 +79,14 @@ async function updateCollaboratorPresets(
 
 export default class CollaboratorAPI {
   public static removeCollaborator = removeCollaborator;
-  public static getOrganizationCollaborators = getOrganizationCollaborators;
+  public static getWorkspaceCollaborators = getWorkspaceCollaborators;
   public static getCollaborator = getCollaborator;
   public static updateCollaboratorPresets = updateCollaboratorPresets;
 }
 
 export class CollaboratorURLs {
   public static removeCollaborator = removeCollaboratorURL;
-  public static getOrganizationCollaborators = getOrganizationCollaboratorsURL;
+  public static getWorkspaceCollaborators = getWorkspaceCollaboratorsURL;
   public static getCollaborator = getCollaboratorURL;
   public static updateCollaboratorPresets = updateCollaboratorPresetsURL;
 }

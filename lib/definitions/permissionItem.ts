@@ -8,7 +8,7 @@ export enum PermissionItemAppliesTo {
 
 export interface IPermissionItem {
   resourceId: string;
-  organizationId: string;
+  workspaceId: string;
   createdAt: string;
   createdBy: IAgent;
   permissionOwnerId: string;

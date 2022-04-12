@@ -6,7 +6,7 @@ const baseURL = "/resources";
 const getResourcesURL = `${baseURL}/getResources`;
 
 export interface IGetResourcesEndpointParams {
-  organizationId: string;
+  workspaceId: string;
   resources: Array<IGetResourceInputItem>;
 }
 

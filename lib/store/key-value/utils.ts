@@ -1,6 +1,6 @@
 import { KeyValueKeys } from "./types";
 
 export class KeyValueDynamicKeys {
-  static getOrgImageLastUpdateTime = (orgId: string) =>
-    `${KeyValueKeys.OrgImageLastUpdateTime}_${orgId}`;
+  static getWorkspaceImageLastUpdateTime = (workspaceId: string) =>
+    `${KeyValueKeys.WorkspaceImageLastUpdateTime}_${workspaceId}`;
 }

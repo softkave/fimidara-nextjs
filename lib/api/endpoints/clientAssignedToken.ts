@@ -8,13 +8,13 @@ import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/clientAssignedTokens";
 const addTokenURL = `${baseURL}/addToken`;
-const getOrganizationTokensURL = `${baseURL}/getOrganizationTokens`;
+const getWorkspaceTokensURL = `${baseURL}/getWorkspaceTokens`;
 const getTokenURL = `${baseURL}/getToken`;
 const deleteTokenURL = `${baseURL}/deleteToken`;
 const updateTokenURL = `${baseURL}/updateToken`;
 
 export interface IAddClientAssignedTokenEndpointParams {
-  organizationId?: string;
+  workspaceId?: string;
   token: INewClientAssignedTokenInput;
 }
 
@@ -42,21 +42,21 @@ async function deleteToken(props: IDeleteClientAssignedTokenEndpointParams) {
   });
 }
 
-export interface IGetOrganizationClientAssignedTokensEndpointParams {
-  organizationId: string;
+export interface IGetWorkspaceClientAssignedTokensEndpointParams {
+  workspaceId: string;
 }
 
-export type IGetOrganizationClientAssignedTokensEndpointResult =
+export type IGetWorkspaceClientAssignedTokensEndpointResult =
   GetEndpointResult<{
     tokens: IClientAssignedToken[];
   }>;
 
-async function getOrganizationTokens(
-  props: IGetOrganizationClientAssignedTokensEndpointParams
+async function getWorkspaceTokens(
+  props: IGetWorkspaceClientAssignedTokensEndpointParams
 ) {
-  return await invokeEndpointWithAuth<IGetOrganizationClientAssignedTokensEndpointResult>(
+  return await invokeEndpointWithAuth<IGetWorkspaceClientAssignedTokensEndpointResult>(
     {
-      path: getOrganizationTokensURL,
+      path: getWorkspaceTokensURL,
       data: props,
     }
   );
@@ -99,7 +99,7 @@ async function updateToken(props: IUpdateClientAssignedTokenEndpointParams) {
 
 export default class ClientAssignedTokenAPI {
   public static addToken = addToken;
-  public static getOrganizationTokens = getOrganizationTokens;
+  public static getWorkspaceTokens = getWorkspaceTokens;
   public static getToken = getToken;
   public static deleteToken = deleteToken;
   public static updateToken = updateToken;
@@ -107,7 +107,7 @@ export default class ClientAssignedTokenAPI {
 
 export class ClientAssignedTokenURLs {
   public static addToken = addTokenURL;
-  public static getOrganizationTokens = getOrganizationTokensURL;
+  public static getWorkspaceTokens = getWorkspaceTokensURL;
   public static getToken = getTokenURL;
   public static deleteToken = deleteTokenURL;
   public static updateToken = updateTokenURL;

@@ -16,7 +16,7 @@ const deleteFolderURL = `${baseURL}/deleteFolder`;
 const updateFolderURL = `${baseURL}/updateFolder`;
 
 export interface IAddFolderEndpointParams {
-  organizationId?: string;
+  workspaceId?: string;
   folder: INewFolderInput;
 }
 

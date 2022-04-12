@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserAPI from "../api/endpoints/user";
-import { appOrgPaths, appRootPaths } from "../definitions/system";
+import { appWorkspacePaths, appRootPaths } from "../definitions/system";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionActions from "../store/session/actions";
 import SessionSelectors from "../store/session/selectors";
@@ -47,7 +47,7 @@ export default function useLoggedInStatus() {
           );
 
           if (first(window.location.pathname.split("/")) !== appRootPaths.app) {
-            router.push(appOrgPaths.orgs);
+            router.push(appWorkspacePaths.workspaces);
           }
 
           setReadyState(true);
