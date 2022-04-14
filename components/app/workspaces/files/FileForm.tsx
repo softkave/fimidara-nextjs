@@ -200,6 +200,7 @@ export default function FileForm(props: IFileFormProps) {
           placeholder="Enter file name"
           disabled={submitResult.loading || !!file}
           maxLength={systemConstants.maxNameLength}
+          autoComplete="off"
         />
         {!file && first(formik.values.file) && (
           <Button

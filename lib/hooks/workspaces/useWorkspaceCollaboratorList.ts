@@ -3,6 +3,7 @@ import CollaboratorAPI, {
   CollaboratorURLs,
 } from "../../api/endpoints/collaborators";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, workspaceId: string) => {
   return checkEndpointResult(
@@ -20,7 +21,7 @@ export default function useWorkspaceCollaboratorList(workspaceId: string) {
   const { data, error } = useSWR(
     getUseWorkspaceCollaboratorListHookKey(workspaceId),
     fetcher,
-    { shouldRetryOnError: false }
+    swrDefaultConfig
   );
 
   return {

@@ -119,6 +119,7 @@ export default function WorkspaceForm(props: IWorkspaceFormProps) {
         placeholder="Enter workspace name"
         disabled={submitResult.loading}
         maxLength={systemConstants.maxNameLength}
+        autoComplete="off"
       />
     </Form.Item>
   );

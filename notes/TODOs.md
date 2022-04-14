@@ -22,3 +22,4 @@
 - [ ] create and update forms should be modals instead of pages
 - [ ] webpage
 - [ ] chip if the user has unattended collaboration requests or new ones
+- [ ] uploaded file size is too big and user avatar is not updated

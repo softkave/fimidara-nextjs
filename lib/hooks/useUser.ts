@@ -6,6 +6,7 @@ import { checkEndpointResult } from "../api/utils";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionActions from "../store/session/actions";
 import SessionSelectors from "../store/session/selectors";
+import { swrDefaultConfig } from "./config";
 
 const fetcher = async (p: string, dispatch: Dispatch, token?: string) => {
   token = token || (UserSessionStorageFns.getUserToken() as string | undefined);
@@ -42,7 +43,7 @@ export default function useUser(swrConfig: SWRConfiguration = {}) {
   const { data, error, mutate } = useSWR(
     [getUseUserHookKey(), dispatch, token],
     fetcher,
-    { shouldRetryOnError: false, ...swrConfig }
+    { ...swrDefaultConfig, ...swrConfig }
   );
 
   return {

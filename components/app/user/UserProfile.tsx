@@ -10,6 +10,7 @@ import {
 import FormError from "../../../components/form/FormError";
 import {
   EmailAddressNotAvailableError,
+  IUser,
   IUserProfileInput,
   userConstants,
 } from "../../../lib/definitions/user";
@@ -35,6 +36,22 @@ const userSettingsValidation = yup.object().shape({
   lastName: signupValidationParts.name.required(messages.lastNameRequired),
   email: signupValidationParts.email.required(messages.emailRequired),
 });
+
+function getInitialValues(user?: IUser): IUserProfileInput {
+  if (!user) {
+    return {
+      firstName: "",
+      lastName: "",
+      email: "",
+    };
+  }
+
+  return {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+  };
+}
 
 export default function UserProfile(props: IUserProfileProps) {
   const { isLoading, error, data, mutate } = useUser();
@@ -66,14 +83,14 @@ export default function UserProfile(props: IUserProfileProps) {
       validationSchema: userSettingsValidation,
 
       // Will be replaced in a useEffect when user loads
-      initialValues: data?.user as any,
+      initialValues: getInitialValues(),
       onSubmit: submitResult.run,
     },
   });
 
   React.useEffect(() => {
     if (data?.user) {
-      formik.setValues(data.user);
+      formik.setValues(getInitialValues(data.user));
     }
   }, [data?.user]);
 

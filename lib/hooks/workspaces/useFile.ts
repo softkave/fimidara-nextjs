@@ -4,6 +4,7 @@ import FileAPI, {
   IGetFileDetailsEndpointParams,
 } from "../../api/endpoints/file";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, params: IGetFileDetailsEndpointParams) => {
   return checkEndpointResult(await FileAPI.getFileDetails(params));
@@ -20,7 +21,7 @@ export default function useFile(
   const { data, error, mutate } = useSWR(
     params ? getUseFileHookKey(params) : null,
     fetcher,
-    { shouldRetryOnError: false, ...config }
+    { ...swrDefaultConfig, ...config }
   );
 
   return {

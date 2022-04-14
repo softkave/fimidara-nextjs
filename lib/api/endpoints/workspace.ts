@@ -36,6 +36,7 @@ async function deleteWorkspace(props: IDeleteWorkspaceEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deleteWorkspaceURL,
     data: props,
+    method: "DELETE",
   });
 }
 

@@ -132,6 +132,7 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
         placeholder="Enter token name"
         disabled={submitResult.loading}
         maxLength={systemConstants.maxNameLength}
+        autoComplete="off"
       />
     </Form.Item>
   );

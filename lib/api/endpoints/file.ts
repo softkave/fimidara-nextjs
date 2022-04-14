@@ -95,26 +95,9 @@ async function deleteFile(props: IDeleteFileEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deleteFileURL,
     data: props,
+    method: "DELETE",
   });
 }
-
-// export interface IGetFileEndpointParams {
-//   path: string;
-//   workspaceId?: string;
-//   imageTranformation?: IImageTransformationParams;
-// }
-
-// export type IGetFileEndpointResult = GetEndpointResult<{
-//   buffer: Buffer;
-//   file: IFile;
-// }>;
-
-// async function getFile(props: IGetFileEndpointParams) {
-//   return await invokeEndpointWithAuth<IGetFileEndpointResult>({
-//     path: `${baseURL}/getFile`,
-//     data: props,
-//   });
-// }
 
 export interface IUpdateFileDetailsEndpointParams extends IFileMatcher {
   file: IUpdateFileDetailsInput;

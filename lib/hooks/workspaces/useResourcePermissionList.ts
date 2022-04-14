@@ -5,6 +5,7 @@ import PermissionItemAPI, {
 } from "../../api/endpoints/permissionItem";
 import { checkEndpointResult } from "../../api/utils";
 import { AppResourceType } from "../../definitions/system";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (
   p: string,
@@ -27,7 +28,7 @@ export default function useResourcePermissionList(
   const { data, error, mutate } = useSWR(
     getUseResourcePermissionListHookKey(params),
     fetcher,
-    { shouldRetryOnError: false }
+    swrDefaultConfig
   );
 
   return {

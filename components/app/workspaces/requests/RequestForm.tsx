@@ -116,7 +116,7 @@ export default function RequestForm(props: IRequestFormProps) {
   });
 
   const globalError = getFormError(formik.errors);
-  const nameNode = (
+  const recipientEmailNode = (
     <Form.Item
       required
       label="Recipient Email Address"
@@ -140,6 +140,7 @@ export default function RequestForm(props: IRequestFormProps) {
         placeholder="Enter recipient email"
         disabled={submitResult.loading}
         maxLength={systemConstants.maxNameLength}
+        autoComplete="off"
       />
     </Form.Item>
   );
@@ -216,7 +217,7 @@ export default function RequestForm(props: IRequestFormProps) {
               <Alert type="error" message={globalError} />
             </Form.Item>
           )}
-          {nameNode}
+          {recipientEmailNode}
           {messageNode}
           {expiresNode}
           <Form.Item className={css({ marginTop: "16px" })}>

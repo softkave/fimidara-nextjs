@@ -39,6 +39,7 @@ async function deletePreset(
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deletePresetURL,
     data: props,
+    method: "DELETE",
   });
 }
 

@@ -3,6 +3,7 @@ import ClientAssignedTokenAPI, {
   ClientAssignedTokenURLs,
 } from "../../api/endpoints/clientAssignedToken";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, id: string) => {
   return checkEndpointResult(
@@ -18,7 +19,7 @@ export default function useClientToken(id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUseClientTokenHookKey(id) : null,
     fetcher,
-    { shouldRetryOnError: false }
+    swrDefaultConfig
   );
 
   return {

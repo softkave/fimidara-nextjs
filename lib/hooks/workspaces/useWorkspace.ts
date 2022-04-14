@@ -1,6 +1,7 @@
 import useSWR, { SWRConfiguration } from "swr";
 import WorkspaceAPI, { WorkspaceURLs } from "../../api/endpoints/workspace";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, id: string) => {
   return checkEndpointResult(
@@ -20,7 +21,7 @@ export default function useWorkspace(
     id ? getUseWorkspaceHookKey(id) : null,
     fetcher,
     {
-      shouldRetryOnError: false,
+      ...swrDefaultConfig,
       ...swrConfig,
     }
   );

@@ -1,8 +1,8 @@
 import { defaultTo } from "lodash";
 import { getClientAddr } from "../api/addr";
 
-if (!process.env.WORKSPACE_ID) {
-  throw new Error("WORKSPACE_ID is not set");
+if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
+  throw new Error("NEXT_PUBLIC_WORKSPACE_ID is not set");
 }
 
 export const systemConstants = {
@@ -12,13 +12,13 @@ export const systemConstants = {
   appShortName: "files",
   tokenQueryKey: "t",
   phoneQueryKey: "p",
-  workspaceId: process.env.WORKSPACE_ID,
+  workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID,
   userImagesFolder: defaultTo(
-    process.env.USER_IMAGES_FOLDER,
+    process.env.NEXT_PUBLIC_USER_IMAGES_FOLDER,
     "/files/images/users"
   ),
   workspaceImagesFolder: defaultTo(
-    process.env.WORKSPACE_IMAGES_FOLDER,
+    process.env.NEXT_PUBLIC_WORKSPACE_IMAGES_FOLDER,
     "/files/images/workspaces"
   ),
 };

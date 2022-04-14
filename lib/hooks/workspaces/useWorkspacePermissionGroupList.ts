@@ -3,6 +3,7 @@ import PresetPermissionsGroupAPI, {
   PresetPermissionsGroupURL,
 } from "../../api/endpoints/presetPermissionsGroup";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, workspaceId: string) => {
   return checkEndpointResult(
@@ -20,7 +21,7 @@ export default function useWorkspacePermissionGroupList(workspaceId: string) {
   const { data, error, mutate } = useSWR(
     getUseWorkspacePermissionGroupListHookKey(workspaceId),
     fetcher,
-    { shouldRetryOnError: false }
+    swrDefaultConfig
   );
 
   return {

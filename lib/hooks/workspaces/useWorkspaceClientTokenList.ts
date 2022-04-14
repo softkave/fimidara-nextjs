@@ -3,6 +3,7 @@ import ClientAssignedTokenAPI, {
   ClientAssignedTokenURLs,
 } from "../../api/endpoints/clientAssignedToken";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, workspaceId: string) => {
   return checkEndpointResult(
@@ -20,7 +21,7 @@ export default function useWorkspaceClientTokenList(workspaceId: string) {
   const { data, error } = useSWR(
     getUseWorkspaceClientTokenListHookKey(workspaceId),
     fetcher,
-    { shouldRetryOnError: false }
+    swrDefaultConfig
   );
 
   return {

@@ -130,6 +130,7 @@ export default function PresetForm(props: IPresetFormProps) {
         placeholder="Enter preset name"
         disabled={submitResult.loading}
         maxLength={systemConstants.maxNameLength}
+        autoComplete="off"
       />
     </Form.Item>
   );

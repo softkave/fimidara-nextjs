@@ -171,6 +171,7 @@ export default function FolderForm(props: IFolderFormProps) {
         placeholder="Enter folder name"
         disabled={submitResult.loading || !!folder}
         maxLength={systemConstants.maxNameLength}
+        autoComplete="off"
       />
     </Form.Item>
   );
@@ -203,34 +204,6 @@ export default function FolderForm(props: IFolderFormProps) {
     </Form.Item>
   );
 
-  // const maxFileSizeInBytesNode = (
-  //   <Form.Item
-  //     label="Max File Size in Bytes"
-  //     help={
-  //       formik.touched?.maxFileSizeInBytes &&
-  //       formik.errors?.maxFileSizeInBytes && (
-  //         <FormError
-  //           visible={formik.touched.maxFileSizeInBytes}
-  //           error={formik.errors.maxFileSizeInBytes}
-  //         />
-  //       )
-  //     }
-  //     labelCol={{ span: 24 }}
-  //     wrapperCol={{ span: 24 }}
-  //   >
-  //     <InputNumber
-  //       name="maxFileSizeInBytes"
-  //       value={formik.values.maxFileSizeInBytes}
-  //       onBlur={formik.handleBlur}
-  //       onChange={formik.handleChange}
-  //       placeholder="Enter max file size"
-  //       disabled={submitResult.loading}
-  //       max={fileConstants.maxFileSizeInBytes}
-  //       style={{ minWidth: "120px" }}
-  //     />
-  //   </Form.Item>
-  // );
-
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
@@ -245,7 +218,6 @@ export default function FolderForm(props: IFolderFormProps) {
           )}
           {nameNode}
           {descriptionNode}
-          {/* {maxFileSizeInBytesNode} */}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

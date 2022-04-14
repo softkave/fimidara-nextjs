@@ -25,6 +25,7 @@ async function deleteRequest(props: IDeleteCollaborationRequestEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deleteRequestURL,
     data: props,
+    method: "DELETE",
   });
 }
 

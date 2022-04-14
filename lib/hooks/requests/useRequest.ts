@@ -3,6 +3,7 @@ import CollaborationRequestAPI, {
   CollaborationRequestURLs,
 } from "../../api/endpoints/collaborationRequest";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, id: string) => {
   return checkEndpointResult(
@@ -18,7 +19,7 @@ export default function useCollaborationRequest(id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUseCollaborationRequestHookKey(id) : null,
     fetcher,
-    { shouldRetryOnError: false }
+    swrDefaultConfig
   );
 
   return {

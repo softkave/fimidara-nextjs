@@ -37,6 +37,7 @@ async function deleteFolder(props: IDeleteFolderEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deleteFolderURL,
     data: props,
+    method: "DELETE",
   });
 }
 

@@ -3,6 +3,7 @@ import ProgramAccessTokenAPI, {
   ProgramAccessTokenURLs,
 } from "../../api/endpoints/programAccessToken";
 import { checkEndpointResult } from "../../api/utils";
+import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, id: string) => {
   return checkEndpointResult(
@@ -18,7 +19,7 @@ export default function useProgramToken(id?: string) {
   const { data, error, mutate } = useSWR(
     id ? getUseProgramTokenHookKey(id) : null,
     fetcher,
-    { shouldRetryOnError: false }
+    swrDefaultConfig
   );
 
   return {

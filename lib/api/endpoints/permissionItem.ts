@@ -39,6 +39,7 @@ async function deleteItemsById(
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deleteItemsByIdURL,
     data: props,
+    method: "DELETE",
   });
 }
 

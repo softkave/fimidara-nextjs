@@ -39,6 +39,7 @@ async function deleteToken(props: IDeleteClientAssignedTokenEndpointParams) {
   return invokeEndpointWithAuth<IEndpointResultBase>({
     path: deleteTokenURL,
     data: props,
+    method: "DELETE",
   });
 }
 

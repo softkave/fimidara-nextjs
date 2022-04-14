@@ -1,4 +1,5 @@
 import { OutgoingHttpHeaders } from "http";
+import { isBoolean } from "lodash";
 import isString from "lodash/isString";
 import last from "lodash/last";
 import { IAppError } from "../definitions/system";
@@ -46,8 +47,12 @@ export interface IInvokeEndpointParams {
   data?: any;
   path: string;
   headers?: OutgoingHttpHeaders;
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "DELETE";
   omitContentTypeHeader?: boolean;
+  returnFetchResponse?: boolean;
+
+  // Defaults to true
+  throwOnBodyError?: boolean;
 }
 
 export async function invokeEndpoint<T extends IEndpointResultBase>(
@@ -77,45 +82,33 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
       mode: "cors",
     });
 
-    // TODO: what if the request fails in the middleware space?
-    // i.e maybe auth token decoding error or something
-    if (!result.headers.get("Content-Type")?.includes("application/json")) {
-      throw new Error("Error completing request");
-    }
-
-    const body = (await result.json()) as T;
-    let errors: IAppError[] | undefined = undefined;
-
-    if (body) {
-      errors = body.errors;
-    }
-
     if (result.ok) {
-      if (errors && errors.length > 0) {
-        const continueProcessing = processServerRecommendedActions(errors);
+      if (props.returnFetchResponse) {
+        // TODO: Annotate with the correct type
+        return result as any;
+      } else {
+        const body = (await result.json()) as T;
+        const throwOnBodyError = isBoolean(props.throwOnBodyError)
+          ? props.throwOnBodyError
+          : true;
 
-        if (continueProcessing) {
-          return body;
-        } else {
-          throw new Error("Error completing request");
+        if ((body as IEndpointResultBase)?.errors && throwOnBodyError) {
+          throw (body as IEndpointResultBase).errors;
         }
+
+        return body;
       }
+    }
 
-      return body;
-    } else {
-      // TODO: do we still need these?
-      if (result.status === 500 || result.status === 401) {
-        if (errors) {
-          if (isExpectedErrorType(errors)) {
-            const continueProcessing = processServerRecommendedActions(errors);
+    const isResultJSON = result.headers
+      .get(HTTP_HEADER_CONTENT_TYPE)
+      ?.includes(CONTENT_TYPE_APPLICATION_JSON);
 
-            if (continueProcessing) {
-              return body;
-            }
-          }
+    if (isResultJSON) {
+      const body = (await result.json()) as IEndpointResultBase | undefined;
 
-          throw new Error("Error completing request");
-        }
+      if (body?.errors) {
+        throw (body as IEndpointResultBase).errors;
       }
     }
 
