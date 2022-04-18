@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import CollaboratorAPI, {
   CollaboratorURLs,
+  IGetCollaboratorEndpointResult,
 } from "../../api/endpoints/collaborators";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
@@ -19,7 +20,7 @@ export function getUseCollaboratorHookKey(workspaceId: string, id: string) {
 }
 
 export default function useCollaborator(workspaceId: string, id?: string) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<IGetCollaboratorEndpointResult>(
     id ? getUseCollaboratorHookKey(workspaceId, id) : null,
     fetcher,
     swrDefaultConfig

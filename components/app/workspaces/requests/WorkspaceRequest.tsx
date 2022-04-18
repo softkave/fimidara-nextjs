@@ -29,7 +29,7 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
     assert(data?.request, new Error("Request not found"));
     cacheMutate(getUseWorkspaceRequestListHookKey(data.request.workspaceId));
     router.push(appWorkspacePaths.requestList(data.request.workspaceId));
-  }, [data]);
+  }, [data, cacheMutate, router]);
 
   if (error) {
     return (

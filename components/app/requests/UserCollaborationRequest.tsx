@@ -71,7 +71,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
         message.error(getBaseError(error) || messages.requestError);
       }
     },
-    [requestId, data]
+    [requestId, data, mutate]
   );
 
   const respondResult = useRequest(onRespond, { manual: true });

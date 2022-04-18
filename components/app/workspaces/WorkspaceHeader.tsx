@@ -57,7 +57,7 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
 
   const onGoBack = React.useCallback(() => {
     router.push(appWorkspacePaths.workspaces);
-  }, []);
+  }, [router]);
 
   const deleteWorkspace = React.useCallback(async () => {
     const result = await WorkspaceAPI.deleteWorkspace({
@@ -92,7 +92,7 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
         toggleVisibility();
       }
     },
-    [toggleVisibility]
+    [toggleVisibility, deleteWorkspaceHelper]
   );
 
   const editWorkspacePath = appWorkspacePaths.editWorkspaceForm(

@@ -157,7 +157,7 @@ export default function FileForm(props: IFileFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [file, workspaceId]
+    [file, workspaceId, folderId, folderpath, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

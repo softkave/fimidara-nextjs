@@ -24,7 +24,10 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
   const { files, renderFileItem } = props;
   const internalRenderItem = React.useCallback(
     (item: IFile) => (
-      <List.Item key={item.resourceId} actions={[<FileMenu file={item} />]}>
+      <List.Item
+        key={item.resourceId}
+        actions={[<FileMenu key="menu" file={item} />]}
+      >
         <List.Item.Meta
           title={
             <Link

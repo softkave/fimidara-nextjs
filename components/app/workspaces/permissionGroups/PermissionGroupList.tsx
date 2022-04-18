@@ -35,6 +35,7 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
         key={item.resourceId}
         actions={[
           <PermissionGroupMenu
+            key="menu"
             preset={item}
             onCompleteDelete={onCompleteDeletePreset}
           />,
@@ -55,7 +56,7 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
         />
       </List.Item>
     ),
-    [onCompleteDeletePreset]
+    [onCompleteDeletePreset, workspaceId]
   );
 
   return (

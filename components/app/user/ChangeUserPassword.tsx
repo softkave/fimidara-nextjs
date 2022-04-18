@@ -31,24 +31,29 @@ const validationSchema = yup.object().shape({
 export default function ChangeUserPassword() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const onSubmit = React.useCallback(async (data: IChangePasswordFormData) => {
-    try {
-      const result = await UserAPI.changePassword({
-        password: data.password,
-      });
+  const onSubmit = React.useCallback(
+    async (data: IChangePasswordFormData) => {
+      try {
+        const result = await UserAPI.changePassword({
+          password: data.password,
+        });
 
-      checkEndpointResult(result);
-      UserSessionStorageFns.saveUserToken(result.token);
-      UserSessionStorageFns.saveClientAssignedToken(result.clientAssignedToken);
-      dispatch(
-        SessionActions.update({
-          data: { token: result.token },
-        })
-      );
-    } catch (error) {
-      throw getFlattenedError(error);
-    }
-  }, []);
+        checkEndpointResult(result);
+        UserSessionStorageFns.saveUserToken(result.token);
+        UserSessionStorageFns.saveClientAssignedToken(
+          result.clientAssignedToken
+        );
+        dispatch(
+          SessionActions.update({
+            data: { token: result.token },
+          })
+        );
+      } catch (error) {
+        throw getFlattenedError(error);
+      }
+    },
+    [dispatch]
+  );
 
   const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({

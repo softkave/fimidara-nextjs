@@ -36,7 +36,7 @@ const WorkspaceCollaboratorFormPage: React.FC<
   } else {
     content = (
       <CollaboratorForm
-        workspaceId={last(data.collaborator.workspaces)!.workspaceId}
+        workspaceId={data.collaborator.workspaceId}
         collaborator={data.collaborator}
       />
     );

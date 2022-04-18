@@ -1,6 +1,6 @@
 import { AlertOutlined, ShopOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Button, Dropdown, Popover, Space, Tooltip, Typography } from "antd";
+import { Button, Popover, Space, Tooltip, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
 import { appWorkspacePaths } from "../../lib/definitions/system";
@@ -27,7 +27,7 @@ export default function AppHeader() {
   return (
     <div className={classes.root}>
       <div>
-        <Link href={appWorkspacePaths.workspaces}>
+        <Link href={appWorkspacePaths.workspaces} passHref={false}>
           <Typography.Title level={5} style={{ margin: 0 }}>
             Files Backend
           </Typography.Title>
@@ -35,7 +35,7 @@ export default function AppHeader() {
       </div>
       <div className={classes.sideLinks}>
         <Space size="middle">
-          <Link href={appWorkspacePaths.workspaces}>
+          <Link href={appWorkspacePaths.workspaces} passHref={false}>
             <Tooltip title="Workspaces">
               <Button icon={<ShopOutlined />} />
             </Tooltip>

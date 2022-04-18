@@ -35,6 +35,7 @@ const CollaboratorList: React.FC<ICollaboratorListProps> = (props) => {
         key={item.resourceId}
         actions={[
           <CollaboratorMenu
+            key="menu"
             collaborator={item}
             workspaceId={workspaceId}
             onCompleteRemove={onCompleteRemoveUser}
@@ -56,7 +57,7 @@ const CollaboratorList: React.FC<ICollaboratorListProps> = (props) => {
         />
       </List.Item>
     ),
-    [onCompleteRemoveUser]
+    [onCompleteRemoveUser, workspaceId]
   );
 
   return (

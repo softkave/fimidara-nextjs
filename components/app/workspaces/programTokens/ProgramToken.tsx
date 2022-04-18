@@ -1,4 +1,4 @@
-import { Space, Typography } from "antd";
+import { Space } from "antd";
 import React from "react";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
 import useProgramToken from "../../../../lib/hooks/workspaces/useProgramToken";
-import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import { getUseWorkspaceProgramTokenListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceProgramTokenList";
 import LabeledNode from "../../../utils/LabeledNode";
 import ProgramTokenMenu from "./ProgramTokenMenu";
@@ -25,28 +24,28 @@ function ProgramToken(props: IProgramTokenProps) {
   const router = useRouter();
   const { error, isLoading, data, mutate } = useProgramToken(tokenId);
   const { mutate: cacheMutate } = useSWRConfig();
-  const onRemovePermissionGroup = React.useCallback(
-    async (presetId: string) => {
-      assert(data?.token, new Error("Token not found"));
-      const updatedPresets = data.token.presets.filter(
-        (item) => item.presetId !== presetId
-      );
+  // const onRemovePermissionGroup = React.useCallback(
+  //   async (presetId: string) => {
+  //     assert(data?.token, new Error("Token not found"));
+  //     const updatedPresets = data.token.presets.filter(
+  //       (item) => item.presetId !== presetId
+  //     );
 
-      const result = await ProgramAccessTokenAPI.updateToken({
-        tokenId,
-        token: { presets: updatedPresets },
-      });
+  //     const result = await ProgramAccessTokenAPI.updateToken({
+  //       tokenId,
+  //       token: { presets: updatedPresets },
+  //     });
 
-      mutate(result, false);
-    },
-    [data, tokenId]
-  );
+  //     mutate(result, false);
+  //   },
+  //   [data, tokenId]
+  // );
 
   const onCompleteDeleteToken = React.useCallback(async () => {
     assert(data?.token, new Error("Token not found"));
     cacheMutate(getUseWorkspaceProgramTokenListHookKey(data.token.workspaceId));
     router.push(appWorkspacePaths.collaboratorList(data.token.workspaceId));
-  }, [data]);
+  }, [data, cacheMutate, router]);
 
   if (error) {
     return (
@@ -94,7 +93,6 @@ function ProgramToken(props: IProgramTokenProps) {
         <AssignedPresetList
           workspaceId={token.workspaceId}
           presets={token.presets}
-          onRemoveItem={onRemovePermissionGroup}
         />
       </Space>
     </div>

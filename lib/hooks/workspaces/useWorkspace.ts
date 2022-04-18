@@ -1,5 +1,8 @@
 import useSWR, { SWRConfiguration } from "swr";
-import WorkspaceAPI, { WorkspaceURLs } from "../../api/endpoints/workspace";
+import WorkspaceAPI, {
+  IGetWorkspaceEndpointResult,
+  WorkspaceURLs,
+} from "../../api/endpoints/workspace";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
 
@@ -17,7 +20,7 @@ export default function useWorkspace(
   id?: string,
   swrConfig: SWRConfiguration = {}
 ) {
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<IGetWorkspaceEndpointResult>(
     id ? getUseWorkspaceHookKey(id) : null,
     fetcher,
     {

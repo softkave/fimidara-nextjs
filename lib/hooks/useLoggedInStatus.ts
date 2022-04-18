@@ -59,7 +59,7 @@ export default function useLoggedInStatus() {
     } catch (error) {
       cleanupLoginArtifacts(error);
     }
-  }, []);
+  }, [dispatch, router]);
 
   const signinHelper = useRequest(signInWithToken, { manual: true });
 
@@ -67,7 +67,7 @@ export default function useLoggedInStatus() {
     if (!isSignedIn && !isReady) {
       signinHelper.run();
     }
-  }, [isSignedIn, isReady]);
+  }, [isSignedIn, isReady, signinHelper]);
 
   return {
     isReady,

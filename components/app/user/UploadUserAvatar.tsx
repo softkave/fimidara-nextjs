@@ -22,7 +22,7 @@ export default function UploadUserAvatar() {
         value: Date.now(),
       })
     );
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className={formClasses.formContentWrapperClassName}>

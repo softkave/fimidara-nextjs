@@ -14,12 +14,9 @@ export type IFilePageProps = {
 
 const FilePage: React.FC<IFilePageProps> = (props) => {
   const { workspaceId, fileId } = props;
-  const renderFile = React.useCallback(
-    (file: IFile) => {
-      return <FileComponent file={file} />;
-    },
-    [workspaceId]
-  );
+  const renderFile = React.useCallback((file: IFile) => {
+    return <FileComponent file={file} />;
+  }, []);
 
   return (
     <Workspace

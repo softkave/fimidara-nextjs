@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import PresetPermissionsGroupAPI, {
+  IGetWorkspacePresetPermissionsGroupEndpointResult,
   PresetPermissionsGroupURL,
 } from "../../api/endpoints/presetPermissionsGroup";
 import { checkEndpointResult } from "../../api/utils";
@@ -18,11 +19,12 @@ export function getUseWorkspacePermissionGroupListHookKey(workspaceId: string) {
 }
 
 export default function useWorkspacePermissionGroupList(workspaceId: string) {
-  const { data, error, mutate } = useSWR(
-    getUseWorkspacePermissionGroupListHookKey(workspaceId),
-    fetcher,
-    swrDefaultConfig
-  );
+  const { data, error, mutate } =
+    useSWR<IGetWorkspacePresetPermissionsGroupEndpointResult>(
+      getUseWorkspacePermissionGroupListHookKey(workspaceId),
+      fetcher,
+      swrDefaultConfig
+    );
 
   return {
     error,

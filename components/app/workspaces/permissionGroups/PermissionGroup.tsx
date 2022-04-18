@@ -51,7 +51,7 @@ function PermissionGroup(props: IPermissionGroupProps) {
       getUseWorkspacePermissionGroupListHookKey(data.preset.workspaceId)
     );
     router.push(appWorkspacePaths.collaboratorList(data.preset.workspaceId));
-  }, [data]);
+  }, [data, router, cacheMutate]);
 
   if (error) {
     return (

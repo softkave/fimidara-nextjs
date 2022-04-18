@@ -6,7 +6,6 @@ import {
   processEndpointError,
 } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
-import { SelectInfo } from "../../../utils/types";
 import { getFormError } from "../../../form/formUtils";
 import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
 import PermissionItemAPI from "../../../../lib/api/endpoints/permissionItem";
@@ -24,11 +23,9 @@ const PermissionItemMenu: React.FC<IPermissionItemMenuProps> = (props) => {
       // TODO: invalidate all the data that has assigned presets
       // when request is successful
 
-      const result = await PermissionItemAPI.deleteItems({
+      const result = await PermissionItemAPI.deleteItemsById({
         itemIds: [item.resourceId],
         workspaceId: item.workspaceId,
-        permissionEntityId: item.permissionEntityId,
-        permissionEntityType: item.permissionEntityType,
       });
 
       checkEndpointResult(result);

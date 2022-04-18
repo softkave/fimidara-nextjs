@@ -1,12 +1,10 @@
 import { Space } from "antd";
 import React from "react";
-import { formatRelative } from "date-fns";
 import useClientToken from "../../../../lib/hooks/workspaces/useClientToken";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
 import LabeledNode from "../../../utils/LabeledNode";
 import AssignedPresetList from "../permissionGroups/AssignedPresetList";
-import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import assert from "assert";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import ClientTokenMenu from "./ClientTokenMenu";
@@ -31,22 +29,22 @@ function ClientToken(props: IClientTokenProps) {
   const router = useRouter();
   const { error, isLoading, data, mutate } = useClientToken(tokenId);
   const { mutate: cacheMutate } = useSWRConfig();
-  const onRemovePermissionGroup = React.useCallback(
-    async (presetId: string) => {
-      assert(data?.token, new Error("Token not found"));
-      const updatedPresets = data?.token.presets.filter(
-        (item) => item.presetId !== presetId
-      );
+  // const onRemovePermissionGroup = React.useCallback(
+  //   async (presetId: string) => {
+  //     assert(data?.token, new Error("Token not found"));
+  //     const updatedPresets = data?.token.presets.filter(
+  //       (item) => item.presetId !== presetId
+  //     );
 
-      const result = await ClientAssignedTokenAPI.updateToken({
-        tokenId,
-        token: { presets: updatedPresets },
-      });
+  //     const result = await ClientAssignedTokenAPI.updateToken({
+  //       tokenId,
+  //       token: { presets: updatedPresets },
+  //     });
 
-      mutate(result, false);
-    },
-    [data, tokenId]
-  );
+  //     mutate(result, false);
+  //   },
+  //   [data, tokenId]
+  // );
 
   const onCompeleteDeleteToken = React.useCallback(async () => {
     assert(data?.token, new Error("Token not found"));
@@ -56,7 +54,7 @@ function ClientToken(props: IClientTokenProps) {
         ? appWorkspacePaths.clientTokenList(data.token.workspaceId)
         : appWorkspacePaths.workspaces
     );
-  }, [data]);
+  }, [data, cacheMutate, router]);
 
   if (error) {
     return (
@@ -118,7 +116,6 @@ function ClientToken(props: IClientTokenProps) {
         <AssignedPresetList
           workspaceId={token.workspaceId}
           presets={token.presets}
-          onRemoveItem={onRemovePermissionGroup}
         />
       </Space>
     </div>

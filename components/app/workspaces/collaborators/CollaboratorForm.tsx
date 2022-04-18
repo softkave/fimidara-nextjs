@@ -61,7 +61,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [collaborator, workspaceId]
+    [collaborator, workspaceId, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

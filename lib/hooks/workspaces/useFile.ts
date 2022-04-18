@@ -2,6 +2,7 @@ import useSWR, { SWRConfiguration } from "swr";
 import FileAPI, {
   FileURLs,
   IGetFileDetailsEndpointParams,
+  IGetFileDetailsEndpointResult,
 } from "../../api/endpoints/file";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
@@ -18,7 +19,7 @@ export default function useFile(
   params?: IGetFileDetailsEndpointParams,
   config: SWRConfiguration = {}
 ) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<IGetFileDetailsEndpointResult>(
     params ? getUseFileHookKey(params) : null,
     fetcher,
     { ...swrDefaultConfig, ...config }

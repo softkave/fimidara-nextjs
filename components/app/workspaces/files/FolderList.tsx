@@ -24,7 +24,10 @@ const FolderList: React.FC<IFolderListProps> = (props) => {
   const { folders, renderFolderItem } = props;
   const internalRenderItem = React.useCallback(
     (item: IFolder) => (
-      <List.Item key={item.resourceId} actions={[<FolderMenu folder={item} />]}>
+      <List.Item
+        key={item.resourceId}
+        actions={[<FolderMenu key="menu" folder={item} />]}
+      >
         <List.Item.Meta
           title={
             <Link

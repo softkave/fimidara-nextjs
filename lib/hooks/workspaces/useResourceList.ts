@@ -2,6 +2,7 @@ import { uniqBy } from "lodash";
 import useSWR from "swr";
 import ResourceAPI, {
   IGetResourcesEndpointParams,
+  IGetResourcesEndpointResult,
   ResourceURLs,
 } from "../../api/endpoints/resources";
 import { checkEndpointResult } from "../../api/utils";
@@ -17,7 +18,7 @@ export function getUseResourceListHookKey(params: IGetResourcesEndpointParams) {
 }
 
 export default function useResourceList(params: IGetResourcesEndpointParams) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<IGetResourcesEndpointResult>(
     getUseResourceListHookKey({
       ...params,
       resources: uniqBy(params.resources, (item) =>

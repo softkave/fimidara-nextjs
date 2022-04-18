@@ -3,13 +3,10 @@ import React from "react";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
 import AssignedPresetList from "../permissionGroups/AssignedPresetList";
-import assert from "assert";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import { useRouter } from "next/router";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useCollaborator from "../../../../lib/hooks/workspaces/useCollaborator";
-import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
-import { last } from "lodash";
 import { useSWRConfig } from "swr";
 import { getUseWorkspaceCollaboratorListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceCollaboratorList";
 import CollaboratorMenu from "./CollaboratorMenu";
@@ -31,33 +28,28 @@ function Collaborator(props: ICollaboratorProps) {
   );
 
   const { mutate: cacheMutate } = useSWRConfig();
-  const onRemovePermissionGroup = React.useCallback(
-    async (presetId: string) => {
-      assert(data?.collaborator, new Error("Collaborator not found"));
-      const userWorkspace = last(data.collaborator.workspaces);
-      assert(
-        userWorkspace,
-        new Error("Collaborator permission groups not found")
-      );
-      const updatedPresets = userWorkspace.presets.filter(
-        (item) => item.presetId !== presetId
-      );
+  // const onRemovePermissionGroup = React.useCallback(
+  //   async (presetId: string) => {
+  //     assert(data?.collaborator, new Error("Collaborator not found"));
+  //     const updatedPresets = data.collaborator.presets.filter(
+  //       (item) => item.presetId !== presetId
+  //     );
 
-      const result = await CollaboratorAPI.updateCollaboratorPresets({
-        collaboratorId,
-        workspaceId: workspaceId,
-        presets: updatedPresets,
-      });
+  //     const result = await CollaboratorAPI.updateCollaboratorPresets({
+  //       collaboratorId,
+  //       workspaceId: workspaceId,
+  //       presets: updatedPresets,
+  //     });
 
-      mutate(result, false);
-    },
-    [data, workspaceId, collaboratorId]
-  );
+  //     mutate(result, false);
+  //   },
+  //   [data, workspaceId, collaboratorId]
+  // );
 
   const onCompeleteRemoveCollaborator = React.useCallback(async () => {
     cacheMutate(getUseWorkspaceCollaboratorListHookKey(workspaceId));
     router.push(appWorkspacePaths.collaboratorList(workspaceId));
-  }, [workspaceId]);
+  }, [workspaceId, router, cacheMutate]);
 
   if (error) {
     return (
@@ -91,8 +83,7 @@ function Collaborator(props: ICollaboratorProps) {
         />
         <AssignedPresetList
           workspaceId={workspaceId}
-          presets={last(collaborator.workspaces)?.presets || []}
-          onRemoveItem={onRemovePermissionGroup}
+          presets={collaborator.presets || []}
         />
       </Space>
     </div>

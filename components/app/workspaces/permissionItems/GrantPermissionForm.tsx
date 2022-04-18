@@ -175,28 +175,28 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
     (items: IPresetPermissionsGroup[]) => {
       return <Collapse>{items.map(renderPreset)}</Collapse>;
     },
-    [renderItem]
+    [renderPreset]
   );
 
   const renderProgramTokenList = React.useCallback(
     (items: IProgramAccessToken[]) => {
       return <Collapse>{items.map(renderProgramToken)}</Collapse>;
     },
-    [renderItem]
+    [renderProgramToken]
   );
 
   const renderClientTokenList = React.useCallback(
     (items: IClientAssignedToken[]) => {
       return <Collapse>{items.map(renderClientToken)}</Collapse>;
     },
-    [renderItem]
+    [renderClientToken]
   );
 
   const renderCollaboratorList = React.useCallback(
     (items: ICollaborator[]) => {
       return <Collapse>{items.map(renderCollaborator)}</Collapse>;
     },
-    [renderItem]
+    [renderCollaborator]
   );
 
   const internalOnSave = React.useCallback(() => {
@@ -204,7 +204,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
       .getNewItems()
       .map((item) => omit(item, ["resourceId", "isNew"]));
     onSave(newItems, controller.getDeletedItemIds());
-  }, [controller]);
+  }, [controller, onSave]);
 
   const tabsNode = (
     <Tabs

@@ -55,26 +55,29 @@ function getInitialValues(user?: IUser): IUserProfileInput {
 
 export default function UserProfile(props: IUserProfileProps) {
   const { isLoading, error, data, mutate } = useUser();
-  const onSubmit = React.useCallback(async (data: IUserProfileInput) => {
-    try {
-      const result = await UserEndpoint.updateUser(data);
-      checkEndpointResult(result);
-      mutate(result, false);
-      message.success("Profile updated");
-    } catch (error) {
-      const errArray = toAppErrorsArray(error);
-      const flattenedErrors = flattenErrorList(errArray);
-      const emailExistsErr = errArray.find((err) => {
-        return err.name === EmailAddressNotAvailableError.name;
-      });
+  const onSubmit = React.useCallback(
+    async (data: IUserProfileInput) => {
+      try {
+        const result = await UserEndpoint.updateUser(data);
+        checkEndpointResult(result);
+        mutate(result, false);
+        message.success("Profile updated");
+      } catch (error) {
+        const errArray = toAppErrorsArray(error);
+        const flattenedErrors = flattenErrorList(errArray);
+        const emailExistsErr = errArray.find((err) => {
+          return err.name === EmailAddressNotAvailableError.name;
+        });
 
-      if (emailExistsErr) {
-        flattenedErrors["email"] = [emailExistsErr.message];
+        if (emailExistsErr) {
+          flattenedErrors["email"] = [emailExistsErr.message];
+        }
+
+        throw flattenedErrors;
       }
-
-      throw flattenedErrors;
-    }
-  }, []);
+    },
+    [mutate]
+  );
 
   const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
@@ -88,11 +91,12 @@ export default function UserProfile(props: IUserProfileProps) {
     },
   });
 
+  const setValues = formik.setValues;
   React.useEffect(() => {
     if (data?.user) {
-      formik.setValues(getInitialValues(data.user));
+      setValues(getInitialValues(data.user));
     }
-  }, [data?.user]);
+  }, [data?.user, setValues]);
 
   if (error) {
     return (

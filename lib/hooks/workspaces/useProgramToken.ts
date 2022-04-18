@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import ProgramAccessTokenAPI, {
+  IGetProgramAccessTokenEndpointResult,
   ProgramAccessTokenURLs,
 } from "../../api/endpoints/programAccessToken";
 import { checkEndpointResult } from "../../api/utils";
@@ -16,7 +17,7 @@ export function getUseProgramTokenHookKey(id: string) {
 }
 
 export default function useProgramToken(id?: string) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<IGetProgramAccessTokenEndpointResult>(
     id ? getUseProgramTokenHookKey(id) : null,
     fetcher,
     swrDefaultConfig

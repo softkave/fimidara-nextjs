@@ -31,7 +31,7 @@ const ListHeader: React.FC<IListHeaderProps> = (props) => {
         {title}
       </Typography.Title>
       <Space className={classes.sideLinks}>
-        <Link href={formLinkPath}>
+        <Link href={formLinkPath} passHref={false}>
           <Button icon={<PlusOutlined />} />
         </Link>
         {actions}

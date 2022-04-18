@@ -1,6 +1,7 @@
 import { Space } from "antd";
 import { isUndefined } from "lodash";
 import React from "react";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import {
   appWorkspacePaths,
@@ -83,6 +84,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
                 itemResourceType={AppResourceType.PresetPermissionsGroup}
                 permissionOwnerId={workspaceId}
                 permissionOwnerType={AppResourceType.Workspace}
+                appliesTo={PermissionItemAppliesTo.Children}
               />
             )
           }

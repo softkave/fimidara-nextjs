@@ -66,7 +66,8 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
           <Typography.Text>
             {customMessages.successful}.{" "}
             <Typography.Text strong>
-              Please reload the page if your change doesn't take effect soon.
+              Please reload the page if your change doesn&apos;t take effect
+              soon.
             </Typography.Text>
           </Typography.Text>
         ),

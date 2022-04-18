@@ -26,16 +26,19 @@ const CreateFileInFolderParentFormPage: React.FC<
   ICreateFileInFolderParentFormPageProps
 > = (props) => {
   const { workspaceId, folderId } = props;
-  const renderForm = React.useCallback((folder: IFolder) => {
-    return (
-      <FileForm
-        workspaceId={workspaceId}
-        folderId={folderId}
-        folderpath={folder.namePath.join(folderConstants.nameSeparator)}
-        key="file-form"
-      />
-    );
-  }, []);
+  const renderForm = React.useCallback(
+    (folder: IFolder) => {
+      return (
+        <FileForm
+          workspaceId={workspaceId}
+          folderId={folderId}
+          folderpath={folder.namePath.join(folderConstants.nameSeparator)}
+          key="file-form"
+        />
+      );
+    },
+    [folderId, workspaceId]
+  );
 
   return (
     <Workspace

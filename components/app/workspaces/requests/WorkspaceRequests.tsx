@@ -1,5 +1,6 @@
 import { Space } from "antd";
 import React from "react";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import {
   appWorkspacePaths,
   AppResourceType,
@@ -62,6 +63,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
               itemResourceType={AppResourceType.CollaborationRequest}
               permissionOwnerId={workspaceId}
               permissionOwnerType={AppResourceType.Workspace}
+              appliesTo={PermissionItemAppliesTo.Children}
             />
           }
         />

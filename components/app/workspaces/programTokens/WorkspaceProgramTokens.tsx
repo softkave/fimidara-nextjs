@@ -1,6 +1,7 @@
 import { Space } from "antd";
 import { isUndefined } from "lodash";
 import React from "react";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import {
   appWorkspacePaths,
@@ -80,6 +81,7 @@ const WorkspaceProgramTokens: React.FC<IWorkspaceProgramTokensProps> = (
                 itemResourceType={AppResourceType.ProgramAccessToken}
                 permissionOwnerId={workspaceId}
                 permissionOwnerType={AppResourceType.Workspace}
+                appliesTo={PermissionItemAppliesTo.Children}
               />
             )
           }

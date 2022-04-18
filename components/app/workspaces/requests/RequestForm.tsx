@@ -100,7 +100,7 @@ export default function RequestForm(props: IRequestFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [request, workspaceId]
+    [request, workspaceId, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

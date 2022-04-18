@@ -13,5 +13,5 @@ export default function useRouteAway(
     if (routeAway) {
       router.push(to);
     }
-  }, [condition, to]);
+  }, [condition, to, router]);
 }

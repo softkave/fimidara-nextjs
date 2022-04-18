@@ -89,14 +89,7 @@ const GrantPermissionFormContainer: React.FC<
         );
       }
     },
-    [
-      itemResourceType,
-      itemResourceId,
-      permissionOwnerId,
-      permissionOwnerType,
-      workspaceId,
-      mutate,
-    ]
+    [workspaceId, mutate]
   );
 
   const saveItemsHelper = useRequest(onSave, { manual: true });

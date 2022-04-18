@@ -34,7 +34,11 @@ const ProgramTokenList: React.FC<IProgramTokenListProps> = (props) => {
       <List.Item
         key={item.resourceId}
         actions={[
-          <ProgramTokenMenu token={item} onCompleteDelete={onCompleteDelete} />,
+          <ProgramTokenMenu
+            key={"menu"}
+            token={item}
+            onCompleteDelete={onCompleteDelete}
+          />,
         ]}
       >
         <List.Item.Meta
@@ -52,7 +56,7 @@ const ProgramTokenList: React.FC<IProgramTokenListProps> = (props) => {
         />
       </List.Item>
     ),
-    [onCompleteDelete]
+    [onCompleteDelete, workspaceId]
   );
 
   return (

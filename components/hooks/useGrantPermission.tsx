@@ -17,6 +17,14 @@ export enum GrantPermissionKey {
 }
 
 export default function useGrantPermission(props: IUseGrantPermissionProps) {
+  const {
+    workspaceId,
+    itemResourceType,
+    itemResourceId,
+    permissionOwnerId,
+    permissionOwnerType,
+    appliesTo,
+  } = props;
   const [visible, setVisibility] = React.useState(false);
   const toggleVisibility = React.useCallback(() => {
     setVisibility(!visible);
@@ -25,12 +33,29 @@ export default function useGrantPermission(props: IUseGrantPermissionProps) {
   const grantPermissionFormNode = React.useMemo(() => {
     if (visible) {
       return (
-        <GrantPermissionFormContainer {...props} onCancel={toggleVisibility} />
+        <GrantPermissionFormContainer
+          workspaceId={workspaceId}
+          itemResourceType={itemResourceType}
+          itemResourceId={itemResourceId}
+          permissionOwnerId={permissionOwnerId}
+          permissionOwnerType={permissionOwnerType}
+          appliesTo={appliesTo}
+          onCancel={toggleVisibility}
+        />
       );
     } else {
       return null;
     }
-  }, [visible, toggleVisibility]);
+  }, [
+    visible,
+    toggleVisibility,
+    workspaceId,
+    itemResourceType,
+    itemResourceId,
+    permissionOwnerId,
+    permissionOwnerType,
+    appliesTo,
+  ]);
 
   return {
     grantPermissionFormNode,

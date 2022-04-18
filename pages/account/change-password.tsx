@@ -95,7 +95,7 @@ export default function ChangePassword(props: IChangePasswordProps) {
         throw flattenedErrors;
       }
     },
-    []
+    [dispatch, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

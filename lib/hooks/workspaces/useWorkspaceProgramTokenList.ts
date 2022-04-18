@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import ProgramAccessTokenAPI, {
+  IGetWorkspaceProgramAccessTokenEndpointResult,
   ProgramAccessTokenURLs,
 } from "../../api/endpoints/programAccessToken";
 import { checkEndpointResult } from "../../api/utils";
@@ -18,7 +19,7 @@ export function getUseWorkspaceProgramTokenListHookKey(workspaceId: string) {
 }
 
 export default function useWorkspaceProgramTokenList(workspaceId: string) {
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<IGetWorkspaceProgramAccessTokenEndpointResult>(
     getUseWorkspaceProgramTokenListHookKey(workspaceId),
     fetcher,
     swrDefaultConfig

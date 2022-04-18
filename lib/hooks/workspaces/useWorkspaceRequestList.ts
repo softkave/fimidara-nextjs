@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import CollaborationRequestAPI, {
   CollaborationRequestURLs,
+  IGetWorkspaceCollaborationRequestsEndpointResult,
 } from "../../api/endpoints/collaborationRequest";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
@@ -18,11 +19,12 @@ export function getUseWorkspaceRequestListHookKey(workspaceId: string) {
 }
 
 export default function useWorkspaceRequestList(workspaceId: string) {
-  const { data, error } = useSWR(
-    getUseWorkspaceRequestListHookKey(workspaceId),
-    fetcher,
-    swrDefaultConfig
-  );
+  const { data, error } =
+    useSWR<IGetWorkspaceCollaborationRequestsEndpointResult>(
+      getUseWorkspaceRequestListHookKey(workspaceId),
+      fetcher,
+      swrDefaultConfig
+    );
 
   return {
     error,

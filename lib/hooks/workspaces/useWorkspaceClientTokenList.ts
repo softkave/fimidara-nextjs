@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import ClientAssignedTokenAPI, {
   ClientAssignedTokenURLs,
+  IGetWorkspaceClientAssignedTokensEndpointResult,
 } from "../../api/endpoints/clientAssignedToken";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
@@ -18,11 +19,12 @@ export function getUseWorkspaceClientTokenListHookKey(workspaceId: string) {
 }
 
 export default function useWorkspaceClientTokenList(workspaceId: string) {
-  const { data, error } = useSWR(
-    getUseWorkspaceClientTokenListHookKey(workspaceId),
-    fetcher,
-    swrDefaultConfig
-  );
+  const { data, error } =
+    useSWR<IGetWorkspaceClientAssignedTokensEndpointResult>(
+      getUseWorkspaceClientTokenListHookKey(workspaceId),
+      fetcher,
+      swrDefaultConfig
+    );
 
   return {
     error,

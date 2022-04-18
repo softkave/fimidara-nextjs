@@ -95,7 +95,7 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [programToken, workspaceId]
+    [programToken, workspaceId, router, mutate]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

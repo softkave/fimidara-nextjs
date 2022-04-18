@@ -82,7 +82,7 @@ export default function WorkspaceForm(props: IWorkspaceFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [workspace]
+    [workspace, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

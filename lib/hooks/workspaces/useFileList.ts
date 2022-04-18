@@ -2,6 +2,7 @@ import useSWR from "swr";
 import FolderAPI, {
   FolderURLs,
   IListFolderContentEndpointParams,
+  IListFolderContentEndpointResult,
 } from "../../api/endpoints/folder";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
@@ -17,7 +18,7 @@ export function getUseFileListHookKey(
 }
 
 export default function useFileList(params?: IListFolderContentEndpointParams) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<IListFolderContentEndpointResult>(
     params ? getUseFileListHookKey(params) : null,
     fetcher,
     swrDefaultConfig

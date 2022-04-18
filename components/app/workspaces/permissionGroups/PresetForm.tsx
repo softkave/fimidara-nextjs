@@ -93,7 +93,7 @@ export default function PresetForm(props: IPresetFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [preset, workspaceId]
+    [preset, workspaceId, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

@@ -19,15 +19,18 @@ const CreateFolderWithParentFormPage: React.FC<
   ICreateFolderWithParentFormPageProps
 > = (props) => {
   const { workspaceId, parentId } = props;
-  const renderForm = React.useCallback((folder: IFolder) => {
-    return (
-      <FolderForm
-        workspaceId={workspaceId}
-        parentId={parentId}
-        parentPath={folder.namePath.join(folderConstants.nameSeparator)}
-      />
-    );
-  }, []);
+  const renderForm = React.useCallback(
+    (folder: IFolder) => {
+      return (
+        <FolderForm
+          workspaceId={workspaceId}
+          parentId={parentId}
+          parentPath={folder.namePath.join(folderConstants.nameSeparator)}
+        />
+      );
+    },
+    [parentId, workspaceId]
+  );
 
   return (
     <Workspace

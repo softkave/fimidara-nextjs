@@ -49,7 +49,11 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
       <List.Item
         key={item.resourceId}
         actions={[
-          <ClientTokenMenu token={item} onCompleteDelete={onCompleteDelete} />,
+          <ClientTokenMenu
+            key="menu"
+            token={item}
+            onCompleteDelete={onCompleteDelete}
+          />,
         ]}
       >
         <List.Item.Meta
@@ -63,7 +67,7 @@ const ClientTokenList: React.FC<IClientTokenListProps> = (props) => {
         />
       </List.Item>
     ),
-    [onCompleteDelete]
+    [onCompleteDelete, workspaceId]
   );
 
   return (

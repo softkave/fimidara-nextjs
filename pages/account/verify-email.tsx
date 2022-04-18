@@ -50,7 +50,7 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
           getFormError(flattenedErrors) || "Error verifying email address.",
       });
     }
-  }, []);
+  }, [router]);
 
   useRequest(onSubmit);
   return (

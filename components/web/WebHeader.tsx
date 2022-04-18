@@ -92,7 +92,7 @@ export default function WebHeader() {
   return (
     <div className={classes.root}>
       <div>
-        <Link href={appRootPaths.home}>
+        <Link href={appRootPaths.home} passHref={false}>
           <Typography.Title level={5} style={{ margin: 0 }}>
             Files Backend
           </Typography.Title>

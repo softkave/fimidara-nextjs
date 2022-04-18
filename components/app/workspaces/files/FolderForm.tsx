@@ -134,7 +134,7 @@ export default function FolderForm(props: IFolderFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [folder, workspaceId]
+    [folder, workspaceId, parentId, parentPath, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

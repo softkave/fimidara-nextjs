@@ -14,12 +14,9 @@ export type IFolderPageProps = {
 
 const FolderPage: React.FC<IFolderPageProps> = (props) => {
   const { workspaceId, folderId } = props;
-  const renderFolder = React.useCallback(
-    (folder: IFolder) => {
-      return <Folder folder={folder} />;
-    },
-    [workspaceId]
-  );
+  const renderFolder = React.useCallback((folder: IFolder) => {
+    return <Folder folder={folder} />;
+  }, []);
 
   return (
     <Workspace

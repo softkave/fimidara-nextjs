@@ -100,7 +100,7 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
         processAndThrowEndpointError(error);
       }
     },
-    [clientToken, workspaceId]
+    [clientToken, workspaceId, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

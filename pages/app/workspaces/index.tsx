@@ -37,7 +37,7 @@ const Workspaces: NextPage<IWorkspacesPageProps> = () => {
     );
   } else if (isLoading || !data) {
     content = <PageLoading messageText="Loading workspaces..." />;
-  } else if (data.length === 0) {
+  } else if (data.workspaces.length === 0) {
     content = (
       <PageNothingFound
         className={appClasses.main}
@@ -49,7 +49,7 @@ const Workspaces: NextPage<IWorkspacesPageProps> = () => {
       <List
         className={appClasses.main}
         itemLayout="horizontal"
-        dataSource={data}
+        dataSource={data.workspaces}
         renderItem={(item) => (
           <List.Item>
             <List.Item.Meta
@@ -80,7 +80,7 @@ const Workspaces: NextPage<IWorkspacesPageProps> = () => {
           <Typography.Title level={5}>Workspaces</Typography.Title>
         </Col>
         <Col span={6} className={classes.sideLinks}>
-          <Link href={appWorkspacePaths.createWorkspaceForm}>
+          <Link href={appWorkspacePaths.createWorkspaceForm} passHref={false}>
             <Button icon={<PlusOutlined />} />
           </Link>
         </Col>

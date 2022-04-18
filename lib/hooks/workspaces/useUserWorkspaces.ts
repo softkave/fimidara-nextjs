@@ -1,16 +1,19 @@
 import useSWR from "swr";
-import WorkspaceAPI, { WorkspaceURLs } from "../../api/endpoints/workspace";
+import WorkspaceAPI, {
+  IGetUserWorkspacesEndpointResult,
+  WorkspaceURLs,
+} from "../../api/endpoints/workspace";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string) => {
   const result = await WorkspaceAPI.getUserWorkspaces();
   checkEndpointResult(result);
-  return result.workspaces;
+  return result;
 };
 
 export default function useUserWorkspaces() {
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<IGetUserWorkspacesEndpointResult>(
     [WorkspaceURLs.getUserWorkspaces],
     fetcher,
     swrDefaultConfig

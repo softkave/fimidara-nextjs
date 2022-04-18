@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import PermissionItemAPI, {
+  IGetEntityPermissionItemsEndpointResult,
   PermissionItemURLs,
 } from "../../api/endpoints/permissionItem";
 import { checkEndpointResult } from "../../api/utils";
@@ -39,11 +40,12 @@ export default function useEntityPermissionList(
   entityId: string,
   entityType: AppResourceType
 ) {
-  const { data, error, mutate } = useSWR(
-    getUseEntityPermissionListHookKey(workspaceId, entityId, entityType),
-    fetcher,
-    swrDefaultConfig
-  );
+  const { data, error, mutate } =
+    useSWR<IGetEntityPermissionItemsEndpointResult>(
+      getUseEntityPermissionListHookKey(workspaceId, entityId, entityType),
+      fetcher,
+      swrDefaultConfig
+    );
 
   return {
     error,

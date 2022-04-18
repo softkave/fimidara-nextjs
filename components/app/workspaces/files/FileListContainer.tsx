@@ -82,7 +82,11 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
           actions={
             folder
               ? [
-                  <Link href={getParentHref()}>
+                  <Link
+                    passHref
+                    key="go-to-parent-list-btn"
+                    href={getParentHref()}
+                  >
                     <Button type="link">Go to parent list</Button>
                   </Link>,
                 ]

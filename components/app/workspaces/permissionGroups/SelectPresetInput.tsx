@@ -98,6 +98,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
             actions={[
               <Button
                 // type="text"
+                key="up"
                 className={appClasses.iconBtn}
                 icon={<UpOutlined />}
                 onClick={() => onMove(item.presetId, "up")}
@@ -105,6 +106,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
               />,
               <Button
                 // type="text"
+                key={"down"}
                 className={appClasses.iconBtn}
                 icon={<DownOutlined />}
                 onClick={() => onMove(item.presetId, "down")}
@@ -112,6 +114,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
               />,
               <Button
                 // type="text"
+                key="delete"
                 className={appClasses.iconBtn}
                 icon={<DeleteOutlined />}
                 onClick={() => onDeleteItem(item.presetId)}

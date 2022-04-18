@@ -40,39 +40,42 @@ const initialValues: ILoginFormValues = {
 export default function Login(props: ILoginProps) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const onSubmit = React.useCallback(async (data: ILoginFormValues) => {
-    try {
-      const result = await UserEndpoint.login({
-        email: data.email,
-        password: data.password,
-      });
+  const onSubmit = React.useCallback(
+    async (data: ILoginFormValues) => {
+      try {
+        const result = await UserEndpoint.login({
+          email: data.email,
+          password: data.password,
+        });
 
-      if (result.errors) {
-        throw result.errors;
-      }
+        if (result.errors) {
+          throw result.errors;
+        }
 
-      if (data.remember) {
-        UserSessionStorageFns.saveUserToken(result.token);
-        UserSessionStorageFns.saveClientAssignedToken(
-          result.clientAssignedToken
+        if (data.remember) {
+          UserSessionStorageFns.saveUserToken(result.token);
+          UserSessionStorageFns.saveClientAssignedToken(
+            result.clientAssignedToken
+          );
+        }
+
+        dispatch(
+          SessionActions.loginUser({
+            userToken: result.token,
+            userId: result.user.resourceId,
+            clientAssignedToken: result.clientAssignedToken,
+          })
         );
+
+        router.push(appWorkspacePaths.workspaces);
+      } catch (error) {
+        const errArray = toAppErrorsArray(error);
+        const flattenedErrors = flattenErrorList(errArray);
+        throw flattenedErrors;
       }
-
-      dispatch(
-        SessionActions.loginUser({
-          userToken: result.token,
-          userId: result.user.resourceId,
-          clientAssignedToken: result.clientAssignedToken,
-        })
-      );
-
-      router.push(appWorkspacePaths.workspaces);
-    } catch (error) {
-      const errArray = toAppErrorsArray(error);
-      const flattenedErrors = flattenErrorList(errArray);
-      throw flattenedErrors;
-    }
-  }, []);
+    },
+    [dispatch, router]
+  );
 
   const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({

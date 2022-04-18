@@ -29,7 +29,7 @@ export default function UploadWorkspaceAvatar(
         value: Date.now(),
       })
     );
-  }, [workspaceId]);
+  }, [refreshKey, dispatch]);
 
   return (
     <div className={formClasses.formContentWrapperClassName}>

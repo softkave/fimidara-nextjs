@@ -2,6 +2,7 @@ import { Space } from "antd";
 import { isUndefined } from "lodash";
 import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import {
   appWorkspacePaths,
   AppResourceType,
@@ -83,6 +84,7 @@ const WorkspaceClientTokens: React.FC<IWorkspaceClientTokensProps> = (
                 itemResourceType={AppResourceType.ClientAssignedToken}
                 permissionOwnerId={workspaceId}
                 permissionOwnerType={AppResourceType.Workspace}
+                appliesTo={PermissionItemAppliesTo.Children}
               />
             )
           }

@@ -2,6 +2,7 @@ import useSWR, { SWRConfiguration } from "swr";
 import FolderAPI, {
   FolderURLs,
   IGetFolderEndpointParams,
+  IGetFolderEndpointResult,
 } from "../../api/endpoints/folder";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
@@ -18,7 +19,7 @@ export default function useFolder(
   params?: IGetFolderEndpointParams,
   config: SWRConfiguration = {}
 ) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<IGetFolderEndpointResult>(
     params ? getUseFolderHookKey(params) : null,
     fetcher,
     { ...swrDefaultConfig, ...config }

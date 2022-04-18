@@ -15,7 +15,7 @@ const WorkspacePage: React.FC<IWorkspacePageProps> = (props) => {
 
   React.useEffect(() => {
     router.push(appWorkspacePaths.rootFolderList(workspaceId));
-  }, [workspaceId]);
+  }, [workspaceId, router]);
 
   return <Workspace workspaceId={workspaceId} activeKey="" />;
 };

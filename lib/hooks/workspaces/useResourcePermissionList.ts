@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import PermissionItemAPI, {
   IGetResourcePermissionItemsEndpointParams,
+  IGetResourcePermissionItemsEndpointResult,
   PermissionItemURLs,
 } from "../../api/endpoints/permissionItem";
 import { checkEndpointResult } from "../../api/utils";
@@ -25,11 +26,12 @@ export function getUseResourcePermissionListHookKey(
 export default function useResourcePermissionList(
   params: IGetResourcePermissionItemsEndpointParams
 ) {
-  const { data, error, mutate } = useSWR(
-    getUseResourcePermissionListHookKey(params),
-    fetcher,
-    swrDefaultConfig
-  );
+  const { data, error, mutate } =
+    useSWR<IGetResourcePermissionItemsEndpointResult>(
+      getUseResourcePermissionListHookKey(params),
+      fetcher,
+      swrDefaultConfig
+    );
 
   return {
     error,

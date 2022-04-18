@@ -55,39 +55,44 @@ const initialValues: ISignupFormInternalData = {
 export default function Signup(props: ISignupProps) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const onSubmit = React.useCallback(async (data: ISignupFormInternalData) => {
-    try {
-      const result = await UserEndpoint.signup(data);
+  const onSubmit = React.useCallback(
+    async (data: ISignupFormInternalData) => {
+      try {
+        const result = await UserEndpoint.signup(data);
 
-      if (result.errors) {
-        throw result.errors;
+        if (result.errors) {
+          throw result.errors;
+        }
+
+        UserSessionStorageFns.saveUserToken(result.token);
+        UserSessionStorageFns.saveClientAssignedToken(
+          result.clientAssignedToken
+        );
+        dispatch(
+          SessionActions.loginUser({
+            userToken: result.token,
+            userId: result.user.resourceId,
+            clientAssignedToken: result.clientAssignedToken,
+          })
+        );
+
+        router.push(appWorkspacePaths.workspaces);
+      } catch (error) {
+        const errArray = toAppErrorsArray(error);
+        const flattenedErrors = flattenErrorList(errArray);
+        const emailExistsErr = errArray.find((err) => {
+          return err.name === EmailAddressNotAvailableError.name;
+        });
+
+        if (emailExistsErr) {
+          flattenedErrors["email"] = [emailExistsErr.message];
+        }
+
+        throw flattenedErrors;
       }
-
-      UserSessionStorageFns.saveUserToken(result.token);
-      UserSessionStorageFns.saveClientAssignedToken(result.clientAssignedToken);
-      dispatch(
-        SessionActions.loginUser({
-          userToken: result.token,
-          userId: result.user.resourceId,
-          clientAssignedToken: result.clientAssignedToken,
-        })
-      );
-
-      router.push(appWorkspacePaths.workspaces);
-    } catch (error) {
-      const errArray = toAppErrorsArray(error);
-      const flattenedErrors = flattenErrorList(errArray);
-      const emailExistsErr = errArray.find((err) => {
-        return err.name === EmailAddressNotAvailableError.name;
-      });
-
-      if (emailExistsErr) {
-        flattenedErrors["email"] = [emailExistsErr.message];
-      }
-
-      throw flattenedErrors;
-    }
-  }, []);
+    },
+    [dispatch, router]
+  );
 
   const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
