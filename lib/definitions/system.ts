@@ -1,5 +1,4 @@
 import { defaultTo } from "lodash";
-import { getClientAddr } from "../api/addr";
 
 if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
   throw new Error("NEXT_PUBLIC_WORKSPACE_ID is not set");
@@ -8,7 +7,6 @@ if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
 export const systemConstants = {
   maxNameLength: 150,
   maxDescriptionLength: 500,
-  domainName: getClientAddr(),
   appShortName: "files",
   tokenQueryKey: "t",
   phoneQueryKey: "p",
@@ -20,6 +18,10 @@ export const systemConstants = {
   workspaceImagesFolder: defaultTo(
     process.env.NEXT_PUBLIC_WORKSPACE_IMAGES_FOLDER,
     "/files/images/workspaces"
+  ),
+  serverAddr: defaultTo(
+    process.env.NEXT_PUBLIC_SERVER_ADDR,
+    "http://localhost:5000"
   ),
 };
 
