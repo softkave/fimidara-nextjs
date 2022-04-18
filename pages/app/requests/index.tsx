@@ -1,8 +1,9 @@
 import { Space } from "antd";
 import AppHeader from "../../../components/app/AppHeader";
 import UserCollaborationRequestList from "../../../components/app/requests/UserCollaborationRequestList";
+import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
 
-export default function UserCollaborationRequestsPage() {
+function UserCollaborationRequestsPage() {
   return (
     <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
       <AppHeader />
@@ -10,3 +11,5 @@ export default function UserCollaborationRequestsPage() {
     </Space>
   );
 }
+
+export default withPageAuthRequired(UserCollaborationRequestsPage);
