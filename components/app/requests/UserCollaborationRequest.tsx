@@ -10,13 +10,12 @@ import PageLoading from "../../utils/PageLoading";
 import {
   CollaborationRequestResponse,
   CollaborationRequestStatusType,
-  ICollaborationRequest,
 } from "../../../lib/definitions/collaborationRequest";
 import CollaborationRequestAPI from "../../../lib/api/endpoints/collaborationRequest";
 import assert from "assert";
 import { useRequest } from "ahooks";
 import { getBaseError } from "../../../lib/utilities/errors";
-import { messages } from "../../../lib/definitions/messages";
+import { messages } from "../../../lib/messages/messages";
 import { checkEndpointResult } from "../../../lib/api/utils";
 import AppHeader from "../AppHeader";
 import withPageAuthRequired from "../../hoc/withPageAuthRequired";

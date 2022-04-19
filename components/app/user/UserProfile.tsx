@@ -22,12 +22,12 @@ import {
 import { signupValidationParts } from "../../../lib/validation/user";
 import useFormHelpers from "../../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../../lib/api/endpoints/user";
-import { checkEndpointResult, toAppErrorsArray } from "../../../lib/api/utils";
+import { checkEndpointResult } from "../../../lib/api/utils";
 import { flattenErrorList } from "../../../lib/utilities/utils";
 import useUser from "../../../lib/hooks/useUser";
 import PageLoading from "../../utils/PageLoading";
 import PageError from "../../utils/PageError";
-import { getBaseError } from "../../../lib/utilities/errors";
+import { getBaseError, toAppErrorsArray } from "../../../lib/utilities/errors";
 
 export interface IUserProfileProps {}
 

@@ -24,4 +24,8 @@ export const messages = {
   tooShort: "Input is too short",
   codeRequired: "Code is required",
   fieldIsRequired: "Field is required",
+
+  // Error
+  requestError: "Error completing request",
+  errorOccurred: "An error occurred",
 };

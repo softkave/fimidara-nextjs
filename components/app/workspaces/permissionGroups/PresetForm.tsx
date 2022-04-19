@@ -5,7 +5,7 @@ import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/definitions/messages";
+import { messages } from "../../../../lib/messages/messages";
 import {
   INewPresetPermissionsGroupInput,
   IPresetPermissionsGroup,

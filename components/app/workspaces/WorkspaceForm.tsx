@@ -4,7 +4,7 @@ import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { systemValidation } from "../../../lib/validation/system";
-import { messages } from "../../../lib/definitions/messages";
+import { messages } from "../../../lib/messages/messages";
 import {
   INewWorkspaceInput,
   IWorkspace,

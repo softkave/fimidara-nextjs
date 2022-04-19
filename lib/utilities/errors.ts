@@ -1,5 +1,5 @@
-import { defaultTo, first, isArray } from "lodash";
-import { toAppErrorsArray } from "../api/utils";
+import { defaultTo, first, isArray, isString } from "lodash";
+import { IAppError } from "../definitions/system";
 import OperationError from "./OperationError";
 import { flattenErrorList } from "./utils";
 
@@ -22,6 +22,12 @@ export class CredentialsExpiredError extends OperationError {
   public message = "Credentials expired";
 }
 
+export class EmailAddressNotVerifiedError extends OperationError {
+  public name = "EmailAddressNotVerifiedError";
+  public message =
+    "Only read-related actions are permitted for unverified email addresses";
+}
+
 export function getFlattenedError(error?: any) {
   const errArray = toAppErrorsArray(error);
   const flattenedErrors = flattenErrorList(errArray);
@@ -40,3 +46,25 @@ export function getErrorTypes(error: any, types: string[]) {
 export function hasErrorTypes(error: any, types: string[]) {
   return getErrorTypes(error, types).length > 0;
 }
+
+export const toAppError = (err: Error | IAppError | string): IAppError => {
+  const error = isString(err) ? new Error(err) : err;
+  return {
+    name: error.name,
+    message: error.message,
+    action: (error as any).action,
+    field: (error as any).field,
+  };
+};
+
+export const toAppErrorsArray = (err: any) => {
+  if (!err) {
+    return [];
+  }
+
+  if (Array.isArray(err)) {
+    return err.map((error) => toAppError(error));
+  } else {
+    return [toAppError(err)];
+  }
+};

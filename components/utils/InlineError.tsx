@@ -1,7 +1,7 @@
 import { RedoOutlined } from "@ant-design/icons";
 import { Button, Space, Typography } from "antd";
 import React from "react";
-import { messages } from "../../lib/definitions/messages";
+import { messages } from "../../lib/messages/messages";
 
 export interface IInlineErrorProps {
   messageText?: string;
