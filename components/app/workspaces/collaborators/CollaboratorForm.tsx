@@ -99,7 +99,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
     </Form.Item>
   );
 
-  const assignedcollaboratorsNode = (
+  const assignedPresetsNode = (
     <Form.Item
       label="Assigned presets"
       help={
@@ -137,7 +137,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
           )}
           {nameNode}
           {emailNode}
-          {assignedcollaboratorsNode}
+          {assignedPresetsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

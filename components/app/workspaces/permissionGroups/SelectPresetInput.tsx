@@ -30,6 +30,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
   const { workspaceId, value, disabled, onChange } = props;
   const { isLoading, error, data, mutate } =
     useWorkspacePermissionGroupList(workspaceId);
+
   const onDeleteItem = React.useCallback(
     (id: string) => {
       const newValue = value.filter((item) => item.presetId !== id);
@@ -74,6 +75,12 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
     [data]
   );
 
+  const assignedPresets = React.useMemo(() => {
+    return value
+      .filter((item) => !!presetsMap[item.presetId])
+      .sort((a, b) => a.order - b.order);
+  }, [value, presetsMap]);
+
   if (isLoading || !data) {
     return <InlineLoading messageText="Loading permission groups..." />;
   } else if (error) {
@@ -85,8 +92,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
     );
   }
 
-  const assignedPresets = value.filter((item) => !!presetsMap[item.presetId]);
-  const valueNode = assignedPresets.length > 0 && (
+  const assignedPresetsNode = assignedPresets.length > 0 && (
     <List
       itemLayout="horizontal"
       dataSource={assignedPresets}
@@ -175,7 +181,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
 
   return (
     <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
-      {valueNode}
+      {assignedPresetsNode}
       {selectNode}
     </Space>
   );
