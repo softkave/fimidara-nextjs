@@ -19,7 +19,7 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
   const onSubmit = React.useCallback(async () => {
     try {
       const query = new URLSearchParams(window.location.search);
-      const token = query.get(systemConstants.tokenQueryKey);
+      const token = query.get(systemConstants.confirmEmailTokenQueryParam);
 
       if (!token) {
         notification.error({

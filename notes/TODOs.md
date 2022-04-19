@@ -1,5 +1,7 @@
 # TODOs
 
+- [ ] auto route to app when logged in
+- [ ] Show visual notification when routing
 - [ ] implement unseen notifications chip
 - [ ] update remaining form paths
 - [ ] Multiselect and batch actions in lists like client assigned tokens
@@ -25,3 +27,4 @@
 - [ ] webpage
 - [ ] chip if the user has unattended collaboration requests or new ones
 - [ ] uploaded file size is too big and user avatar is not updated
+- [ ] Implement scaling down images
