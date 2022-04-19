@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        {/* <title>Files by Softkave</title> */}
+        <title>Fimidara</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

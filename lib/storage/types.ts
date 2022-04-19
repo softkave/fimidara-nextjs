@@ -1,4 +1,4 @@
 export enum StorageKeys {
-  UserToken = "files.t",
-  ClientAssignedToken = "files.cat",
+  UserToken = "fimidara.t",
+  ClientAssignedToken = "fimidara.cat",
 }

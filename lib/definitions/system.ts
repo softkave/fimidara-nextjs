@@ -7,9 +7,8 @@ if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
 export const systemConstants = {
   maxNameLength: 150,
   maxDescriptionLength: 500,
-  appShortName: "files",
+  appShortName: "fimidara",
   tokenQueryKey: "t",
-  phoneQueryKey: "p",
   workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID,
   userImagesFolder: defaultTo(
     process.env.NEXT_PUBLIC_USER_IMAGES_FOLDER,

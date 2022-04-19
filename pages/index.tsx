@@ -11,11 +11,7 @@ const Home: NextPage = () => {
     <Space direction="vertical" size={128} style={{ width: "100%" }}>
       <WebHeader />
       <div className={cx(appClasses.main)}>
-        <Typography.Title level={2}>
-          Files
-          <br />
-          By Softkave
-        </Typography.Title>
+        <Typography.Title level={2}>Fimidara</Typography.Title>
       </div>
       <div className={cx(appClasses.main)}>
         <Features />

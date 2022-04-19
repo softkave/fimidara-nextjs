@@ -94,7 +94,7 @@ export default function WebHeader() {
       <div>
         <Link href={appRootPaths.home} passHref={false}>
           <Typography.Title level={5} style={{ margin: 0 }}>
-            Files Backend
+            Fimidara
           </Typography.Title>
         </Link>
       </div>

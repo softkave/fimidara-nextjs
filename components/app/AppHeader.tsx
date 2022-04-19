@@ -21,21 +21,19 @@ const classes = {
   notifications: css({ minWidth: "260px", minHeight: "200px" }),
 };
 
-// TODO: implement unseen notifications chip
-
 export default function AppHeader() {
   return (
     <div className={classes.root}>
       <div>
-        <Link href={appWorkspacePaths.workspaces} passHref={false}>
+        <Link href={appWorkspacePaths.workspaces} passHref>
           <Typography.Title level={5} style={{ margin: 0 }}>
-            Files Backend
+            Fimidara
           </Typography.Title>
         </Link>
       </div>
       <div className={classes.sideLinks}>
         <Space size="middle">
-          <Link href={appWorkspacePaths.workspaces} passHref={false}>
+          <Link href={appWorkspacePaths.workspaces} passHref>
             <Tooltip title="Workspaces">
               <Button icon={<ShopOutlined />} />
             </Tooltip>
