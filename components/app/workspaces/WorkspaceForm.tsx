@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
@@ -17,7 +17,6 @@ import {
 import { useSWRConfig } from "swr";
 import { getUseWorkspaceHookKey } from "../../../lib/hooks/workspaces/useWorkspace";
 import useFormHelpers from "../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../form/formUtils";
 import FormError from "../../form/FormError";
 import {
   appWorkspacePaths,
@@ -25,6 +24,7 @@ import {
 } from "../../../lib/definitions/system";
 import { formClasses } from "../../form/classNames";
 import { useRouter } from "next/router";
+import { FormAlert } from "../../utils/FormAlert";
 
 const workspaceValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -97,7 +97,6 @@ export default function WorkspaceForm(props: IWorkspaceFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
       required
@@ -159,11 +158,7 @@ export default function WorkspaceForm(props: IWorkspaceFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Workspace Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
           <Form.Item className={css({ marginTop: "16px" })}>

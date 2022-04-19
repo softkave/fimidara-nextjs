@@ -6,17 +6,14 @@ import {
   AppResourceType,
 } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { BsThreeDots } from "react-icons/bs";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
-import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IProgramTokenMenuProps {
   token: IProgramAccessToken;
@@ -50,9 +47,7 @@ const ProgramTokenMenu: React.FC<IProgramTokenMenuProps> = (props) => {
       message.success("Token deleted");
       await onCompleteDelete();
     } catch (error: any) {
-      message.error(
-        getFormError(processEndpointError(error)) || "Error deleting token"
-      );
+      errorMessageNotificatition(error, "Error deleting token");
     }
   }, [token, onCompleteDelete]);
 

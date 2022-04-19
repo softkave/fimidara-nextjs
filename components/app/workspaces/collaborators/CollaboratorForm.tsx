@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, message, Space, Typography } from "antd";
+import { Button, Form, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
@@ -10,7 +10,6 @@ import {
 } from "../../../../lib/api/utils";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import {
@@ -22,6 +21,7 @@ import SelectPresetInput from "../permissionGroups/SelectPresetInput";
 import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import LabeledNode from "../../../utils/LabeledNode";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const collaboratorValidation = yup.object().shape({
   presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
@@ -76,7 +76,6 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item>
       <LabeledNode
@@ -130,11 +129,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Collaborator Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {emailNode}
           {assignedPresetsNode}

@@ -4,10 +4,7 @@ import React from "react";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useAppResponsive from "../../../../lib/hooks/useAppResponsive";
 import { appClasses } from "../../../utils/theme";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useSWRConfig } from "swr";
 import { useRequest } from "ahooks";
 import { SelectInfo } from "../../../utils/types";
@@ -20,7 +17,7 @@ import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspa
 import { last } from "lodash";
 import { BsThreeDots } from "react-icons/bs";
 import { css } from "@emotion/css";
-import { getFormError } from "../../../form/formUtils";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IWorkspaceRequestListProps {
   workspaceId: string;
@@ -55,9 +52,7 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
         mutate(getUseWorkspaceRequestListHookKey(workspaceId));
         message.success("Request sent");
       } catch (error: any) {
-        message.error(
-          getFormError(processEndpointError(error)) || "Error deleting request"
-        );
+        errorMessageNotificatition(error, "Error deleting request");
       }
     },
     [workspaceId, mutate]

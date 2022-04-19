@@ -3,10 +3,7 @@ import { message } from "antd";
 import React from "react";
 import PermissionItemAPI from "../../../../lib/api/endpoints/permissionItem";
 import { IEndpointResultBase } from "../../../../lib/api/types";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   INewPermissionItemInput,
   PermissionItemAppliesTo,
@@ -14,11 +11,10 @@ import {
 import { AppResourceType } from "../../../../lib/definitions/system";
 import useResourcePermissionList from "../../../../lib/hooks/workspaces/useResourcePermissionList";
 import { getBaseError } from "../../../../lib/utilities/errors";
-import { getFormError } from "../../../form/formUtils";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import { appClasses } from "../../../utils/theme";
-import { appComponentConstants } from "../../../utils/utils";
 import GrantPermissionForm from "./GrantPermissionForm";
 
 export interface IGrantPermissionFormContainerProps {
@@ -82,10 +78,9 @@ const GrantPermissionFormContainer: React.FC<
         message.success("Resource permissions updated");
         mutate();
       } catch (error: any) {
-        message.error(
-          getFormError(processEndpointError(error)) ||
-            "Error updating resource permissions",
-          appComponentConstants.errorDuration
+        errorMessageNotificatition(
+          error,
+          "Error updating resource permissions"
         );
       }
     },

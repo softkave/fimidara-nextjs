@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Alert, Button, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import React from "react";
@@ -12,9 +12,9 @@ import SessionActions from "../../../lib/store/session/actions";
 import UserSessionStorageFns from "../../../lib/storage/userSession";
 import { getFlattenedError } from "../../../lib/utilities/errors";
 import useFormHelpers from "../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../form/formUtils";
 import FormError from "../../form/FormError";
 import { formClasses } from "../../form/classNames";
+import { FormAlert } from "../../utils/FormAlert";
 
 export interface IChangePasswordFormData {
   password: string;
@@ -65,8 +65,6 @@ export default function ChangeUserPassword() {
     },
   });
 
-  const globalError = getFormError(formik.errors);
-
   const passwordNode = (
     <Form.Item
       required
@@ -99,11 +97,7 @@ export default function ChangeUserPassword() {
     <div className={formClasses.formBodyClassName}>
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {passwordNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button

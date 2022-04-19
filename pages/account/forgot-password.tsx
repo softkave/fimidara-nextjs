@@ -1,16 +1,17 @@
 import React from "react";
 import { css } from "@emotion/css";
-import { Alert, Button, Form, Input, notification, Typography } from "antd";
+import { Alert, Button, Form, Input, Typography } from "antd";
 import * as yup from "yup";
 import { useRequest } from "ahooks";
 import { formClasses } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
-import { getFormError, preSubmitCheck } from "../../components/form/formUtils";
+import { preSubmitCheck } from "../../components/form/formUtils";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
-import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
 import WebHeader from "../../components/web/WebHeader";
+import { toAppErrorsArray } from "../../lib/utilities/errors";
+import { FormAlert } from "../../components/utils/FormAlert";
 
 export interface IForgotPasswordFormData {
   email: string;
@@ -67,8 +68,6 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
-
   const emailNode = (
     <Form.Item
       required
@@ -103,11 +102,7 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
           <Form.Item>
             <Typography.Title level={4}>Forgot Password</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {successMessage && (
             <Form.Item>
               <Alert type="success" message={successMessage} />

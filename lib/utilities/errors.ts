@@ -25,7 +25,8 @@ export class CredentialsExpiredError extends OperationError {
 export class EmailAddressNotVerifiedError extends OperationError {
   public name = "EmailAddressNotVerifiedError";
   public message =
-    "Only read-related actions are permitted for unverified email addresses";
+    "Only read-related actions are permitted for unverified email addresses. " +
+    "Please login and go to the Settings page to verify your email address.";
 }
 
 export function getFlattenedError(error?: any) {
@@ -49,6 +50,7 @@ export function hasErrorTypes(error: any, types: string[]) {
 
 export const toAppError = (err: Error | IAppError | string): IAppError => {
   const error = isString(err) ? new Error(err) : err;
+
   return {
     name: error.name,
     message: error.message,

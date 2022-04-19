@@ -1,6 +1,5 @@
 # TODOs
 
-- [ ] errors returned from the server are not populated in formik
 - [ ] use new FormAlert and errorMessageNotification functions
 - [ ] auto route to app when logged in
 - [ ] Show visual notification when routing

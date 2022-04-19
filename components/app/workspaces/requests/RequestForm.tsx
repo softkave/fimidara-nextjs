@@ -1,13 +1,5 @@
 import { css, cx } from "@emotion/css";
-import {
-  Alert,
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Typography,
-} from "antd";
+import { Button, DatePicker, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
@@ -23,7 +15,6 @@ import {
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { signupValidationParts } from "../../../../lib/validation/user";
@@ -34,6 +25,7 @@ import {
 import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
 import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
 import moment from "moment";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const requestValidation = yup.object().shape({
   recipientEmail: signupValidationParts.email.required(messages.emailRequired),
@@ -115,7 +107,6 @@ export default function RequestForm(props: IRequestFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const recipientEmailNode = (
     <Form.Item
       required
@@ -212,11 +203,7 @@ export default function RequestForm(props: IRequestFormProps) {
               Collaboration Request Form
             </Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {recipientEmailNode}
           {messageNode}
           {expiresNode}

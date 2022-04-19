@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
@@ -22,10 +22,10 @@ import {
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import SelectPresetInput from "./SelectPresetInput";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const presetValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -108,7 +108,6 @@ export default function PresetForm(props: IPresetFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
       required
@@ -194,11 +193,7 @@ export default function PresetForm(props: IPresetFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Preset Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
           {assignedPresetsNode}

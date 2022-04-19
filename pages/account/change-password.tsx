@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Alert, Button, Form, Input, notification, Typography } from "antd";
+import { Button, Form, Input, notification, Typography } from "antd";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import React from "react";
@@ -11,7 +11,6 @@ import {
 } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { userConstants } from "../../lib/definitions/user";
-import { getFormError } from "../../components/form/formUtils";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import UserSessionStorageFns from "../../lib/storage/userSession";
@@ -20,9 +19,11 @@ import {
   appWorkspacePaths,
   systemConstants,
 } from "../../lib/definitions/system";
-import { checkEndpointResult, toAppErrorsArray } from "../../lib/api/utils";
+import { checkEndpointResult } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
 import WebHeader from "../../components/web/WebHeader";
+import { toAppErrorsArray } from "../../lib/utilities/errors";
+import { FormAlert } from "../../components/utils/FormAlert";
 
 export interface IChangePasswordFormData {
   password: string;
@@ -108,8 +109,6 @@ export default function ChangePassword(props: IChangePasswordProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
-
   const passwordNode = (
     <Form.Item
       required
@@ -146,11 +145,7 @@ export default function ChangePassword(props: IChangePasswordProps) {
           <Form.Item>
             <Typography.Title level={4}>Change Password</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {passwordNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button

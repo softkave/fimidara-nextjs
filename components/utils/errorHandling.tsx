@@ -1,4 +1,5 @@
-import { Alert, AlertProps, message, Typography } from "antd";
+import { message, Typography } from "antd";
+import { ArgsProps } from "antd/lib/message";
 import Link from "next/link";
 import React from "react";
 import { appUserPaths } from "../../lib/definitions/system";
@@ -9,11 +10,13 @@ import {
   hasErrorTypes,
   toAppErrorsArray,
 } from "../../lib/utilities/errors";
+import { appComponentConstants } from "./utils";
 
-export function enrichErrorMessage(error: any) {
-  let errorMessage: React.ReactNode = getBaseError(
-    error || messages.requestError
-  );
+export function enrichErrorMessage(
+  error: any,
+  defaultMessage = messages.requestError
+) {
+  let errorMessage: React.ReactNode = getBaseError(error || defaultMessage);
   const hasEmailNotVerifiedError = hasErrorTypes(error, [
     EmailAddressNotVerifiedError.name,
   ]);
@@ -21,10 +24,12 @@ export function enrichErrorMessage(error: any) {
   if (hasEmailNotVerifiedError) {
     errorMessage = (
       <Typography.Text>
-        {errorMessage}{" "}
+        {errorMessage}
+        {" - "}
         <Link passHref href={appUserPaths.settings}>
           <a>Goto Settings</a>
-        </Link>
+        </Link>{" "}
+        to verify your email address.
       </Typography.Text>
     );
   }
@@ -32,9 +37,18 @@ export function enrichErrorMessage(error: any) {
   return errorMessage;
 }
 
-export function errorMessageNotificatition(error: any) {
-  const errorMessage = enrichErrorMessage(error);
-  message.error(errorMessage);
+export function errorMessageNotificatition(
+  error: any,
+  defaultMessage = messages.requestError,
+  props: Partial<ArgsProps> = {}
+) {
+  const errorMessage = enrichErrorMessage(error, defaultMessage);
+  message.error({
+    type: "error",
+    content: errorMessage,
+    duration: appComponentConstants.errorDuration,
+    ...props,
+  });
 }
 
 export function throwErrorForUseRequestHandling(error: any) {

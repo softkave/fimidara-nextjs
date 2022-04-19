@@ -1,14 +1,5 @@
 import { css, cx } from "@emotion/css";
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  message,
-  Space,
-  Typography,
-  Upload,
-} from "antd";
+import { Button, Form, Input, message, Space, Typography, Upload } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
@@ -24,7 +15,6 @@ import {
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { useSWRConfig } from "swr";
@@ -40,6 +30,7 @@ import { first } from "lodash";
 import { IEndpointResultBase } from "../../../../lib/api/types";
 import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
 import { folderConstants } from "../../../../lib/definitions/folder";
+import { FormAlert } from "../../../utils/FormAlert";
 
 export interface IFileFormValue {
   description?: string;
@@ -176,7 +167,6 @@ export default function FileForm(props: IFileFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
       required
@@ -275,11 +265,7 @@ export default function FileForm(props: IFileFormProps) {
           <Form.Item>
             <Typography.Title level={4}>File Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
           {selectFileNode}

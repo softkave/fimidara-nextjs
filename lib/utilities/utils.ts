@@ -3,7 +3,7 @@ import get from "lodash/get";
 import mergeWith from "lodash/mergeWith";
 import set from "lodash/set";
 import { getDate } from "./dateFns";
-import { IAppError } from "../definitions/system";
+import { toAppErrorsArray } from "./errors";
 
 const tempPrefix = "temp-";
 
@@ -25,31 +25,27 @@ export const pluralize = (str: string, count: number = 2) => {
   return `${str}${count === 1 ? "" : "s"}`;
 };
 
-export const flattenErrorList = (
-  errors?: IAppError[]
-): { [key: string]: string[] } => {
+export const flattenErrorList = (errors?: any): { [key: string]: string[] } => {
   if (!errors) {
     return {};
   }
 
-  if (!Array.isArray(errors)) {
-    errors = [errors];
-  }
+  const errorList = toAppErrorsArray(errors);
 
-  if (errors.length === 0) {
+  if (errorList.length === 0) {
     return {};
   }
 
   const defaultKey = "error";
-  const err = {};
+  const errorMap = {};
   const cachedFields: Record<string, true> = {};
 
-  errors.forEach((error) => {
+  errorList.forEach((error) => {
     const field = error.field || defaultKey;
-    let errs = get(err, field);
+    let fieldErrorList = get(errorMap, field);
 
-    if (Array.isArray(errs)) {
-      errs.push(error.message);
+    if (Array.isArray(fieldErrorList)) {
+      fieldErrorList.push(error.message);
       return;
     }
 
@@ -67,12 +63,12 @@ export const flattenErrorList = (
     });
 
     if (!parentExists) {
-      errs = [error.message];
-      set(err, field, errs);
+      fieldErrorList = [error.message];
+      set(errorMap, field, fieldErrorList);
     }
   });
 
-  return err;
+  return errorMap;
 };
 
 export interface IMergeDataMeta {
