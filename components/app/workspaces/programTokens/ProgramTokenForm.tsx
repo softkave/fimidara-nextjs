@@ -6,10 +6,7 @@ import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
 import { messages } from "../../../../lib/messages/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
@@ -64,36 +61,30 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
   const { mutate } = useProgramToken(programToken?.resourceId);
   const onSubmit = React.useCallback(
     async (data: INewProgramAccessTokenInput) => {
-      try {
-        let programTokenId: string | null = null;
+      let programTokenId: string | null = null;
 
-        if (programToken) {
-          const result = await ProgramAccessTokenAPI.updateToken({
-            token: data,
-            tokenId: programToken.resourceId,
-          });
+      if (programToken) {
+        const result = await ProgramAccessTokenAPI.updateToken({
+          token: data,
+          tokenId: programToken.resourceId,
+        });
 
-          checkEndpointResult(result);
-          programTokenId = result.token.resourceId;
-          mutate(result);
-          message.success("Program access token updated");
-        } else {
-          const result = await ProgramAccessTokenAPI.addToken({
-            workspaceId: workspaceId,
-            token: data,
-          });
+        checkEndpointResult(result);
+        programTokenId = result.token.resourceId;
+        mutate(result);
+        message.success("Program access token updated");
+      } else {
+        const result = await ProgramAccessTokenAPI.addToken({
+          workspaceId: workspaceId,
+          token: data,
+        });
 
-          checkEndpointResult(result);
-          programTokenId = result.token.resourceId;
-          message.success("Program access token created");
-        }
-
-        router.push(
-          appWorkspacePaths.programToken(workspaceId, programTokenId)
-        );
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        programTokenId = result.token.resourceId;
+        message.success("Program access token created");
       }
+
+      router.push(appWorkspacePaths.programToken(workspaceId, programTokenId));
     },
     [programToken, workspaceId, router, mutate]
   );

@@ -6,10 +6,7 @@ import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
 import { messages } from "../../../../lib/messages/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
@@ -81,72 +78,68 @@ export default function FileForm(props: IFileFormProps) {
 
   const onSubmit = React.useCallback(
     async (data: IFileFormValue) => {
-      try {
-        let fileId: string | null = null;
-        const inputFile = first(data.file);
+      let fileId: string | null = null;
+      const inputFile = first(data.file);
 
-        if (file) {
-          let result: IEndpointResultBase;
+      if (file) {
+        let result: IEndpointResultBase;
 
-          if (inputFile) {
-            result = await FileAPI.uploadFile({
-              workspaceId: workspaceId,
-              fileId: file.resourceId,
-              description: data.description,
-              data: inputFile as any,
-              mimetype: inputFile.type,
-            });
-          } else {
-            result = await FileAPI.updateFileDetails({
-              workspaceId: workspaceId,
-              fileId: file.resourceId,
-              file: {
-                description: data.description,
-              },
-            });
-          }
-
-          checkEndpointResult(result);
-          fileId = file.resourceId;
-          message.success("File updated");
-          mutate(getUseFileListHookKey({ folderId, workspaceId: workspaceId }));
-          mutate(
-            getUseFileHookKey({
-              workspaceId: workspaceId,
-              fileId: file.resourceId,
-            })
-          );
-        } else {
-          if (!inputFile) {
-            // TODO: show error
-            return;
-          }
-
-          const result = await FileAPI.uploadFile({
+        if (inputFile) {
+          result = await FileAPI.uploadFile({
             workspaceId: workspaceId,
-            filepath: folderpath
-              ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
-              : data.name,
+            fileId: file.resourceId,
             description: data.description,
             data: inputFile as any,
             mimetype: inputFile.type,
           });
-
-          checkEndpointResult(result);
-          fileId = result.file.resourceId;
-          message.success("File created");
-          mutate(
-            getUseFileListHookKey({
-              folderId,
-              workspaceId: workspaceId,
-            })
-          );
+        } else {
+          result = await FileAPI.updateFileDetails({
+            workspaceId: workspaceId,
+            fileId: file.resourceId,
+            file: {
+              description: data.description,
+            },
+          });
         }
 
-        router.push(appWorkspacePaths.file(workspaceId, fileId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        fileId = file.resourceId;
+        message.success("File updated");
+        mutate(getUseFileListHookKey({ folderId, workspaceId: workspaceId }));
+        mutate(
+          getUseFileHookKey({
+            workspaceId: workspaceId,
+            fileId: file.resourceId,
+          })
+        );
+      } else {
+        if (!inputFile) {
+          // TODO: show error
+          return;
+        }
+
+        const result = await FileAPI.uploadFile({
+          workspaceId: workspaceId,
+          filepath: folderpath
+            ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
+            : data.name,
+          description: data.description,
+          data: inputFile as any,
+          mimetype: inputFile.type,
+        });
+
+        checkEndpointResult(result);
+        fileId = result.file.resourceId;
+        message.success("File created");
+        mutate(
+          getUseFileListHookKey({
+            folderId,
+            workspaceId: workspaceId,
+          })
+        );
       }
+
+      router.push(appWorkspacePaths.file(workspaceId, fileId));
     },
     [file, workspaceId, folderId, folderpath, mutate, router]
   );

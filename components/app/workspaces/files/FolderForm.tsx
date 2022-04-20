@@ -6,10 +6,7 @@ import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
 import { messages } from "../../../../lib/messages/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
@@ -73,66 +70,62 @@ export default function FolderForm(props: IFolderFormProps) {
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
     async (data: IFolderFormValues) => {
-      try {
-        let folderId: string | null = null;
+      let folderId: string | null = null;
 
-        if (folder) {
-          const result = await FolderAPI.updateFolder({
+      if (folder) {
+        const result = await FolderAPI.updateFolder({
+          workspaceId: workspaceId,
+          folderId: folder.resourceId,
+          folder: {
+            description: data.description,
+            maxFileSizeInBytes: data.maxFileSizeInBytes,
+            // publicAccessOps: data.publicAccessOps,
+          },
+        });
+
+        checkEndpointResult(result);
+        folderId = folder.resourceId;
+        message.success("Folder updated");
+        mutate(
+          getUseFileListHookKey({
+            workspaceId: workspaceId,
+            folderId: parentId,
+          })
+        );
+
+        mutate(
+          getUseFolderHookKey({
             workspaceId: workspaceId,
             folderId: folder.resourceId,
-            folder: {
-              description: data.description,
-              maxFileSizeInBytes: data.maxFileSizeInBytes,
-              // publicAccessOps: data.publicAccessOps,
-            },
-          });
+          })
+        );
+      } else {
+        const folderpath = parentPath
+          ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
+          : data.name;
 
-          checkEndpointResult(result);
-          folderId = folder.resourceId;
-          message.success("Folder updated");
-          mutate(
-            getUseFileListHookKey({
-              workspaceId: workspaceId,
-              folderId: parentId,
-            })
-          );
+        const result = await FolderAPI.addFolder({
+          workspaceId: workspaceId,
+          folder: {
+            folderpath,
+            description: data.description,
+            maxFileSizeInBytes: data.maxFileSizeInBytes,
+            // publicAccessOps: data.publicAccessOps,
+          },
+        });
 
-          mutate(
-            getUseFolderHookKey({
-              workspaceId: workspaceId,
-              folderId: folder.resourceId,
-            })
-          );
-        } else {
-          const folderpath = parentPath
-            ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
-            : data.name;
-
-          const result = await FolderAPI.addFolder({
+        checkEndpointResult(result);
+        folderId = result.folder.resourceId;
+        message.success("Folder created");
+        mutate(
+          getUseFileListHookKey({
             workspaceId: workspaceId,
-            folder: {
-              folderpath,
-              description: data.description,
-              maxFileSizeInBytes: data.maxFileSizeInBytes,
-              // publicAccessOps: data.publicAccessOps,
-            },
-          });
-
-          checkEndpointResult(result);
-          folderId = result.folder.resourceId;
-          message.success("Folder created");
-          mutate(
-            getUseFileListHookKey({
-              workspaceId: workspaceId,
-              folderId: parentId,
-            })
-          );
-        }
-
-        router.push(appWorkspacePaths.folder(workspaceId, folderId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+            folderId: parentId,
+          })
+        );
       }
+
+      router.push(appWorkspacePaths.folder(workspaceId, folderId));
     },
     [folder, workspaceId, parentId, parentPath, mutate, router]
   );

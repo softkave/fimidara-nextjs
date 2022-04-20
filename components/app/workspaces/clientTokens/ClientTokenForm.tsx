@@ -4,10 +4,7 @@ import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import FormError from "../../../form/FormError";
@@ -63,34 +60,30 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
   const { mutate } = useClientToken(clientToken?.resourceId);
   const onSubmit = React.useCallback(
     async (data: INewClientAssignedTokenInput) => {
-      try {
-        let clientTokenId: string | null = null;
+      let clientTokenId: string | null = null;
 
-        if (clientToken) {
-          const result = await ClientAssignedTokenAPI.updateToken({
-            token: data,
-            tokenId: clientToken.resourceId,
-          });
+      if (clientToken) {
+        const result = await ClientAssignedTokenAPI.updateToken({
+          token: data,
+          tokenId: clientToken.resourceId,
+        });
 
-          checkEndpointResult(result);
-          clientTokenId = result.token.resourceId;
-          mutate(result);
-          message.success("Client assigned token updated");
-        } else {
-          const result = await ClientAssignedTokenAPI.addToken({
-            workspaceId: workspaceId,
-            token: data,
-          });
+        checkEndpointResult(result);
+        clientTokenId = result.token.resourceId;
+        mutate(result);
+        message.success("Client assigned token updated");
+      } else {
+        const result = await ClientAssignedTokenAPI.addToken({
+          workspaceId: workspaceId,
+          token: data,
+        });
 
-          checkEndpointResult(result);
-          clientTokenId = result.token.resourceId;
-          message.success("Client assigned token created");
-        }
-
-        router.push(appWorkspacePaths.clientToken(workspaceId, clientTokenId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        clientTokenId = result.token.resourceId;
+        message.success("Client assigned token created");
       }
+
+      router.push(appWorkspacePaths.clientToken(workspaceId, clientTokenId));
     },
     [clientToken, workspaceId, mutate, router]
   );

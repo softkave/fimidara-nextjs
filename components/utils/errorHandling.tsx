@@ -12,11 +12,12 @@ import {
 } from "../../lib/utilities/errors";
 import { appComponentConstants } from "./utils";
 
-export function enrichErrorMessage(
-  error: any,
-  defaultMessage = messages.requestError
-) {
-  let errorMessage: React.ReactNode = getBaseError(error || defaultMessage);
+export function enrichErrorMessage(error: any) {
+  if (!error) {
+    return "";
+  }
+
+  let errorMessage: React.ReactNode = getBaseError(error);
   const hasEmailNotVerifiedError = hasErrorTypes(error, [
     EmailAddressNotVerifiedError.name,
   ]);
@@ -42,11 +43,11 @@ export function errorMessageNotificatition(
   defaultMessage = messages.requestError,
   props: Partial<ArgsProps> = {}
 ) {
-  const errorMessage = enrichErrorMessage(error, defaultMessage);
+  const errorMessage = enrichErrorMessage(error) || defaultMessage;
   message.error({
     type: "error",
     content: errorMessage,
-    duration: appComponentConstants.errorDuration,
+    duration: appComponentConstants.messageDuration,
     ...props,
   });
 }

@@ -46,11 +46,6 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
       }
 
       setSuccessMessage("Change password email sent");
-
-      // notification.success({
-      //   message: "Change password email sent",
-      //   // description: "",
-      // });
     } catch (error) {
       const errArray = toAppErrorsArray(error);
       const flattenedErrors = flattenErrorList(errArray);

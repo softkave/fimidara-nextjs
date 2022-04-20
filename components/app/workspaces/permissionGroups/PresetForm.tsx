@@ -12,10 +12,7 @@ import {
   presetPermissionsGroupConstants,
 } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
 import {
   appWorkspacePaths,
@@ -64,34 +61,30 @@ export default function PresetForm(props: IPresetFormProps) {
   const { mutate } = usePermissionGroup(preset?.resourceId);
   const onSubmit = React.useCallback(
     async (data: INewPresetPermissionsGroupInput) => {
-      try {
-        let presetId: string | null = null;
+      let presetId: string | null = null;
 
-        if (preset) {
-          const result = await PresetPermissionsGroupAPI.updatePreset({
-            preset: data,
-            presetId: preset.resourceId,
-          });
+      if (preset) {
+        const result = await PresetPermissionsGroupAPI.updatePreset({
+          preset: data,
+          presetId: preset.resourceId,
+        });
 
-          checkEndpointResult(result);
-          presetId = result.preset.resourceId;
-          mutate(result);
-          message.success("Permission group updated");
-        } else {
-          const result = await PresetPermissionsGroupAPI.addPreset({
-            workspaceId: workspaceId,
-            preset: data,
-          });
+        checkEndpointResult(result);
+        presetId = result.preset.resourceId;
+        mutate(result);
+        message.success("Permission group updated");
+      } else {
+        const result = await PresetPermissionsGroupAPI.addPreset({
+          workspaceId: workspaceId,
+          preset: data,
+        });
 
-          checkEndpointResult(result);
-          presetId = result.preset.resourceId;
-          message.success("Permission group created");
-        }
-
-        router.push(appWorkspacePaths.permissionGroup(workspaceId, presetId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        presetId = result.preset.resourceId;
+        message.success("Permission group created");
       }
+
+      router.push(appWorkspacePaths.permissionGroup(workspaceId, presetId));
     },
     [preset, workspaceId, mutate, router]
   );

@@ -4,10 +4,7 @@ import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import FormError from "../../../form/FormError";
@@ -43,23 +40,17 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
   const { mutate } = useCollaborator(workspaceId, collaborator.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaboratorFormValues) => {
-      try {
-        const result = await CollaboratorAPI.updateCollaboratorPresets({
-          workspaceId: workspaceId,
-          collaboratorId: collaborator.resourceId,
-          presets: data.presets,
-        });
+      const result = await CollaboratorAPI.updateCollaboratorPresets({
+        workspaceId: workspaceId,
+        collaboratorId: collaborator.resourceId,
+        presets: data.presets,
+      });
 
-        checkEndpointResult(result);
-        const collaboratorId = result.collaborator.resourceId;
-        mutate(result);
-        message.success("Collaborator updated");
-        router.push(
-          appWorkspacePaths.collaborator(workspaceId, collaboratorId)
-        );
-      } catch (error) {
-        processAndThrowEndpointError(error);
-      }
+      checkEndpointResult(result);
+      const collaboratorId = result.collaborator.resourceId;
+      mutate(result);
+      message.success("Collaborator updated");
+      router.push(appWorkspacePaths.collaborator(workspaceId, collaboratorId));
     },
     [collaborator, workspaceId, mutate, router]
   );

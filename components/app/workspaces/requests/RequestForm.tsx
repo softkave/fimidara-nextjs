@@ -6,10 +6,7 @@ import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
 import { messages } from "../../../../lib/messages/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
@@ -63,34 +60,30 @@ export default function RequestForm(props: IRequestFormProps) {
   const { mutate } = useCollaborationRequest(request?.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaborationRequestInput) => {
-      try {
-        let requestId: string | null = null;
+      let requestId: string | null = null;
 
-        if (request) {
-          const result = await CollaborationRequestAPI.updateRequest({
-            requestId: request.resourceId,
-            request: data,
-          });
+      if (request) {
+        const result = await CollaborationRequestAPI.updateRequest({
+          requestId: request.resourceId,
+          request: data,
+        });
 
-          checkEndpointResult(result);
-          requestId = result.request.resourceId;
-          mutate(result);
-          message.success("Collaboration request updated");
-        } else {
-          const result = await CollaborationRequestAPI.sendRequest({
-            workspaceId: workspaceId,
-            request: data,
-          });
+        checkEndpointResult(result);
+        requestId = result.request.resourceId;
+        mutate(result);
+        message.success("Collaboration request updated");
+      } else {
+        const result = await CollaborationRequestAPI.sendRequest({
+          workspaceId: workspaceId,
+          request: data,
+        });
 
-          checkEndpointResult(result);
-          requestId = result.request.resourceId;
-          message.success("Collaboration request created");
-        }
-
-        router.push(appWorkspacePaths.request(workspaceId, requestId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        requestId = result.request.resourceId;
+        message.success("Collaboration request created");
       }
+
+      router.push(appWorkspacePaths.request(workspaceId, requestId));
     },
     [request, workspaceId, mutate, router]
   );

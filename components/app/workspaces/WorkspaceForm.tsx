@@ -53,34 +53,30 @@ export default function WorkspaceForm(props: IWorkspaceFormProps) {
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
     async (data: INewWorkspaceInput) => {
-      try {
-        let workspaceId: string | null = null;
+      let workspaceId: string | null = null;
 
-        if (workspace) {
-          const result = await WorkspaceAPI.updateWorkspace({
-            workspace: data,
-            workspaceId: workspace.resourceId,
-          });
+      if (workspace) {
+        const result = await WorkspaceAPI.updateWorkspace({
+          workspace: data,
+          workspaceId: workspace.resourceId,
+        });
 
-          checkEndpointResult(result);
-          workspaceId = result.workspace.resourceId;
-          mutate(
-            getUseWorkspaceHookKey(workspace.resourceId),
-            result.workspace,
-            false
-          );
-          message.success("Workspace updated");
-        } else {
-          const result = await WorkspaceAPI.addWorkspace(data);
-          checkEndpointResult(result);
-          workspaceId = result.workspace.resourceId;
-          message.success("Workspace created");
-        }
-
-        router.push(`${appWorkspacePaths.workspaces}/${workspaceId}`);
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        workspaceId = result.workspace.resourceId;
+        mutate(
+          getUseWorkspaceHookKey(workspace.resourceId),
+          result.workspace,
+          false
+        );
+        message.success("Workspace updated");
+      } else {
+        const result = await WorkspaceAPI.addWorkspace(data);
+        checkEndpointResult(result);
+        workspaceId = result.workspace.resourceId;
+        message.success("Workspace created");
       }
+
+      router.push(`${appWorkspacePaths.workspaces}/${workspaceId}`);
     },
     [workspace, mutate, router]
   );
