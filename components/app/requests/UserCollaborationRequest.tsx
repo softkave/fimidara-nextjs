@@ -10,13 +10,11 @@ import PageLoading from "../../utils/PageLoading";
 import {
   CollaborationRequestResponse,
   CollaborationRequestStatusType,
-  ICollaborationRequest,
 } from "../../../lib/definitions/collaborationRequest";
 import CollaborationRequestAPI from "../../../lib/api/endpoints/collaborationRequest";
 import assert from "assert";
 import { useRequest } from "ahooks";
 import { getBaseError } from "../../../lib/utilities/errors";
-import { messages } from "../../../lib/definitions/messages";
 import { checkEndpointResult } from "../../../lib/api/utils";
 import AppHeader from "../AppHeader";
 import withPageAuthRequired from "../../hoc/withPageAuthRequired";
@@ -24,6 +22,7 @@ import { appDimensions } from "../../utils/theme";
 import { css } from "@emotion/css";
 import { last } from "lodash";
 import InlineLoading from "../../utils/InlineLoading";
+import { errorMessageNotificatition } from "../../utils/errorHandling";
 
 export interface IUserCollaborationRequestProps {
   requestId: string;
@@ -45,20 +44,6 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
     async (response: CollaborationRequestResponse) => {
       try {
         assert(data);
-        // const updatedRequest: ICollaborationRequest = {
-        //   ...data.request,
-        //   statusHistory: data.request.statusHistory.concat({
-        //     status: response,
-        //     date: new Date().toISOString(),
-        //   }),
-        // };
-
-        // mutate(
-        //   getUseCollaborationRequestHookKey(requestId),
-        //   { request: updatedRequest },
-        //   false
-        // );
-
         const result = await CollaborationRequestAPI.respondToRequest({
           response,
           requestId: data.request.resourceId,
@@ -68,7 +53,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
         mutate(getUseCollaborationRequestHookKey(requestId), result, false);
         message.success("Response submitted");
       } catch (error) {
-        message.error(getBaseError(error) || messages.requestError);
+        errorMessageNotificatition(error);
       }
     },
     [requestId, data, mutate]

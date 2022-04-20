@@ -261,7 +261,6 @@ export const appAccountPaths = {
   verifyEmail: appRootPaths.account + "/verify-email",
   forgotPassword: appRootPaths.account + "/forgot-password",
   changePassword: appRootPaths.account + "/change-password",
-  settings: appRootPaths.account + "/settings",
 };
 
 export const appUserPaths = {

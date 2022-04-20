@@ -1,21 +1,17 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/definitions/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { messages } from "../../../../lib/messages/messages";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { presetPermissionsGroupConstants } from "../../../../lib/definitions/presets";
@@ -26,6 +22,7 @@ import {
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import useProgramToken from "../../../../lib/hooks/workspaces/useProgramToken";
 import SelectPresetInput from "../permissionGroups/SelectPresetInput";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const programTokenValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -64,36 +61,30 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
   const { mutate } = useProgramToken(programToken?.resourceId);
   const onSubmit = React.useCallback(
     async (data: INewProgramAccessTokenInput) => {
-      try {
-        let programTokenId: string | null = null;
+      let programTokenId: string | null = null;
 
-        if (programToken) {
-          const result = await ProgramAccessTokenAPI.updateToken({
-            token: data,
-            tokenId: programToken.resourceId,
-          });
+      if (programToken) {
+        const result = await ProgramAccessTokenAPI.updateToken({
+          token: data,
+          tokenId: programToken.resourceId,
+        });
 
-          checkEndpointResult(result);
-          programTokenId = result.token.resourceId;
-          mutate(result);
-          message.success("Program access token updated");
-        } else {
-          const result = await ProgramAccessTokenAPI.addToken({
-            workspaceId: workspaceId,
-            token: data,
-          });
+        checkEndpointResult(result);
+        programTokenId = result.token.resourceId;
+        mutate(result);
+        message.success("Program access token updated");
+      } else {
+        const result = await ProgramAccessTokenAPI.addToken({
+          workspaceId: workspaceId,
+          token: data,
+        });
 
-          checkEndpointResult(result);
-          programTokenId = result.token.resourceId;
-          message.success("Program access token created");
-        }
-
-        router.push(
-          appWorkspacePaths.programToken(workspaceId, programTokenId)
-        );
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        programTokenId = result.token.resourceId;
+        message.success("Program access token created");
       }
+
+      router.push(appWorkspacePaths.programToken(workspaceId, programTokenId));
     },
     [programToken, workspaceId, router, mutate]
   );
@@ -110,7 +101,6 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
       required
@@ -198,11 +188,7 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
               Program Access Token Form
             </Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
           {assignedprogramTokensNode}

@@ -6,18 +6,15 @@ import {
   AppResourceType,
 } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { MenuInfo } from "../../../utils/types";
 import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { BsThreeDots } from "react-icons/bs";
-import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface ICollaboratorMenuProps {
   workspaceId: string;
@@ -53,10 +50,7 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
       message.success("Collaborator removed");
       await onCompleteRemove();
     } catch (error: any) {
-      message.error(
-        getFormError(processEndpointError(error)) ||
-          "Error removing collaborator"
-      );
+      errorMessageNotificatition(error, "Error removing collaborator");
     }
   }, [workspaceId, collaborator, onCompleteRemove]);
 

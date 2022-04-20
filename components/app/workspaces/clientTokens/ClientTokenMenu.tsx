@@ -8,16 +8,13 @@ import {
 } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
 import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IClientTokenMenuProps {
   token: IClientAssignedToken;
@@ -51,9 +48,7 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
       message.success("Token deleted");
       await onCompleteDelete();
     } catch (error: any) {
-      message.error(
-        getFormError(processEndpointError(error)) || "Error deleting token"
-      );
+      errorMessageNotificatition(error, "Error deleting token");
     }
   }, [token, onCompleteDelete]);
 

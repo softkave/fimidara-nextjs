@@ -1,42 +1,13 @@
 import { OutgoingHttpHeaders } from "http";
 import { isBoolean } from "lodash";
-import isString from "lodash/isString";
 import last from "lodash/last";
-import { IAppError } from "../definitions/system";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionSelectors from "../store/session/selectors";
 import store from "../store/store";
+import { toAppErrorsArray } from "../utilities/errors";
 import { flattenErrorList } from "../utilities/utils";
 import { getServerAddr } from "./addr";
-import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IEndpointResultBase } from "./types";
-
-const isExpectedErrorType = (errors: Error[]) => {
-  return Array.isArray(errors) && !!errors.find((e) => !!e.name);
-};
-
-export const toAppError = (err: Error | IAppError | string): IAppError => {
-  const error = isString(err) ? new Error(err) : err;
-
-  return {
-    name: error.name,
-    message: error.message,
-    action: (error as any).action,
-    field: (error as any).field,
-  };
-};
-
-export const toAppErrorsArray = (err: any) => {
-  if (!err) {
-    return [];
-  }
-
-  if (Array.isArray(err)) {
-    return err.map((error) => toAppError(error));
-  } else {
-    return [toAppError(err)];
-  }
-};
 
 export const HTTP_HEADER_CONTENT_TYPE = "Content-Type";
 export const HTTP_HEADER_AUTHORIZATION = "Authorization";

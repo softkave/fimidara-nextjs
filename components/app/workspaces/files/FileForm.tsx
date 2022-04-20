@@ -1,30 +1,17 @@
 import { css, cx } from "@emotion/css";
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  message,
-  Space,
-  Typography,
-  Upload,
-} from "antd";
+import { Button, Form, Input, message, Space, Typography, Upload } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/definitions/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { messages } from "../../../../lib/messages/messages";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { useSWRConfig } from "swr";
@@ -40,6 +27,7 @@ import { first } from "lodash";
 import { IEndpointResultBase } from "../../../../lib/api/types";
 import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
 import { folderConstants } from "../../../../lib/definitions/folder";
+import { FormAlert } from "../../../utils/FormAlert";
 
 export interface IFileFormValue {
   description?: string;
@@ -90,72 +78,68 @@ export default function FileForm(props: IFileFormProps) {
 
   const onSubmit = React.useCallback(
     async (data: IFileFormValue) => {
-      try {
-        let fileId: string | null = null;
-        const inputFile = first(data.file);
+      let fileId: string | null = null;
+      const inputFile = first(data.file);
 
-        if (file) {
-          let result: IEndpointResultBase;
+      if (file) {
+        let result: IEndpointResultBase;
 
-          if (inputFile) {
-            result = await FileAPI.uploadFile({
-              workspaceId: workspaceId,
-              fileId: file.resourceId,
-              description: data.description,
-              data: inputFile as any,
-              mimetype: inputFile.type,
-            });
-          } else {
-            result = await FileAPI.updateFileDetails({
-              workspaceId: workspaceId,
-              fileId: file.resourceId,
-              file: {
-                description: data.description,
-              },
-            });
-          }
-
-          checkEndpointResult(result);
-          fileId = file.resourceId;
-          message.success("File updated");
-          mutate(getUseFileListHookKey({ folderId, workspaceId: workspaceId }));
-          mutate(
-            getUseFileHookKey({
-              workspaceId: workspaceId,
-              fileId: file.resourceId,
-            })
-          );
-        } else {
-          if (!inputFile) {
-            // TODO: show error
-            return;
-          }
-
-          const result = await FileAPI.uploadFile({
+        if (inputFile) {
+          result = await FileAPI.uploadFile({
             workspaceId: workspaceId,
-            filepath: folderpath
-              ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
-              : data.name,
+            fileId: file.resourceId,
             description: data.description,
             data: inputFile as any,
             mimetype: inputFile.type,
           });
-
-          checkEndpointResult(result);
-          fileId = result.file.resourceId;
-          message.success("File created");
-          mutate(
-            getUseFileListHookKey({
-              folderId,
-              workspaceId: workspaceId,
-            })
-          );
+        } else {
+          result = await FileAPI.updateFileDetails({
+            workspaceId: workspaceId,
+            fileId: file.resourceId,
+            file: {
+              description: data.description,
+            },
+          });
         }
 
-        router.push(appWorkspacePaths.file(workspaceId, fileId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        fileId = file.resourceId;
+        message.success("File updated");
+        mutate(getUseFileListHookKey({ folderId, workspaceId: workspaceId }));
+        mutate(
+          getUseFileHookKey({
+            workspaceId: workspaceId,
+            fileId: file.resourceId,
+          })
+        );
+      } else {
+        if (!inputFile) {
+          // TODO: show error
+          return;
+        }
+
+        const result = await FileAPI.uploadFile({
+          workspaceId: workspaceId,
+          filepath: folderpath
+            ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
+            : data.name,
+          description: data.description,
+          data: inputFile as any,
+          mimetype: inputFile.type,
+        });
+
+        checkEndpointResult(result);
+        fileId = result.file.resourceId;
+        message.success("File created");
+        mutate(
+          getUseFileListHookKey({
+            folderId,
+            workspaceId: workspaceId,
+          })
+        );
       }
+
+      router.push(appWorkspacePaths.file(workspaceId, fileId));
     },
     [file, workspaceId, folderId, folderpath, mutate, router]
   );
@@ -176,7 +160,6 @@ export default function FileForm(props: IFileFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
       required
@@ -275,11 +258,7 @@ export default function FileForm(props: IFileFormProps) {
           <Form.Item>
             <Typography.Title level={4}>File Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
           {selectFileNode}

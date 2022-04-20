@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Alert, Button, Checkbox, Form, Input, Typography } from "antd";
+import { Button, Checkbox, Form, Input, Typography } from "antd";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import React from "react";
@@ -8,15 +8,15 @@ import { useRouter } from "next/router";
 import { formClasses } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { userConstants } from "../../lib/definitions/user";
-import { getFormError } from "../../components/form/formUtils";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../lib/api/endpoints/user";
 import UserSessionStorageFns from "../../lib/storage/userSession";
 import SessionActions from "../../lib/store/session/actions";
 import { appWorkspacePaths } from "../../lib/definitions/system";
-import { toAppErrorsArray } from "../../lib/api/utils";
 import { flattenErrorList } from "../../lib/utilities/utils";
 import WebHeader from "../../components/web/WebHeader";
+import { toAppErrorsArray } from "../../lib/utilities/errors";
+import { FormAlert } from "../../components/utils/FormAlert";
 
 export interface ILoginFormValues {
   email: string;
@@ -86,8 +86,6 @@ export default function Login(props: ILoginProps) {
       onSubmit: submitResult.run,
     },
   });
-
-  const globalError = getFormError(formik.errors);
 
   const emailNode = (
     <Form.Item
@@ -164,11 +162,7 @@ export default function Login(props: ILoginProps) {
           <Form.Item>
             <Typography.Title level={4}>Login</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {emailNode}
           {passwordNode}
           {rememberNode}

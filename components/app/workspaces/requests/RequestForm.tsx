@@ -1,29 +1,17 @@
 import { css, cx } from "@emotion/css";
-import {
-  Alert,
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Typography,
-} from "antd";
+import { Button, DatePicker, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/definitions/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { messages } from "../../../../lib/messages/messages";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { signupValidationParts } from "../../../../lib/validation/user";
@@ -34,6 +22,7 @@ import {
 import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
 import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
 import moment from "moment";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const requestValidation = yup.object().shape({
   recipientEmail: signupValidationParts.email.required(messages.emailRequired),
@@ -71,34 +60,30 @@ export default function RequestForm(props: IRequestFormProps) {
   const { mutate } = useCollaborationRequest(request?.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaborationRequestInput) => {
-      try {
-        let requestId: string | null = null;
+      let requestId: string | null = null;
 
-        if (request) {
-          const result = await CollaborationRequestAPI.updateRequest({
-            requestId: request.resourceId,
-            request: data,
-          });
+      if (request) {
+        const result = await CollaborationRequestAPI.updateRequest({
+          requestId: request.resourceId,
+          request: data,
+        });
 
-          checkEndpointResult(result);
-          requestId = result.request.resourceId;
-          mutate(result);
-          message.success("Collaboration request updated");
-        } else {
-          const result = await CollaborationRequestAPI.sendRequest({
-            workspaceId: workspaceId,
-            request: data,
-          });
+        checkEndpointResult(result);
+        requestId = result.request.resourceId;
+        mutate(result);
+        message.success("Collaboration request updated");
+      } else {
+        const result = await CollaborationRequestAPI.sendRequest({
+          workspaceId: workspaceId,
+          request: data,
+        });
 
-          checkEndpointResult(result);
-          requestId = result.request.resourceId;
-          message.success("Collaboration request created");
-        }
-
-        router.push(appWorkspacePaths.request(workspaceId, requestId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        requestId = result.request.resourceId;
+        message.success("Collaboration request created");
       }
+
+      router.push(appWorkspacePaths.request(workspaceId, requestId));
     },
     [request, workspaceId, mutate, router]
   );
@@ -115,7 +100,6 @@ export default function RequestForm(props: IRequestFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const recipientEmailNode = (
     <Form.Item
       required
@@ -212,11 +196,7 @@ export default function RequestForm(props: IRequestFormProps) {
               Collaboration Request Form
             </Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {recipientEmailNode}
           {messageNode}
           {expiresNode}

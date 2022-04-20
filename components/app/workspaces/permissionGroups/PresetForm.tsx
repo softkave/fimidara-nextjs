@@ -1,31 +1,28 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/definitions/messages";
+import { messages } from "../../../../lib/messages/messages";
 import {
   INewPresetPermissionsGroupInput,
   IPresetPermissionsGroup,
   presetPermissionsGroupConstants,
 } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import SelectPresetInput from "./SelectPresetInput";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const presetValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -64,34 +61,30 @@ export default function PresetForm(props: IPresetFormProps) {
   const { mutate } = usePermissionGroup(preset?.resourceId);
   const onSubmit = React.useCallback(
     async (data: INewPresetPermissionsGroupInput) => {
-      try {
-        let presetId: string | null = null;
+      let presetId: string | null = null;
 
-        if (preset) {
-          const result = await PresetPermissionsGroupAPI.updatePreset({
-            preset: data,
-            presetId: preset.resourceId,
-          });
+      if (preset) {
+        const result = await PresetPermissionsGroupAPI.updatePreset({
+          preset: data,
+          presetId: preset.resourceId,
+        });
 
-          checkEndpointResult(result);
-          presetId = result.preset.resourceId;
-          mutate(result);
-          message.success("Permission group updated");
-        } else {
-          const result = await PresetPermissionsGroupAPI.addPreset({
-            workspaceId: workspaceId,
-            preset: data,
-          });
+        checkEndpointResult(result);
+        presetId = result.preset.resourceId;
+        mutate(result);
+        message.success("Permission group updated");
+      } else {
+        const result = await PresetPermissionsGroupAPI.addPreset({
+          workspaceId: workspaceId,
+          preset: data,
+        });
 
-          checkEndpointResult(result);
-          presetId = result.preset.resourceId;
-          message.success("Permission group created");
-        }
-
-        router.push(appWorkspacePaths.permissionGroup(workspaceId, presetId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        presetId = result.preset.resourceId;
+        message.success("Permission group created");
       }
+
+      router.push(appWorkspacePaths.permissionGroup(workspaceId, presetId));
     },
     [preset, workspaceId, mutate, router]
   );
@@ -108,7 +101,6 @@ export default function PresetForm(props: IPresetFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
       required
@@ -194,11 +186,7 @@ export default function PresetForm(props: IPresetFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Preset Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
           {assignedPresetsNode}

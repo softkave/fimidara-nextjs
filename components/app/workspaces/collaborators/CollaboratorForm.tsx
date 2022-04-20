@@ -1,16 +1,12 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, message, Space, Typography } from "antd";
+import { Button, Form, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import {
@@ -22,6 +18,7 @@ import SelectPresetInput from "../permissionGroups/SelectPresetInput";
 import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import LabeledNode from "../../../utils/LabeledNode";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const collaboratorValidation = yup.object().shape({
   presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
@@ -43,23 +40,17 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
   const { mutate } = useCollaborator(workspaceId, collaborator.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaboratorFormValues) => {
-      try {
-        const result = await CollaboratorAPI.updateCollaboratorPresets({
-          workspaceId: workspaceId,
-          collaboratorId: collaborator.resourceId,
-          presets: data.presets,
-        });
+      const result = await CollaboratorAPI.updateCollaboratorPresets({
+        workspaceId: workspaceId,
+        collaboratorId: collaborator.resourceId,
+        presets: data.presets,
+      });
 
-        checkEndpointResult(result);
-        const collaboratorId = result.collaborator.resourceId;
-        mutate(result);
-        message.success("Collaborator updated");
-        router.push(
-          appWorkspacePaths.collaborator(workspaceId, collaboratorId)
-        );
-      } catch (error) {
-        processAndThrowEndpointError(error);
-      }
+      checkEndpointResult(result);
+      const collaboratorId = result.collaborator.resourceId;
+      mutate(result);
+      message.success("Collaborator updated");
+      router.push(appWorkspacePaths.collaborator(workspaceId, collaboratorId));
     },
     [collaborator, workspaceId, mutate, router]
   );
@@ -76,7 +67,6 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item>
       <LabeledNode
@@ -130,11 +120,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Collaborator Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {emailNode}
           {assignedPresetsNode}

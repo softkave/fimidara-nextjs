@@ -6,18 +6,15 @@ import {
   AppResourceType,
 } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
 import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
-import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IPermissionGroupMenuProps {
   preset: IPresetPermissionsGroup;
@@ -54,10 +51,7 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
       message.success("Permission group deleted");
       await onCompleteDelete();
     } catch (error: any) {
-      message.error(
-        getFormError(processEndpointError(error)) ||
-          "Error deleting permission group"
-      );
+      errorMessageNotificatition(error, "Error deleting permission group");
     }
   }, [preset, onCompleteDelete]);
 

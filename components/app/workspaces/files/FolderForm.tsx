@@ -1,21 +1,17 @@
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/definitions/messages";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { messages } from "../../../../lib/messages/messages";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { getUseFolderHookKey } from "../../../../lib/hooks/workspaces/useFolder";
@@ -25,6 +21,7 @@ import FolderAPI from "../../../../lib/api/endpoints/folder";
 import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
 import { fileConstants } from "../../../../lib/definitions/file";
 import { folderConstants } from "../../../../lib/definitions/folder";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const folderValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -73,66 +70,62 @@ export default function FolderForm(props: IFolderFormProps) {
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
     async (data: IFolderFormValues) => {
-      try {
-        let folderId: string | null = null;
+      let folderId: string | null = null;
 
-        if (folder) {
-          const result = await FolderAPI.updateFolder({
+      if (folder) {
+        const result = await FolderAPI.updateFolder({
+          workspaceId: workspaceId,
+          folderId: folder.resourceId,
+          folder: {
+            description: data.description,
+            maxFileSizeInBytes: data.maxFileSizeInBytes,
+            // publicAccessOps: data.publicAccessOps,
+          },
+        });
+
+        checkEndpointResult(result);
+        folderId = folder.resourceId;
+        message.success("Folder updated");
+        mutate(
+          getUseFileListHookKey({
+            workspaceId: workspaceId,
+            folderId: parentId,
+          })
+        );
+
+        mutate(
+          getUseFolderHookKey({
             workspaceId: workspaceId,
             folderId: folder.resourceId,
-            folder: {
-              description: data.description,
-              maxFileSizeInBytes: data.maxFileSizeInBytes,
-              // publicAccessOps: data.publicAccessOps,
-            },
-          });
+          })
+        );
+      } else {
+        const folderpath = parentPath
+          ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
+          : data.name;
 
-          checkEndpointResult(result);
-          folderId = folder.resourceId;
-          message.success("Folder updated");
-          mutate(
-            getUseFileListHookKey({
-              workspaceId: workspaceId,
-              folderId: parentId,
-            })
-          );
+        const result = await FolderAPI.addFolder({
+          workspaceId: workspaceId,
+          folder: {
+            folderpath,
+            description: data.description,
+            maxFileSizeInBytes: data.maxFileSizeInBytes,
+            // publicAccessOps: data.publicAccessOps,
+          },
+        });
 
-          mutate(
-            getUseFolderHookKey({
-              workspaceId: workspaceId,
-              folderId: folder.resourceId,
-            })
-          );
-        } else {
-          const folderpath = parentPath
-            ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
-            : data.name;
-
-          const result = await FolderAPI.addFolder({
+        checkEndpointResult(result);
+        folderId = result.folder.resourceId;
+        message.success("Folder created");
+        mutate(
+          getUseFileListHookKey({
             workspaceId: workspaceId,
-            folder: {
-              folderpath,
-              description: data.description,
-              maxFileSizeInBytes: data.maxFileSizeInBytes,
-              // publicAccessOps: data.publicAccessOps,
-            },
-          });
-
-          checkEndpointResult(result);
-          folderId = result.folder.resourceId;
-          message.success("Folder created");
-          mutate(
-            getUseFileListHookKey({
-              workspaceId: workspaceId,
-              folderId: parentId,
-            })
-          );
-        }
-
-        router.push(appWorkspacePaths.folder(workspaceId, folderId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+            folderId: parentId,
+          })
+        );
       }
+
+      router.push(appWorkspacePaths.folder(workspaceId, folderId));
     },
     [folder, workspaceId, parentId, parentPath, mutate, router]
   );
@@ -149,7 +142,6 @@ export default function FolderForm(props: IFolderFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const nameNode = (
     <Form.Item
       required
@@ -211,11 +203,7 @@ export default function FolderForm(props: IFolderFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Folder Form</Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
           <Form.Item className={css({ marginTop: "16px" })}>

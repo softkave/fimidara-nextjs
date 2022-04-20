@@ -1,15 +1,12 @@
 import { Button, message, Modal } from "antd";
 import React from "react";
 import { appClasses } from "../../../utils/theme";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
-import { getFormError } from "../../../form/formUtils";
 import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
 import PermissionItemAPI from "../../../../lib/api/endpoints/permissionItem";
 import { DeleteOutlined } from "@ant-design/icons";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IPermissionItemMenuProps {
   item: IPermissionItem;
@@ -32,10 +29,7 @@ const PermissionItemMenu: React.FC<IPermissionItemMenuProps> = (props) => {
       message.success("Permission item deleted");
       await onCompleteDelete();
     } catch (error: any) {
-      message.error(
-        getFormError(processEndpointError(error)) ||
-          "Error deleting permission item"
-      );
+      errorMessageNotificatition(error, "Error deleting permission item");
     }
   }, [item, onCompleteDelete]);
 

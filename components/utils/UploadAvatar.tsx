@@ -7,6 +7,7 @@ import { css, cx } from "@emotion/css";
 import { useSelector } from "react-redux";
 import SessionSelectors from "../../lib/store/session/selectors";
 import { appDimensions } from "./theme";
+import { errorMessageNotificatition } from "./errorHandling";
 
 export type IImageUploadMessages = Partial<{
   uploading: string;
@@ -29,7 +30,7 @@ const DEFAULT_MESSAGES: IImageUploadMessages = {
 
 function beforeUpload(file: RcFile) {
   if (first(file.type.split("/")) !== "image") {
-    message.error("Invalid image type");
+    errorMessageNotificatition("Invalid image type");
   }
 
   return true;
@@ -80,8 +81,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
         onCompleteUpload();
       }, 3000);
     } else if (info.file.status === "error") {
-      message.error({
-        content: customMessages.failed,
+      errorMessageNotificatition(null, customMessages.failed, {
         key: messageKey,
       });
 

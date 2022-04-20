@@ -6,14 +6,10 @@ import {
   AppResourceType,
 } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import { IFile } from "../../../../lib/definitions/file";
 import FileAPI from "../../../../lib/api/endpoints/file";
@@ -22,6 +18,7 @@ import { useSWRConfig } from "swr";
 import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
 import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IFileMenuProps {
   file: IFile;
@@ -70,9 +67,7 @@ const FileMenu: React.FC<IFileMenuProps> = (props) => {
         })
       );
     } catch (error: any) {
-      message.error(
-        getFormError(processEndpointError(error)) || "Error deleting file"
-      );
+      errorMessageNotificatition(error, "Error deleting file");
     }
   }, [file, cacheMutate]);
 

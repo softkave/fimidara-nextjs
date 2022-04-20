@@ -1,10 +1,11 @@
 import { DeleteFilled, LoadingOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Button, Image, ImageProps, message } from "antd";
+import { Button, Image, ImageProps } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import KeyValueSelectors from "../../lib/store/key-value/selectors";
 import { IAppState } from "../../lib/store/types";
+import { errorMessageNotificatition } from "./errorHandling";
 import { appDataImages } from "./theme";
 
 export interface IImageWithFallbackProps {
@@ -91,7 +92,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
       try {
         await onDelete();
       } catch (error: any) {
-        message.error(error?.message || "Request Error");
+        errorMessageNotificatition(error, "Error deleting image");
       }
 
       setTimeout(() => {

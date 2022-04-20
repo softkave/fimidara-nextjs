@@ -3,19 +3,23 @@ import React from "react";
 import { useRequest } from "ahooks";
 import { formBodyClassName } from "../../components/form/classNames";
 import UserEndpoint from "../../lib/api/endpoints/user";
-import { toAppErrorsArray } from "../../lib/api/utils";
-import { flattenErrorList } from "../../lib/utilities/utils";
 import {
+  appRootPaths,
   appWorkspacePaths,
   systemConstants,
 } from "../../lib/definitions/system";
 import { useRouter } from "next/router";
-import { getFormError } from "../../components/form/formUtils";
+import { errorMessageNotificatition } from "../../components/utils/errorHandling";
+import { checkEndpointResult } from "../../lib/api/utils";
+import { appComponentConstants } from "../../components/utils/utils";
+import { saveUserTokenLocal } from "../../lib/hooks/useUser";
+import { useDispatch } from "react-redux";
 
 export interface IVerifyEmailProps {}
 
 export default function VerifyEmail(props: IVerifyEmailProps) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const onSubmit = React.useCallback(async () => {
     try {
       const query = new URLSearchParams(window.location.search);
@@ -32,23 +36,24 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
       }
 
       const result = await UserEndpoint.confirmEmailAddress({ token });
-
-      if (result.errors) {
-        throw result.errors;
-      }
+      checkEndpointResult(result);
+      saveUserTokenLocal(
+        dispatch,
+        result.user.resourceId,
+        result.token,
+        result.clientAssignedToken
+      );
 
       message.success({
-        message: "Email address verified.",
+        type: "success",
+        content: "Email address verified.",
+        duration: appComponentConstants.messageDuration,
       });
 
       router.push(appWorkspacePaths.workspaces);
     } catch (error) {
-      const errArray = toAppErrorsArray(error);
-      const flattenedErrors = flattenErrorList(errArray);
-      message.error({
-        message:
-          getFormError(flattenedErrors) || "Error verifying email address.",
-      });
+      errorMessageNotificatition(error, "Error verifying email address");
+      router.push(appRootPaths.home);
     }
   }, [router]);
 

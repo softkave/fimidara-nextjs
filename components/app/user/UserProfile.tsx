@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Alert, Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
@@ -15,19 +15,17 @@ import {
   userConstants,
 } from "../../../lib/definitions/user";
 import { messages } from "../../../lib/messages/messages";
-import {
-  getFormError,
-  preSubmitCheck,
-} from "../../../components/form/formUtils";
+import { preSubmitCheck } from "../../../components/form/formUtils";
 import { signupValidationParts } from "../../../lib/validation/user";
 import useFormHelpers from "../../../lib/hooks/useFormHelpers";
 import UserEndpoint from "../../../lib/api/endpoints/user";
-import { checkEndpointResult, toAppErrorsArray } from "../../../lib/api/utils";
+import { checkEndpointResult } from "../../../lib/api/utils";
 import { flattenErrorList } from "../../../lib/utilities/utils";
 import useUser from "../../../lib/hooks/useUser";
 import PageLoading from "../../utils/PageLoading";
 import PageError from "../../utils/PageError";
-import { getBaseError } from "../../../lib/utilities/errors";
+import { getBaseError, toAppErrorsArray } from "../../../lib/utilities/errors";
+import { FormAlert } from "../../utils/FormAlert";
 
 export interface IUserProfileProps {}
 
@@ -106,7 +104,6 @@ export default function UserProfile(props: IUserProfileProps) {
     return <PageLoading messageText="Loading user..." />;
   }
 
-  const globalError = getFormError(formik.errors);
   const firstNameNode = (
     <Form.Item
       required
@@ -197,11 +194,7 @@ export default function UserProfile(props: IUserProfileProps) {
     <div className={formBodyClassName}>
       <div className={formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {firstNameNode}
           {lastNameNode}
           {emailNode}

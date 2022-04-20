@@ -6,14 +6,10 @@ import {
   AppResourceType,
 } from "../../../../lib/definitions/system";
 import { appClasses } from "../../../utils/theme";
-import {
-  checkEndpointResult,
-  processEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import { getFormError } from "../../../form/formUtils";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import { IFolder } from "../../../../lib/definitions/folder";
 import FolderAPI from "../../../../lib/api/endpoints/folder";
@@ -22,6 +18,7 @@ import { useSWRConfig } from "swr";
 import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
 import { getUseFolderHookKey } from "../../../../lib/hooks/workspaces/useFolder";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IFolderMenuProps {
   folder: IFolder;
@@ -89,9 +86,7 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
         })
       );
     } catch (error: any) {
-      message.error(
-        getFormError(processEndpointError(error)) || "Error deleting folder"
-      );
+      errorMessageNotificatition(error, "Error deleting folder");
     }
   }, [folder, cacheMutate]);
 

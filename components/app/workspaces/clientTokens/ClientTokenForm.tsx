@@ -1,24 +1,12 @@
 import { css, cx } from "@emotion/css";
-import {
-  Alert,
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Typography,
-} from "antd";
+import { Button, DatePicker, Form, Input, message, Typography } from "antd";
 import * as yup from "yup";
 import React from "react";
 import { useRequest } from "ahooks";
 import { useRouter } from "next/router";
-import {
-  checkEndpointResult,
-  processAndThrowEndpointError,
-} from "../../../../lib/api/utils";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getFormError } from "../../../form/formUtils";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { presetPermissionsGroupConstants } from "../../../../lib/definitions/presets";
@@ -31,6 +19,7 @@ import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssigned
 import useClientToken from "../../../../lib/hooks/workspaces/useClientToken";
 import SelectPresetInput from "../permissionGroups/SelectPresetInput";
 import moment from "moment";
+import { FormAlert } from "../../../utils/FormAlert";
 
 const clientTokenValidation = yup.object().shape({
   expires: yup.string(),
@@ -71,34 +60,30 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
   const { mutate } = useClientToken(clientToken?.resourceId);
   const onSubmit = React.useCallback(
     async (data: INewClientAssignedTokenInput) => {
-      try {
-        let clientTokenId: string | null = null;
+      let clientTokenId: string | null = null;
 
-        if (clientToken) {
-          const result = await ClientAssignedTokenAPI.updateToken({
-            token: data,
-            tokenId: clientToken.resourceId,
-          });
+      if (clientToken) {
+        const result = await ClientAssignedTokenAPI.updateToken({
+          token: data,
+          tokenId: clientToken.resourceId,
+        });
 
-          checkEndpointResult(result);
-          clientTokenId = result.token.resourceId;
-          mutate(result);
-          message.success("Client assigned token updated");
-        } else {
-          const result = await ClientAssignedTokenAPI.addToken({
-            workspaceId: workspaceId,
-            token: data,
-          });
+        checkEndpointResult(result);
+        clientTokenId = result.token.resourceId;
+        mutate(result);
+        message.success("Client assigned token updated");
+      } else {
+        const result = await ClientAssignedTokenAPI.addToken({
+          workspaceId: workspaceId,
+          token: data,
+        });
 
-          checkEndpointResult(result);
-          clientTokenId = result.token.resourceId;
-          message.success("Client assigned token created");
-        }
-
-        router.push(appWorkspacePaths.clientToken(workspaceId, clientTokenId));
-      } catch (error) {
-        processAndThrowEndpointError(error);
+        checkEndpointResult(result);
+        clientTokenId = result.token.resourceId;
+        message.success("Client assigned token created");
       }
+
+      router.push(appWorkspacePaths.clientToken(workspaceId, clientTokenId));
     },
     [clientToken, workspaceId, mutate, router]
   );
@@ -115,7 +100,6 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
     },
   });
 
-  const globalError = getFormError(formik.errors);
   const expiresNode = (
     <Form.Item
       label="Expires"
@@ -207,11 +191,7 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
               Client Assigned Token Form
             </Typography.Title>
           </Form.Item>
-          {globalError && (
-            <Form.Item>
-              <Alert type="error" message={globalError} />
-            </Form.Item>
-          )}
+          <FormAlert error={submitResult.error} />
           {expiresNode}
           {providedResourceIdNode}
           {assignedPresetsNode}

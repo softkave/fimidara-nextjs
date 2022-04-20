@@ -1,3 +1,3 @@
 export const appComponentConstants = {
-  errorDuration: 7, // secs
+  messageDuration: 7, // secs
 };
