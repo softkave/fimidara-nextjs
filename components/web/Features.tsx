@@ -56,7 +56,7 @@ export default function Features() {
       <Typography.Title level={4}>Features</Typography.Title>
       <Row gutter={[16, 64]}>
         {features.map((feature) => (
-          <Col key={feature.title} sm={24} lg={8}>
+          <Col key={feature.title} sm={24} lg={12}>
             <Space direction="vertical">
               <span style={{ fontSize: "24px" }}>{feature.icon}</span>
               <Typography.Title
