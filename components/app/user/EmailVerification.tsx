@@ -25,7 +25,7 @@ export default function EmailVerification() {
     } catch (error: any) {
       errorMessageNotificatition(error);
     }
-  }, []);
+  }, [startCooldown]);
 
   const submitResult = useRequest(onSubmit, { manual: true });
   let rootNode: React.ReactNode = null;

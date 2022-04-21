@@ -27,7 +27,7 @@ const useCooldown = (
     setIsInCooldown(false);
     setCooldownTimer(undefined);
     clearTimeout(cooldownTimer);
-  }, []);
+  }, [cooldownTimer]);
 
   React.useEffect(() => {
     if (isInCooldown && !cooldownTimer) {
