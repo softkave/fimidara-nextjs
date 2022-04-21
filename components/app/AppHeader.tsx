@@ -27,7 +27,7 @@ export default function AppHeader() {
       <div>
         <Link href={appWorkspacePaths.workspaces} passHref>
           <Typography.Title level={5} style={{ margin: 0 }}>
-            Fimidara
+            fimidara
           </Typography.Title>
         </Link>
       </div>

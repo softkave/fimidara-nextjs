@@ -5,7 +5,7 @@ import {
   KeyOutlined,
   LockOutlined,
 } from "@ant-design/icons";
-import { List, Space, Typography } from "antd";
+import { Col, Row, Space, Typography } from "antd";
 
 interface IFeature {
   title: string;
@@ -54,7 +54,27 @@ export default function Features() {
   return (
     <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
       <Typography.Title level={4}>Features</Typography.Title>
-      <List
+      <Row gutter={[16, 64]}>
+        {features.map((feature) => (
+          <Col key={feature.title} sm={24} lg={8}>
+            <Space direction="vertical">
+              <span style={{ fontSize: "24px" }}>{feature.icon}</span>
+              <Typography.Title
+                level={5}
+                style={{ fontWeight: 500, fontSize: "16px" }}
+              >
+                {feature.title}
+              </Typography.Title>
+              {feature.description && (
+                <Typography.Paragraph>
+                  {feature.description}
+                </Typography.Paragraph>
+              )}
+            </Space>
+          </Col>
+        ))}
+      </Row>
+      {/* <List
         dataSource={features}
         renderItem={(item) => (
           <List.Item>
@@ -65,7 +85,7 @@ export default function Features() {
             />
           </List.Item>
         )}
-      />
+      /> */}
     </Space>
   );
 }
