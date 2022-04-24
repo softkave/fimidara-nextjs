@@ -2,7 +2,6 @@
 
 - [ ] use new FormAlert and errorMessageNotification functions
 - [ ] auto route to app when logged in
-- [ ] Show visual notification when routing
 - [ ] implement unseen notifications chip
 - [ ] update remaining form paths
 - [ ] Multiselect and batch actions in lists like client assigned tokens

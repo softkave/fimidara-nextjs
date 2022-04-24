@@ -54,7 +54,10 @@ const Workspaces: NextPage<IWorkspacesPageProps> = () => {
           <List.Item>
             <List.Item.Meta
               title={
-                <Link href={appWorkspacePaths.rootFolderList(item.resourceId)}>
+                <Link
+                  passHref={false}
+                  href={appWorkspacePaths.rootFolderList(item.resourceId)}
+                >
                   {item.name}
                 </Link>
               }

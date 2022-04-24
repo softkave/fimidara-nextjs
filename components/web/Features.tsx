@@ -25,7 +25,7 @@ const features: IFeature[] = [
   },
   {
     title:
-      "Access files from anywhere, using program access tokens for servers, and client-side access tokens for browsers",
+      "Access files from anywhere, using program access tokens for servers, and client-assigned tokens for browsers",
     icon: <KeyOutlined />,
   },
   // {
@@ -39,13 +39,11 @@ const features: IFeature[] = [
   //   icon: <CloudUploadOutlined />,
   // },
   {
-    title:
-      "Rich UI for managing files, including file uploads, file permissions, and so on",
+    title: "Rich UI for managing files, permissions, and so on",
     icon: <BuildOutlined />,
   },
   {
-    title:
-      "Rich API for managing files, including file uploads, file permissions, and so on",
+    title: "Rich API for managing files, permissions, and so on",
     icon: <ApiOutlined />,
   },
 ];
@@ -56,12 +54,12 @@ export default function Features() {
       <Typography.Title level={4}>Features</Typography.Title>
       <Row gutter={[16, 64]}>
         {features.map((feature) => (
-          <Col key={feature.title} sm={24} lg={12}>
+          <Col key={feature.title} sm={24} lg={8}>
             <Space direction="vertical">
               <span style={{ fontSize: "24px" }}>{feature.icon}</span>
               <Typography.Title
                 level={5}
-                style={{ fontWeight: 500, fontSize: "16px" }}
+                style={{ fontWeight: 500, fontSize: "15px" }}
               >
                 {feature.title}
               </Typography.Title>

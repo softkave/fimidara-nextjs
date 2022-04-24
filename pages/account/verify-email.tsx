@@ -55,7 +55,7 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
       errorMessageNotificatition(error, "Error verifying email address");
       router.push(appRootPaths.home);
     }
-  }, [router]);
+  }, [router, dispatch]);
 
   useRequest(onSubmit);
   return (
