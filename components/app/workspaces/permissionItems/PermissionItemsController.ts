@@ -431,7 +431,7 @@ export default class PermissionItemsByResourceController {
         item.itemResourceId == this.itemResourceId && // we want null == undefined
         item.itemResourceType === this.itemResourceType;
 
-      if (item.grantAccess && isForResource) {
+      if (!item.grantAccess && isForResource) {
         if (item.resourceId) {
           this.deletedItemIds.push(item.resourceId);
         }
@@ -517,12 +517,7 @@ export default class PermissionItemsByResourceController {
     );
 
     const actionItem = first(actionItemList);
-
-    if (actionItem?.grantAccess) {
-      return false;
-    }
-
-    return !!actionItem;
+    return actionItem?.grantAccess;
   }
 
   private getNewController() {

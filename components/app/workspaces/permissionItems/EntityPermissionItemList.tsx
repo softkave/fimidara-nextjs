@@ -76,7 +76,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           key: "grantAccess",
           render: (text, item) => (
             <Typography.Text className={classes.cell70px}>
-              {item.grantAccess ? "Deny" : "Allow"}
+              {item.grantAccess ? "Allow" : "Deny"}
             </Typography.Text>
           ),
         },

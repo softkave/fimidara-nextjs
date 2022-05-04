@@ -1,5 +1,6 @@
 # TODOs
 
+- [ ] increase SEO
 - [ ] use new FormAlert and errorMessageNotification functions
 - [ ] auto route to app when logged in
 - [ ] implement unseen notifications chip
@@ -28,3 +29,5 @@
 - [ ] chip if the user has unattended collaboration requests or new ones
 - [ ] uploaded file size is too big and user avatar is not updated
 - [ ] Implement scaling down images
+- [ ] center the tabs
+- [ ] add collaborator and workspace images

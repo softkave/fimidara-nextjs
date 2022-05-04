@@ -1,5 +1,6 @@
 import { RightOutlined } from "@ant-design/icons";
-import { Button, Space, Tabs } from "antd";
+import { css } from "@emotion/css";
+import { Space, Tabs } from "antd";
 import Link from "next/link";
 import React from "react";
 import { SWRConfiguration } from "swr";
@@ -8,7 +9,7 @@ import useWorkspace from "../../../lib/hooks/workspaces/useWorkspace";
 import { getBaseError } from "../../../lib/utilities/errors";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
-import { appClasses } from "../../utils/theme";
+import { appClasses, appDimensions } from "../../utils/theme";
 import AppHeader from "../AppHeader";
 import WorkspaceHeader from "./WorkspaceHeader";
 
@@ -17,6 +18,16 @@ export interface IWorkspaceProps {
   activeKey: string;
   swrConfig?: SWRConfiguration;
 }
+
+const classes = {
+  root: css({
+    "& .ant-tabs-nav-wrap": {
+      maxWidth: appDimensions.app.maxWidth,
+      margin: "0 auto",
+      padding: "0px 16px",
+    },
+  }),
+};
 
 const Workspace: React.FC<IWorkspaceProps> = (props) => {
   const { workspaceId, activeKey, swrConfig, children } = props;
@@ -56,17 +67,14 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
   };
 
   return (
-    <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
+    <Space
+      direction="vertical"
+      size={"middle"}
+      style={{ width: "100%" }}
+      className={classes.root}
+    >
       <WorkspaceHeader workspace={workspace} />
-      <Tabs
-        // centered
-        animated={false}
-        defaultActiveKey={activeKey}
-        moreIcon={<RightOutlined />}
-        tabBarExtraContent={{
-          left: <div style={{ marginLeft: "16px" }} />,
-        }}
-      >
+      <Tabs animated={false} activeKey={activeKey} moreIcon={<RightOutlined />}>
         <Tabs.TabPane
           tab={
             <Link href={paths.files}>

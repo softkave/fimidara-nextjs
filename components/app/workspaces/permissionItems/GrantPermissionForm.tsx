@@ -55,6 +55,10 @@ const classes = {
     "& .ant-tabs-nav": {
       marginBottom: 0,
     },
+
+    "& .ant-tabs-nav-wrap": {
+      padding: "0px 16px",
+    },
   }),
 };
 
@@ -98,7 +102,6 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
         action,
         permitted
       );
-
       setController(newController);
     },
     [controller]
@@ -212,9 +215,6 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
       animated={false}
       defaultActiveKey={activeKey}
       moreIcon={<RightOutlined />}
-      tabBarExtraContent={{
-        left: <div style={{ marginLeft: "16px" }} />,
-      }}
     >
       <Tabs.TabPane tab={"Permission Groups"} key={TabKey.PermissionGroup}>
         <WorkspacePermissionGroups
