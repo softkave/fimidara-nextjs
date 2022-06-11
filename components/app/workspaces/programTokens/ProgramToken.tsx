@@ -86,6 +86,7 @@ function ProgramToken(props: IProgramTokenProps) {
         )}
         <LabeledNode
           nodeIsText
+          copyable
           direction="vertical"
           label="Token"
           node={token.tokenStr}
