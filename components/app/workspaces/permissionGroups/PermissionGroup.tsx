@@ -2,7 +2,7 @@ import { Space } from "antd";
 import React from "react";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
-import AssignedPresetList from "./AssignedPresetList";
+import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import assert from "assert";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import { useRouter } from "next/router";
@@ -20,37 +20,37 @@ import EntityPermissionGroupList from "../permissionItems/EntityPermissionItemLi
 import { getBaseError } from "../../../../lib/utilities/errors";
 
 export interface IPermissionGroupProps {
-  presetId: string;
+  permissionGroupId: string;
 }
 
 function PermissionGroup(props: IPermissionGroupProps) {
-  const { presetId } = props;
+  const { permissionGroupId } = props;
   const router = useRouter();
-  const { error, isLoading, data } = usePermissionGroup(presetId);
+  const { error, isLoading, data } = usePermissionGroup(permissionGroupId);
   const { mutate: cacheMutate } = useSWRConfig();
   // const onRemovePermissionGroup = React.useCallback(
-  //   async (presetId: string) => {
-  //     assert(data?.preset, new Error("Permission group not found"));
-  //     const updatedPresets = data.preset.presets.filter(
-  //       (item) => item.presetId !== presetId
+  //   async (permissionGroupId: string) => {
+  //     assert(data?.permissionGroup, new Error("Permission group not found"));
+  //     const updatedPermissionGroups = data.permissionGroup.permissionGroups.filter(
+  //       (item) => item.permissionGroupId !== permissionGroupId
   //     );
 
-  //     const result = await PresetPermissionsGroupAPI.updatePreset({
-  //       presetId,
-  //       data: { presets: updatedPresets },
+  //     const result = await PermissionGroupAPI.updatePermissionGroup({
+  //       permissionGroupId,
+  //       data: { permissionGroups: updatedPermissionGroups },
   //     });
 
   //     mutate(result, false);
   //   },
-  //   [data, presetId]
+  //   [data, permissionGroupId]
   // );
 
-  const onCompleteDeletePreset = React.useCallback(async () => {
-    assert(data?.preset, new Error("Permission group not found"));
+  const onCompleteDeletePermissionGroup = React.useCallback(async () => {
+    assert(data?.permissionGroup, new Error("Permission group not found"));
     cacheMutate(
-      getUseWorkspacePermissionGroupListHookKey(data.preset.workspaceId)
+      getUseWorkspacePermissionGroupListHookKey(data.permissionGroup.workspaceId)
     );
-    router.push(appWorkspacePaths.collaboratorList(data.preset.workspaceId));
+    router.push(appWorkspacePaths.collaboratorList(data.permissionGroup.workspaceId));
   }, [data, router, cacheMutate]);
 
   if (error) {
@@ -65,7 +65,7 @@ function PermissionGroup(props: IPermissionGroupProps) {
     return <PageLoading messageText="Loading permission group..." />;
   }
 
-  const preset = data.preset;
+  const permissionGroup = data.permissionGroup;
   return (
     <div>
       <Space
@@ -74,12 +74,12 @@ function PermissionGroup(props: IPermissionGroupProps) {
         style={{ width: "100%", padding: "16px" }}
       >
         <ComponentHeader
-          title={preset.name}
+          title={permissionGroup.name}
           className={appClasses.mainNoPadding}
         >
           <PermissionGroupMenu
-            preset={preset}
-            onCompleteDelete={onCompleteDeletePreset}
+            permissionGroup={permissionGroup}
+            onCompleteDelete={onCompleteDeletePermissionGroup}
           />
         </ComponentHeader>
         <LabeledNode
@@ -87,28 +87,28 @@ function PermissionGroup(props: IPermissionGroupProps) {
           copyable
           direction="vertical"
           label="Resource ID"
-          node={preset.resourceId}
+          node={permissionGroup.resourceId}
           className={appClasses.mainNoPadding}
         />
-        {preset.description && (
+        {permissionGroup.description && (
           <LabeledNode
             nodeIsText
             label="Description"
-            node={preset.description}
+            node={permissionGroup.description}
             direction="vertical"
             className={appClasses.mainNoPadding}
           />
         )}
         <div className={appClasses.mainNoPadding}>
-          <AssignedPresetList
-            workspaceId={preset.workspaceId}
-            presets={preset.presets}
+          <AssignedPermissionGroupList
+            workspaceId={permissionGroup.workspaceId}
+            permissionGroups={permissionGroup.permissionGroups}
           />
         </div>
         <EntityPermissionGroupList
-          workspaceId={preset.workspaceId}
-          entityId={preset.resourceId}
-          entityType={AppResourceType.PresetPermissionsGroup}
+          workspaceId={permissionGroup.workspaceId}
+          entityId={permissionGroup.resourceId}
+          entityType={AppResourceType.PermissionGroup}
         />
       </Space>
     </div>

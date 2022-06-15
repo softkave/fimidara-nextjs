@@ -1,4 +1,4 @@
-import { IPresetInput } from "../../definitions/presets";
+import { IPermissionGroupInput } from "../../definitions/permissionGroups";
 import { ICollaborator } from "../../definitions/user";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
@@ -7,7 +7,7 @@ const baseURL = "/collaborators";
 const removeCollaboratorURL = `${baseURL}/removeCollaborator`;
 const getWorkspaceCollaboratorsURL = `${baseURL}/getWorkspaceCollaborators`;
 const getCollaboratorURL = `${baseURL}/getCollaborator`;
-const updateCollaboratorPresetsURL = `${baseURL}/updateCollaboratorPresets`;
+const updateCollaboratorPermissionGroupsURL = `${baseURL}/updateCollaboratorPermissionGroups`;
 
 export interface IGetCollaboratorEndpointParams {
   workspaceId: string;
@@ -56,22 +56,23 @@ async function removeCollaborator(props: IRemoveCollaboratorEndpointParams) {
   });
 }
 
-export interface IUpdateCollaboratorPresetsEndpointParams {
+export interface IUpdateCollaboratorPermissionGroupsEndpointParams {
   workspaceId: string;
   collaboratorId: string;
-  presets: IPresetInput[];
+  permissionGroups: IPermissionGroupInput[];
 }
 
-export type IUpdateCollaboratorPresetsEndpointResult = GetEndpointResult<{
-  collaborator: ICollaborator;
-}>;
+export type IUpdateCollaboratorPermissionGroupsEndpointResult =
+  GetEndpointResult<{
+    collaborator: ICollaborator;
+  }>;
 
-async function updateCollaboratorPresets(
-  props: IUpdateCollaboratorPresetsEndpointParams
+async function updateCollaboratorPermissionGroups(
+  props: IUpdateCollaboratorPermissionGroupsEndpointParams
 ) {
-  return await invokeEndpointWithAuth<IUpdateCollaboratorPresetsEndpointResult>(
+  return await invokeEndpointWithAuth<IUpdateCollaboratorPermissionGroupsEndpointResult>(
     {
-      path: updateCollaboratorPresetsURL,
+      path: updateCollaboratorPermissionGroupsURL,
       data: props,
     }
   );
@@ -81,12 +82,14 @@ export default class CollaboratorAPI {
   public static removeCollaborator = removeCollaborator;
   public static getWorkspaceCollaborators = getWorkspaceCollaborators;
   public static getCollaborator = getCollaborator;
-  public static updateCollaboratorPresets = updateCollaboratorPresets;
+  public static updateCollaboratorPermissionGroups =
+    updateCollaboratorPermissionGroups;
 }
 
 export class CollaboratorURLs {
   public static removeCollaborator = removeCollaboratorURL;
   public static getWorkspaceCollaborators = getWorkspaceCollaboratorsURL;
   public static getCollaborator = getCollaboratorURL;
-  public static updateCollaboratorPresets = updateCollaboratorPresetsURL;
+  public static updateCollaboratorPermissionGroups =
+    updateCollaboratorPermissionGroupsURL;
 }

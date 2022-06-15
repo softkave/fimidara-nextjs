@@ -9,7 +9,7 @@ import {
   IPermissionItem,
   PermissionItemAppliesTo,
 } from "../../../../lib/definitions/permissionItem";
-import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
+import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import {
   AppResourceType,
@@ -130,12 +130,12 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
     [controller, itemResourceType, loading, updateItem]
   );
 
-  const renderPreset = React.useCallback(
-    (item: IPresetPermissionsGroup) => {
+  const renderPermissionGroup = React.useCallback(
+    (item: IPermissionGroup) => {
       return renderItem(
         item.resourceId,
         item.name,
-        AppResourceType.PresetPermissionsGroup
+        AppResourceType.PermissionGroup
       );
     },
     [renderItem]
@@ -174,11 +174,11 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
     [renderItem]
   );
 
-  const renderPresetList = React.useCallback(
-    (items: IPresetPermissionsGroup[]) => {
-      return <Collapse>{items.map(renderPreset)}</Collapse>;
+  const renderPermissionGroupList = React.useCallback(
+    (items: IPermissionGroup[]) => {
+      return <Collapse>{items.map(renderPermissionGroup)}</Collapse>;
     },
-    [renderPreset]
+    [renderPermissionGroup]
   );
 
   const renderProgramTokenList = React.useCallback(
@@ -219,7 +219,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
       <Tabs.TabPane tab={"Permission Groups"} key={TabKey.PermissionGroup}>
         <WorkspacePermissionGroups
           workspaceId={workspaceId}
-          renderList={renderPresetList}
+          renderList={renderPermissionGroupList}
           menu={null}
         />
       </Tabs.TabPane>

@@ -23,7 +23,7 @@ export interface IClientTokenMenuProps {
 
 enum MenuKeys {
   DeleteToken = "delete-token",
-  UpdatePresets = "update-presets",
+  UpdatePermissionGroups = "update-permissionGroups",
   GrantPermission = "grant-permission",
 }
 
@@ -84,7 +84,7 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
         trigger={["click"]}
         overlay={
           <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
-            <Menu.Item key={MenuKeys.UpdatePresets}>
+            <Menu.Item key={MenuKeys.UpdatePermissionGroups}>
               <Link
                 href={appWorkspacePaths.clientTokenForm(
                   token.workspaceId,

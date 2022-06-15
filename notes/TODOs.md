@@ -4,7 +4,7 @@
 - [ ] use new FormAlert and errorMessageNotification functions
 - [ ] auto route to app when logged in
 - [ ] Multiselect and batch actions in lists like client assigned tokens
-- [ ] Test that people who shouldn't have access can't access the presets, also that they can't do what they shouldn't be able to, like removing an admin
+- [ ] Test that people who shouldn't have access can't access the permission groups, also that they can't do what they shouldn't be able to, like removing an admin
 - [ ] Add more information to all the pages and lists
 - [ ] Call mutate to invalidate lists when item is updated
 - [ ] Group and better render permission items

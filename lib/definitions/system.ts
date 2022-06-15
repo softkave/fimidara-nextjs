@@ -63,7 +63,7 @@ export enum AppResourceType {
   ProgramAccessToken = "program-access-token",
   ClientAssignedToken = "client-assigned-token",
   UserToken = "user-token",
-  PresetPermissionsGroup = "preset-permissions-group",
+  PermissionGroup = "permission-group",
   PermissionItem = "permission-item",
   Folder = "folder",
   File = "file",
@@ -77,7 +77,7 @@ export const appResourceTypeLabel: Record<AppResourceType, string> = {
   [AppResourceType.ProgramAccessToken]: "Program access token",
   [AppResourceType.ClientAssignedToken]: "Client assigned token",
   [AppResourceType.UserToken]: "User token",
-  [AppResourceType.PresetPermissionsGroup]: "Preset permissions group",
+  [AppResourceType.PermissionGroup]: "Permission group",
   [AppResourceType.PermissionItem]: "Permission item",
   [AppResourceType.Folder]: "Folder",
   [AppResourceType.File]: "File",
@@ -240,18 +240,18 @@ export const appWorkspacePaths = {
     return `${this.clientToken(workspaceId, tokenId)}/form`;
   },
 
-  // Preset
+  // permission group
   permissionGroupList(workspaceId: string) {
     return `${this.workspace(workspaceId)}/permission-groups`;
   },
   createPermissionGroupForm(workspaceId: string) {
     return `${this.permissionGroupList(workspaceId)}/form`;
   },
-  permissionGroup(workspaceId: string, presetId: string) {
-    return `${this.permissionGroupList(workspaceId)}/${presetId}`;
+  permissionGroup(workspaceId: string, permissiongroupId: string) {
+    return `${this.permissionGroupList(workspaceId)}/${permissiongroupId}`;
   },
-  permissionGroupForm(workspaceId: string, presetId: string) {
-    return `${this.permissionGroup(workspaceId, presetId)}/form`;
+  permissionGroupForm(workspaceId: string, permissiongroupId: string) {
+    return `${this.permissionGroup(workspaceId, permissiongroupId)}/form`;
   },
 };
 

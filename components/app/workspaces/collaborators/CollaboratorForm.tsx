@@ -10,22 +10,22 @@ import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import {
-  IPresetInput,
-  presetPermissionsGroupConstants,
-} from "../../../../lib/definitions/presets";
+  IPermissionGroupInput,
+  permissionGroupPermissionsGroupConstants,
+} from "../../../../lib/definitions/permissionGroups";
 import useCollaborator from "../../../../lib/hooks/workspaces/useCollaborator";
-import SelectPresetInput from "../permissionGroups/SelectPresetInput";
+import SelectPermissionGroupInput from "../permissionGroups/SelectPermissionGroupInput";
 import { ICollaborator } from "../../../../lib/definitions/user";
 import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import LabeledNode from "../../../utils/LabeledNode";
 import { FormAlert } from "../../../utils/FormAlert";
 
 const collaboratorValidation = yup.object().shape({
-  presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
+  permissionGroups: yup.array().max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
 });
 
 interface ICollaboratorFormValues {
-  presets: IPresetInput[];
+  permissionGroups: IPermissionGroupInput[];
 }
 
 export interface ICollaboratorFormProps {
@@ -40,10 +40,10 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
   const { mutate } = useCollaborator(workspaceId, collaborator.resourceId);
   const onSubmit = React.useCallback(
     async (data: ICollaboratorFormValues) => {
-      const result = await CollaboratorAPI.updateCollaboratorPresets({
+      const result = await CollaboratorAPI.updateCollaboratorPermissionGroups({
         workspaceId: workspaceId,
         collaboratorId: collaborator.resourceId,
-        presets: data.presets,
+        permissionGroups: data.permissionGroups,
       });
 
       checkEndpointResult(result);
@@ -61,7 +61,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
     formikProps: {
       validationSchema: collaboratorValidation,
       initialValues: {
-        presets: collaborator.presets,
+        permissionGroups: collaborator.permissionGroups,
       },
       onSubmit: submitResult.run,
     },
@@ -89,26 +89,26 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
     </Form.Item>
   );
 
-  const assignedPresetsNode = (
+  const assignedPermissionGroupsNode = (
     <Form.Item
-      label="Assigned presets"
+      label="Assigned permission groups"
       help={
-        formik.touched?.presets &&
-        formik.errors?.presets && (
+        formik.touched?.permissionGroups &&
+        formik.errors?.permissionGroups && (
           <FormError
-            visible={formik.touched.presets as any}
-            error={formik.errors.presets as any}
+            visible={formik.touched.permissionGroups as any}
+            error={formik.errors.permissionGroups as any}
           />
         )
       }
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <SelectPresetInput
+      <SelectPermissionGroupInput
         workspaceId={workspaceId}
-        value={formik.values.presets || []}
+        value={formik.values.permissionGroups || []}
         disabled={submitResult.loading}
-        onChange={(items) => formik.setFieldValue("presets", items)}
+        onChange={(items) => formik.setFieldValue("permissionGroups", items)}
       />
     </Form.Item>
   );
@@ -123,7 +123,7 @@ export default function CollaboratorForm(props: ICollaboratorFormProps) {
           <FormAlert error={submitResult.error} />
           {nameNode}
           {emailNode}
-          {assignedPresetsNode}
+          {assignedPermissionGroupsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

@@ -1,6 +1,6 @@
 import React from "react";
 import Workspace from "../../../../../components/app/workspaces/Workspace";
-import PresetForm from "../../../../../components/app/workspaces/permissionGroups/PresetForm";
+import PermissionGroupForm from "../../../../../components/app/workspaces/permissionGroups/PermissionGroupForm";
 import {
   getWorkspaceServerSideProps,
   IWorkspaceComponentProps,
@@ -18,7 +18,7 @@ const WorkspaceCreatePermissionGroupFormPage: React.FC<
       workspaceId={workspaceId}
       activeKey={appWorkspacePaths.collaboratorList(workspaceId)}
     >
-      <PresetForm workspaceId={workspaceId} />
+      <PermissionGroupForm workspaceId={workspaceId} />
     </Workspace>
   );
 };

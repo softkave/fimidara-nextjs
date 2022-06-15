@@ -10,14 +10,14 @@ import { checkEndpointResult } from "../../../../lib/api/utils";
 import { useRequest } from "ahooks";
 import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
-import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
+import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
+import PermissionGroupAPI from "../../../../lib/api/endpoints/permissionGroup";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 
 export interface IPermissionGroupMenuProps {
-  preset: IPresetPermissionsGroup;
+  permissionGroup: IPermissionGroup;
   onCompleteDelete: () => any;
 }
 
@@ -28,23 +28,23 @@ enum MenuKeys {
 }
 
 const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
-  const { preset, onCompleteDelete } = props;
+  const { permissionGroup, onCompleteDelete } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
-    workspaceId: preset.workspaceId,
-    itemResourceType: AppResourceType.PresetPermissionsGroup,
-    permissionOwnerId: preset.workspaceId,
+    workspaceId: permissionGroup.workspaceId,
+    itemResourceType: AppResourceType.PermissionGroup,
+    permissionOwnerId: permissionGroup.workspaceId,
     permissionOwnerType: AppResourceType.Workspace,
-    itemResourceId: preset.resourceId,
+    itemResourceId: permissionGroup.resourceId,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const deleteItem = React.useCallback(async () => {
     try {
-      // TODO: invalidate all the data that has assigned presets
+      // TODO: invalidate all the data that has assigned permissionGroups
       // when request is successful
 
-      const result = await PresetPermissionsGroupAPI.deletePreset({
-        presetId: preset.resourceId,
+      const result = await PermissionGroupAPI.deletePermissionGroup({
+        permissionGroupId: permissionGroup.resourceId,
       });
 
       checkEndpointResult(result);
@@ -53,7 +53,7 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
     } catch (error: any) {
       errorMessageNotificatition(error, "Error deleting permission group");
     }
-  }, [preset, onCompleteDelete]);
+  }, [permissionGroup, onCompleteDelete]);
 
   const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
@@ -89,8 +89,8 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
             <Menu.Item key={MenuKeys.UpdateItem}>
               <Link
                 href={appWorkspacePaths.permissionGroupForm(
-                  preset.workspaceId,
-                  preset.resourceId
+                  permissionGroup.workspaceId,
+                  permissionGroup.resourceId
                 )}
               >
                 Update Group

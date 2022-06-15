@@ -7,19 +7,19 @@ import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 
 export type IWorkspacePermissionGroupPageProps = {
   workspaceId: string;
-  presetId: string;
+  permissionGroupId: string;
 };
 
 const WorkspacePermissionGroupPage: React.FC<
   IWorkspacePermissionGroupPageProps
 > = (props) => {
-  const { workspaceId, presetId } = props;
+  const { workspaceId, permissionGroupId } = props;
   return (
     <Workspace
       workspaceId={workspaceId}
       activeKey={appWorkspacePaths.permissionGroupList(workspaceId)}
     >
-      <PermissionGroup presetId={presetId} />
+      <PermissionGroup permissionGroupId={permissionGroupId} />
     </Workspace>
   );
 };
@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       workspaceId: context.params!.workspaceId,
-      presetId: context.params!.presetId,
+      permissionGroupId: context.params!.permissionGroupId,
     },
   };
 };

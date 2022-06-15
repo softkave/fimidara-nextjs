@@ -1,4 +1,7 @@
-import { IAssignedPresetPermissionsGroup, IPresetInput } from "./presets";
+import {
+  IAssignedPermissionGroup,
+  IPermissionGroupInput,
+} from "./permissionGroups";
 import { IAgent } from "./system";
 
 export interface IClientAssignedToken {
@@ -10,7 +13,7 @@ export interface IClientAssignedToken {
   lastUpdatedAt?: string;
   workspaceId: string;
   version: number;
-  presets: IAssignedPresetPermissionsGroup[];
+  permissionGroups: IAssignedPermissionGroup[];
   issuedAt: string;
   expires?: number;
   tokenStr: string;
@@ -18,7 +21,7 @@ export interface IClientAssignedToken {
 
 export interface INewClientAssignedTokenInput {
   expires?: number;
-  presets?: IPresetInput[];
+  permissionGroups?: IPermissionGroupInput[];
   providedResourceId?: string;
 }
 

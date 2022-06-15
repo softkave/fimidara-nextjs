@@ -1,6 +1,6 @@
 import { List, Space, Typography } from "antd";
 import React from "react";
-import { IAssignedPresetPermissionsGroup } from "../../../../lib/definitions/presets";
+import { IAssignedPermissionGroup } from "../../../../lib/definitions/permissionGroups";
 import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { css, cx } from "@emotion/css";
 import PageLoading from "../../../utils/PageLoading";
@@ -9,9 +9,9 @@ import { indexArray } from "../../../../lib/utilities/indexArray";
 import PageNothingFound from "../../../utils/PageNothingFound";
 import { getBaseError } from "../../../../lib/utilities/errors";
 
-export interface IAssignedPresetListProps {
+export interface IAssignedPermissionGroupListProps {
   workspaceId: string;
-  presets: IAssignedPresetPermissionsGroup[];
+  permissionGroups: IAssignedPermissionGroup[];
   className?: string;
 }
 
@@ -25,21 +25,21 @@ const classes = {
     //   padding: "0px !important",
     // },
   }),
-  noPresets: css({
+  noPermissionGroups: css({
     margin: "64px auto !important",
   }),
 };
 
 // TODO: add bulk remove, and add bulk actions to other lists
 
-const AssignedPresetList: React.FC<IAssignedPresetListProps> = (props) => {
-  const { workspaceId, presets, className } = props;
+const AssignedPermissionGroupList: React.FC<IAssignedPermissionGroupListProps> = (props) => {
+  const { workspaceId, permissionGroups, className } = props;
   const { isLoading, error, data } =
     useWorkspacePermissionGroupList(workspaceId);
   let content: React.ReactNode = null;
-  const presetsMap = React.useMemo(() => {
-    return indexArray(data?.presets, { path: "resourceId" });
-  }, [data?.presets]);
+  const permissionGroupsMap = React.useMemo(() => {
+    return indexArray(data?.permissionGroups, { path: "resourceId" });
+  }, [data?.permissionGroups]);
 
   if (error) {
     content = (
@@ -49,11 +49,11 @@ const AssignedPresetList: React.FC<IAssignedPresetListProps> = (props) => {
     );
   } else if (isLoading || !data) {
     content = <PageLoading messageText="Loading permission groups..." />;
-  } else if (presets.length === 0) {
+  } else if (permissionGroups.length === 0) {
     content = (
       <PageNothingFound
-        messageText="No assigned presets yet"
-        className={classes.noPresets}
+        messageText="No assigned permission groups yet"
+        className={classes.noPermissionGroups}
       />
     );
   } else {
@@ -61,14 +61,14 @@ const AssignedPresetList: React.FC<IAssignedPresetListProps> = (props) => {
       <List
         className={cx(classes.list)}
         itemLayout="horizontal"
-        dataSource={presets}
+        dataSource={permissionGroups}
         renderItem={(item) => {
-          const preset = presetsMap[item.presetId];
+          const permissionGroup = permissionGroupsMap[item.permissionGroupId];
 
-          if (preset) {
+          if (permissionGroup) {
             return (
-              <List.Item key={item.presetId}>
-                <List.Item.Meta title={preset.name} />
+              <List.Item key={item.permissionGroupId}>
+                <List.Item.Meta title={permissionGroup.name} />
               </List.Item>
             );
           }
@@ -94,4 +94,4 @@ const AssignedPresetList: React.FC<IAssignedPresetListProps> = (props) => {
   );
 };
 
-export default AssignedPresetList;
+export default AssignedPermissionGroupList;

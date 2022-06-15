@@ -2,7 +2,7 @@ import { Space } from "antd";
 import React from "react";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
-import AssignedPresetList from "../permissionGroups/AssignedPresetList";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import { useRouter } from "next/router";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
@@ -29,16 +29,16 @@ function Collaborator(props: ICollaboratorProps) {
 
   const { mutate: cacheMutate } = useSWRConfig();
   // const onRemovePermissionGroup = React.useCallback(
-  //   async (presetId: string) => {
+  //   async (permissionGroupId: string) => {
   //     assert(data?.collaborator, new Error("Collaborator not found"));
-  //     const updatedPresets = data.collaborator.presets.filter(
-  //       (item) => item.presetId !== presetId
+  //     const updatedPermissionGroups = data.collaborator.permissionGroups.filter(
+  //       (item) => item.permissionGroupId !== permissionGroupId
   //     );
 
-  //     const result = await CollaboratorAPI.updateCollaboratorPresets({
+  //     const result = await CollaboratorAPI.updateCollaboratorPermissionGroups({
   //       collaboratorId,
   //       workspaceId: workspaceId,
-  //       presets: updatedPresets,
+  //       permissionGroups: updatedPermissionGroups,
   //     });
 
   //     mutate(result, false);
@@ -81,9 +81,9 @@ function Collaborator(props: ICollaboratorProps) {
           label="Resource ID"
           node={collaborator.resourceId}
         />
-        <AssignedPresetList
+        <AssignedPermissionGroupList
           workspaceId={workspaceId}
-          presets={collaborator.presets || []}
+          permissionGroups={collaborator.permissionGroups || []}
         />
       </Space>
     </div>

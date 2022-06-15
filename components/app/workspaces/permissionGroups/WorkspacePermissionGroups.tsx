@@ -2,7 +2,7 @@ import { Space } from "antd";
 import { isUndefined } from "lodash";
 import React from "react";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
-import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
+import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
 import {
   appWorkspacePaths,
   AppResourceType,
@@ -19,8 +19,8 @@ import PermissionGroupList from "./PermissionGroupList";
 
 export interface IWorkspacePermissionGroupsProps {
   workspaceId: string;
-  renderItem?: (item: IPresetPermissionsGroup) => React.ReactNode;
-  renderList?: (items: IPresetPermissionsGroup[]) => React.ReactNode;
+  renderItem?: (item: IPermissionGroup) => React.ReactNode;
+  renderList?: (items: IPermissionGroup[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
   menu?: React.ReactNode;
 }
@@ -38,13 +38,13 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
       <PageError
         className={appClasses.main}
         messageText={
-          getBaseError(error) || "Error fetching preset permission groups"
+          getBaseError(error) || "Error fetching permissionGroup permission groups"
         }
       />
     );
   } else if (isLoading || !data) {
-    content = <PageLoading messageText="Loading preset permission groups..." />;
-  } else if (data.presets.length === 0) {
+    content = <PageLoading messageText="Loading permissionGroup permission groups..." />;
+  } else if (data.permissionGroups.length === 0) {
     content = (
       <PageNothingFound
         className={appClasses.maxWidth420}
@@ -53,11 +53,11 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
     );
   } else {
     content = renderList ? (
-      renderList(data.presets)
+      renderList(data.permissionGroups)
     ) : (
       <PermissionGroupList
         workspaceId={workspaceId}
-        presets={data.presets}
+        permissionGroups={data.permissionGroups}
         renderItem={renderItem}
       />
     );
@@ -71,7 +71,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
     <div className={appClasses.main}>
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <ListHeader
-          title="Preset Permission Groups"
+          title="PermissionGroup Permission Groups"
           formLinkPath={appWorkspacePaths.createPermissionGroupForm(
             workspaceId
           )}
@@ -81,7 +81,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
             ) : (
               <GrantPermissionMenu
                 workspaceId={workspaceId}
-                itemResourceType={AppResourceType.PresetPermissionsGroup}
+                itemResourceType={AppResourceType.PermissionGroup}
                 permissionOwnerId={workspaceId}
                 permissionOwnerType={AppResourceType.Workspace}
                 appliesTo={PermissionItemAppliesTo.Children}

@@ -8,32 +8,32 @@ import {
 } from "@ant-design/icons";
 import { Button, List, Select, Space, Typography } from "antd";
 import React from "react";
-import { IPresetInput } from "../../../../lib/definitions/presets";
+import { IPermissionGroupInput } from "../../../../lib/definitions/permissionGroups";
 import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { indexArray } from "../../../../lib/utilities/indexArray";
 import InlineError from "../../../utils/InlineError";
 import InlineLoading from "../../../utils/InlineLoading";
 import { appClasses } from "../../../utils/theme";
 
-export interface ISelectPresetInputProps {
+export interface ISelectPermissionGroupInputProps {
   disabled?: boolean;
   workspaceId: string;
-  value: IPresetInput[];
-  onChange: (value: IPresetInput[]) => void;
+  value: IPermissionGroupInput[];
+  onChange: (value: IPermissionGroupInput[]) => void;
 }
 
-function reorderItems(items: IPresetInput[]) {
+function reorderItems(items: IPermissionGroupInput[]) {
   return items.map((item, index) => ({ ...item, order: index }));
 }
 
-const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
+const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (props) => {
   const { workspaceId, value, disabled, onChange } = props;
   const { isLoading, error, data, mutate } =
     useWorkspacePermissionGroupList(workspaceId);
 
   const onDeleteItem = React.useCallback(
     (id: string) => {
-      const newValue = value.filter((item) => item.presetId !== id);
+      const newValue = value.filter((item) => item.permissionGroupId !== id);
       onChange(reorderItems(newValue));
     },
     [value, onChange]
@@ -41,7 +41,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
 
   const onMove = React.useCallback(
     (id: string, side: "up" | "down") => {
-      const index = value.findIndex((item) => item.presetId === id);
+      const index = value.findIndex((item) => item.permissionGroupId === id);
 
       if (index === -1) {
         return;
@@ -64,22 +64,22 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
 
   const onAddItem = React.useCallback(
     (id: string) => {
-      const newValue = [...value, { presetId: id, order: value.length }];
+      const newValue = [...value, { permissionGroupId: id, order: value.length }];
       onChange(reorderItems(newValue));
     },
     [value, onChange]
   );
 
-  const presetsMap = React.useMemo(
-    () => indexArray(data?.presets, { path: "resourceId" }),
+  const permissionGroupsMap = React.useMemo(
+    () => indexArray(data?.permissionGroups, { path: "resourceId" }),
     [data]
   );
 
-  const assignedPresets = React.useMemo(() => {
+  const assignedPermissionGroups = React.useMemo(() => {
     return value
-      .filter((item) => !!presetsMap[item.presetId])
+      .filter((item) => !!permissionGroupsMap[item.permissionGroupId])
       .sort((a, b) => a.order - b.order);
-  }, [value, presetsMap]);
+  }, [value, permissionGroupsMap]);
 
   if (isLoading || !data) {
     return <InlineLoading messageText="Loading permission groups..." />;
@@ -92,22 +92,22 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
     );
   }
 
-  const assignedPresetsNode = assignedPresets.length > 0 && (
+  const assignedPermissionGroupsNode = assignedPermissionGroups.length > 0 && (
     <List
       itemLayout="horizontal"
-      dataSource={assignedPresets}
+      dataSource={assignedPermissionGroups}
       renderItem={(item, index) => {
-        const preset = presetsMap[item.presetId];
+        const permissionGroup = permissionGroupsMap[item.permissionGroupId];
         return (
           <List.Item
-            key={item.presetId}
+            key={item.permissionGroupId}
             actions={[
               <Button
                 // type="text"
                 key="up"
                 className={appClasses.iconBtn}
                 icon={<UpOutlined />}
-                onClick={() => onMove(item.presetId, "up")}
+                onClick={() => onMove(item.permissionGroupId, "up")}
                 disabled={index === 0}
               />,
               <Button
@@ -115,21 +115,21 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
                 key={"down"}
                 className={appClasses.iconBtn}
                 icon={<DownOutlined />}
-                onClick={() => onMove(item.presetId, "down")}
-                disabled={index === assignedPresets.length - 1}
+                onClick={() => onMove(item.permissionGroupId, "down")}
+                disabled={index === assignedPermissionGroups.length - 1}
               />,
               <Button
                 // type="text"
                 key="delete"
                 className={appClasses.iconBtn}
                 icon={<DeleteOutlined />}
-                onClick={() => onDeleteItem(item.presetId)}
+                onClick={() => onDeleteItem(item.permissionGroupId)}
               />,
             ]}
           >
             <List.Item.Meta
-              title={preset.name}
-              description={preset.description}
+              title={permissionGroup.name}
+              description={permissionGroup.description}
             />
           </List.Item>
         );
@@ -142,11 +142,11 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
       showSearch
       mode="multiple"
       style={{ width: "100%" }}
-      placeholder="Select preset..."
+      placeholder="Select permissionGroup..."
       maxTagCount="responsive"
       disabled={disabled}
       optionLabelProp="label"
-      value={value.map((item) => item.presetId) as any}
+      value={value.map((item) => item.permissionGroupId) as any}
       onSelect={onAddItem}
       optionFilterProp="label"
       filterOption={(input, option) => {
@@ -159,7 +159,7 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
         return label01.toLowerCase().localeCompare(label02.toLowerCase());
       }}
     >
-      {data.presets.map((item) => (
+      {data.permissionGroups.map((item) => (
         <Select.Option
           key={item.resourceId}
           label={item.name}
@@ -181,10 +181,10 @@ const SelectPresetInput: React.FC<ISelectPresetInputProps> = (props) => {
 
   return (
     <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
-      {assignedPresetsNode}
+      {assignedPermissionGroupsNode}
       {selectNode}
     </Space>
   );
 };
 
-export default SelectPresetInput;
+export default SelectPermissionGroupInput;

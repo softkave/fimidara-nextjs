@@ -50,7 +50,7 @@ const GrantPermissionFormContainer: React.FC<
   const onSave = React.useCallback(
     async (newItems: INewPermissionItemInput[], deletedItemIds: string[]) => {
       try {
-        // TODO: invalidate all the data that has assigned presets
+        // TODO: invalidate all the data that has assigned permissionGroups
         // when request is successful
 
         // console.log({ newItems, deletedItemIds });

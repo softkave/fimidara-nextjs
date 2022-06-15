@@ -17,7 +17,7 @@ const PermissionItemMenu: React.FC<IPermissionItemMenuProps> = (props) => {
   const { item, onCompleteDelete } = props;
   const deleteItem = React.useCallback(async () => {
     try {
-      // TODO: invalidate all the data that has assigned presets
+      // TODO: invalidate all the data that has assigned permissionGroups
       // when request is successful
 
       const result = await PermissionItemAPI.deleteItemsById({

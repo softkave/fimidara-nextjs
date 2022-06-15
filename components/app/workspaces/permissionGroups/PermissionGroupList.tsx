@@ -3,15 +3,15 @@ import Link from "next/link";
 import React from "react";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
-import { IPresetPermissionsGroup } from "../../../../lib/definitions/presets";
+import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
 import { getUseWorkspacePermissionGroupListHookKey } from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { css } from "@emotion/css";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
 export interface IPermissionGroupListProps {
   workspaceId: string;
-  presets: IPresetPermissionsGroup[];
-  renderItem?: (item: IPresetPermissionsGroup) => React.ReactNode;
+  permissionGroups: IPermissionGroup[];
+  renderItem?: (item: IPermissionGroup) => React.ReactNode;
 }
 
 const classes = {
@@ -23,21 +23,21 @@ const classes = {
 };
 
 const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
-  const { workspaceId, presets, renderItem } = props;
+  const { workspaceId, permissionGroups, renderItem } = props;
   const { mutate } = useSWRConfig();
-  const onCompleteDeletePreset = React.useCallback(async () => {
+  const onCompleteDeletePermissionGroup = React.useCallback(async () => {
     mutate(getUseWorkspacePermissionGroupListHookKey(workspaceId));
   }, [workspaceId, mutate]);
 
   const internalRenderItem = React.useCallback(
-    (item: IPresetPermissionsGroup) => (
+    (item: IPermissionGroup) => (
       <List.Item
         key={item.resourceId}
         actions={[
           <PermissionGroupMenu
             key="menu"
-            preset={item}
-            onCompleteDelete={onCompleteDeletePreset}
+            permissionGroup={item}
+            onCompleteDelete={onCompleteDeletePermissionGroup}
           />,
         ]}
       >
@@ -56,14 +56,14 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
         />
       </List.Item>
     ),
-    [onCompleteDeletePreset, workspaceId]
+    [onCompleteDeletePermissionGroup, workspaceId]
   );
 
   return (
     <List
       className={classes.list}
       itemLayout="horizontal"
-      dataSource={presets}
+      dataSource={permissionGroups}
       renderItem={renderItem || internalRenderItem}
     />
   );

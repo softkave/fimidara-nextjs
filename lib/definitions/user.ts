@@ -1,11 +1,11 @@
 import { getFields, makeExtract } from "../utilities/extract";
 import OperationError from "../utilities/OperationError";
-import { IAssignedPresetPermissionsGroup } from "./presets";
+import { IAssignedPermissionGroup } from "./permissionGroups";
 
 export interface IUserWorkspace {
   workspaceId: string;
   joinedAt: string;
-  presets: IAssignedPresetPermissionsGroup[];
+  permissionGroups: IAssignedPermissionGroup[];
 }
 
 export interface IUser {

@@ -1,4 +1,7 @@
-import { IAssignedPresetPermissionsGroup, IPresetInput } from "./presets";
+import {
+  IAssignedPermissionGroup,
+  IPermissionGroupInput,
+} from "./permissionGroups";
 import { IAgent } from "./system";
 
 export interface IProgramAccessToken {
@@ -8,7 +11,7 @@ export interface IProgramAccessToken {
   createdAt: string;
   createdBy: IAgent;
   workspaceId: string;
-  presets: IAssignedPresetPermissionsGroup[];
+  permissionGroups: IAssignedPermissionGroup[];
   lastUpdatedAt?: string;
   lastUpdatedBy?: IAgent;
   tokenStr: string;
@@ -17,7 +20,7 @@ export interface IProgramAccessToken {
 export interface INewProgramAccessTokenInput {
   name: string;
   description?: string;
-  presets?: IPresetInput[];
+  permissionGroups?: IPermissionGroupInput[];
 }
 
 export type IUpdateProgramAccessTokenInput =

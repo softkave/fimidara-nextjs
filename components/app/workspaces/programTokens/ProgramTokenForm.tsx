@@ -14,26 +14,26 @@ import {
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
-import { presetPermissionsGroupConstants } from "../../../../lib/definitions/presets";
+import { permissionGroupPermissionsGroupConstants } from "../../../../lib/definitions/permissionGroups";
 import {
   INewProgramAccessTokenInput,
   IProgramAccessToken,
 } from "../../../../lib/definitions/programAccessToken";
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
 import useProgramToken from "../../../../lib/hooks/workspaces/useProgramToken";
-import SelectPresetInput from "../permissionGroups/SelectPresetInput";
 import { FormAlert } from "../../../utils/FormAlert";
+import SelectPermissionGroupInput from "../permissionGroups/SelectPermissionGroupInput";
 
 const programTokenValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
   description: systemValidation.description,
-  presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
+  permissionGroups: yup.array().max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
 });
 
 const initialValues: INewProgramAccessTokenInput = {
   name: "",
   description: "",
-  presets: [],
+  permissionGroups: [],
 };
 
 function getProgramTokenFormInputFromToken(
@@ -42,8 +42,8 @@ function getProgramTokenFormInputFromToken(
   return {
     name: item.name,
     description: item.description,
-    presets: item.presets.map((item) => ({
-      presetId: item.presetId,
+    permissionGroups: item.permissionGroups.map((item) => ({
+      permissionGroupId: item.permissionGroupId,
       order: item.order,
     })),
   };
@@ -157,24 +157,24 @@ export default function ProgramTokenForm(props: IProgramTokenFormProps) {
 
   const assignedprogramTokensNode = (
     <Form.Item
-      label="Assigned presets"
+      label="Assigned permission groups"
       help={
-        formik.touched?.presets &&
-        formik.errors?.presets && (
+        formik.touched?.permissionGroups &&
+        formik.errors?.permissionGroups && (
           <FormError
-            visible={formik.touched.presets}
-            error={formik.errors.presets}
+            visible={formik.touched.permissionGroups}
+            error={formik.errors.permissionGroups}
           />
         )
       }
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <SelectPresetInput
+      <SelectPermissionGroupInput
         workspaceId={workspaceId}
-        value={formik.values.presets || []}
+        value={formik.values.permissionGroups || []}
         disabled={submitResult.loading}
-        onChange={(items) => formik.setFieldValue("presets", items)}
+        onChange={(items) => formik.setFieldValue("permissionGroups", items)}
       />
     </Form.Item>
   );

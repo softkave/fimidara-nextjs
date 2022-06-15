@@ -2,7 +2,6 @@ import {
   IClientAssignedToken,
   INewClientAssignedTokenInput,
 } from "../../definitions/clientAssignedToken";
-import { IPresetInput } from "../../definitions/presets";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 

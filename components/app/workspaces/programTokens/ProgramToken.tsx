@@ -11,7 +11,7 @@ import useProgramToken from "../../../../lib/hooks/workspaces/useProgramToken";
 import { getUseWorkspaceProgramTokenListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceProgramTokenList";
 import LabeledNode from "../../../utils/LabeledNode";
 import ProgramTokenMenu from "./ProgramTokenMenu";
-import AssignedPresetList from "../permissionGroups/AssignedPresetList";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import { appClasses } from "../../../utils/theme";
 import { getBaseError } from "../../../../lib/utilities/errors";
 
@@ -25,15 +25,15 @@ function ProgramToken(props: IProgramTokenProps) {
   const { error, isLoading, data, mutate } = useProgramToken(tokenId);
   const { mutate: cacheMutate } = useSWRConfig();
   // const onRemovePermissionGroup = React.useCallback(
-  //   async (presetId: string) => {
+  //   async (permissionGroupId: string) => {
   //     assert(data?.token, new Error("Token not found"));
-  //     const updatedPresets = data.token.presets.filter(
-  //       (item) => item.presetId !== presetId
+  //     const updatedPermissionGroups = data.token.permissionGroups.filter(
+  //       (item) => item.permissionGroupId !== permissionGroupId
   //     );
 
   //     const result = await ProgramAccessTokenAPI.updateToken({
   //       tokenId,
-  //       token: { presets: updatedPresets },
+  //       token: { permissionGroups: updatedPermissionGroups },
   //     });
 
   //     mutate(result, false);
@@ -91,9 +91,9 @@ function ProgramToken(props: IProgramTokenProps) {
           label="Token"
           node={token.tokenStr}
         />
-        <AssignedPresetList
+        <AssignedPermissionGroupList
           workspaceId={token.workspaceId}
-          presets={token.presets}
+          permissionGroups={token.permissionGroups}
         />
       </Space>
     </div>

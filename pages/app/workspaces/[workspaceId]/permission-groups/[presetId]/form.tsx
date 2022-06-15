@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import React from "react";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
-import PresetForm from "../../../../../../components/app/workspaces/permissionGroups/PresetForm";
+import PermissionGroupForm from "../../../../../../components/app/workspaces/permissionGroups/PermissionGroupForm";
 import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
@@ -9,16 +9,16 @@ import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 import usePermissionGroup from "../../../../../../lib/hooks/workspaces/usePermissionGroup";
 import { getBaseError } from "../../../../../../lib/utilities/errors";
 
-export type IWorkspacePresetFormPageProps = {
+export type IWorkspacePermissionGroupFormPageProps = {
   workspaceId: string;
-  presetId: string;
+  permissionGroupId: string;
 };
 
-const WorkspacePresetFormPage: React.FC<IWorkspacePresetFormPageProps> = (
+const WorkspacePermissionGroupFormPage: React.FC<IWorkspacePermissionGroupFormPageProps> = (
   props
 ) => {
-  const { workspaceId, presetId } = props;
-  const { error, isLoading, data } = usePermissionGroup(presetId);
+  const { workspaceId, permissionGroupId } = props;
+  const { error, isLoading, data } = usePermissionGroup(permissionGroupId);
   let content: React.ReactNode = null;
 
   if (error) {
@@ -31,7 +31,7 @@ const WorkspacePresetFormPage: React.FC<IWorkspacePresetFormPageProps> = (
     content = <PageLoading messageText="Loading permission group..." />;
   } else {
     content = (
-      <PresetForm workspaceId={data.preset.workspaceId} preset={data.preset} />
+      <PermissionGroupForm workspaceId={data.permissionGroup.workspaceId} permissionGroup={data.permissionGroup} />
     );
   }
 
@@ -45,16 +45,16 @@ const WorkspacePresetFormPage: React.FC<IWorkspacePresetFormPageProps> = (
   );
 };
 
-export default withPageAuthRequired(WorkspacePresetFormPage);
+export default withPageAuthRequired(WorkspacePermissionGroupFormPage);
 
 export const getServerSideProps: GetServerSideProps<
-  IWorkspacePresetFormPageProps,
-  IWorkspacePresetFormPageProps
+  IWorkspacePermissionGroupFormPageProps,
+  IWorkspacePermissionGroupFormPageProps
 > = async (context) => {
   return {
     props: {
       workspaceId: context.params!.workspaceId,
-      presetId: context.params!.presetId,
+      permissionGroupId: context.params!.permissionGroupId,
     },
   };
 };

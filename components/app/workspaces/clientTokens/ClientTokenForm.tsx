@@ -9,7 +9,7 @@ import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
-import { presetPermissionsGroupConstants } from "../../../../lib/definitions/presets";
+import { permissionGroupPermissionsGroupConstants } from "../../../../lib/definitions/permissionGroups";
 import {
   INewClientAssignedTokenInput,
   IClientAssignedToken,
@@ -17,13 +17,13 @@ import {
 } from "../../../../lib/definitions/clientAssignedToken";
 import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import useClientToken from "../../../../lib/hooks/workspaces/useClientToken";
-import SelectPresetInput from "../permissionGroups/SelectPresetInput";
+import SelectPermissionGroupInput from "../permissionGroups/SelectPermissionGroupInput";
 import moment from "moment";
 import { FormAlert } from "../../../utils/FormAlert";
 
 const clientTokenValidation = yup.object().shape({
   expires: yup.string(),
-  presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
+  permissionGroups: yup.array().max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
   providedResourceId: yup
     .string()
     .max(clientAssignedTokenConstants.providedResourceMaxLength),
@@ -31,7 +31,7 @@ const clientTokenValidation = yup.object().shape({
 
 const initialValues: INewClientAssignedTokenInput = {
   expires: undefined,
-  presets: [],
+  permissionGroups: [],
   providedResourceId: undefined,
 };
 
@@ -41,8 +41,8 @@ function getClientTokenFormInputFromToken(
   return {
     expires: item.expires,
     providedResourceId: item.providedResourceId,
-    presets: item.presets.map((item) => ({
-      presetId: item.presetId,
+    permissionGroups: item.permissionGroups.map((item) => ({
+      permissionGroupId: item.permissionGroupId,
       order: item.order,
     })),
   };
@@ -158,26 +158,26 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
     </Form.Item>
   );
 
-  const assignedPresetsNode = (
+  const assignedPermissionGroupsNode = (
     <Form.Item
-      label="Assigned Presets"
+      label="Assigned PermissionGroups"
       help={
-        formik.touched?.presets &&
-        formik.errors?.presets && (
+        formik.touched?.permissionGroups &&
+        formik.errors?.permissionGroups && (
           <FormError
-            visible={formik.touched.presets}
-            error={formik.errors.presets}
+            visible={formik.touched.permissionGroups}
+            error={formik.errors.permissionGroups}
           />
         )
       }
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <SelectPresetInput
+      <SelectPermissionGroupInput
         workspaceId={workspaceId}
-        value={formik.values.presets || []}
+        value={formik.values.permissionGroups || []}
         disabled={submitResult.loading}
-        onChange={(items) => formik.setFieldValue("presets", items)}
+        onChange={(items) => formik.setFieldValue("permissionGroups", items)}
       />
     </Form.Item>
   );
@@ -194,7 +194,7 @@ export default function ClientTokenForm(props: IClientTokenFormProps) {
           <FormAlert error={submitResult.error} />
           {expiresNode}
           {providedResourceIdNode}
-          {assignedPresetsNode}
+          {assignedPermissionGroupsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

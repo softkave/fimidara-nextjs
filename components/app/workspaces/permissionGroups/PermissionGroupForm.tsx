@@ -7,11 +7,11 @@ import { useRouter } from "next/router";
 import { systemValidation } from "../../../../lib/validation/system";
 import { messages } from "../../../../lib/messages/messages";
 import {
-  INewPresetPermissionsGroupInput,
-  IPresetPermissionsGroup,
-  presetPermissionsGroupConstants,
-} from "../../../../lib/definitions/presets";
-import PresetPermissionsGroupAPI from "../../../../lib/api/endpoints/presetPermissionsGroup";
+  INewPermissionGroupInput,
+  IPermissionGroup,
+  permissionGroupPermissionsGroupConstants,
+} from "../../../../lib/definitions/permissionGroups";
+import PermissionGroupAPI from "../../../../lib/api/endpoints/permissionGroup";
 import { checkEndpointResult } from "../../../../lib/api/utils";
 import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
 import {
@@ -21,81 +21,81 @@ import {
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
-import SelectPresetInput from "./SelectPresetInput";
+import SelectPermissionGroupInput from "./SelectPermissionGroupInput";
 import { FormAlert } from "../../../utils/FormAlert";
 
-const presetValidation = yup.object().shape({
+const permissionGroupValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
   description: systemValidation.description,
-  presets: yup.array().max(presetPermissionsGroupConstants.maxAssignedPresets),
+  permissionGroups: yup.array().max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
 });
 
-const initialValues: INewPresetPermissionsGroupInput = {
+const initialValues: INewPermissionGroupInput = {
   name: "",
   description: "",
-  presets: [],
+  permissionGroups: [],
 };
 
-function getPresetFormInputFromPreset(
-  item: IPresetPermissionsGroup
-): INewPresetPermissionsGroupInput {
+function getPermissionGroupFormInputFromPermissionGroup(
+  item: IPermissionGroup
+): INewPermissionGroupInput {
   return {
     name: item.name,
     description: item.description,
-    presets: item.presets.map((item) => ({
-      presetId: item.presetId,
+    permissionGroups: item.permissionGroups.map((item) => ({
+      permissionGroupId: item.permissionGroupId,
       order: item.order,
     })),
   };
 }
 
-export interface IPresetFormProps {
-  preset?: IPresetPermissionsGroup;
+export interface IPermissionGroupFormProps {
+  permissionGroup?: IPermissionGroup;
   className?: string;
   workspaceId: string;
 }
 
-export default function PresetForm(props: IPresetFormProps) {
-  const { preset, className, workspaceId } = props;
+export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
+  const { permissionGroup, className, workspaceId } = props;
   const router = useRouter();
-  const { mutate } = usePermissionGroup(preset?.resourceId);
+  const { mutate } = usePermissionGroup(permissionGroup?.resourceId);
   const onSubmit = React.useCallback(
-    async (data: INewPresetPermissionsGroupInput) => {
-      let presetId: string | null = null;
+    async (data: INewPermissionGroupInput) => {
+      let permissionGroupId: string | null = null;
 
-      if (preset) {
-        const result = await PresetPermissionsGroupAPI.updatePreset({
-          preset: data,
-          presetId: preset.resourceId,
+      if (permissionGroup) {
+        const result = await PermissionGroupAPI.updatePermissionGroup({
+          permissionGroup: data,
+          permissionGroupId: permissionGroup.resourceId,
         });
 
         checkEndpointResult(result);
-        presetId = result.preset.resourceId;
+        permissionGroupId = result.permissionGroup.resourceId;
         mutate(result);
         message.success("Permission group updated");
       } else {
-        const result = await PresetPermissionsGroupAPI.addPreset({
+        const result = await PermissionGroupAPI.addPermissionGroup({
           workspaceId: workspaceId,
-          preset: data,
+          permissionGroup: data,
         });
 
         checkEndpointResult(result);
-        presetId = result.preset.resourceId;
+        permissionGroupId = result.permissionGroup.resourceId;
         message.success("Permission group created");
       }
 
-      router.push(appWorkspacePaths.permissionGroup(workspaceId, presetId));
+      router.push(appWorkspacePaths.permissionGroup(workspaceId, permissionGroupId));
     },
-    [preset, workspaceId, mutate, router]
+    [permissionGroup, workspaceId, mutate, router]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
     errors: submitResult.error,
     formikProps: {
-      validationSchema: presetValidation,
-      initialValues: preset
-        ? getPresetFormInputFromPreset(preset)
+      validationSchema: permissionGroupValidation,
+      initialValues: permissionGroup
+        ? getPermissionGroupFormInputFromPermissionGroup(permissionGroup)
         : initialValues,
       onSubmit: submitResult.run,
     },
@@ -104,7 +104,7 @@ export default function PresetForm(props: IPresetFormProps) {
   const nameNode = (
     <Form.Item
       required
-      label="Preset Name"
+      label="PermissionGroup Name"
       help={
         formik.touched?.name &&
         formik.errors?.name && (
@@ -119,7 +119,7 @@ export default function PresetForm(props: IPresetFormProps) {
         value={formik.values.name}
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        placeholder="Enter preset name"
+        placeholder="Enter permission group name"
         disabled={submitResult.loading}
         maxLength={systemConstants.maxNameLength}
         autoComplete="off"
@@ -147,7 +147,7 @@ export default function PresetForm(props: IPresetFormProps) {
         value={formik.values.description}
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        placeholder="Enter preset description"
+        placeholder="Enter permission group description"
         disabled={submitResult.loading}
         maxLength={systemConstants.maxDescriptionLength}
         autoSize={{ minRows: 3 }}
@@ -155,26 +155,26 @@ export default function PresetForm(props: IPresetFormProps) {
     </Form.Item>
   );
 
-  const assignedPresetsNode = (
+  const assignedPermissionGroupsNode = (
     <Form.Item
-      label="Assigned Presets"
+      label="Assigned PermissionGroups"
       help={
-        formik.touched?.presets &&
-        formik.errors?.presets && (
+        formik.touched?.permissionGroups &&
+        formik.errors?.permissionGroups && (
           <FormError
-            visible={formik.touched.presets}
-            error={formik.errors.presets}
+            visible={formik.touched.permissionGroups}
+            error={formik.errors.permissionGroups}
           />
         )
       }
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <SelectPresetInput
+      <SelectPermissionGroupInput
         workspaceId={workspaceId}
-        value={formik.values.presets || []}
+        value={formik.values.permissionGroups || []}
         disabled={submitResult.loading}
-        onChange={(items) => formik.setFieldValue("presets", items)}
+        onChange={(items) => formik.setFieldValue("permissionGroups", items)}
       />
     </Form.Item>
   );
@@ -184,12 +184,12 @@ export default function PresetForm(props: IPresetFormProps) {
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>Preset Form</Typography.Title>
+            <Typography.Title level={4}>PermissionGroup Form</Typography.Title>
           </Form.Item>
           <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
-          {assignedPresetsNode}
+          {assignedPermissionGroupsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block
@@ -197,7 +197,7 @@ export default function PresetForm(props: IPresetFormProps) {
               htmlType="submit"
               loading={submitResult.loading}
             >
-              {preset ? "Update Preset" : "Create Preset"}
+              {permissionGroup ? "Update PermissionGroup" : "Create PermissionGroup"}
             </Button>
           </Form.Item>
         </form>

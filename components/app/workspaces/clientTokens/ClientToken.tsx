@@ -4,7 +4,7 @@ import useClientToken from "../../../../lib/hooks/workspaces/useClientToken";
 import PageLoading from "../../../utils/PageLoading";
 import PageError from "../../../utils/PageError";
 import LabeledNode from "../../../utils/LabeledNode";
-import AssignedPresetList from "../permissionGroups/AssignedPresetList";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import assert from "assert";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import ClientTokenMenu from "./ClientTokenMenu";
@@ -30,15 +30,15 @@ function ClientToken(props: IClientTokenProps) {
   const { error, isLoading, data, mutate } = useClientToken(tokenId);
   const { mutate: cacheMutate } = useSWRConfig();
   // const onRemovePermissionGroup = React.useCallback(
-  //   async (presetId: string) => {
+  //   async (permissionGroupId: string) => {
   //     assert(data?.token, new Error("Token not found"));
-  //     const updatedPresets = data?.token.presets.filter(
-  //       (item) => item.presetId !== presetId
+  //     const updatedPermissionGroups = data?.token.permissionGroups.filter(
+  //       (item) => item.permissionGroupId !== permissionGroupId
   //     );
 
   //     const result = await ClientAssignedTokenAPI.updateToken({
   //       tokenId,
-  //       token: { presets: updatedPresets },
+  //       token: { permissionGroups: updatedPermissionGroups },
   //     });
 
   //     mutate(result, false);
@@ -113,9 +113,9 @@ function ClientToken(props: IClientTokenProps) {
             node={expirationDate}
           />
         )}
-        <AssignedPresetList
+        <AssignedPermissionGroupList
           workspaceId={token.workspaceId}
-          presets={token.presets}
+          permissionGroups={token.permissionGroups}
         />
       </Space>
     </div>
