@@ -1,32 +1,33 @@
+import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Button, Form, Input, message, Space, Typography, Upload } from "antd";
-import * as yup from "yup";
-import React from "react";
 import { useRequest } from "ahooks";
+import { Button, Form, Input, message, Space, Typography, Upload } from "antd";
+import { UploadFile } from "antd/lib/upload/interface";
+import { first } from "lodash";
 import { useRouter } from "next/router";
-import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/messages/messages";
+import React from "react";
+import { useSWRConfig } from "swr";
+import * as yup from "yup";
+import FileAPI from "../../../../lib/api/endpoints/file";
+import { IEndpointResultBase } from "../../../../lib/api/types";
 import { checkEndpointResult } from "../../../../lib/api/utils";
+import {
+  IFile,
+  UploadFilePublicAccessActions,
+} from "../../../../lib/definitions/file";
+import { folderConstants } from "../../../../lib/definitions/folder";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import FormError from "../../../form/FormError";
-import { formClasses } from "../../../form/classNames";
-import { useSWRConfig } from "swr";
-import FileAPI from "../../../../lib/api/endpoints/file";
-import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
-import {
-  IFile,
-  UploadFilePublicAccessActions,
-} from "../../../../lib/definitions/file";
-import { UploadFile } from "antd/lib/upload/interface";
-import { UploadOutlined } from "@ant-design/icons";
-import { first } from "lodash";
-import { IEndpointResultBase } from "../../../../lib/api/types";
 import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
-import { folderConstants } from "../../../../lib/definitions/folder";
+import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
+import { messages } from "../../../../lib/messages/messages";
+import { fileValidationParts } from "../../../../lib/validation/file";
+import { systemValidation } from "../../../../lib/validation/system";
+import { formClasses } from "../../../form/classNames";
+import FormError from "../../../form/FormError";
 import { FormAlert } from "../../../utils/FormAlert";
 
 export interface IFileFormValue {
@@ -43,16 +44,6 @@ export interface IFileFormValue {
 const initialValues: IFileFormValue = {
   name: "",
   file: [],
-};
-
-const classes = {
-  fileInput: css({
-    position: "absolute",
-    height: "1px",
-    width: "1px",
-    overflow: "hidden",
-    clip: "rect(1px, 1px, 1px, 1px)",
-  }),
 };
 
 function getFileFormInputFromFile(item: IFile): IFileFormValue {
@@ -75,15 +66,12 @@ export default function FileForm(props: IFileFormProps) {
   const { file, className, workspaceId, folderId, folderpath } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
-
   const onSubmit = React.useCallback(
     async (data: IFileFormValue) => {
       let fileId: string | null = null;
       const inputFile = first(data.file);
-
       if (file) {
         let result: IEndpointResultBase;
-
         if (inputFile) {
           result = await FileAPI.uploadFile({
             workspaceId: workspaceId,
@@ -149,7 +137,7 @@ export default function FileForm(props: IFileFormProps) {
     errors: submitResult.error,
     formikProps: {
       validationSchema: yup.object().shape({
-        name: systemValidation.name.required(messages.fieldIsRequired),
+        name: fileValidationParts.filename.required(messages.fieldIsRequired),
         description: systemValidation.description.nullable(),
         file: !file
           ? yup.mixed().required(messages.fieldIsRequired)
