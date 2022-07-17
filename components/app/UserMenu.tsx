@@ -2,7 +2,6 @@ import { CaretDownOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Space } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { appRootPaths, appUserPaths } from "../../lib/definitions/system";
 import SessionActions from "../../lib/store/session/actions";
@@ -15,13 +14,13 @@ export default function UserMenu() {
   const userId = useSelector(SessionSelectors.assertGetUserId);
   const dispatch = useDispatch();
   const router = useRouter();
-
   return (
     <Dropdown
       trigger={["click"]}
       overlay={
         <Menu
-          onSelect={async (info) => {
+          onClick={async (info) => {
+            console.log(info);
             if (info.key === LOGOUT_MENU_KEY) {
               // TODO: delete all cache keys
               router.push(appRootPaths.home);

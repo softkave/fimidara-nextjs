@@ -17,5 +17,8 @@ export const getWorkspaceServerSideProps: GetServerSideProps<
 };
 
 export function getRootnameFromName(name: string): string {
-  return name.replace(fileValidationParts.notNameRegex, "").replace(/\s/g, "-");
+  return name
+    .replace(fileValidationParts.notNameRegex, "")
+    .replace(/\s/g, "-")
+    .toLowerCase();
 }
