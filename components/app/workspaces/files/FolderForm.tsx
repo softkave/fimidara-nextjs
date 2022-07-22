@@ -8,7 +8,11 @@ import * as yup from "yup";
 import FolderAPI from "../../../../lib/api/endpoints/folder";
 import { checkEndpointResult } from "../../../../lib/api/utils";
 import { fileConstants } from "../../../../lib/definitions/file";
-import { folderConstants, IFolder } from "../../../../lib/definitions/folder";
+import {
+  addRootnameToPath,
+  folderConstants,
+  IFolder,
+} from "../../../../lib/definitions/folder";
 import {
   appWorkspacePaths,
   systemConstants,
@@ -58,23 +62,31 @@ export interface IFolderFormProps {
   folder?: IFolder;
   className?: string;
   parentId?: string;
+
+  // folder parent path without rootname
   parentPath?: string;
   workspaceId: string;
+  workspaceRootname: string;
 }
 
 // TODO: show path to parent folder
 
 export default function FolderForm(props: IFolderFormProps) {
-  const { folder, className, workspaceId, parentId, parentPath } = props;
+  const {
+    folder,
+    className,
+    workspaceId,
+    workspaceRootname,
+    parentId,
+    parentPath,
+  } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
     async (data: IFolderFormValues) => {
       let folderId: string | null = null;
-
       if (folder) {
         const result = await FolderAPI.updateFolder({
-          workspaceId: workspaceId,
           folderId: folder.resourceId,
           folder: {
             description: data.description,
@@ -88,14 +100,12 @@ export default function FolderForm(props: IFolderFormProps) {
         message.success("Folder updated");
         mutate(
           getUseFileListHookKey({
-            workspaceId: workspaceId,
             folderId: parentId,
           })
         );
 
         mutate(
           getUseFolderHookKey({
-            workspaceId: workspaceId,
             folderId: folder.resourceId,
           })
         );
@@ -105,9 +115,8 @@ export default function FolderForm(props: IFolderFormProps) {
           : data.name;
 
         const result = await FolderAPI.addFolder({
-          workspaceId: workspaceId,
           folder: {
-            folderpath,
+            folderpath: addRootnameToPath(folderpath, workspaceRootname),
             description: data.description,
             maxFileSizeInBytes: data.maxFileSizeInBytes,
             // publicAccessOps: data.publicAccessOps,
@@ -119,7 +128,6 @@ export default function FolderForm(props: IFolderFormProps) {
         message.success("Folder created");
         mutate(
           getUseFileListHookKey({
-            workspaceId: workspaceId,
             folderId: parentId,
           })
         );
@@ -127,7 +135,15 @@ export default function FolderForm(props: IFolderFormProps) {
 
       router.push(appWorkspacePaths.folder(workspaceId, folderId));
     },
-    [folder, workspaceId, parentId, parentPath, mutate, router]
+    [
+      folder,
+      parentId,
+      workspaceRootname,
+      parentPath,
+      mutate,
+      router,
+      workspaceId,
+    ]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

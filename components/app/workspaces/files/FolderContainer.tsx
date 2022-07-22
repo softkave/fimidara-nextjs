@@ -9,7 +9,6 @@ import PageLoading from "../../../utils/PageLoading";
 import { appClasses } from "../../../utils/theme";
 
 export interface IFolderContainerProps {
-  workspaceId: string;
   folderId: string;
   render: (
     folder: IFolder,
@@ -19,12 +18,9 @@ export interface IFolderContainerProps {
 }
 
 const FolderContainer: React.FC<IFolderContainerProps> = (props) => {
-  const { workspaceId, folderId, fetchConfig, render } = props;
+  const { folderId, fetchConfig, render } = props;
   const { data, error, isLoading, mutate } = useFolder(
-    {
-      folderId,
-      workspaceId: workspaceId,
-    },
+    { folderId },
     fetchConfig
   );
 

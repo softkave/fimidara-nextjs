@@ -22,4 +22,6 @@ export interface IRequestWorkspace {
   name: string;
 }
 
-export type IUpdateWorkspaceInput = Partial<INewWorkspaceInput>;
+export type IUpdateWorkspaceInput = Partial<
+  Omit<INewWorkspaceInput, "rootname">
+>;

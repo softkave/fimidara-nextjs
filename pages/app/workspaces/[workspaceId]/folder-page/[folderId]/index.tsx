@@ -4,8 +4,8 @@ import Folder from "../../../../../../components/app/workspaces/files/Folder";
 import FolderContainer from "../../../../../../components/app/workspaces/files/FolderContainer";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
-import { IFolder } from "../../../../../../lib/definitions/folder";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
+import { IWorkspace } from "../../../../../../lib/definitions/workspace";
 
 export type IFolderPageProps = {
   workspaceId: string;
@@ -14,21 +14,26 @@ export type IFolderPageProps = {
 
 const FolderPage: React.FC<IFolderPageProps> = (props) => {
   const { workspaceId, folderId } = props;
-  const renderFolder = React.useCallback((folder: IFolder) => {
-    return <Folder folder={folder} />;
-  }, []);
+  const renderFolder = React.useCallback(
+    (workspace: IWorkspace) => {
+      return (
+        <FolderContainer
+          folderId={folderId}
+          render={(folder) => (
+            <Folder folder={folder} workspaceRootname={workspace.rootname} />
+          )}
+        />
+      );
+    },
+    [folderId]
+  );
 
   return (
     <Workspace
       workspaceId={workspaceId}
       activeKey={appWorkspacePaths.rootFolderList(workspaceId)}
-    >
-      <FolderContainer
-        folderId={folderId}
-        workspaceId={workspaceId}
-        render={renderFolder}
-      />
-    </Workspace>
+      render={renderFolder}
+    />
   );
 };
 

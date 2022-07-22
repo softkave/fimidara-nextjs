@@ -1,27 +1,31 @@
+import { useRequest } from "ahooks";
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import {
-  appWorkspacePaths,
-  AppResourceType,
-} from "../../../../lib/definitions/system";
-import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import { useRequest } from "ahooks";
-import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
-import { IFolder } from "../../../../lib/definitions/folder";
-import FolderAPI from "../../../../lib/api/endpoints/folder";
-import { folderConstants } from "../../../../lib/definitions/folder";
 import { useSWRConfig } from "swr";
+import FolderAPI from "../../../../lib/api/endpoints/folder";
+import { checkEndpointResult } from "../../../../lib/api/utils";
+import {
+  addRootnameToPath,
+  folderConstants,
+  IFolder,
+} from "../../../../lib/definitions/folder";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import {
+  AppResourceType,
+  appWorkspacePaths,
+} from "../../../../lib/definitions/system";
 import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
 import { getUseFolderHookKey } from "../../../../lib/hooks/workspaces/useFolder";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
+import { appClasses } from "../../../utils/theme";
+import { MenuInfo } from "../../../utils/types";
 
 export interface IFolderMenuProps {
   folder: IFolder;
+  workspaceRootname: string;
 }
 
 enum MenuKeys {
@@ -34,7 +38,7 @@ enum MenuKeys {
 }
 
 const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
-  const { folder } = props;
+  const { folder, workspaceRootname } = props;
   const folderGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
     itemResourceType: AppResourceType.Folder,
@@ -66,29 +70,29 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
   const deleteItem = React.useCallback(async () => {
     try {
       const result = await FolderAPI.deleteFolder({
-        workspaceId: folder.workspaceId,
-        folderpath: folder.namePath.join(folderConstants.nameSeparator),
+        folderpath: addRootnameToPath(
+          folder.namePath.join(folderConstants.nameSeparator),
+          workspaceRootname
+        ),
       });
 
       checkEndpointResult(result);
       message.success("Folder deleted");
       cacheMutate(
         getUseFileListHookKey({
-          workspaceId: folder.workspaceId,
           folderId: folder.parentId,
         })
       );
 
       cacheMutate(
         getUseFolderHookKey({
-          workspaceId: folder.workspaceId,
           folderId: folder.resourceId,
         })
       );
     } catch (error: any) {
       errorMessageNotificatition(error, "Error deleting folder");
     }
-  }, [folder, cacheMutate]);
+  }, [folder, cacheMutate, workspaceRootname]);
 
   const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
@@ -153,15 +157,15 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Permission to Folder
+              Grant Access To Folder
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
             <Menu.Item key={MenuKeys.ChildrenFoldersGrantPermission}>
-              Grant Permission To Children Folders
+              Grant Access To Children Folders
             </Menu.Item>
             <Menu.Divider key={"divider-03"} />
             <Menu.Item key={MenuKeys.ChildrenFilesGrantPermission}>
-              Grant Permission to Children Files
+              Grant Access To Children Files
             </Menu.Item>
             <Menu.Divider key={"divider-04"} />
             <Menu.Item key={MenuKeys.DeleteItem}>Delete Folder</Menu.Item>

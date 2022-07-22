@@ -4,7 +4,13 @@ if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
   throw new Error("NEXT_PUBLIC_WORKSPACE_ID is not set");
 }
 
+const workspaceRootname = defaultTo(
+  process.env.NEXT_PUBLIC_WORKSPACE_ROOTNAME,
+  "fimidara"
+);
+
 export const systemConstants = {
+  workspaceRootname,
   maxNameLength: 150,
   maxDescriptionLength: 500,
   appShortName: "fimidara",
@@ -13,11 +19,11 @@ export const systemConstants = {
   workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID,
   userImagesFolder: defaultTo(
     process.env.NEXT_PUBLIC_USER_IMAGES_FOLDER,
-    "/files/images/users"
+    `/${workspaceRootname}/files/images/users`
   ),
   workspaceImagesFolder: defaultTo(
     process.env.NEXT_PUBLIC_WORKSPACE_IMAGES_FOLDER,
-    "/files/images/workspaces"
+    `/${workspaceRootname}/files/images/workspaces`
   ),
   serverAddr: defaultTo(
     process.env.NEXT_PUBLIC_SERVER_ADDR,

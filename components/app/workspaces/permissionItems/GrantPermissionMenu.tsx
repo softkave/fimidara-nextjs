@@ -1,12 +1,12 @@
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
-import { appClasses } from "../../../utils/theme";
-import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
 import useGrantPermission, {
   GrantPermissionKey,
   IUseGrantPermissionProps,
 } from "../../../hooks/useGrantPermission";
+import { appClasses } from "../../../utils/theme";
+import { MenuInfo } from "../../../utils/types";
 
 const GrantPermissionMenu: React.FC<IUseGrantPermissionProps> = (props) => {
   const { toggleVisibility, grantPermissionFormNode } =
@@ -29,7 +29,7 @@ const GrantPermissionMenu: React.FC<IUseGrantPermissionProps> = (props) => {
         overlay={
           <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={GrantPermissionKey.GrantPermission}>
-              Grant Permission
+              Grant Access To Resource
             </Menu.Item>
           </Menu>
         }

@@ -15,7 +15,10 @@ import {
   IFile,
   UploadFilePublicAccessActions,
 } from "../../../../lib/definitions/file";
-import { folderConstants } from "../../../../lib/definitions/folder";
+import {
+  addRootnameToPath,
+  folderConstants,
+} from "../../../../lib/definitions/folder";
 import {
   appWorkspacePaths,
   systemConstants,
@@ -58,12 +61,22 @@ export interface IFileFormProps {
   file?: IFile;
   className?: string;
   folderId?: string;
+
+  // file parent folder without rootname
   folderpath?: string;
   workspaceId: string;
+  workspaceRootname: string;
 }
 
 export default function FileForm(props: IFileFormProps) {
-  const { file, className, workspaceId, folderId, folderpath } = props;
+  const {
+    file,
+    className,
+    workspaceId,
+    folderId,
+    folderpath,
+    workspaceRootname,
+  } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
@@ -74,7 +87,6 @@ export default function FileForm(props: IFileFormProps) {
         let result: IEndpointResultBase;
         if (inputFile) {
           result = await FileAPI.uploadFile({
-            workspaceId: workspaceId,
             fileId: file.resourceId,
             description: data.description,
             data: inputFile as any,
@@ -82,7 +94,6 @@ export default function FileForm(props: IFileFormProps) {
           });
         } else {
           result = await FileAPI.updateFileDetails({
-            workspaceId: workspaceId,
             fileId: file.resourceId,
             file: {
               description: data.description,
@@ -93,10 +104,9 @@ export default function FileForm(props: IFileFormProps) {
         checkEndpointResult(result);
         fileId = file.resourceId;
         message.success("File updated");
-        mutate(getUseFileListHookKey({ folderId, workspaceId: workspaceId }));
+        mutate(getUseFileListHookKey({ folderId }));
         mutate(
           getUseFileHookKey({
-            workspaceId: workspaceId,
             fileId: file.resourceId,
           })
         );
@@ -107,10 +117,12 @@ export default function FileForm(props: IFileFormProps) {
         }
 
         const result = await FileAPI.uploadFile({
-          workspaceId: workspaceId,
-          filepath: folderpath
-            ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
-            : data.name,
+          filepath: addRootnameToPath(
+            folderpath
+              ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
+              : data.name,
+            workspaceRootname
+          ),
           description: data.description,
           data: inputFile as any,
           mimetype: inputFile.type,
@@ -122,14 +134,13 @@ export default function FileForm(props: IFileFormProps) {
         mutate(
           getUseFileListHookKey({
             folderId,
-            workspaceId: workspaceId,
           })
         );
       }
 
       router.push(appWorkspacePaths.file(workspaceId, fileId));
     },
-    [file, workspaceId, folderId, folderpath, mutate, router]
+    [file, workspaceId, folderId, folderpath, mutate, router, workspaceRootname]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });

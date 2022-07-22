@@ -39,7 +39,6 @@ export enum UploadFilePublicAccessActions {
 export interface IFileMatcher {
   filepath?: string;
   fileId?: string;
-  workspaceId?: string;
 }
 
 export const fileConstants = {

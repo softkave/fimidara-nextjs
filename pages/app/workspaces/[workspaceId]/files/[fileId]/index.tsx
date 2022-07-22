@@ -4,8 +4,8 @@ import FileComponent from "../../../../../../components/app/workspaces/files/Fil
 import FileContainer from "../../../../../../components/app/workspaces/files/FileContainer";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
-import { IFile } from "../../../../../../lib/definitions/file";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
+import { IWorkspace } from "../../../../../../lib/definitions/workspace";
 
 export type IFilePageProps = {
   workspaceId: string;
@@ -14,21 +14,27 @@ export type IFilePageProps = {
 
 const FilePage: React.FC<IFilePageProps> = (props) => {
   const { workspaceId, fileId } = props;
-  const renderFile = React.useCallback((file: IFile) => {
-    return <FileComponent file={file} />;
-  }, []);
+  const renderFileContainer = React.useCallback(
+    (workspace: IWorkspace) => {
+      return (
+        <FileContainer
+          fileId={fileId}
+          workspaceId={workspaceId}
+          render={(file) => (
+            <FileComponent file={file} workspaceRootname={workspace.rootname} />
+          )}
+        />
+      );
+    },
+    [fileId, workspaceId]
+  );
 
   return (
     <Workspace
       workspaceId={workspaceId}
       activeKey={appWorkspacePaths.rootFolderList(workspaceId)}
-    >
-      <FileContainer
-        fileId={fileId}
-        workspaceId={workspaceId}
-        render={renderFile}
-      />
-    </Workspace>
+      render={renderFileContainer}
+    />
   );
 };
 

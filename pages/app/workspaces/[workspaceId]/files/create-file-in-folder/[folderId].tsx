@@ -4,6 +4,7 @@ import { SWRConfiguration } from "swr";
 import FileForm from "../../../../../../components/app/workspaces/files/FileForm";
 import FolderContainer from "../../../../../../components/app/workspaces/files/FolderContainer";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
+import WorkspaceContainer from "../../../../../../components/app/workspaces/WorkspaceContainer";
 import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
 import {
   folderConstants,
@@ -29,11 +30,17 @@ const CreateFileInFolderParentFormPage: React.FC<
   const renderForm = React.useCallback(
     (folder: IFolder) => {
       return (
-        <FileForm
+        <WorkspaceContainer
           workspaceId={workspaceId}
-          folderId={folderId}
-          folderpath={folder.namePath.join(folderConstants.nameSeparator)}
-          key="file-form"
+          render={(workspace) => (
+            <FileForm
+              workspaceRootname={workspace.rootname}
+              workspaceId={workspaceId}
+              folderId={folderId}
+              folderpath={folder.namePath.join(folderConstants.nameSeparator)}
+              key="file-form"
+            />
+          )}
         />
       );
     },
@@ -47,7 +54,6 @@ const CreateFileInFolderParentFormPage: React.FC<
     >
       <FolderContainer
         folderId={folderId}
-        workspaceId={workspaceId}
         render={renderForm}
         fetchConfig={swrConfig}
       />

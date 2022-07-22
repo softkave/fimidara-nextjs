@@ -5,6 +5,7 @@ import Link from "next/link";
 import React from "react";
 import { SWRConfiguration } from "swr";
 import { appWorkspacePaths } from "../../../lib/definitions/system";
+import { IWorkspace } from "../../../lib/definitions/workspace";
 import useWorkspace from "../../../lib/hooks/workspaces/useWorkspace";
 import { getBaseError } from "../../../lib/utilities/errors";
 import PageError from "../../utils/PageError";
@@ -17,6 +18,7 @@ export interface IWorkspaceProps {
   workspaceId: string;
   activeKey: string;
   swrConfig?: SWRConfiguration;
+  render?: (workspace: IWorkspace) => React.ReactElement;
 }
 
 const classes = {
@@ -30,7 +32,7 @@ const classes = {
 };
 
 const Workspace: React.FC<IWorkspaceProps> = (props) => {
-  const { workspaceId, activeKey, swrConfig, children } = props;
+  const { workspaceId, activeKey, swrConfig, render, children } = props;
   const { data, error, isLoading } = useWorkspace(workspaceId, swrConfig);
 
   if (error) {
@@ -66,6 +68,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
     ),
   };
 
+  const contentNode = render ? render(workspace) : children;
   return (
     <Space
       direction="vertical"
@@ -83,7 +86,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
           }
           key={paths.files}
         >
-          {paths.files === activeKey && children}
+          {paths.files === activeKey && contentNode}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -93,7 +96,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
           }
           key={paths.collaborators}
         >
-          {paths.collaborators === activeKey && children}
+          {paths.collaborators === activeKey && contentNode}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -103,7 +106,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
           }
           key={paths.requests}
         >
-          {paths.requests === activeKey && children}
+          {paths.requests === activeKey && contentNode}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -113,7 +116,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
           }
           key={paths.programTokens}
         >
-          {paths.programTokens === activeKey && children}
+          {paths.programTokens === activeKey && contentNode}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -123,7 +126,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
           }
           key={paths.clientTokens}
         >
-          {paths.clientTokens === activeKey && children}
+          {paths.clientTokens === activeKey && contentNode}
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -133,7 +136,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
           }
           key={paths.permissionGroups}
         >
-          {paths.permissionGroups === activeKey && children}
+          {paths.permissionGroups === activeKey && contentNode}
         </Tabs.TabPane>
       </Tabs>
     </Space>

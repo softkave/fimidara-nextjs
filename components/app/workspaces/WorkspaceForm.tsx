@@ -149,11 +149,11 @@ export default function WorkspaceForm(props: IWorkspaceFormProps) {
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
           placeholder="Enter workspace root name"
-          disabled={submitResult.loading}
+          disabled={submitResult.loading || !!workspace}
           maxLength={folderConstants.maxFolderNameLength}
           autoComplete="off"
         />
-        {formik.values.name && (
+        {formik.values.name && !workspace && (
           <Button
             type="link"
             onClick={() => {
