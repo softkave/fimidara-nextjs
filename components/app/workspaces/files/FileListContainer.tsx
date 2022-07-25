@@ -57,6 +57,7 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
     isLoading: isLoadingFileList,
   } = useFileList({
     folderId: folder?.resourceId,
+    folderpath: !folder ? workspaceRootname : undefined,
   });
 
   let content: React.ReactNode = null;
