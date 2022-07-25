@@ -5,21 +5,21 @@ import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { BsThreeDots } from "react-icons/bs";
 import { useSWRConfig } from "swr";
 import WorkspaceAPI from "../../../lib/api/endpoints/workspace";
 import { checkEndpointResult } from "../../../lib/api/utils";
-import { IWorkspace } from "../../../lib/definitions/workspace";
+import { PermissionItemAppliesTo } from "../../../lib/definitions/permissionItem";
 import {
-  appWorkspacePaths,
   AppResourceType,
+  appWorkspacePaths,
 } from "../../../lib/definitions/system";
+import { IWorkspace } from "../../../lib/definitions/workspace";
 import { getUseWorkspaceHookKey } from "../../../lib/hooks/workspaces/useWorkspace";
+import useGrantPermission from "../../hooks/useGrantPermission";
+import { appClasses } from "../../utils/theme";
 import { MenuInfo } from "../../utils/types";
 import WorkspaceAvatar from "./WorkspaceAvatar";
-import { BsThreeDots } from "react-icons/bs";
-import { appClasses } from "../../utils/theme";
-import useGrantPermission from "../../hooks/useGrantPermission";
-import { PermissionItemAppliesTo } from "../../../lib/definitions/permissionItem";
 
 export interface IWorkspaceHeaderProps {
   workspace: IWorkspace;
@@ -121,7 +121,7 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Permission
+              Grant Access To Resource
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
             <Menu.Item key={MenuKeys.DeleteWorkspace}>Delete</Menu.Item>

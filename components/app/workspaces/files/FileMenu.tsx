@@ -1,27 +1,31 @@
+import { useRequest } from "ahooks";
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import {
-  appWorkspacePaths,
-  AppResourceType,
-} from "../../../../lib/definitions/system";
-import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import { useRequest } from "ahooks";
-import { MenuInfo } from "../../../utils/types";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
-import { IFile } from "../../../../lib/definitions/file";
-import FileAPI from "../../../../lib/api/endpoints/file";
-import { folderConstants } from "../../../../lib/definitions/folder";
 import { useSWRConfig } from "swr";
-import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
-import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
+import FileAPI from "../../../../lib/api/endpoints/file";
+import { checkEndpointResult } from "../../../../lib/api/utils";
+import { IFile } from "../../../../lib/definitions/file";
+import {
+  addRootnameToPath,
+  folderConstants,
+} from "../../../../lib/definitions/folder";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import {
+  AppResourceType,
+  appWorkspacePaths,
+} from "../../../../lib/definitions/system";
+import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
+import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
+import { appClasses } from "../../../utils/theme";
+import { MenuInfo } from "../../../utils/types";
 
 export interface IFileMenuProps {
   file: IFile;
+  workspaceRootname: string;
 }
 
 enum MenuKeys {
@@ -31,7 +35,7 @@ enum MenuKeys {
 }
 
 const FileMenu: React.FC<IFileMenuProps> = (props) => {
-  const { file } = props;
+  const { file, workspaceRootname } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: file.workspaceId,
     itemResourceType: AppResourceType.File,
@@ -47,29 +51,29 @@ const FileMenu: React.FC<IFileMenuProps> = (props) => {
   const deleteItem = React.useCallback(async () => {
     try {
       const result = await FileAPI.deleteFile({
-        workspaceId: file.workspaceId,
-        filepath: file.namePath.join(folderConstants.nameSeparator),
+        filepath: addRootnameToPath(
+          file.namePath.join(folderConstants.nameSeparator),
+          workspaceRootname
+        ),
       });
 
       checkEndpointResult(result);
       message.success("File deleted");
       cacheMutate(
         getUseFileListHookKey({
-          workspaceId: file.workspaceId,
           folderId: file.folderId,
         })
       );
 
       cacheMutate(
         getUseFileHookKey({
-          workspaceId: file.workspaceId,
           fileId: file.resourceId,
         })
       );
     } catch (error: any) {
       errorMessageNotificatition(error, "Error deleting file");
     }
-  }, [file, cacheMutate]);
+  }, [file, cacheMutate, workspaceRootname]);
 
   const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
@@ -114,7 +118,7 @@ const FileMenu: React.FC<IFileMenuProps> = (props) => {
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Permission
+              Grant Access To Resource
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
             <Menu.Item key={MenuKeys.DeleteItem}>Delete File</Menu.Item>

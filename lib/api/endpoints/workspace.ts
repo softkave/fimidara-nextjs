@@ -1,8 +1,8 @@
 import {
   INewWorkspaceInput,
-  IWorkspace,
   IRequestWorkspace,
   IUpdateWorkspaceInput,
+  IWorkspace,
 } from "../../definitions/workspace";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
@@ -16,7 +16,6 @@ const getUserWorkspacesURL = `${baseURL}/getUserWorkspaces`;
 const updateWorkspaceURL = `${baseURL}/updateWorkspace`;
 
 export type IAddWorkspaceEndpointParams = INewWorkspaceInput;
-
 export type IAddWorkspaceEndpointResult = GetEndpointResult<{
   workspace: IWorkspace;
 }>;

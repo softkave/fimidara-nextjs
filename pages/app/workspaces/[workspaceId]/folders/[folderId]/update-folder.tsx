@@ -3,6 +3,7 @@ import React from "react";
 import FolderContainer from "../../../../../../components/app/workspaces/files/FolderContainer";
 import FolderForm from "../../../../../../components/app/workspaces/files/FolderForm";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
+import WorkspaceContainer from "../../../../../../components/app/workspaces/WorkspaceContainer";
 import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
 import { IFolder } from "../../../../../../lib/definitions/folder";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
@@ -14,9 +15,20 @@ export type IUpdateFolderFormPageProps = {
 
 const UpdateFolderFormPage: React.FC<IUpdateFolderFormPageProps> = (props) => {
   const { workspaceId, folderId } = props;
-  const renderForm = React.useCallback(
+  const renderFormWithWorkspace = React.useCallback(
     (folder: IFolder) => {
-      return <FolderForm workspaceId={workspaceId} folder={folder} />;
+      return (
+        <WorkspaceContainer
+          workspaceId={workspaceId}
+          render={(workspace) => (
+            <FolderForm
+              workspaceId={workspaceId}
+              folder={folder}
+              workspaceRootname={workspace.rootname}
+            />
+          )}
+        />
+      );
     },
     [workspaceId]
   );
@@ -26,11 +38,7 @@ const UpdateFolderFormPage: React.FC<IUpdateFolderFormPageProps> = (props) => {
       workspaceId={workspaceId}
       activeKey={appWorkspacePaths.rootFolderList(workspaceId)}
     >
-      <FolderContainer
-        folderId={folderId}
-        workspaceId={workspaceId}
-        render={renderForm}
-      />
+      <FolderContainer folderId={folderId} render={renderFormWithWorkspace} />
     </Workspace>
   );
 };

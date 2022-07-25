@@ -1,6 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Typography, Button, Space, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, Space, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
 import { IFolder } from "../../../../lib/definitions/folder";
@@ -11,8 +11,8 @@ import RootFilesMenu from "./RootFilesMenu";
 
 export interface IFileListContainerHeaderProps {
   workspaceId: string;
+  workspaceRootname: string;
   folder?: IFolder;
-  onCompleteRemove: () => any;
 }
 
 enum CreateMenuKeys {
@@ -36,7 +36,7 @@ const classes = {
 const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
   props
 ) => {
-  const { workspaceId, folder, onCompleteRemove } = props;
+  const { workspaceId, folder, workspaceRootname } = props;
   return (
     <div className={classes.root}>
       <Typography.Title level={5} className={classes.title}>
@@ -78,7 +78,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
           ></Button>
         </Dropdown>
         {folder ? (
-          <FolderMenu folder={folder} />
+          <FolderMenu folder={folder} workspaceRootname={workspaceRootname} />
         ) : (
           <RootFilesMenu workspaceId={workspaceId} />
         )}

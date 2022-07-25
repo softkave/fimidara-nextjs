@@ -4,6 +4,7 @@ import { SWRConfiguration } from "swr";
 import FileContainer from "../../../../../../components/app/workspaces/files/FileContainer";
 import FileForm from "../../../../../../components/app/workspaces/files/FileForm";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
+import WorkspaceContainer from "../../../../../../components/app/workspaces/WorkspaceContainer";
 import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
 import { IFile } from "../../../../../../lib/definitions/file";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
@@ -21,9 +22,20 @@ const swrConfig: SWRConfiguration = {
 
 const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
   const { workspaceId, fileId } = props;
-  const renderForm = React.useCallback(
+  const renderFormWithWorkspace = React.useCallback(
     (file: IFile) => {
-      return <FileForm workspaceId={workspaceId} file={file} />;
+      return (
+        <WorkspaceContainer
+          workspaceId={workspaceId}
+          render={(workspace) => (
+            <FileForm
+              workspaceId={workspaceId}
+              file={file}
+              workspaceRootname={workspace.rootname}
+            />
+          )}
+        />
+      );
     },
     [workspaceId]
   );
@@ -37,10 +49,9 @@ const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
       <FileContainer
         fileId={fileId}
         workspaceId={workspaceId}
-        render={renderForm}
+        render={renderFormWithWorkspace}
         swrConfig={swrConfig}
       />
-      ;
     </Workspace>
   );
 };

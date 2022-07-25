@@ -1,19 +1,19 @@
+import { useRequest } from "ahooks";
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import {
-  appWorkspacePaths,
-  AppResourceType,
-} from "../../../../lib/definitions/system";
-import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import { useRequest } from "ahooks";
 import { BsThreeDots } from "react-icons/bs";
-import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import ProgramAccessTokenAPI from "../../../../lib/api/endpoints/programAccessToken";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
+import {
+  AppResourceType,
+  appWorkspacePaths,
+} from "../../../../lib/definitions/system";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
+import { appClasses } from "../../../utils/theme";
 
 export interface IProgramTokenMenuProps {
   token: IProgramAccessToken;
@@ -94,7 +94,7 @@ const ProgramTokenMenu: React.FC<IProgramTokenMenuProps> = (props) => {
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Permission
+              Grant Access To Resource
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
             <Menu.Item key={MenuKeys.DeleteItem}>Delete Token</Menu.Item>

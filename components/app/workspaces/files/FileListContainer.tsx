@@ -1,10 +1,11 @@
-import { Button, Space, Typography } from "antd";
+import { Button, Space } from "antd";
 import Link from "next/link";
 import React from "react";
 import { IFile } from "../../../../lib/definitions/file";
 import { IFolder } from "../../../../lib/definitions/folder";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFileList from "../../../../lib/hooks/workspaces/useFileList";
+import useWorkspace from "../../../../lib/hooks/workspaces/useWorkspace";
 import { getBaseError } from "../../../../lib/utilities/errors";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -16,17 +17,31 @@ import FolderList from "./FolderList";
 
 export interface IFileListContainerProps {
   workspaceId: string;
+  workspaceRootname: string;
   folder?: IFolder;
-  renderFolderItem?: (item: IFolder) => React.ReactNode;
-  renderFolderList?: (items: IFolder[]) => React.ReactNode;
-  renderFileItem?: (item: IFile) => React.ReactNode;
-  renderFileList?: (items: IFile[]) => React.ReactNode;
-  renderRoot?: (node: React.ReactNode) => React.ReactElement;
+  renderFolderItem?: (
+    item: IFolder,
+    workspaceRootname: string
+  ) => React.ReactNode;
+  renderFolderList?: (
+    items: IFolder[],
+    workspaceRootname: string
+  ) => React.ReactNode;
+  renderFileItem?: (item: IFile, workspaceRootname: string) => React.ReactNode;
+  renderFileList?: (
+    items: IFile[],
+    workspaceRootname: string
+  ) => React.ReactNode;
+  renderRoot?: (
+    node: React.ReactNode,
+    workspaceRootname: string
+  ) => React.ReactElement;
 }
 
 const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
   const {
     workspaceId,
+    workspaceRootname,
     folder,
     renderFileItem,
     renderFileList,
@@ -35,9 +50,14 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
     renderRoot,
   } = props;
 
-  const { data, error, isLoading, mutate } = useFileList({
-    workspaceId: workspaceId,
+  const loadWorkspace = useWorkspace(workspaceId);
+  const {
+    data: fileListData,
+    error: loadFileListError,
+    isLoading: isLoadingFileList,
+  } = useFileList({
     folderId: folder?.resourceId,
+    folderpath: !folder ? workspaceRootname : undefined,
   });
 
   let content: React.ReactNode = null;
@@ -63,16 +83,28 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
     );
   };
 
-  if (error) {
+  if (loadFileListError || loadWorkspace.error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching files and folders"}
+        messageText={
+          getBaseError(loadFileListError) ||
+          getBaseError(loadWorkspace.error) ||
+          "Error fetching files and folders"
+        }
       />
     );
-  } else if (isLoading || !data) {
+  } else if (
+    isLoadingFileList ||
+    !fileListData ||
+    loadWorkspace.isLoading ||
+    !loadWorkspace.data
+  ) {
     content = <PageLoading messageText="Loading files and folders..." />;
-  } else if (data.files.length === 0 && data.folders.length === 0) {
+  } else if (
+    fileListData.files.length === 0 &&
+    fileListData.folders.length === 0
+  ) {
     content = (
       <Space direction="vertical" style={{ width: "100%" }}>
         {renderGotoParentList()}
@@ -96,22 +128,27 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
       </Space>
     );
   } else {
-    const folderNode = data.folders.length ? (
+    const folderNode = fileListData.folders.length ? (
       renderFolderList ? (
-        renderFolderList(data.folders)
+        renderFolderList(fileListData.folders, workspaceRootname)
       ) : (
         <FolderList
-          folders={data.folders}
+          folders={fileListData.folders}
+          workspaceRootname={workspaceRootname}
           renderFolderItem={renderFolderItem}
         />
       )
     ) : null;
 
-    const fileNode = data.files.length ? (
+    const fileNode = fileListData.files.length ? (
       renderFileList ? (
-        renderFileList(data.files)
+        renderFileList(fileListData.files, workspaceRootname)
       ) : (
-        <AppFileList files={data.files} renderFileItem={renderFileItem} />
+        <AppFileList
+          files={fileListData.files}
+          renderFileItem={renderFileItem}
+          workspaceRootname={loadWorkspace.data.workspace.rootname}
+        />
       )
     ) : null;
 
@@ -125,7 +162,7 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
   }
 
   if (renderRoot) {
-    return renderRoot(content);
+    return renderRoot(content, workspaceRootname);
   }
 
   return (
@@ -134,7 +171,7 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
         <FileListContainerHeader
           workspaceId={workspaceId}
           folder={folder}
-          onCompleteRemove={mutate}
+          workspaceRootname={workspaceRootname}
         />
         {content}
       </Space>

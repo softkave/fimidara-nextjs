@@ -39,15 +39,11 @@ export enum UploadFilePublicAccessActions {
 export interface IFileMatcher {
   filepath?: string;
   fileId?: string;
-  workspaceId?: string;
 }
 
 export const fileConstants = {
   maxFileSizeInBytes: 10 * 1024 ** 3, // 10Gb
   fileNameAndExtensionSeparator: ".",
-  maxMimeTypeCharLength: 100,
-  maxEncodingCharLength: 100,
-  maxExtensionCharLength: 100,
   maxFileWidth: 10000, // px
   maxFileHeight: 10000, // px
   uploadedFileFieldName: "data",

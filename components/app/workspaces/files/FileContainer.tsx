@@ -19,15 +19,8 @@ export interface IFileContainerProps {
 }
 
 const FileContainer: React.FC<IFileContainerProps> = (props) => {
-  const { workspaceId, fileId, swrConfig, render } = props;
-  const { data, error, isLoading, mutate } = useFile(
-    {
-      fileId,
-      workspaceId: workspaceId,
-    },
-    swrConfig
-  );
-
+  const { fileId, swrConfig, render } = props;
+  const { data, error, isLoading, mutate } = useFile({ fileId }, swrConfig);
   if (error) {
     return (
       <PageError

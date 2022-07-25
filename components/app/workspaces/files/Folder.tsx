@@ -1,23 +1,22 @@
 import { Space } from "antd";
-import React from "react";
-import ComponentHeader from "../../../utils/ComponentHeader";
-import { appClasses } from "../../../utils/theme";
-import LabeledNode from "../../../utils/LabeledNode";
 import { IFolder } from "../../../../lib/definitions/folder";
+import ComponentHeader from "../../../utils/ComponentHeader";
+import LabeledNode from "../../../utils/LabeledNode";
+import { appClasses } from "../../../utils/theme";
 import FolderMenu from "./FolderMenu";
 
 export interface IFolderProps {
   folder: IFolder;
+  workspaceRootname: string;
 }
 
 function Folder(props: IFolderProps) {
-  const { folder } = props;
-
+  const { folder, workspaceRootname } = props;
   return (
     <div className={appClasses.main}>
       <Space direction="vertical" size={32} style={{ width: "100%" }}>
         <ComponentHeader title={folder.name}>
-          <FolderMenu folder={folder} />
+          <FolderMenu folder={folder} workspaceRootname={workspaceRootname} />
         </ComponentHeader>
         <LabeledNode
           nodeIsText

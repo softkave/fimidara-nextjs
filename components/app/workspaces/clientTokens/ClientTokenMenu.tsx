@@ -1,20 +1,20 @@
+import { useRequest } from "ahooks";
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
-import {
-  appWorkspacePaths,
-  AppResourceType,
-} from "../../../../lib/definitions/system";
-import { appClasses } from "../../../utils/theme";
+import { BsThreeDots } from "react-icons/bs";
 import ClientAssignedTokenAPI from "../../../../lib/api/endpoints/clientAssignedToken";
 import { checkEndpointResult } from "../../../../lib/api/utils";
-import { useRequest } from "ahooks";
-import { MenuInfo } from "../../../utils/types";
-import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import {
+  AppResourceType,
+  appWorkspacePaths,
+} from "../../../../lib/definitions/system";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
+import { appClasses } from "../../../utils/theme";
+import { MenuInfo } from "../../../utils/types";
 
 export interface IClientTokenMenuProps {
   token: IClientAssignedToken;
@@ -96,7 +96,7 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Permission
+              Grant Access To Resource
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
             <Menu.Item key={MenuKeys.DeleteToken}>Delete Token</Menu.Item>

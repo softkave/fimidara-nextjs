@@ -1,11 +1,11 @@
 import { Space } from "antd";
 import { isUndefined } from "lodash";
 import React from "react";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import {
-  appWorkspacePaths,
   AppResourceType,
+  appWorkspacePaths,
 } from "../../../../lib/definitions/system";
 import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { getBaseError } from "../../../../lib/utilities/errors";
@@ -37,13 +37,11 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
     content = (
       <PageError
         className={appClasses.main}
-        messageText={
-          getBaseError(error) || "Error fetching permissionGroup permission groups"
-        }
+        messageText={getBaseError(error) || "Error fetching permission groups"}
       />
     );
   } else if (isLoading || !data) {
-    content = <PageLoading messageText="Loading permissionGroup permission groups..." />;
+    content = <PageLoading messageText="Loading permission groups..." />;
   } else if (data.permissionGroups.length === 0) {
     content = (
       <PageNothingFound
@@ -71,7 +69,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
     <div className={appClasses.main}>
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <ListHeader
-          title="PermissionGroup Permission Groups"
+          title="Permission Groups"
           formLinkPath={appWorkspacePaths.createPermissionGroupForm(
             workspaceId
           )}

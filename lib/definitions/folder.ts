@@ -1,3 +1,4 @@
+import { isArray, last } from "lodash";
 import { IAgent, IPublicAccessOp, IPublicAccessOpInput } from "./system";
 
 export interface IFolder {
@@ -32,12 +33,25 @@ export interface IUpdateFolderInput {
 export interface IFolderMatcher {
   folderpath?: string;
   folderId?: string;
-  workspaceId?: string;
 }
 
 export const folderConstants = {
   minFolderNameLength: 1,
-  maxFolderNameLength: 50,
+  maxFolderNameLength: 70,
   maxFolderDepth: 10,
   nameSeparator: "/",
 };
+
+export function addRootnameToPath<
+  T extends string | string[] = string | string[]
+>(path: T, workspaceRootname: string | string[]): T {
+  const rootname = isArray(workspaceRootname)
+    ? last(workspaceRootname)
+    : workspaceRootname;
+
+  if (isArray(path)) {
+    return <T>[rootname, ...path];
+  }
+
+  return <T>`${rootname}${folderConstants.nameSeparator}${path}`;
+}

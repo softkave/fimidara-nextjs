@@ -1,20 +1,20 @@
+import { useRequest } from "ahooks";
 import { Button, Dropdown, Menu, message, Modal } from "antd";
 import Link from "next/link";
 import React from "react";
-import {
-  appWorkspacePaths,
-  AppResourceType,
-} from "../../../../lib/definitions/system";
-import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import { useRequest } from "ahooks";
-import { MenuInfo } from "../../../utils/types";
-import { ICollaborator } from "../../../../lib/definitions/user";
-import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import CollaboratorAPI from "../../../../lib/api/endpoints/collaborators";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
+import {
+  AppResourceType,
+  appWorkspacePaths,
+} from "../../../../lib/definitions/system";
+import { ICollaborator } from "../../../../lib/definitions/user";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
+import { appClasses } from "../../../utils/theme";
+import { MenuInfo } from "../../../utils/types";
 
 export interface ICollaboratorMenuProps {
   workspaceId: string;
@@ -97,7 +97,7 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Permission
+              Grant Access To Resource
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
             <Menu.Item key={MenuKeys.DeleteItem}>Remove Collaborator</Menu.Item>

@@ -1,6 +1,7 @@
 {
   "name": "fimidara-nextjs",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Fimidara file storage service Next.js frontend",
   "private": true,
   "scripts": {
     "dev": "env-cmd -f \".env.development\" next dev",

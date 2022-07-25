@@ -7,11 +7,13 @@ export interface IWorkspace {
   lastUpdatedBy?: IAgent;
   lastUpdatedAt?: string;
   name: string;
+  rootname: string;
   description?: string;
 }
 
 export interface INewWorkspaceInput {
   name: string;
+  rootname: string;
   description?: string;
 }
 
@@ -20,4 +22,6 @@ export interface IRequestWorkspace {
   name: string;
 }
 
-export type IUpdateWorkspaceInput = Partial<INewWorkspaceInput>;
+export type IUpdateWorkspaceInput = Partial<
+  Omit<INewWorkspaceInput, "rootname">
+>;

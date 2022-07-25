@@ -1,11 +1,11 @@
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
+import { BsThreeDots } from "react-icons/bs";
+import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import { AppResourceType } from "../../../../lib/definitions/system";
+import useGrantPermission from "../../../hooks/useGrantPermission";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
-import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 
 export interface IRootFilesMenuProps {
   workspaceId: string;
@@ -52,11 +52,11 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
         overlay={
           <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
             <Menu.Item key={MenuKeys.ChildrenFoldersGrantPermission}>
-              Grant Permission To Children Folders
+              Grant Access To Resource To Children Folders
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={MenuKeys.ChildrenFilesGrantPermission}>
-              Grant Permission to Children Files
+              Grant Access To Resource To Children Files
             </Menu.Item>
           </Menu>
         }
