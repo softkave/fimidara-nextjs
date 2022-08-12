@@ -259,6 +259,11 @@ export const appWorkspacePaths = {
   permissionGroupForm(workspaceId: string, permissiongroupId: string) {
     return `${this.permissionGroup(workspaceId, permissiongroupId)}/form`;
   },
+
+  // usage records
+  usageRecordList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/usage-records`;
+  },
 };
 
 export const appAccountPaths = {

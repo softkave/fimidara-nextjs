@@ -4,8 +4,8 @@ import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import {
-  appWorkspacePaths,
   AppResourceType,
+  appWorkspacePaths,
 } from "../../../../lib/definitions/system";
 import useWorkspaceClientTokenList from "../../../../lib/hooks/workspaces/useWorkspaceClientTokenList";
 import { getBaseError } from "../../../../lib/utilities/errors";

@@ -23,7 +23,7 @@ function FilesApp({ Component, pageProps }: AppProps) {
         {/* <link rel="shortcut icon" href="/fimidara.svg" /> */}
         <title>fimidara</title>
       </Head>
-      <NextNProgress />
+      <NextNProgress options={{ showSpinner: false }} />
       <Component {...pageProps} />
     </Provider>
   );
