@@ -1,4 +1,4 @@
-import { defaultTo, first, isArray, isString } from "lodash";
+import { first, isArray, isString } from "lodash";
 import { IAppError } from "../definitions/system";
 import OperationError from "./OperationError";
 import { flattenErrorList } from "./utils";
@@ -36,7 +36,14 @@ export function getFlattenedError(error?: any) {
 }
 
 export function getBaseError(error?: any) {
-  return first(defaultTo(getFlattenedError(error)?.error, []));
+  if (error?.error) {
+    // Error is already flattened
+    return error.error;
+  }
+
+  const fErrors = getFlattenedError(error);
+  const baseErrors = fErrors?.error || [];
+  return first(baseErrors);
 }
 
 export function getErrorTypes(error: any, types: string[]) {
@@ -50,7 +57,6 @@ export function hasErrorTypes(error: any, types: string[]) {
 
 export const toAppError = (err: Error | IAppError | string): IAppError => {
   const error = isString(err) ? new Error(err) : err;
-
   return {
     name: error.name,
     message: error.message,
