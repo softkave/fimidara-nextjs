@@ -1,18 +1,19 @@
+import { css, cx } from "@emotion/css";
 import { List, Space, Typography } from "antd";
 import React from "react";
 import { IAssignedPermissionGroup } from "../../../../lib/definitions/permissionGroups";
 import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import { css, cx } from "@emotion/css";
-import PageLoading from "../../../utils/PageLoading";
-import PageError from "../../../utils/PageError";
-import { indexArray } from "../../../../lib/utilities/indexArray";
-import PageNothingFound from "../../../utils/PageNothingFound";
 import { getBaseError } from "../../../../lib/utilities/errors";
+import { indexArray } from "../../../../lib/utilities/indexArray";
+import PageError from "../../../utils/PageError";
+import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 
 export interface IAssignedPermissionGroupListProps {
   workspaceId: string;
   permissionGroups: IAssignedPermissionGroup[];
   className?: string;
+  title?: string;
 }
 
 const classes = {
@@ -32,8 +33,10 @@ const classes = {
 
 // TODO: add bulk remove, and add bulk actions to other lists
 
-const AssignedPermissionGroupList: React.FC<IAssignedPermissionGroupListProps> = (props) => {
-  const { workspaceId, permissionGroups, className } = props;
+const AssignedPermissionGroupList: React.FC<
+  IAssignedPermissionGroupListProps
+> = (props) => {
+  const { workspaceId, permissionGroups, className, title } = props;
   const { isLoading, error, data } =
     useWorkspacePermissionGroupList(workspaceId);
   let content: React.ReactNode = null;
@@ -87,7 +90,7 @@ const AssignedPermissionGroupList: React.FC<IAssignedPermissionGroupListProps> =
       className={className}
     >
       <Typography.Title level={5} style={{ margin: 0 }}>
-        Assigned Permission Groups
+        {title || "Assigned Permission Groups"}
       </Typography.Title>
       {content}
     </Space>

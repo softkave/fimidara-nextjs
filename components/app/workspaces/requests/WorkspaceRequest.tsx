@@ -1,20 +1,21 @@
-import { Space, Typography } from "antd";
-import React from "react";
-import PageLoading from "../../../utils/PageLoading";
-import PageError from "../../../utils/PageError";
+import { Space } from "antd";
 import assert from "assert";
-import ComponentHeader from "../../../utils/ComponentHeader";
-import { useRouter } from "next/router";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import { useSWRConfig } from "swr";
-import LabeledNode from "../../../utils/LabeledNode";
-import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
-import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
-import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 import { formatRelative } from "date-fns";
 import { last } from "lodash";
-import { appClasses } from "../../../utils/theme";
+import { useRouter } from "next/router";
+import React from "react";
+import { useSWRConfig } from "swr";
+import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
+import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
 import { getBaseError } from "../../../../lib/utilities/errors";
+import ComponentHeader from "../../../utils/ComponentHeader";
+import LabeledNode from "../../../utils/LabeledNode";
+import PageError from "../../../utils/PageError";
+import PageLoading from "../../../utils/PageLoading";
+import { appClasses } from "../../../utils/theme";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
+import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 
 export interface IWorkspaceRequestProps {
   requestId: string;
@@ -82,6 +83,13 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
           direction="vertical"
           node={last(request.statusHistory)?.status}
         />
+        <div className={appClasses.mainNoPadding}>
+          <AssignedPermissionGroupList
+            workspaceId={request.workspaceId}
+            permissionGroups={request.permissionGroupsOnAccept || []}
+            title="Permission Groups Assigned if Accepted"
+          />
+        </div>
       </Space>
     </div>
   );

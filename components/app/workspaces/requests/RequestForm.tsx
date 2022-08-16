@@ -1,28 +1,29 @@
 import { css, cx } from "@emotion/css";
-import { Button, DatePicker, Form, Input, message, Typography } from "antd";
-import * as yup from "yup";
-import React from "react";
 import { useRequest } from "ahooks";
+import { Button, DatePicker, Form, Input, message, Typography } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
-import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/messages/messages";
+import React from "react";
+import * as yup from "yup";
+import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
 import { checkEndpointResult } from "../../../../lib/api/utils";
-import {
-  appWorkspacePaths,
-  systemConstants,
-} from "../../../../lib/definitions/system";
-import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import FormError from "../../../form/FormError";
-import { formClasses } from "../../../form/classNames";
-import { signupValidationParts } from "../../../../lib/validation/user";
 import {
   ICollaborationRequest,
   ICollaborationRequestInput,
 } from "../../../../lib/definitions/collaborationRequest";
+import {
+  appWorkspacePaths,
+  systemConstants,
+} from "../../../../lib/definitions/system";
 import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
-import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
-import moment from "moment";
+import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
+import { messages } from "../../../../lib/messages/messages";
+import { systemValidation } from "../../../../lib/validation/system";
+import { signupValidationParts } from "../../../../lib/validation/user";
+import { formClasses } from "../../../form/classNames";
+import FormError from "../../../form/FormError";
 import { FormAlert } from "../../../utils/FormAlert";
+import SelectPermissionGroupInput from "../permissionGroups/SelectPermissionGroupInput";
 
 const requestValidation = yup.object().shape({
   recipientEmail: signupValidationParts.email.required(messages.emailRequired),
@@ -187,6 +188,32 @@ export default function RequestForm(props: IRequestFormProps) {
     </Form.Item>
   );
 
+  const permissionGroupsOnAcceptNode = (
+    <Form.Item
+      label="Assigned Permission Groups"
+      help={
+        formik.touched?.permissionGroupsOnAccept &&
+        formik.errors?.permissionGroupsOnAccept && (
+          <FormError
+            visible={formik.touched.permissionGroupsOnAccept}
+            error={formik.errors.permissionGroupsOnAccept}
+          />
+        )
+      }
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
+    >
+      <SelectPermissionGroupInput
+        workspaceId={workspaceId}
+        value={formik.values.permissionGroupsOnAccept || []}
+        disabled={submitResult.loading}
+        onChange={(items) =>
+          formik.setFieldValue("permissionGroupsOnAccept", items)
+        }
+      />
+    </Form.Item>
+  );
+
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
@@ -200,6 +227,7 @@ export default function RequestForm(props: IRequestFormProps) {
           {recipientEmailNode}
           {messageNode}
           {expiresNode}
+          {permissionGroupsOnAcceptNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

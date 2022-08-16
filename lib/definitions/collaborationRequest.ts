@@ -1,3 +1,7 @@
+import {
+  IAssignedPermissionGroup,
+  IPermissionGroupInput,
+} from "./permissionGroups";
 import { IAgent } from "./system";
 
 export enum CollaborationRequestStatusType {
@@ -41,15 +45,18 @@ export interface ICollaborationRequest {
   readAt?: string;
   statusHistory: ICollaborationRequestStatus[];
   sentEmailHistory: ICollaborationRequestSentEmailHistoryItem[];
+  permissionGroupsOnAccept?: IAssignedPermissionGroup[];
 }
 
 export interface ICollaborationRequestInput {
   recipientEmail: string;
   message: string;
   expires?: string;
+  permissionGroupsOnAccept?: IPermissionGroupInput[];
 }
 
 export interface IUpdateCollaborationRequestInput {
   message?: string;
   expiresAt?: string;
+  permissionGroupsOnAccept?: IPermissionGroupInput[];
 }

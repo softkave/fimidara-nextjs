@@ -1,9 +1,11 @@
-# Workspace and Collaboration Requests
+# Workspace
 
 - What is a workspace
 - How to create a workspace
   - Choosing a rootname
 - Sending collaboration requests
+  - Assigning permissions to requests
+- Assigning permissions to collaborators
 
 ## What is a workspace
 
