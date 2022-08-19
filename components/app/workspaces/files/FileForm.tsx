@@ -1,7 +1,14 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Form, Input, message, Space, Typography, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message, Space,
+  Typography,
+  Upload
+} from "antd";
 import { UploadFile } from "antd/lib/upload/interface";
 import { first } from "lodash";
 import { useRouter } from "next/router";
@@ -13,15 +20,15 @@ import { IEndpointResultBase } from "../../../../lib/api/types";
 import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   IFile,
-  UploadFilePublicAccessActions,
+  UploadFilePublicAccessActions
 } from "../../../../lib/definitions/file";
 import {
   addRootnameToPath,
-  folderConstants,
+  folderConstants
 } from "../../../../lib/definitions/folder";
 import {
   appWorkspacePaths,
-  systemConstants,
+  systemConstants
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
@@ -41,7 +48,7 @@ export interface IFileFormValue {
   data?: Blob;
   file: Array<UploadFile>;
   name: string;
-  publicAccessActions?: UploadFilePublicAccessActions;
+  publicAccessAction?: UploadFilePublicAccessActions;
 }
 
 const initialValues: IFileFormValue = {
@@ -245,10 +252,47 @@ export default function FileForm(props: IFileFormProps) {
           formik.setFieldValue("file", []);
         }}
       >
-        <Button icon={<UploadOutlined />}>Select File</Button>
+        <Button icon={<UploadOutlined />}>
+          {file ? "Replace File" : "Select File"}
+        </Button>
       </Upload>
     </Form.Item>
   );
+
+  // const publicAccessOpNode = (
+  //   <Form.Item
+  //     label="Public Access Action"
+  //     labelCol={{ span: 24 }}
+  //     wrapperCol={{ span: 24 }}
+  //     help={
+  //       formik.touched?.publicAccessAction &&
+  //       formik.errors?.publicAccessAction && (
+  //         <FormError
+  //           visible={formik.touched.publicAccessAction}
+  //           error={formik.errors.publicAccessAction}
+  //         />
+  //       )
+  //     }
+  //   >
+  //     <Select
+  //       showSearch
+  //       disabled
+  //       style={{ width: "100%" }}
+  //       placeholder="Action"
+  //       optionLabelProp="label"
+  //       value={formik.values.publicAccessAction}
+  //       optionFilterProp="label"
+  //       filterOption={filterOption}
+  //       filterSort={filterSort}
+  //     >
+  //       {Object.values(UploadFilePublicAccessActions).map((item) => (
+  //         <Select.Option key={item} label={item} value={item}>
+  //           {uploadFilePublicAccessActionsLabel[item]}
+  //         </Select.Option>
+  //       ))}
+  //     </Select>
+  //   </Form.Item>
+  // );
 
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
@@ -261,6 +305,7 @@ export default function FileForm(props: IFileFormProps) {
           {nameNode}
           {descriptionNode}
           {selectFileNode}
+          {/* {publicAccessOpNode} */}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

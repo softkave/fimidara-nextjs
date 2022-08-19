@@ -36,6 +36,17 @@ export enum UploadFilePublicAccessActions {
   ReadUpdateAndDelete = "read-update-delete",
 }
 
+export const uploadFilePublicAccessActionsLabel: Record<
+  UploadFilePublicAccessActions,
+  string
+> = {
+  [UploadFilePublicAccessActions.None]: "None",
+  [UploadFilePublicAccessActions.Read]: "Read",
+  [UploadFilePublicAccessActions.ReadAndUpdate]: "Read and update",
+  [UploadFilePublicAccessActions.ReadUpdateAndDelete]:
+    "Read, update and delete",
+};
+
 export interface IFileMatcher {
   filepath?: string;
   fileId?: string;
