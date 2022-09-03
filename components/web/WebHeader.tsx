@@ -1,10 +1,14 @@
-import React from "react";
-import { Typography, Space, Dropdown, Menu, Button } from "antd";
-import Link from "next/link";
 import { css } from "@emotion/css";
-import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
+import { Button, Dropdown, Menu, Space, Typography } from "antd";
+import Link from "next/link";
+import React from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
 import { appClasses } from "../utils/theme";
+
+export interface IWebHeaderProps {
+  prefixBtn?: React.ReactNode;
+}
 
 const classes = {
   root: css({
@@ -17,52 +21,14 @@ const classes = {
     marginLeft: "16px",
     justifyContent: "flex-end",
   }),
+  prefixBtnContainer: css({
+    marginRight: "16px",
+  }),
 };
 
-export default function WebHeader() {
-  // const responsive = useResponsive() as unknown as
-  //   | IUseResponsiveResult
-  //   | undefined;
+const WebHeader: React.FC<IWebHeaderProps> = (props) => {
+  const { prefixBtn } = props;
   let sideLinksNode: React.ReactNode = null;
-
-  // if (responsive?.lg) {
-  //   sideLinksNode = (
-  //     <Space size={"middle"}>
-  //       <Link href={appAccountPaths.signup}>Signup</Link>
-  //       <Link href={appAccountPaths.login}>Login</Link>
-  //       <Link href={appAccountPaths.forgotPassword}>Forgot Password</Link>
-  //     </Space>
-  //   );
-  // } else {
-  //   sideLinksNode = (
-  //     <Space size={"middle"}>
-  //       <Link href={appAccountPaths.login}>Login</Link>
-  //       <Dropdown
-  //         overlay={
-  //           <Menu>
-  //             <Menu.Item>
-  //               <Link href={appAccountPaths.signup}>Signup</Link>
-  //             </Menu.Item>
-  //             <Menu.Divider />
-  //             <Menu.Item>
-  //               <Link href={appAccountPaths.login}>Login</Link>
-  //             </Menu.Item>
-  //             <Menu.Divider />
-  //             <Menu.Item>
-  //               <Link href={appAccountPaths.forgotPassword}>
-  //                 Forgot Password
-  //               </Link>
-  //             </Menu.Item>
-  //           </Menu>
-  //         }
-  //         trigger={["click"]}
-  //       >
-  //         <Button icon={<EllipsisOutlined />} />
-  //       </Dropdown>
-  //     </Space>
-  //   );
-  // }
-
   sideLinksNode = (
     <Space size={"middle"}>
       <Link href={appAccountPaths.login}>Login</Link>
@@ -91,9 +57,12 @@ export default function WebHeader() {
 
   return (
     <div className={classes.root}>
-      <div>
+      {prefixBtn ? (
+        <div className={classes.prefixBtnContainer}>{prefixBtn}</div>
+      ) : null}
+      <div style={{ display: "flex", alignItems: "center" }}>
         <Link href={appRootPaths.home} passHref={false}>
-          <Typography.Title level={5} style={{ margin: 0 }}>
+          <Typography.Title level={5} style={{ margin: 0, cursor: "pointer" }}>
             fimidara
           </Typography.Title>
         </Link>
@@ -101,4 +70,6 @@ export default function WebHeader() {
       <div className={classes.sideLinks}>{sideLinksNode}</div>
     </div>
   );
-}
+};
+
+export default WebHeader;

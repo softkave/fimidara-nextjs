@@ -1,3 +1,0 @@
-# Endpoints
-
-- List of endpoints

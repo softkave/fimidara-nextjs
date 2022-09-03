@@ -1,4 +1,9 @@
-# Introduction to Fimidara
+---
+title: Introduction to fimidara
+description: A quick introduction to fimidara and how it works
+---
+
+# {% $markdoc.frontmatter.title %}
 
 ## What is Fimidara?
 
