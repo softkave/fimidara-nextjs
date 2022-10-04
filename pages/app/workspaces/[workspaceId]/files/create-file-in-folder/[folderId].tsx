@@ -61,10 +61,7 @@ const CreateFileInFolderParentFormPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(CreateFileInFolderParentFormPage, {
-  swrConfig,
-});
-
+export default withPageAuthRequired(CreateFileInFolderParentFormPage);
 export const getServerSideProps: GetServerSideProps<
   ICreateFileInFolderParentFormPageProps,
   ICreateFileInFolderParentFormPageProps

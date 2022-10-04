@@ -96,17 +96,17 @@ async function updatePermissionGroup(
 }
 
 export default class PermissionGroupAPI {
-  public static addPermissionGroup = addPermissionGroup;
-  public static getWorkspacePermissionGroups = getWorkspacePermissionGroups;
-  public static getPermissionGroup = getPermissionGroup;
-  public static deletePermissionGroup = deletePermissionGroup;
-  public static updatePermissionGroup = updatePermissionGroup;
+  static addPermissionGroup = addPermissionGroup;
+  static getWorkspacePermissionGroups = getWorkspacePermissionGroups;
+  static getPermissionGroup = getPermissionGroup;
+  static deletePermissionGroup = deletePermissionGroup;
+  static updatePermissionGroup = updatePermissionGroup;
 }
 
 export class PermissionGroupURL {
-  public static addPermissionGroup = addPermissionGroupURL;
-  public static getWorkspacePermissionGroups = getWorkspacePermissionGroupsURL;
-  public static getPermissionGroup = getPermissionGroupURL;
-  public static deletePermissionGroup = deletePermissionGroupURL;
-  public static updatePermissionGroup = updatePermissionGroupURL;
+  static addPermissionGroup = addPermissionGroupURL;
+  static getWorkspacePermissionGroups = getWorkspacePermissionGroupsURL;
+  static getPermissionGroup = getPermissionGroupURL;
+  static deletePermissionGroup = deletePermissionGroupURL;
+  static updatePermissionGroup = updatePermissionGroupURL;
 }

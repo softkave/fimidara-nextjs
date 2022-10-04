@@ -10,6 +10,6 @@ function getAll(state: IAppState) {
 }
 
 export default class KeyValueSelectors {
-  public static getKey = getKeyValue;
-  public static getAll = getAll;
+  static getKey = getKeyValue;
+  static getAll = getAll;
 }

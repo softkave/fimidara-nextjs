@@ -48,12 +48,12 @@ function assertGetUserId(state: IAppState) {
 }
 
 export default class SessionSelectors {
-  public static getUserToken = getUserToken;
-  public static isUserSignedIn = isUserSignedIn;
-  public static getSessionType = getSessionType;
-  public static assertGetToken = assertGetToken;
-  public static getSessionData = getSessionData;
-  public static getUserId = getUserId;
-  public static assertGetUserId = assertGetUserId;
-  public static assertGetClientAssignedToken = assertGetClientAssignedToken;
+  static getUserToken = getUserToken;
+  static isUserSignedIn = isUserSignedIn;
+  static getSessionType = getSessionType;
+  static assertGetToken = assertGetToken;
+  static getSessionData = getSessionData;
+  static getUserId = getUserId;
+  static assertGetUserId = assertGetUserId;
+  static assertGetClientAssignedToken = assertGetClientAssignedToken;
 }

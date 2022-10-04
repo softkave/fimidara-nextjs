@@ -148,23 +148,23 @@ async function getRequest(props: IGetCollaborationRequestEndpointParams) {
 }
 
 export default class CollaborationRequestAPI {
-  public static deleteRequest = deleteRequest;
-  public static getWorkspaceRequests = getWorkspaceRequests;
-  public static getUserRequests = getUserRequests;
-  public static sendRequest = sendRequest;
-  public static updateRequest = updateRequest;
-  public static respondToRequest = respondToRequest;
-  public static revokeRequest = revokeRequest;
-  public static getRequest = getRequest;
+  static deleteRequest = deleteRequest;
+  static getWorkspaceRequests = getWorkspaceRequests;
+  static getUserRequests = getUserRequests;
+  static sendRequest = sendRequest;
+  static updateRequest = updateRequest;
+  static respondToRequest = respondToRequest;
+  static revokeRequest = revokeRequest;
+  static getRequest = getRequest;
 }
 
 export class CollaborationRequestURLs {
-  public static deleteRequest = deleteRequestURL;
-  public static getWorkspaceRequests = getWorkspaceRequestsURL;
-  public static getUserRequests = getUserRequestsURL;
-  public static sendRequest = sendRequestURL;
-  public static updateRequest = updateRequestURL;
-  public static respondToRequest = respondToRequestURL;
-  public static revokeRequest = revokeRequestURL;
-  public static getRequest = getRequestURL;
+  static deleteRequest = deleteRequestURL;
+  static getWorkspaceRequests = getWorkspaceRequestsURL;
+  static getUserRequests = getUserRequestsURL;
+  static sendRequest = sendRequestURL;
+  static updateRequest = updateRequestURL;
+  static respondToRequest = respondToRequestURL;
+  static revokeRequest = revokeRequestURL;
+  static getRequest = getRequestURL;
 }

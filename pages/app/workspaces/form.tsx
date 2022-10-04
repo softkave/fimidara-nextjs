@@ -1,5 +1,5 @@
 import { Space } from "antd";
-import AppHeader from "../../../components/app/AppHeader";
+import LoggedInHeader from "../../../components/app/LoggedInHeader";
 import WorkspaceForm from "../../../components/app/workspaces/WorkspaceForm";
 import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
 import { appClasses } from "../../../components/utils/theme";
@@ -7,7 +7,7 @@ import { appClasses } from "../../../components/utils/theme";
 function WorkspaceFormPage() {
   return (
     <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-      <AppHeader />
+      <LoggedInHeader />
       <WorkspaceForm className={appClasses.main} />
     </Space>
   );

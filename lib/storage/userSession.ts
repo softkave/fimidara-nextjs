@@ -7,23 +7,21 @@ import {
 import { StorageKeys } from "./types";
 
 export default class UserSessionStorageFns {
-  public static getUserToken = makeGetFnForKey(StorageKeys.UserToken);
-  public static saveUserToken = makeSetFnForKey(StorageKeys.UserToken);
-  public static deleteUserToken = makeRemoveFnForKey(StorageKeys.UserToken);
-  public static saveUserTokenIfExists = makeSetIfExistFnForKey(
-    StorageKeys.UserToken
-  );
+  static getUserToken = makeGetFnForKey(StorageKeys.UserToken);
+  static saveUserToken = makeSetFnForKey(StorageKeys.UserToken);
+  static deleteUserToken = makeRemoveFnForKey(StorageKeys.UserToken);
+  static saveUserTokenIfExists = makeSetIfExistFnForKey(StorageKeys.UserToken);
 
-  public static getClientAssignedToken = makeGetFnForKey(
+  static getClientAssignedToken = makeGetFnForKey(
     StorageKeys.ClientAssignedToken
   );
-  public static saveClientAssignedToken = makeSetFnForKey(
+  static saveClientAssignedToken = makeSetFnForKey(
     StorageKeys.ClientAssignedToken
   );
-  public static deleteClientAssignedToken = makeRemoveFnForKey(
+  static deleteClientAssignedToken = makeRemoveFnForKey(
     StorageKeys.ClientAssignedToken
   );
-  public static saveClientAssignedTokenIfExists = makeSetIfExistFnForKey(
+  static saveClientAssignedTokenIfExists = makeSetIfExistFnForKey(
     StorageKeys.ClientAssignedToken
   );
 }

@@ -96,19 +96,19 @@ async function updateWorkspace(props: IUpdateWorkspaceEndpointParams) {
 }
 
 export default class WorkspaceAPI {
-  public static addWorkspace = addWorkspace;
-  public static deleteWorkspace = deleteWorkspace;
-  public static getWorkspace = getWorkspace;
-  public static getRequestWorkspace = getRequestWorkspace;
-  public static getUserWorkspaces = getUserWorkspaces;
-  public static updateWorkspace = updateWorkspace;
+  static addWorkspace = addWorkspace;
+  static deleteWorkspace = deleteWorkspace;
+  static getWorkspace = getWorkspace;
+  static getRequestWorkspace = getRequestWorkspace;
+  static getUserWorkspaces = getUserWorkspaces;
+  static updateWorkspace = updateWorkspace;
 }
 
 export class WorkspaceURLs {
-  public static addWorkspace = addWorkspaceURL;
-  public static deleteWorkspace = deleteWorkspaceURL;
-  public static getWorkspace = getWorkspaceURL;
-  public static getRequestWorkspace = getRequestWorkspaceURL;
-  public static getUserWorkspaces = getUserWorkspacesURL;
-  public static updateWorkspace = updateWorkspaceURL;
+  static addWorkspace = addWorkspaceURL;
+  static deleteWorkspace = deleteWorkspaceURL;
+  static getWorkspace = getWorkspaceURL;
+  static getRequestWorkspace = getRequestWorkspaceURL;
+  static getUserWorkspaces = getUserWorkspacesURL;
+  static updateWorkspace = updateWorkspaceURL;
 }

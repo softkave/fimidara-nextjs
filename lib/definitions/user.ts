@@ -62,6 +62,6 @@ export const userConstants = {
 };
 
 export class EmailAddressNotAvailableError extends OperationError {
-  public name = "EmailAddressNotAvailableError";
-  public message = "Email address is not available";
+  name = "EmailAddressNotAvailableError";
+  message = "Email address is not available";
 }

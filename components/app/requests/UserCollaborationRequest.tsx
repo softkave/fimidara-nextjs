@@ -1,28 +1,28 @@
+import { css } from "@emotion/css";
+import { useRequest } from "ahooks";
 import { Button, message, Space, Typography } from "antd";
-import React from "react";
+import assert from "assert";
 import { formatRelative } from "date-fns";
+import { last } from "lodash";
+import React from "react";
 import { useSWRConfig } from "swr";
-import useCollaborationRequest, {
-  getUseCollaborationRequestHookKey,
-} from "../../../lib/hooks/requests/useRequest";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
+import CollaborationRequestAPI from "../../../lib/api/endpoints/collaborationRequest";
+import { checkEndpointResult } from "../../../lib/api/utils";
 import {
   CollaborationRequestResponse,
   CollaborationRequestStatusType,
 } from "../../../lib/definitions/collaborationRequest";
-import CollaborationRequestAPI from "../../../lib/api/endpoints/collaborationRequest";
-import assert from "assert";
-import { useRequest } from "ahooks";
+import useCollaborationRequest, {
+  getUseCollaborationRequestHookKey,
+} from "../../../lib/hooks/requests/useRequest";
 import { getBaseError } from "../../../lib/utilities/errors";
-import { checkEndpointResult } from "../../../lib/api/utils";
-import AppHeader from "../AppHeader";
 import withPageAuthRequired from "../../hoc/withPageAuthRequired";
-import { appDimensions } from "../../utils/theme";
-import { css } from "@emotion/css";
-import { last } from "lodash";
-import InlineLoading from "../../utils/InlineLoading";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
+import InlineLoading from "../../utils/InlineLoading";
+import PageError from "../../utils/PageError";
+import PageLoading from "../../utils/PageLoading";
+import { appDimensions } from "../../utils/theme";
+import LoggedInHeader from "../LoggedInHeader";
 
 export interface IUserCollaborationRequestProps {
   requestId: string;
@@ -147,7 +147,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
 
   return (
     <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-      <AppHeader />
+      <LoggedInHeader />
       {content}
     </Space>
   );

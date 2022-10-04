@@ -152,15 +152,15 @@ async function uploadFile(props: IUploadFileEndpointParams) {
 }
 
 export default class FileAPI {
-  public static deleteFile = deleteFile;
-  public static getFileDetails = getFileDetails;
-  public static updateFileDetails = updateFileDetails;
-  public static uploadFile = uploadFile;
+  static deleteFile = deleteFile;
+  static getFileDetails = getFileDetails;
+  static updateFileDetails = updateFileDetails;
+  static uploadFile = uploadFile;
 }
 
 export class FileURLs {
-  public static deleteFile = deleteFileURL;
-  public static getFileDetails = getFileDetailsURL;
-  public static updateFileDetails = updateFileDetailsURL;
-  public static uploadFile = uploadFileURL;
+  static deleteFile = deleteFileURL;
+  static getFileDetails = getFileDetailsURL;
+  static updateFileDetails = updateFileDetailsURL;
+  static uploadFile = uploadFileURL;
 }

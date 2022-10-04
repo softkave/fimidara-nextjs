@@ -4,27 +4,27 @@ import OperationError from "./OperationError";
 import { flattenErrorList } from "./utils";
 
 export class ServerError extends OperationError {
-  public name = "ServerError";
-  public message = "Server error";
+  name = "ServerError";
+  message = "Server error";
 }
 
 export class ValidationError extends OperationError {
-  public name = "ValidationError";
+  name = "ValidationError";
 }
 
 export class InvalidCredentialsError extends OperationError {
-  public name = "InvalidCredentialsError";
-  public message = "Invalid credentials";
+  name = "InvalidCredentialsError";
+  message = "Invalid credentials";
 }
 
 export class CredentialsExpiredError extends OperationError {
-  public name = "CredentialsExpiredError";
-  public message = "Credentials expired";
+  name = "CredentialsExpiredError";
+  message = "Credentials expired";
 }
 
 export class EmailAddressNotVerifiedError extends OperationError {
-  public name = "EmailAddressNotVerifiedError";
-  public message =
+  name = "EmailAddressNotVerifiedError";
+  message =
     "Only read-related actions are permitted for unverified email addresses. " +
     "Please login and go to the Settings page to verify your email address.";
 }

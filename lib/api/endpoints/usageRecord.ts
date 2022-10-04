@@ -43,11 +43,11 @@ async function getWorkspaceSummedUsage(
 }
 
 export default class UsageRecordAPI {
-  public static getUsageCosts = getUsageCosts;
-  public static getWorkspaceSummedUsage = getWorkspaceSummedUsage;
+  static getUsageCosts = getUsageCosts;
+  static getWorkspaceSummedUsage = getWorkspaceSummedUsage;
 }
 
 export class UsageRecordURLs {
-  public static getUsageCosts = getUsageCostsPath;
-  public static getWorkspaceSummedUsage = getWorkspaceSummedUsagePath;
+  static getUsageCosts = getUsageCostsPath;
+  static getWorkspaceSummedUsage = getWorkspaceSummedUsagePath;
 }

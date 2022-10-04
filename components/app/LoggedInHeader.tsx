@@ -2,7 +2,6 @@ import { AlertOutlined, ShopOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Button, Popover, Space, Tooltip, Typography } from "antd";
 import Link from "next/link";
-import React from "react";
 import { appWorkspacePaths } from "../../lib/definitions/system";
 import UserCollaborationRequestList from "./requests/UserCollaborationRequestList";
 import UserMenu from "./UserMenu";
@@ -21,7 +20,7 @@ const classes = {
   notifications: css({ minWidth: "260px", minHeight: "200px" }),
 };
 
-export default function AppHeader() {
+export default function LoggedInHeader() {
   return (
     <div className={classes.root}>
       <div>

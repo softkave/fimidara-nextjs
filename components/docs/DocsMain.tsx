@@ -4,7 +4,7 @@ import Dropdown from "antd/lib/dropdown";
 import Menu from "antd/lib/menu";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import WebHeader from "../web/WebHeader";
+import FimidaraHeader from "../FimidaraHeader";
 import { docsNavItems } from "./navItems";
 
 export interface IDocsMainProps {
@@ -23,7 +23,7 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
         <Menu
           items={docsNavItems}
           defaultSelectedKeys={[router.pathname]}
-          style={{ minWidth: "120px" }}
+          style={{ minWidth: "145px" }}
         />
       }
     >
@@ -40,7 +40,7 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
         <meta name="title" content={title} />
         <meta name="description" content={description} />
       </Head>
-      <WebHeader prefixBtn={dropdownNode} />
+      <FimidaraHeader webHeaderProps={{ prefixBtn: dropdownNode }} />
       <div className="page">
         {/* <SideNav /> */}
         <main className="flex column">{children}</main>

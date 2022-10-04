@@ -11,7 +11,7 @@ import { getBaseError } from "../../../lib/utilities/errors";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import { appClasses } from "../../utils/theme";
-import AppHeader from "../AppHeader";
+import LoggedInHeader from "../LoggedInHeader";
 import WorkspaceHeader from "./WorkspaceHeader";
 
 export interface IWorkspaceProps {
@@ -52,7 +52,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
   if (error) {
     return (
       <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-        <AppHeader />
+        <LoggedInHeader />
         <PageError
           className={appClasses.main}
           messageText={getBaseError(error) || "Error fetching workspace"}
@@ -64,7 +64,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
   if (isLoading || !data) {
     return (
       <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-        <AppHeader />
+        <LoggedInHeader />
         <PageLoading messageText="Loading workspace..." />
       </Space>
     );
