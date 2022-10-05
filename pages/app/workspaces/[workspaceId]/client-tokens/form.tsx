@@ -1,11 +1,11 @@
 import React from "react";
 import ClientTokenForm from "../../../../../components/app/workspaces/clientTokens/ClientTokenForm";
-import Workspace from "../../../../../components/app/workspaces/Workspace";
 import {
   getWorkspaceServerSideProps,
   IWorkspaceComponentProps,
 } from "../../../../../components/app/workspaces/utils";
-import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../lib/definitions/system";
 
 const WorkspaceCreateClientTokenFormPage: React.FC<IWorkspaceComponentProps> = (
@@ -23,5 +23,5 @@ const WorkspaceCreateClientTokenFormPage: React.FC<IWorkspaceComponentProps> = (
   );
 };
 
-export default withPageAuthRequired(WorkspaceCreateClientTokenFormPage);
+export default withPageAuthRequiredHOC(WorkspaceCreateClientTokenFormPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

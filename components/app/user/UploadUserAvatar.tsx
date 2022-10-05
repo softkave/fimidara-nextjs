@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { withServerAddr } from "../../../lib/api/addr";
 import {
   getFetchUserImagePath,
@@ -7,13 +7,13 @@ import {
 } from "../../../lib/api/endpoints/file";
 import KeyValueActions from "../../../lib/store/key-value/actions";
 import { KeyValueKeys } from "../../../lib/store/key-value/types";
-import SessionSelectors from "../../../lib/store/session/selectors";
 import { formClasses } from "../../form/classNames";
+import { useUserNode } from "../../hooks/useUserNode";
 import ImageAndUploadAvatar from "../../utils/ImageAndUploadAvatar";
 import { appDimensions } from "../../utils/theme";
 
 export default function UploadUserAvatar() {
-  const userId = useSelector(SessionSelectors.assertGetUserId);
+  const u0 = useUserNode();
   const dispatch = useDispatch();
   const onCompleteUpload = React.useCallback(() => {
     dispatch(
@@ -24,6 +24,11 @@ export default function UploadUserAvatar() {
     );
   }, [dispatch]);
 
+  if (u0.renderNode) {
+    return u0.renderNode;
+  }
+
+  const userId = u0.assertGet().user.resourceId;
   return (
     <div className={formClasses.formContentWrapperClassName}>
       <ImageAndUploadAvatar

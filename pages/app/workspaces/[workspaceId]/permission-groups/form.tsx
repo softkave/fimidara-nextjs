@@ -1,11 +1,11 @@
 import React from "react";
-import Workspace from "../../../../../components/app/workspaces/Workspace";
 import PermissionGroupForm from "../../../../../components/app/workspaces/permissionGroups/PermissionGroupForm";
 import {
   getWorkspaceServerSideProps,
   IWorkspaceComponentProps,
 } from "../../../../../components/app/workspaces/utils";
-import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../lib/definitions/system";
 
 const WorkspaceCreatePermissionGroupFormPage: React.FC<
@@ -23,5 +23,5 @@ const WorkspaceCreatePermissionGroupFormPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(WorkspaceCreatePermissionGroupFormPage);
+export default withPageAuthRequiredHOC(WorkspaceCreatePermissionGroupFormPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

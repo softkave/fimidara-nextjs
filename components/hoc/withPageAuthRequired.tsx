@@ -1,7 +1,8 @@
+import { isUndefined } from "lodash";
 import { useRouter } from "next/router";
 import React from "react";
 import { appAccountPaths } from "../../lib/definitions/system";
-import useUserLoggedIn from "../../lib/hooks/useUserLoggedIn";
+import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 
 const defaultOnRedirecting = (): React.ReactElement => <></>;
 
@@ -10,16 +11,18 @@ export interface WithPageAuthRequiredOptions {
   onRedirecting?: () => React.ReactElement;
 }
 
-const withPageAuthRequired = <P extends object>(
+const withPageAuthRequiredHOC = <P extends object>(
   Component: React.ComponentType<P>,
   options: WithPageAuthRequiredOptions = {}
 ) => {
-  const withPageAuthRequired: React.FC<P> = (props) => {
+  const WithPageAuthRequired: React.FC<P> = (props) => {
     const { returnTo, onRedirecting = defaultOnRedirecting } = options;
     const router = useRouter();
     const isLoggedIn = useUserLoggedIn();
     React.useEffect(() => {
-      if (isLoggedIn) return;
+      if (isUndefined(isLoggedIn) || isLoggedIn) return;
+
+      // run the following only is isLoggedIn is strictly false
       if (!returnTo) {
         router.push(appAccountPaths.login);
       } else {
@@ -31,7 +34,7 @@ const withPageAuthRequired = <P extends object>(
     return onRedirecting();
   };
 
-  return withPageAuthRequired;
+  return WithPageAuthRequired;
 };
 
-export default withPageAuthRequired;
+export default withPageAuthRequiredHOC;

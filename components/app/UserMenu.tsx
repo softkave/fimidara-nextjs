@@ -2,18 +2,22 @@ import { CaretDownOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Space } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { appRootPaths, appUserPaths } from "../../lib/definitions/system";
 import SessionActions from "../../lib/store/session/actions";
-import SessionSelectors from "../../lib/store/session/selectors";
+import { useUserNode } from "../hooks/useUserNode";
 import UserAvatar from "./user/UserAvatar";
 
 const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
-  const userId = useSelector(SessionSelectors.assertGetUserId);
+  const { renderNode, assertGet } = useUserNode();
   const dispatch = useDispatch();
   const router = useRouter();
+  if (renderNode) {
+    return renderNode;
+  }
+
   return (
     <Dropdown
       trigger={["click"]}
@@ -45,7 +49,10 @@ export default function UserMenu() {
         }}
       >
         <Space size={"small"}>
-          <UserAvatar userId={userId} alt="Your profile picture" />
+          <UserAvatar
+            userId={assertGet().user.resourceId}
+            alt="Your profile picture"
+          />
           <CaretDownOutlined />
         </Space>
       </Button>

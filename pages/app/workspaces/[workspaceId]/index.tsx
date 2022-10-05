@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import React from "react";
-import Workspace from "../../../../components/app/workspaces/Workspace";
 import { getWorkspaceServerSideProps } from "../../../../components/app/workspaces/utils";
-import withPageAuthRequired from "../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 
 export interface IWorkspacePageProps {
@@ -20,5 +20,5 @@ const WorkspacePage: React.FC<IWorkspacePageProps> = (props) => {
   return <Workspace workspaceId={workspaceId} activeKey="" />;
 };
 
-export default withPageAuthRequired(WorkspacePage);
+export default withPageAuthRequiredHOC(WorkspacePage);
 export const getServerSideProps = getWorkspaceServerSideProps;

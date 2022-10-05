@@ -6,7 +6,7 @@ import {
   IWorkspaceComponentProps,
 } from "../../../../../components/app/workspaces/utils";
 import Workspace from "../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../lib/definitions/system";
 
 const swrConfig: SWRConfiguration = {
@@ -41,5 +41,5 @@ const CreateRootLevelFileFormPage: React.FC<IWorkspaceComponentProps> = (
   );
 };
 
-export default withPageAuthRequired(CreateRootLevelFileFormPage);
+export default withPageAuthRequiredHOC(CreateRootLevelFileFormPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

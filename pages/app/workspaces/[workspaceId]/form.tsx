@@ -1,10 +1,10 @@
 import { Divider, Space } from "antd";
 import { NextPage } from "next";
-import WorkspaceForm from "../../../../components/app/workspaces/WorkspaceForm";
-import WorkspaceHeader from "../../../../components/app/workspaces/WorkspaceHeader";
 import UploadWorkspaceAvatar from "../../../../components/app/workspaces/UploadWorkspaceAvatar";
 import { getWorkspaceServerSideProps } from "../../../../components/app/workspaces/utils";
-import withPageAuthRequired from "../../../../components/hoc/withPageAuthRequired";
+import WorkspaceForm from "../../../../components/app/workspaces/WorkspaceForm";
+import WorkspaceHeader from "../../../../components/app/workspaces/WorkspaceHeader";
+import withPageAuthRequiredHOC from "../../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../../components/utils/PageError";
 import PageLoading from "../../../../components/utils/PageLoading";
 import { appClasses } from "../../../../components/utils/theme";
@@ -40,5 +40,5 @@ const EditWorkspacePage: NextPage<IEditWorkspacePageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(EditWorkspacePage);
+export default withPageAuthRequiredHOC(EditWorkspacePage);
 export const getServerSideProps = getWorkspaceServerSideProps;

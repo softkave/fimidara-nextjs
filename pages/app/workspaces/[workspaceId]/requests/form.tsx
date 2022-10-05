@@ -1,11 +1,11 @@
 import React from "react";
-import Workspace from "../../../../../components/app/workspaces/Workspace";
 import RequestForm from "../../../../../components/app/workspaces/requests/RequestForm";
 import {
   getWorkspaceServerSideProps,
   IWorkspaceComponentProps,
 } from "../../../../../components/app/workspaces/utils";
-import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../lib/definitions/system";
 
 const WorkspaceCreateRequestFormPage: React.FC<IWorkspaceComponentProps> = (
@@ -23,5 +23,5 @@ const WorkspaceCreateRequestFormPage: React.FC<IWorkspaceComponentProps> = (
   );
 };
 
-export default withPageAuthRequired(WorkspaceCreateRequestFormPage);
+export default withPageAuthRequiredHOC(WorkspaceCreateRequestFormPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

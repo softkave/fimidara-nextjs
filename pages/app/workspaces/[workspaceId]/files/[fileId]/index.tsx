@@ -3,7 +3,7 @@ import React from "react";
 import FileComponent from "../../../../../../components/app/workspaces/files/FileComponent";
 import FileContainer from "../../../../../../components/app/workspaces/files/FileContainer";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 import { IWorkspace } from "../../../../../../lib/definitions/workspace";
 
@@ -38,7 +38,7 @@ const FilePage: React.FC<IFilePageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(FilePage);
+export default withPageAuthRequiredHOC(FilePage);
 
 export const getServerSideProps: GetServerSideProps<
   IFilePageProps,

@@ -1,14 +1,7 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import {
-  Button,
-  Form,
-  Input,
-  message, Space,
-  Typography,
-  Upload
-} from "antd";
+import { Button, Form, Input, message, Space, Typography, Upload } from "antd";
 import { UploadFile } from "antd/lib/upload/interface";
 import { first } from "lodash";
 import { useRouter } from "next/router";
@@ -20,15 +13,15 @@ import { IEndpointResultBase } from "../../../../lib/api/types";
 import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   IFile,
-  UploadFilePublicAccessActions
+  UploadFilePublicAccessActions,
 } from "../../../../lib/definitions/file";
 import {
   addRootnameToPath,
-  folderConstants
+  folderConstants,
 } from "../../../../lib/definitions/folder";
 import {
   appWorkspacePaths,
-  systemConstants
+  systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
@@ -38,6 +31,7 @@ import { fileValidationParts } from "../../../../lib/validation/file";
 import { systemValidation } from "../../../../lib/validation/system";
 import { formClasses } from "../../../form/classNames";
 import FormError from "../../../form/FormError";
+import { useUserNode } from "../../../hooks/useUserNode";
 import { FormAlert } from "../../../utils/FormAlert";
 
 export interface IFileFormValue {
@@ -86,14 +80,18 @@ export default function FileForm(props: IFileFormProps) {
   } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const { renderNode: userLoadNode, assertGet: assertGetUserData } =
+    useUserNode();
   const onSubmit = React.useCallback(
     async (data: IFileFormValue) => {
       let fileId: string | null = null;
       const inputFile = first(data.file);
+      const clientAssignedToken = assertGetUserData().clientAssignedToken;
       if (file) {
         let result: IEndpointResultBase;
         if (inputFile) {
           result = await FileAPI.uploadFile({
+            clientAssignedToken,
             fileId: file.resourceId,
             description: data.description,
             data: inputFile as any,
@@ -124,6 +122,7 @@ export default function FileForm(props: IFileFormProps) {
         }
 
         const result = await FileAPI.uploadFile({
+          clientAssignedToken,
           filepath: addRootnameToPath(
             folderpath
               ? `${folderpath}${folderConstants.nameSeparator}${data.name}`

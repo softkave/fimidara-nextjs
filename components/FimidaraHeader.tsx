@@ -1,4 +1,4 @@
-import useUserLoggedIn from "../lib/hooks/useUserLoggedIn";
+import { useUserLoggedIn } from "../lib/hooks/useUserLoggedIn";
 import LoggedInHeader from "./app/LoggedInHeader";
 import WebHeader, { IWebHeaderProps } from "./web/WebHeader";
 

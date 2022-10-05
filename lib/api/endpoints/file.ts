@@ -7,8 +7,6 @@ import {
 } from "../../definitions/file";
 import { folderConstants } from "../../definitions/folder";
 import { systemConstants } from "../../definitions/system";
-import SessionSelectors from "../../store/session/selectors";
-import store from "../../store/store";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import {
   HTTP_HEADER_AUTHORIZATION,
@@ -124,6 +122,7 @@ export interface IUploadFileEndpointParams extends IFileMatcher {
   mimetype?: string;
   data: Blob;
   publicAccessActions?: UploadFilePublicAccessActions;
+  clientAssignedToken: string;
 }
 
 export type IUploadFileEndpointResult = GetEndpointResult<{
@@ -139,13 +138,12 @@ async function uploadFile(props: IUploadFileEndpointParams) {
   setEndpointFormData(formData, "encoding", props.encoding);
   setEndpointFormData(formData, "extension", props.extension);
   setEndpointFormData(formData, "mimetype", props.mimetype);
-  const clientAssignedToken = SessionSelectors.assertGetToken(store.getState());
   return await invokeEndpoint<IUploadFileEndpointResult>({
     path: props.filepath ? getUploadfilepath(props.filepath) : uploadFileURL,
     data: formData,
     headers: {
       // [HTTP_HEADER_CONTENT_TYPE]: CONTENT_TYPE_MULTIPART_FORMDATA,
-      [HTTP_HEADER_AUTHORIZATION]: `Bearer ${clientAssignedToken}`,
+      [HTTP_HEADER_AUTHORIZATION]: `Bearer ${props.clientAssignedToken}`,
     },
     omitContentTypeHeader: true,
   });

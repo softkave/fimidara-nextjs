@@ -7,16 +7,15 @@ import { useSWRConfig } from "swr";
 import * as yup from "yup";
 import FolderAPI from "../../../../lib/api/endpoints/folder";
 import { checkEndpointResult } from "../../../../lib/api/utils";
-import { fileConstants } from "../../../../lib/definitions/file";
 import {
   addRootnameToPath,
   folderConstants,
-  IFolder
+  IFolder,
 } from "../../../../lib/definitions/folder";
 import {
   AppResourceType,
   appWorkspacePaths,
-  systemConstants
+  systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
@@ -29,22 +28,21 @@ import FormError from "../../../form/FormError";
 import { FormAlert } from "../../../utils/FormAlert";
 import {
   IResourcePublicAccessActions,
-  resourceListPublicAccessActionsToPublicAccessOps
+  resourceListPublicAccessActionsToPublicAccessOps,
 } from "./FolderPublicAccessOpsInput";
 
 const folderValidation = yup.object().shape({
   name: fileValidationParts.filename.required(messages.fieldIsRequired),
   description: systemValidation.description.nullable(),
-  maxFileSizeInBytes: yup
-    .number()
-    .max(fileConstants.maxFileSizeInBytes)
-    .nullable(),
+  // maxFileSizeInBytes: yup
+  //   .number()
+  //   .max(fileConstants.maxFileSizeInBytes)
+  //   .nullable(),
 });
 
 export interface IFolderFormValues {
   name: string;
   description?: string;
-  maxFileSizeInBytes?: number;
   publicAccessOps: IResourcePublicAccessActions[];
 }
 
@@ -72,7 +70,6 @@ function getFolderFormInputFromFolder(item: IFolder): IFolderFormValues {
     publicAccessOps,
     name: item.name,
     description: item.description,
-    maxFileSizeInBytes: item.maxFileSizeInBytes,
   };
 }
 
@@ -108,7 +105,6 @@ export default function FolderForm(props: IFolderFormProps) {
           folderId: folder.resourceId,
           folder: {
             description: data.description,
-            maxFileSizeInBytes: data.maxFileSizeInBytes,
             publicAccessOps: resourceListPublicAccessActionsToPublicAccessOps(
               data.publicAccessOps
             ),
@@ -138,7 +134,6 @@ export default function FolderForm(props: IFolderFormProps) {
           folder: {
             folderpath: addRootnameToPath(folderpath, workspaceRootname),
             description: data.description,
-            maxFileSizeInBytes: data.maxFileSizeInBytes,
             publicAccessOps: resourceListPublicAccessActionsToPublicAccessOps(
               data.publicAccessOps
             ),

@@ -5,7 +5,7 @@ import FileContainer from "../../../../../../components/app/workspaces/files/Fil
 import FileForm from "../../../../../../components/app/workspaces/files/FileForm";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import WorkspaceContainer from "../../../../../../components/app/workspaces/WorkspaceContainer";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import { IFile } from "../../../../../../lib/definitions/file";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 
@@ -56,7 +56,7 @@ const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(UpdateFileFormPage);
+export default withPageAuthRequiredHOC(UpdateFileFormPage);
 export const getServerSideProps: GetServerSideProps<
   IUpdateFileFormPageProps,
   IUpdateFileFormPageProps

@@ -3,7 +3,7 @@ import React from "react";
 import Folder from "../../../../../../components/app/workspaces/files/Folder";
 import FolderContainer from "../../../../../../components/app/workspaces/files/FolderContainer";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 import { IWorkspace } from "../../../../../../lib/definitions/workspace";
 
@@ -37,7 +37,7 @@ const FolderPage: React.FC<IFolderPageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(FolderPage);
+export default withPageAuthRequiredHOC(FolderPage);
 
 export const getServerSideProps: GetServerSideProps<
   IFolderPageProps,

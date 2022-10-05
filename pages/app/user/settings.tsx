@@ -4,7 +4,7 @@ import ChangeUserPassword from "../../../components/app/user/ChangeUserPassword"
 import EmailVerification from "../../../components/app/user/EmailVerification";
 import UploadUserAvatar from "../../../components/app/user/UploadUserAvatar";
 import UserProfile from "../../../components/app/user/UserProfile";
-import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../components/hoc/withPageAuthRequired";
 
 function UserSettings() {
   return (
@@ -22,4 +22,4 @@ function UserSettings() {
   );
 }
 
-export default withPageAuthRequired(UserSettings);
+export default withPageAuthRequiredHOC(UserSettings);

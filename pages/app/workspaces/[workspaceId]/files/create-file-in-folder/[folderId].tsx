@@ -5,7 +5,7 @@ import FileForm from "../../../../../../components/app/workspaces/files/FileForm
 import FolderContainer from "../../../../../../components/app/workspaces/files/FolderContainer";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import WorkspaceContainer from "../../../../../../components/app/workspaces/WorkspaceContainer";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import {
   folderConstants,
   IFolder,
@@ -61,7 +61,7 @@ const CreateFileInFolderParentFormPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(CreateFileInFolderParentFormPage);
+export default withPageAuthRequiredHOC(CreateFileInFolderParentFormPage);
 export const getServerSideProps: GetServerSideProps<
   ICreateFileInFolderParentFormPageProps,
   ICreateFileInFolderParentFormPageProps
