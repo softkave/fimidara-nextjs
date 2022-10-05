@@ -41,5 +41,5 @@ const CreateRootLevelFileFormPage: React.FC<IWorkspaceComponentProps> = (
   );
 };
 
-export default withPageAuthRequired(CreateRootLevelFileFormPage, { swrConfig });
+export default withPageAuthRequired(CreateRootLevelFileFormPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

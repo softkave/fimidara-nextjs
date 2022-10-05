@@ -1,9 +1,9 @@
-import isString from "lodash/isString";
 import { createAction, createReducer } from "@reduxjs/toolkit";
+import isString from "lodash/isString";
+import { IAppError } from "../definitions/system";
 import { IMergeDataMeta, mergeData } from "../utilities/utils";
 import SessionActions from "./session/actions";
 import { IAppState } from "./types";
-import { IAppError } from "../definitions/system";
 
 export const errorToAppError = (err: Error | IAppError | string): IAppError => {
   const error = isString(err) ? new Error(err) : err;
@@ -44,12 +44,12 @@ export function getActions<T extends object>(name: string) {
   const bulkDelete = createAction<string[]>(`${name}/bulkDelete`);
 
   return class {
-    public static add = add;
-    public static update = update;
-    public static remove = remove;
-    public static bulkAdd = bulkAdd;
-    public static bulkUpdate = bulkUpdate;
-    public static bulkDelete = bulkDelete;
+    static add = add;
+    static update = update;
+    static remove = remove;
+    static bulkAdd = bulkAdd;
+    static bulkUpdate = bulkUpdate;
+    static bulkDelete = bulkDelete;
   };
 }
 
@@ -198,9 +198,9 @@ export function getSelectors<T>(key: keyof IAppState) {
   }
 
   return class {
-    public static getOne = getOne;
-    public static getMany = getMany;
-    public static filter = filter;
-    public static getMap = getMap;
+    static getOne = getOne;
+    static getMany = getMany;
+    static filter = filter;
+    static getMap = getMap;
   };
 }

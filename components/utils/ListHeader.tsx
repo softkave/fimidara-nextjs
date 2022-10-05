@@ -1,12 +1,12 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Typography, Button, Space } from "antd";
+import { Button, Space, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
 
 export interface IListHeaderProps {
   title: string;
-  formLinkPath: string;
+  formLinkPath?: string;
   actions?: React.ReactNode;
 }
 
@@ -31,9 +31,11 @@ const ListHeader: React.FC<IListHeaderProps> = (props) => {
         {title}
       </Typography.Title>
       <Space className={classes.sideLinks}>
-        <Link href={formLinkPath} passHref={false}>
-          <Button icon={<PlusOutlined />} />
-        </Link>
+        {formLinkPath && (
+          <Link href={formLinkPath} passHref={false}>
+            <Button icon={<PlusOutlined />} />
+          </Link>
+        )}
         {actions}
       </Space>
     </div>

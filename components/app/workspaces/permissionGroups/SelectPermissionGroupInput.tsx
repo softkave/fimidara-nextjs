@@ -1,11 +1,4 @@
-import {
-  CloseCircleFilled,
-  CloseCircleOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Button, List, Select, Space, Typography } from "antd";
 import React from "react";
 import { IPermissionGroupInput } from "../../../../lib/definitions/permissionGroups";
@@ -26,7 +19,9 @@ function reorderItems(items: IPermissionGroupInput[]) {
   return items.map((item, index) => ({ ...item, order: index }));
 }
 
-const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (props) => {
+const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
+  props
+) => {
   const { workspaceId, value, disabled, onChange } = props;
   const { isLoading, error, data, mutate } =
     useWorkspacePermissionGroupList(workspaceId);
@@ -42,13 +37,11 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
   const onMove = React.useCallback(
     (id: string, side: "up" | "down") => {
       const index = value.findIndex((item) => item.permissionGroupId === id);
-
       if (index === -1) {
         return;
       }
 
       const newIndex = side === "up" ? index - 1 : index + 1;
-
       if (newIndex < 0 || newIndex >= value.length) {
         return;
       }
@@ -64,7 +57,10 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
 
   const onAddItem = React.useCallback(
     (id: string) => {
-      const newValue = [...value, { permissionGroupId: id, order: value.length }];
+      const newValue = [
+        ...value,
+        { permissionGroupId: id, order: value.length },
+      ];
       onChange(reorderItems(newValue));
     },
     [value, onChange]
@@ -142,7 +138,7 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
       showSearch
       mode="multiple"
       style={{ width: "100%" }}
-      placeholder="Select permissionGroup..."
+      placeholder="Select permission group..."
       maxTagCount="responsive"
       disabled={disabled}
       optionLabelProp="label"

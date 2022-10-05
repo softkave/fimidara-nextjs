@@ -1,4 +1,3 @@
-import getNewId from "./getNewId";
 import get from "lodash/get";
 import mergeWith from "lodash/mergeWith";
 import set from "lodash/set";
@@ -7,13 +6,8 @@ import { toAppErrorsArray } from "./errors";
 
 const tempPrefix = "temp-";
 
-export function getNewTempId(id?: string) {
-  return `${tempPrefix}${id || getNewId()}`;
-}
-
 export function isTempId(id: string, matchId?: string) {
   const hasTempPrefix = id.startsWith(tempPrefix);
-
   if (hasTempPrefix && matchId) {
     return id.endsWith(matchId);
   }
@@ -31,7 +25,6 @@ export const flattenErrorList = (errors?: any): { [key: string]: string[] } => {
   }
 
   const errorList = toAppErrorsArray(errors);
-
   if (errorList.length === 0) {
     return {};
   }
@@ -39,11 +32,9 @@ export const flattenErrorList = (errors?: any): { [key: string]: string[] } => {
   const defaultKey = "error";
   const errorMap = {};
   const cachedFields: Record<string, true> = {};
-
   errorList.forEach((error) => {
     const field = error.field || defaultKey;
     let fieldErrorList = get(errorMap, field);
-
     if (Array.isArray(fieldErrorList)) {
       fieldErrorList.push(error.message);
       return;
@@ -53,7 +44,6 @@ export const flattenErrorList = (errors?: any): { [key: string]: string[] } => {
     const fieldPath = field.split(".");
     const parentExists = fieldPath.find((path) => {
       prev = [prev, path].join(".");
-
       if (cachedFields[prev]) {
         return true;
       }

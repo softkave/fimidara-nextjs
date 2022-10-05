@@ -127,7 +127,7 @@ export default class PermissionItemsByResourceController {
     this.appliesTo = appliesTo;
   }
 
-  public canPerformAction(
+  canPerformAction(
     permissionEntityId: string,
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
@@ -159,7 +159,7 @@ export default class PermissionItemsByResourceController {
     }
   }
 
-  public grantPermission(
+  grantPermission(
     permissionEntityId: string,
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
@@ -276,7 +276,7 @@ export default class PermissionItemsByResourceController {
     return this.getNewController();
   }
 
-  public removePermission(
+  removePermission(
     permissionEntityId: string,
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
@@ -402,7 +402,7 @@ export default class PermissionItemsByResourceController {
     return this.getNewController();
   }
 
-  public togglePermission(
+  togglePermission(
     permissionEntityId: string,
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions,
@@ -413,15 +413,15 @@ export default class PermissionItemsByResourceController {
       : this.removePermission(permissionEntityId, permissionEntityType, action);
   }
 
-  public getItems() {
+  getItems() {
     return flattenDeep(Object.values(this.itemsMap));
   }
 
-  public getNewItems() {
+  getNewItems() {
     return this.getItems().filter((item) => item.isNew);
   }
 
-  public getDeletedItemIds() {
+  getDeletedItemIds() {
     return this.deletedItemIds;
   }
 

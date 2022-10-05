@@ -86,15 +86,15 @@ async function getResourcePermissionItems(
 }
 
 export default class PermissionItemAPI {
-  public static addItems = addItems;
-  public static deleteItemsById = deleteItemsById;
-  public static getResourcePermissionItems = getResourcePermissionItems;
-  public static getEntityPermissionItems = getEntityPermissionItems;
+  static addItems = addItems;
+  static deleteItemsById = deleteItemsById;
+  static getResourcePermissionItems = getResourcePermissionItems;
+  static getEntityPermissionItems = getEntityPermissionItems;
 }
 
 export class PermissionItemURLs {
-  public static addItems = addItemsURL;
-  public static deleteItemsById = deleteItemsByIdURL;
-  public static getResourcePermissionItems = getResourcePermissionItemsURL;
-  public static getEntityPermissionItems = getEntityPermissionItemsURL;
+  static addItems = addItemsURL;
+  static deleteItemsById = deleteItemsByIdURL;
+  static getResourcePermissionItems = getResourcePermissionItemsURL;
+  static getEntityPermissionItems = getEntityPermissionItemsURL;
 }

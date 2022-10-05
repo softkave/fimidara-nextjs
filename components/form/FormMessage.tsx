@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
-import React from "react";
 import { compact, isString } from "lodash";
+import React from "react";
 import { IAppError } from "../../lib/definitions/system";
 
 type FormMessageType = "error" | "message";
@@ -21,7 +21,6 @@ export interface IFormMessageProps {
 
 const FormMessage: React.FC<IFormMessageProps> = (props) => {
   const { children, message, type, className, style, visible } = props;
-
   if (!visible) {
     return null;
   }
@@ -33,7 +32,6 @@ const FormMessage: React.FC<IFormMessageProps> = (props) => {
     : [];
 
   const renderedMessages: React.ReactNode[] = [];
-
   messages.forEach((message) => {
     if (isString(message)) {
       renderedMessages.push(message);

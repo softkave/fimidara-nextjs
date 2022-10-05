@@ -56,8 +56,7 @@ const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(UpdateFileFormPage, { swrConfig });
-
+export default withPageAuthRequired(UpdateFileFormPage);
 export const getServerSideProps: GetServerSideProps<
   IUpdateFileFormPageProps,
   IUpdateFileFormPageProps

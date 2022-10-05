@@ -6,7 +6,6 @@ function getStorageType(storageType: StorageName) {
     case "local":
     case "localStorage":
       return localStorage;
-
     case "session":
     case "sessionStorage":
     default:
@@ -22,7 +21,6 @@ export function setItem(
   storageType = defaultStorageType
 ) {
   const storageObject = getStorageType(storageType);
-
   if (storageObject) {
     storageObject.setItem(key, data);
   }
@@ -30,7 +28,6 @@ export function setItem(
 
 export function removeItem(key: string, storageType = defaultStorageType) {
   const storageObject = getStorageType(storageType);
-
   if (storageObject) {
     storageObject.removeItem(key);
   }
@@ -38,7 +35,6 @@ export function removeItem(key: string, storageType = defaultStorageType) {
 
 export function getItem(key: string, storageType = defaultStorageType) {
   const storageObject = getStorageType(storageType);
-
   if (storageObject) {
     return storageObject.getItem(key);
   }

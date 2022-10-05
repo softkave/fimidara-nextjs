@@ -98,17 +98,17 @@ async function updateToken(props: IUpdateClientAssignedTokenEndpointParams) {
 }
 
 export default class ClientAssignedTokenAPI {
-  public static addToken = addToken;
-  public static getWorkspaceTokens = getWorkspaceTokens;
-  public static getToken = getToken;
-  public static deleteToken = deleteToken;
-  public static updateToken = updateToken;
+  static addToken = addToken;
+  static getWorkspaceTokens = getWorkspaceTokens;
+  static getToken = getToken;
+  static deleteToken = deleteToken;
+  static updateToken = updateToken;
 }
 
 export class ClientAssignedTokenURLs {
-  public static addToken = addTokenURL;
-  public static getWorkspaceTokens = getWorkspaceTokensURL;
-  public static getToken = getTokenURL;
-  public static deleteToken = deleteTokenURL;
-  public static updateToken = updateTokenURL;
+  static addToken = addTokenURL;
+  static getWorkspaceTokens = getWorkspaceTokensURL;
+  static getToken = getTokenURL;
+  static deleteToken = deleteTokenURL;
+  static updateToken = updateTokenURL;
 }

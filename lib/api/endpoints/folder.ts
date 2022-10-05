@@ -81,17 +81,17 @@ async function updateFolder(props: IUpdateFolderEndpointParams) {
 }
 
 export default class FolderAPI {
-  public static addFolder = addFolder;
-  public static listFolderContent = listFolderContent;
-  public static getFolder = getFolder;
-  public static deleteFolder = deleteFolder;
-  public static updateFolder = updateFolder;
+  static addFolder = addFolder;
+  static listFolderContent = listFolderContent;
+  static getFolder = getFolder;
+  static deleteFolder = deleteFolder;
+  static updateFolder = updateFolder;
 }
 
 export class FolderURLs {
-  public static addFolder = addFolderURL;
-  public static listFolderContent = listFolderContentURL;
-  public static getFolder = getFolderURL;
-  public static deleteFolder = deleteFolderURL;
-  public static updateFolder = updateFolderURL;
+  static addFolder = addFolderURL;
+  static listFolderContent = listFolderContentURL;
+  static getFolder = getFolderURL;
+  static deleteFolder = deleteFolderURL;
+  static updateFolder = updateFolderURL;
 }

@@ -12,7 +12,7 @@ const deleteKeyValue = createAction<KeyValueKeys | string>(
 );
 
 export default class KeyValueActions {
-  public static setKey = setKeyValue;
-  public static setValues = setValues;
-  public static deleteKey = deleteKeyValue;
+  static setKey = setKeyValue;
+  static setValues = setValues;
+  static deleteKey = deleteKeyValue;
 }

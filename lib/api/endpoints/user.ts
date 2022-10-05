@@ -161,27 +161,27 @@ async function getUserData(props: IGetUserDataParams) {
 }
 
 export default class UserAPI {
-  public static signup = signup;
-  public static login = login;
-  public static updateUser = updateUser;
-  public static changePassword = changePassword;
-  public static forgotPassword = forgotPassword;
-  public static userExists = userExists;
-  public static changePasswordWithToken = changePasswordWithToken;
-  public static getUserData = getUserData;
-  public static sendEmailVerificationCode = sendEmailVerificationCode;
-  public static confirmEmailAddress = confirmEmailAddress;
+  static signup = signup;
+  static login = login;
+  static updateUser = updateUser;
+  static changePassword = changePassword;
+  static forgotPassword = forgotPassword;
+  static userExists = userExists;
+  static changePasswordWithToken = changePasswordWithToken;
+  static getUserData = getUserData;
+  static sendEmailVerificationCode = sendEmailVerificationCode;
+  static confirmEmailAddress = confirmEmailAddress;
 }
 
 export class UserURLs {
-  public static signup = signupURL;
-  public static login = loginURL;
-  public static updateUser = updateUserURL;
-  public static changePassword = changePasswordURL;
-  public static forgotPassword = forgotPasswordURL;
-  public static userExists = userExistsURL;
-  public static changePasswordWithToken = changePasswordWithTokenURL;
-  public static getUserData = getUserDataURL;
-  public static sendEmailVerificationCode = sendEmailVerificationCodeURL;
-  public static confirmEmailAddress = confirmEmailAddressURL;
+  static signup = signupURL;
+  static login = loginURL;
+  static updateUser = updateUserURL;
+  static changePassword = changePasswordURL;
+  static forgotPassword = forgotPasswordURL;
+  static userExists = userExistsURL;
+  static changePasswordWithToken = changePasswordWithTokenURL;
+  static getUserData = getUserDataURL;
+  static sendEmailVerificationCode = sendEmailVerificationCodeURL;
+  static confirmEmailAddress = confirmEmailAddressURL;
 }

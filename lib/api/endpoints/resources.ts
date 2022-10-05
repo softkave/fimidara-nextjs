@@ -22,9 +22,9 @@ async function getResources(props: IGetResourcesEndpointParams) {
 }
 
 export default class ResourceAPI {
-  public static getResources = getResources;
+  static getResources = getResources;
 }
 
 export class ResourceURLs {
-  public static getResources = getResourcesURL;
+  static getResources = getResourcesURL;
 }

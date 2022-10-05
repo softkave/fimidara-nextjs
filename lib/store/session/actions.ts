@@ -17,8 +17,8 @@ const update = createAction<{
 }>("session/update");
 
 export default class SessionActions {
-  public static loginUser = loginUser;
-  public static logoutUser = logoutUser;
-  public static setSessionToWeb = setSessionToWeb;
-  public static update = update;
+  static loginUser = loginUser;
+  static logoutUser = logoutUser;
+  static setSessionToWeb = setSessionToWeb;
+  static update = update;
 }

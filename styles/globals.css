@@ -8,3 +8,7 @@
 body {
   font-weight: 500;
 }
+
+:root {
+  --top-nav-height: 64px;
+}

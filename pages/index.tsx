@@ -1,10 +1,10 @@
+import { cx } from "@emotion/css";
 import { Space, Typography } from "antd";
 import type { NextPage } from "next";
-import { cx } from "@emotion/css";
-import Features from "../components/web/Features";
-import WebHeader from "../components/web/WebHeader";
 import { appClasses } from "../components/utils/theme";
 import Docs from "../components/web/Docs";
+import Features from "../components/web/Features";
+import WebHeader from "../components/web/WebHeader";
 
 const Home: NextPage = () => {
   return (

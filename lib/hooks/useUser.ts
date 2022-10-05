@@ -27,7 +27,6 @@ export function saveUserTokenLocal(
 
 const fetcher = async (p: string, dispatch: Dispatch, token?: string) => {
   token = token || (UserSessionStorageFns.getUserToken() as string | undefined);
-
   if (!token) {
     throw new Error("Please sign in");
   }

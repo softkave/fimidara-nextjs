@@ -10,6 +10,11 @@ interface IDoc {
 
 const docs: IDoc[] = [
   {
+    title: "Fimidara Docs",
+    icon: <FileTextOutlined />,
+    link: "/docs/fimidara/introduction",
+  },
+  {
     title: "REST API",
     icon: <FileTextOutlined />,
     link: "https://github.com/softkave/fimidara-docs/blob/master/REST-API-latest.md",

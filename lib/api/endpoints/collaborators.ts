@@ -79,17 +79,17 @@ async function updateCollaboratorPermissionGroups(
 }
 
 export default class CollaboratorAPI {
-  public static removeCollaborator = removeCollaborator;
-  public static getWorkspaceCollaborators = getWorkspaceCollaborators;
-  public static getCollaborator = getCollaborator;
-  public static updateCollaboratorPermissionGroups =
+  static removeCollaborator = removeCollaborator;
+  static getWorkspaceCollaborators = getWorkspaceCollaborators;
+  static getCollaborator = getCollaborator;
+  static updateCollaboratorPermissionGroups =
     updateCollaboratorPermissionGroups;
 }
 
 export class CollaboratorURLs {
-  public static removeCollaborator = removeCollaboratorURL;
-  public static getWorkspaceCollaborators = getWorkspaceCollaboratorsURL;
-  public static getCollaborator = getCollaboratorURL;
-  public static updateCollaboratorPermissionGroups =
+  static removeCollaborator = removeCollaboratorURL;
+  static getWorkspaceCollaborators = getWorkspaceCollaboratorsURL;
+  static getCollaborator = getCollaboratorURL;
+  static updateCollaboratorPermissionGroups =
     updateCollaboratorPermissionGroupsURL;
 }

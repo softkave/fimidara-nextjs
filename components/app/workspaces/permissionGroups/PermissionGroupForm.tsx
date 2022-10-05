@@ -1,33 +1,35 @@
 import { css, cx } from "@emotion/css";
-import { Button, Form, Input, message, Typography } from "antd";
-import * as yup from "yup";
-import React from "react";
 import { useRequest } from "ahooks";
+import { Button, Form, Input, message, Typography } from "antd";
 import { useRouter } from "next/router";
-import { systemValidation } from "../../../../lib/validation/system";
-import { messages } from "../../../../lib/messages/messages";
+import React from "react";
+import * as yup from "yup";
+import PermissionGroupAPI from "../../../../lib/api/endpoints/permissionGroup";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   INewPermissionGroupInput,
   IPermissionGroup,
   permissionGroupPermissionsGroupConstants,
 } from "../../../../lib/definitions/permissionGroups";
-import PermissionGroupAPI from "../../../../lib/api/endpoints/permissionGroup";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import FormError from "../../../form/FormError";
+import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
+import { messages } from "../../../../lib/messages/messages";
+import { systemValidation } from "../../../../lib/validation/system";
 import { formClasses } from "../../../form/classNames";
-import SelectPermissionGroupInput from "./SelectPermissionGroupInput";
+import FormError from "../../../form/FormError";
 import { FormAlert } from "../../../utils/FormAlert";
+import SelectPermissionGroupInput from "./SelectPermissionGroupInput";
 
 const permissionGroupValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
   description: systemValidation.description,
-  permissionGroups: yup.array().max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
+  permissionGroups: yup
+    .array()
+    .max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
 });
 
 const initialValues: INewPermissionGroupInput = {
@@ -84,7 +86,9 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
         message.success("Permission group created");
       }
 
-      router.push(appWorkspacePaths.permissionGroup(workspaceId, permissionGroupId));
+      router.push(
+        appWorkspacePaths.permissionGroup(workspaceId, permissionGroupId)
+      );
     },
     [permissionGroup, workspaceId, mutate, router]
   );
@@ -157,7 +161,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
 
   const assignedPermissionGroupsNode = (
     <Form.Item
-      label="Assigned PermissionGroups"
+      label="Assigned Permission Groups"
       help={
         formik.touched?.permissionGroups &&
         formik.errors?.permissionGroups && (
@@ -197,7 +201,9 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
               htmlType="submit"
               loading={submitResult.loading}
             >
-              {permissionGroup ? "Update PermissionGroup" : "Create PermissionGroup"}
+              {permissionGroup
+                ? "Update PermissionGroup"
+                : "Create PermissionGroup"}
             </Button>
           </Form.Item>
         </form>

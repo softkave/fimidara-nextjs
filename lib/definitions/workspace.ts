@@ -1,4 +1,19 @@
 import { IAgent } from "./system";
+import { UsageRecordCategory } from "./usageRecord";
+
+export interface IUsageThreshold {
+  lastUpdatedBy: IAgent;
+  lastUpdatedAt: Date | string;
+  category: UsageRecordCategory;
+  budget: number; // price in USD
+}
+
+export interface IUsageThresholdLock {
+  lastUpdatedBy: IAgent;
+  lastUpdatedAt: Date | string;
+  category: UsageRecordCategory;
+  locked: boolean;
+}
 
 export interface IWorkspace {
   resourceId: string;
@@ -9,6 +24,10 @@ export interface IWorkspace {
   name: string;
   rootname: string;
   description?: string;
+  usageThresholds?: Partial<Record<UsageRecordCategory, IUsageThreshold>>;
+  usageThresholdLocks?: Partial<
+    Record<UsageRecordCategory, IUsageThresholdLock>
+  >;
 }
 
 export interface INewWorkspaceInput {

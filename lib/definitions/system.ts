@@ -259,11 +259,20 @@ export const appWorkspacePaths = {
   permissionGroupForm(workspaceId: string, permissiongroupId: string) {
     return `${this.permissionGroup(workspaceId, permissiongroupId)}/form`;
   },
+
+  // usage records
+  usageRecordList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/usage-records`;
+  },
 };
 
 export const appAccountPaths = {
   signup: appRootPaths.account + "/signup",
   login: appRootPaths.account + "/login",
+  loginWithReturnPath(returnTo: string) {
+    return `${this.login}?returnTo=${encodeURIComponent(returnTo)}`;
+  },
+
   verifyEmail: appRootPaths.account + "/verify-email",
   forgotPassword: appRootPaths.account + "/forgot-password",
   changePassword: appRootPaths.account + "/change-password",

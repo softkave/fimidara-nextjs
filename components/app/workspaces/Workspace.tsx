@@ -10,8 +10,8 @@ import useWorkspace from "../../../lib/hooks/workspaces/useWorkspace";
 import { getBaseError } from "../../../lib/utilities/errors";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
-import { appClasses, appDimensions } from "../../utils/theme";
-import AppHeader from "../AppHeader";
+import { appClasses } from "../../utils/theme";
+import LoggedInHeader from "../LoggedInHeader";
 import WorkspaceHeader from "./WorkspaceHeader";
 
 export interface IWorkspaceProps {
@@ -24,9 +24,24 @@ export interface IWorkspaceProps {
 const classes = {
   root: css({
     "& .ant-tabs-nav-wrap": {
-      maxWidth: appDimensions.app.maxWidth,
-      margin: "0 auto",
-      padding: "0px 16px",
+      // maxWidth: appDimensions.app.maxWidth,
+      // margin: "0 auto",
+      // padding: "0px",
+    },
+
+    "& .ant-tabs-tab:first-of-type": {
+      marginLeft: "16px",
+    },
+
+    "& .ant-tabs-tab:last-of-type": {
+      marginRight: "16px",
+    },
+
+    "@media (min-width: 720px)": {
+      "& .ant-tabs-nav-wrap": {
+        display: "flex",
+        justifyContent: "center",
+      },
     },
   }),
 };
@@ -34,11 +49,10 @@ const classes = {
 const Workspace: React.FC<IWorkspaceProps> = (props) => {
   const { workspaceId, activeKey, swrConfig, render, children } = props;
   const { data, error, isLoading } = useWorkspace(workspaceId, swrConfig);
-
   if (error) {
     return (
       <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-        <AppHeader />
+        <LoggedInHeader />
         <PageError
           className={appClasses.main}
           messageText={getBaseError(error) || "Error fetching workspace"}
@@ -50,7 +64,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
   if (isLoading || !data) {
     return (
       <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-        <AppHeader />
+        <LoggedInHeader />
         <PageLoading messageText="Loading workspace..." />
       </Space>
     );
@@ -66,6 +80,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
     permissionGroups: appWorkspacePaths.permissionGroupList(
       workspace.resourceId
     ),
+    usageRecords: appWorkspacePaths.usageRecordList(workspace.resourceId),
   };
 
   const contentNode = render ? render(workspace) : children;
@@ -137,6 +152,16 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
           key={paths.permissionGroups}
         >
           {paths.permissionGroups === activeKey && contentNode}
+        </Tabs.TabPane>
+        <Tabs.TabPane
+          tab={
+            <Link href={paths.usageRecords}>
+              <a>Usage Records</a>
+            </Link>
+          }
+          key={paths.usageRecords}
+        >
+          {paths.usageRecords === activeKey && contentNode}
         </Tabs.TabPane>
       </Tabs>
     </Space>

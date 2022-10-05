@@ -3,7 +3,7 @@ import { css } from "@emotion/css";
 import { Button, Col, List, Row, Space, Typography } from "antd";
 import type { NextPage } from "next";
 import Link from "next/link";
-import AppHeader from "../../../components/app/AppHeader";
+import LoggedInHeader from "../../../components/app/LoggedInHeader";
 import WorkspaceAvatar from "../../../components/app/workspaces/WorkspaceAvatar";
 import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../components/utils/PageError";
@@ -77,7 +77,7 @@ const Workspaces: NextPage<IWorkspacesPageProps> = () => {
 
   return (
     <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-      <AppHeader />
+      <LoggedInHeader />
       <Row className={appClasses.main}>
         <Col span={18}>
           <Typography.Title level={5}>Workspaces</Typography.Title>

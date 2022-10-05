@@ -11,11 +11,12 @@ import { fileConstants } from "../../../../lib/definitions/file";
 import {
   addRootnameToPath,
   folderConstants,
-  IFolder,
+  IFolder
 } from "../../../../lib/definitions/folder";
 import {
+  AppResourceType,
   appWorkspacePaths,
-  systemConstants,
+  systemConstants
 } from "../../../../lib/definitions/system";
 import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
 import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
@@ -26,6 +27,10 @@ import { systemValidation } from "../../../../lib/validation/system";
 import { formClasses } from "../../../form/classNames";
 import FormError from "../../../form/FormError";
 import { FormAlert } from "../../../utils/FormAlert";
+import {
+  IResourcePublicAccessActions,
+  resourceListPublicAccessActionsToPublicAccessOps
+} from "./FolderPublicAccessOpsInput";
 
 const folderValidation = yup.object().shape({
   name: fileValidationParts.filename.required(messages.fieldIsRequired),
@@ -40,21 +45,34 @@ export interface IFolderFormValues {
   name: string;
   description?: string;
   maxFileSizeInBytes?: number;
+  publicAccessOps: IResourcePublicAccessActions[];
 }
 
 const initialValues: IFolderFormValues = {
   name: "",
+  publicAccessOps: [
+    { resourceType: AppResourceType.Folder, actions: [] },
+    { resourceType: AppResourceType.File, actions: [] },
+  ],
 };
 
 function getFolderFormInputFromFolder(item: IFolder): IFolderFormValues {
+  const publicAccessOps: IResourcePublicAccessActions[] = [
+    { resourceType: AppResourceType.Folder, actions: [] },
+    { resourceType: AppResourceType.File, actions: [] },
+  ];
+
+  item.publicAccessOps.forEach((publicAccessOp) => {
+    const index =
+      publicAccessOp.resourceType === AppResourceType.Folder ? 0 : 1;
+    publicAccessOps[index].actions.push(publicAccessOp.action);
+  });
+
   return {
+    publicAccessOps,
     name: item.name,
     description: item.description,
     maxFileSizeInBytes: item.maxFileSizeInBytes,
-    // publicAccessOps: item.publicAccessOps.map((op) => ({
-    //   action: op.action,
-    //   resourceType: op.resourceType,
-    // })),
   };
 }
 
@@ -91,7 +109,9 @@ export default function FolderForm(props: IFolderFormProps) {
           folder: {
             description: data.description,
             maxFileSizeInBytes: data.maxFileSizeInBytes,
-            // publicAccessOps: data.publicAccessOps,
+            publicAccessOps: resourceListPublicAccessActionsToPublicAccessOps(
+              data.publicAccessOps
+            ),
           },
         });
 
@@ -119,7 +139,9 @@ export default function FolderForm(props: IFolderFormProps) {
             folderpath: addRootnameToPath(folderpath, workspaceRootname),
             description: data.description,
             maxFileSizeInBytes: data.maxFileSizeInBytes,
-            // publicAccessOps: data.publicAccessOps,
+            publicAccessOps: resourceListPublicAccessActionsToPublicAccessOps(
+              data.publicAccessOps
+            ),
           },
         });
 
@@ -212,6 +234,36 @@ export default function FolderForm(props: IFolderFormProps) {
     </Form.Item>
   );
 
+  // const publicAccessOpsNode = (
+  //   <Form.Item
+  //     label="Public Access Ops"
+  //     help={
+  //       formik.touched?.publicAccessOps &&
+  //       formik.errors?.publicAccessOps && (
+  //         <FormError
+  //           visible={
+  //             isBoolean(formik.touched.publicAccessOps) &&
+  //             formik.touched.publicAccessOps
+  //           }
+  //           error={
+  //             isString(formik.errors.publicAccessOps)
+  //               ? formik.errors.publicAccessOps
+  //               : null
+  //           }
+  //         />
+  //       )
+  //     }
+  //     labelCol={{ span: 24 }}
+  //     wrapperCol={{ span: 24 }}
+  //   >
+  //     <FolderPublicAccessOpsInput
+  //       disabled={submitResult.loading}
+  //       value={formik.values.publicAccessOps}
+  //       onChange={(update) => formik.setFieldValue("publicAccessOps", update)}
+  //     />
+  //   </Form.Item>
+  // );
+
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
@@ -222,6 +274,7 @@ export default function FolderForm(props: IFolderFormProps) {
           <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
+          {/* {publicAccessOpsNode} */}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block
