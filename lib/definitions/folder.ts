@@ -9,7 +9,7 @@ export interface IFolder {
   parentId?: string;
   createdBy: IAgent;
   createdAt: Date | string;
-  maxFileSizeInBytes: number;
+  // maxFileSizeInBytes: number;
   lastUpdatedBy?: IAgent;
   lastUpdatedAt?: Date | string;
   name: string;
@@ -20,13 +20,11 @@ export interface IFolder {
 export interface INewFolderInput {
   folderpath: string;
   description?: string;
-  maxFileSizeInBytes?: number;
   publicAccessOps?: IPublicAccessOpInput[];
 }
 
 export interface IUpdateFolderInput {
   description?: string;
-  maxFileSizeInBytes?: number;
   publicAccessOps?: IPublicAccessOpInput[];
 }
 

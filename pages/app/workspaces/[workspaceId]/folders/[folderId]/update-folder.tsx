@@ -4,7 +4,7 @@ import FolderContainer from "../../../../../../components/app/workspaces/files/F
 import FolderForm from "../../../../../../components/app/workspaces/files/FolderForm";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import WorkspaceContainer from "../../../../../../components/app/workspaces/WorkspaceContainer";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import { IFolder } from "../../../../../../lib/definitions/folder";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 
@@ -43,7 +43,7 @@ const UpdateFolderFormPage: React.FC<IUpdateFolderFormPageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(UpdateFolderFormPage);
+export default withPageAuthRequiredHOC(UpdateFolderFormPage);
 
 export const getServerSideProps: GetServerSideProps<
   IUpdateFolderFormPageProps,

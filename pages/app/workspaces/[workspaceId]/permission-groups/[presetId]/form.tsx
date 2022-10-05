@@ -1,8 +1,8 @@
 import { GetServerSideProps } from "next";
 import React from "react";
-import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import PermissionGroupForm from "../../../../../../components/app/workspaces/permissionGroups/PermissionGroupForm";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
@@ -14,9 +14,9 @@ export type IWorkspacePermissionGroupFormPageProps = {
   permissionGroupId: string;
 };
 
-const WorkspacePermissionGroupFormPage: React.FC<IWorkspacePermissionGroupFormPageProps> = (
-  props
-) => {
+const WorkspacePermissionGroupFormPage: React.FC<
+  IWorkspacePermissionGroupFormPageProps
+> = (props) => {
   const { workspaceId, permissionGroupId } = props;
   const { error, isLoading, data } = usePermissionGroup(permissionGroupId);
   let content: React.ReactNode = null;
@@ -31,7 +31,10 @@ const WorkspacePermissionGroupFormPage: React.FC<IWorkspacePermissionGroupFormPa
     content = <PageLoading messageText="Loading permission group..." />;
   } else {
     content = (
-      <PermissionGroupForm workspaceId={data.permissionGroup.workspaceId} permissionGroup={data.permissionGroup} />
+      <PermissionGroupForm
+        workspaceId={data.permissionGroup.workspaceId}
+        permissionGroup={data.permissionGroup}
+      />
     );
   }
 
@@ -45,7 +48,7 @@ const WorkspacePermissionGroupFormPage: React.FC<IWorkspacePermissionGroupFormPa
   );
 };
 
-export default withPageAuthRequired(WorkspacePermissionGroupFormPage);
+export default withPageAuthRequiredHOC(WorkspacePermissionGroupFormPage);
 
 export const getServerSideProps: GetServerSideProps<
   IWorkspacePermissionGroupFormPageProps,

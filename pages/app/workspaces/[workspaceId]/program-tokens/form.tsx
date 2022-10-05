@@ -1,11 +1,11 @@
 import React from "react";
-import Workspace from "../../../../../components/app/workspaces/Workspace";
 import ProgramTokenForm from "../../../../../components/app/workspaces/programTokens/ProgramTokenForm";
 import {
   getWorkspaceServerSideProps,
   IWorkspaceComponentProps,
 } from "../../../../../components/app/workspaces/utils";
-import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../lib/definitions/system";
 
 const WorkspaceCreateProgramTokenFormPage: React.FC<
@@ -23,5 +23,5 @@ const WorkspaceCreateProgramTokenFormPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(WorkspaceCreateProgramTokenFormPage);
+export default withPageAuthRequiredHOC(WorkspaceCreateProgramTokenFormPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

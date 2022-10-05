@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import Collaborator from "../../../../../../components/app/workspaces/collaborators/Collaborator";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 
 export type IWorkspaceCollaboratorPageProps = {
@@ -24,7 +24,7 @@ const WorkspaceCollaboratorPage: React.FC<IWorkspaceCollaboratorPageProps> = (
   );
 };
 
-export default withPageAuthRequired(WorkspaceCollaboratorPage);
+export default withPageAuthRequiredHOC(WorkspaceCollaboratorPage);
 
 export const getServerSideProps: GetServerSideProps<
   IWorkspaceCollaboratorPageProps,

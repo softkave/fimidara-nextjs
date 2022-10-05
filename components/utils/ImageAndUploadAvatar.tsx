@@ -13,7 +13,6 @@ export interface IImageAndUploadAvatarProps
 
 const ImageAndUploadAvatar: React.FC<IImageAndUploadAvatarProps> = (props) => {
   const { className } = props;
-
   return (
     <Space direction="vertical" size="middle" className={className}>
       <ImageWithFallback {...props} />

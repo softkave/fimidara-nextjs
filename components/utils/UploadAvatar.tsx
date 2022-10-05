@@ -1,13 +1,12 @@
-import { Upload, message, Typography, Button } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
-import { RcFile, UploadChangeParam } from "antd/lib/upload";
-import React from "react";
-import { defaultTo, first } from "lodash";
 import { css, cx } from "@emotion/css";
-import { useSelector } from "react-redux";
-import SessionSelectors from "../../lib/store/session/selectors";
-import { appDimensions } from "./theme";
+import { Button, message, Typography, Upload } from "antd";
+import { RcFile, UploadChangeParam } from "antd/lib/upload";
+import { defaultTo, first } from "lodash";
+import React from "react";
+import { useUserNode } from "../hooks/useUserNode";
 import { errorMessageNotificatition } from "./errorHandling";
+import { appDimensions } from "./theme";
 
 export type IImageUploadMessages = Partial<{
   uploading: string;
@@ -45,10 +44,7 @@ const classes = {
 
 const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
   const { uploadPath, className, onCompleteUpload } = props;
-  const clientAssignedToken = useSelector(
-    SessionSelectors.assertGetClientAssignedToken
-  );
-
+  const u0 = useUserNode();
   const customMessages = {
     ...DEFAULT_MESSAGES,
     ...defaultTo(props.messages, {}),
@@ -89,6 +85,11 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
     }
   };
 
+  if (u0.renderNode) {
+    return u0.renderNode;
+  }
+
+  const clientAssignedToken = u0.assertGet().clientAssignedToken;
   const uploadButton = (
     <Button icon={<CloudUploadOutlined />} disabled={loading}>
       Upload image

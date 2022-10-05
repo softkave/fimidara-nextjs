@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import ClientTokenForm from "../../../../../../components/app/workspaces/clientTokens/ClientTokenForm";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
@@ -50,7 +50,7 @@ const WorkspaceClientTokenFormPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(WorkspaceClientTokenFormPage);
+export default withPageAuthRequiredHOC(WorkspaceClientTokenFormPage);
 
 export const getServerSideProps: GetServerSideProps<
   IWorkspaceClientTokenFormPageProps,

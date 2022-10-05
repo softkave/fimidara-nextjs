@@ -1,16 +1,13 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import CollaborationRequestList from "./CollaborationRequestList";
+import useUserRequests from "../../../lib/hooks/requests/useUserRequests";
+import { getBaseError } from "../../../lib/utilities/errors";
+import { useUserNode } from "../../hooks/useUserNode";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
-import useUserRequests from "../../../lib/hooks/requests/useUserRequests";
-import SessionSelectors from "../../../lib/store/session/selectors";
-import { getBaseError } from "../../../lib/utilities/errors";
+import CollaborationRequestList from "./CollaborationRequestList";
 
 export default function UserCollaborationRequestList() {
-  const userId = useSelector(SessionSelectors.assertGetUserId);
-  const { error, isLoading, data } = useUserRequests(userId);
-
+  const u0 = useUserNode();
+  const { error, isLoading, data } = useUserRequests(u0.data?.user?.resourceId);
   if (error) {
     return (
       <PageError

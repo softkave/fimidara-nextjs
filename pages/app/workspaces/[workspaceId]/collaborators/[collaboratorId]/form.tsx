@@ -1,9 +1,8 @@
-import { last } from "lodash";
 import { GetServerSideProps } from "next";
 import React from "react";
 import CollaboratorForm from "../../../../../../components/app/workspaces/collaborators/CollaboratorForm";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
@@ -52,7 +51,7 @@ const WorkspaceCollaboratorFormPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(WorkspaceCollaboratorFormPage);
+export default withPageAuthRequiredHOC(WorkspaceCollaboratorFormPage);
 
 export const getServerSideProps: GetServerSideProps<
   IWorkspaceCollaboratorFormPageProps,

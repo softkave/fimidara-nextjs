@@ -2,7 +2,7 @@ import React from "react";
 import SummedUsageRecordListContainer from "../../../../../components/app/workspaces/usageRecords/SummedUsageRecordListContainer";
 import { getWorkspaceServerSideProps } from "../../../../../components/app/workspaces/utils";
 import Workspace from "../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../lib/definitions/system";
 
 export interface IWorkspaceUsageRecordsPageProps {
@@ -24,5 +24,5 @@ const WorkspaceUsageRecordsPage: React.FC<IWorkspaceUsageRecordsPageProps> = (
   );
 };
 
-export default withPageAuthRequired(WorkspaceUsageRecordsPage);
+export default withPageAuthRequiredHOC(WorkspaceUsageRecordsPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

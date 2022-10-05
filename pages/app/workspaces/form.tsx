@@ -1,7 +1,7 @@
 import { Space } from "antd";
 import LoggedInHeader from "../../../components/app/LoggedInHeader";
 import WorkspaceForm from "../../../components/app/workspaces/WorkspaceForm";
-import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../components/hoc/withPageAuthRequired";
 import { appClasses } from "../../../components/utils/theme";
 
 function WorkspaceFormPage() {
@@ -13,4 +13,4 @@ function WorkspaceFormPage() {
   );
 }
 
-export default withPageAuthRequired(WorkspaceFormPage);
+export default withPageAuthRequiredHOC(WorkspaceFormPage);

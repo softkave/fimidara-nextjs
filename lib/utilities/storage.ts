@@ -5,11 +5,11 @@ function getStorageType(storageType: StorageName) {
   switch (storageType) {
     case "local":
     case "localStorage":
-      return localStorage;
+      return globalThis?.localStorage;
     case "session":
     case "sessionStorage":
     default:
-      return sessionStorage;
+      return globalThis?.sessionStorage;
   }
 }
 

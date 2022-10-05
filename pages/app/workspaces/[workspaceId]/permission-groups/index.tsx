@@ -1,8 +1,8 @@
 import React from "react";
-import Workspace from "../../../../../components/app/workspaces/Workspace";
 import WorkspacePermissionGroups from "../../../../../components/app/workspaces/permissionGroups/WorkspacePermissionGroups";
 import { getWorkspaceServerSideProps } from "../../../../../components/app/workspaces/utils";
-import withPageAuthRequired from "../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../lib/definitions/system";
 
 export interface IWorkspacePermissionGroupsPageProps {
@@ -23,5 +23,5 @@ const WorkspacePermissionGroupsPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(WorkspacePermissionGroupsPage);
+export default withPageAuthRequiredHOC(WorkspacePermissionGroupsPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

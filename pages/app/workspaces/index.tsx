@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import LoggedInHeader from "../../../components/app/LoggedInHeader";
 import WorkspaceAvatar from "../../../components/app/workspaces/WorkspaceAvatar";
-import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../components/utils/PageError";
 import PageLoading from "../../../components/utils/PageLoading";
 import PageNothingFound from "../../../components/utils/PageNothingFound";
@@ -93,4 +93,4 @@ const Workspaces: NextPage<IWorkspacesPageProps> = () => {
   );
 };
 
-export default withPageAuthRequired(Workspaces);
+export default withPageAuthRequiredHOC(Workspaces);

@@ -1,8 +1,8 @@
 import { GetServerSideProps } from "next";
 import React from "react";
-import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import ProgramTokenForm from "../../../../../../components/app/workspaces/programTokens/ProgramTokenForm";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
@@ -50,7 +50,7 @@ const WorkspaceProgramTokenFormPage: React.FC<
   );
 };
 
-export default withPageAuthRequired(WorkspaceProgramTokenFormPage);
+export default withPageAuthRequiredHOC(WorkspaceProgramTokenFormPage);
 
 export const getServerSideProps: GetServerSideProps<
   IWorkspaceProgramTokenFormPageProps,

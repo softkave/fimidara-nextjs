@@ -1,8 +1,8 @@
 import { GetServerSideProps } from "next";
 import React from "react";
-import Workspace from "../../../../../../components/app/workspaces/Workspace";
 import WorkspaceRequest from "../../../../../../components/app/workspaces/requests/WorkspaceRequest";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import Workspace from "../../../../../../components/app/workspaces/Workspace";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 
 export type IWorkspaceRequestPageProps = {
@@ -22,7 +22,7 @@ const WorkspaceRequestPage: React.FC<IWorkspaceRequestPageProps> = (props) => {
   );
 };
 
-export default withPageAuthRequired(WorkspaceRequestPage);
+export default withPageAuthRequiredHOC(WorkspaceRequestPage);
 
 export const getServerSideProps: GetServerSideProps<
   IWorkspaceRequestPageProps,

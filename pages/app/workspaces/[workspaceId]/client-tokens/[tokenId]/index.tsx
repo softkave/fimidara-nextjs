@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import ClientToken from "../../../../../../components/app/workspaces/clientTokens/ClientToken";
 import Workspace from "../../../../../../components/app/workspaces/Workspace";
-import withPageAuthRequired from "../../../../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../../../../components/hoc/withPageAuthRequired";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 
 export type IWorkspaceClientTokenPageProps = {
@@ -24,7 +24,7 @@ const WorkspaceClientTokenPage: React.FC<IWorkspaceClientTokenPageProps> = (
   );
 };
 
-export default withPageAuthRequired(WorkspaceClientTokenPage);
+export default withPageAuthRequiredHOC(WorkspaceClientTokenPage);
 
 export const getServerSideProps: GetServerSideProps<
   IWorkspaceClientTokenPageProps,

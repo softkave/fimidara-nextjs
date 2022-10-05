@@ -1,7 +1,7 @@
 import { Space } from "antd";
 import LoggedInHeader from "../../../components/app/LoggedInHeader";
 import UserCollaborationRequestList from "../../../components/app/requests/UserCollaborationRequestList";
-import withPageAuthRequired from "../../../components/hoc/withPageAuthRequired";
+import withPageAuthRequiredHOC from "../../../components/hoc/withPageAuthRequired";
 
 function UserCollaborationRequestsPage() {
   return (
@@ -12,4 +12,4 @@ function UserCollaborationRequestsPage() {
   );
 }
 
-export default withPageAuthRequired(UserCollaborationRequestsPage);
+export default withPageAuthRequiredHOC(UserCollaborationRequestsPage);
