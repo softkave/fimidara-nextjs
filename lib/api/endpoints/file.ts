@@ -7,6 +7,7 @@ import {
 } from "../../definitions/file";
 import { folderConstants } from "../../definitions/folder";
 import { systemConstants } from "../../definitions/system";
+import { stripPrefix } from "../../utilities/utils";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import {
   HTTP_HEADER_AUTHORIZATION,
@@ -36,11 +37,21 @@ export function getFetchImagePath(p: string, width: number, height: number) {
   const params = new URLSearchParams();
   setEndpointParam(params, IMAGE_WIDTH_QUERY_PARAMS_KEY, width);
   setEndpointParam(params, IMAGE_HEIGHT_QUERY_PARAMS_KEY, height);
-  return path.normalize(`${getFileURL}/${p}`) + `?${params.toString()}`;
+  return (
+    path.posix.normalize(
+      `${getFileURL}/${encodeURIComponent(
+        stripPrefix(p, folderConstants.nameSeparator)
+      )}`
+    ) + `?${params.toString()}`
+  );
 }
 
 export function getUploadfilepath(p: string) {
-  return path.normalize(`${uploadFileURL}/${p}`);
+  return path.posix.normalize(
+    `${uploadFileURL}/${encodeURIComponent(
+      stripPrefix(p, folderConstants.nameSeparator)
+    )}`
+  );
 }
 
 export function getFetchUserImagePath(
@@ -122,7 +133,7 @@ export interface IUploadFileEndpointParams extends IFileMatcher {
   mimetype?: string;
   data: Blob;
   publicAccessActions?: UploadFilePublicAccessActions;
-  clientAssignedToken: string;
+  token: string;
 }
 
 export type IUploadFileEndpointResult = GetEndpointResult<{
@@ -143,7 +154,7 @@ async function uploadFile(props: IUploadFileEndpointParams) {
     data: formData,
     headers: {
       // [HTTP_HEADER_CONTENT_TYPE]: CONTENT_TYPE_MULTIPART_FORMDATA,
-      [HTTP_HEADER_AUTHORIZATION]: `Bearer ${props.clientAssignedToken}`,
+      [HTTP_HEADER_AUTHORIZATION]: `Bearer ${props.token}`,
     },
     omitContentTypeHeader: true,
   });

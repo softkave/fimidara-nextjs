@@ -5,7 +5,17 @@ import { getBaseError } from "../../lib/utilities/errors";
 import PageError from "../utils/PageError";
 import PageLoading from "../utils/PageLoading";
 
-export function useUserNode() {
+export interface IUseUserNodeResult extends ReturnType<typeof useUser> {
+  renderNode: React.ReactElement | null;
+
+  /**
+   * Make sure to check for and return `renderNode` or make sure to check that
+   * result is not loading or in error state before using `assertGet`
+   */
+  assertGet: () => NonNullable<ReturnType<typeof useUser>["data"]>;
+}
+
+export function useUserNode(): IUseUserNodeResult {
   const u0 = useUser();
   const { isLoading, error, data } = u0;
   let renderNode: React.ReactElement | null = null;

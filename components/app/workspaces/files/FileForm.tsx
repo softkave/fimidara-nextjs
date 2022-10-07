@@ -86,12 +86,12 @@ export default function FileForm(props: IFileFormProps) {
     async (data: IFileFormValue) => {
       let fileId: string | null = null;
       const inputFile = first(data.file);
-      const clientAssignedToken = assertGetUserData().clientAssignedToken;
+      const token = assertGetUserData().token;
       if (file) {
         let result: IEndpointResultBase;
         if (inputFile) {
           result = await FileAPI.uploadFile({
-            clientAssignedToken,
+            token,
             fileId: file.resourceId,
             description: data.description,
             data: inputFile as any,
@@ -122,7 +122,7 @@ export default function FileForm(props: IFileFormProps) {
         }
 
         const result = await FileAPI.uploadFile({
-          clientAssignedToken,
+          token: token,
           filepath: addRootnameToPath(
             folderpath
               ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
@@ -146,7 +146,16 @@ export default function FileForm(props: IFileFormProps) {
 
       router.push(appWorkspacePaths.file(workspaceId, fileId));
     },
-    [file, workspaceId, folderId, folderpath, mutate, router, workspaceRootname]
+    [
+      file,
+      workspaceId,
+      folderId,
+      folderpath,
+      router,
+      workspaceRootname,
+      mutate,
+      assertGetUserData,
+    ]
   );
 
   const submitResult = useRequest(onSubmit, { manual: true });
@@ -164,6 +173,10 @@ export default function FileForm(props: IFileFormProps) {
       onSubmit: submitResult.run,
     },
   });
+
+  if (userLoadNode) {
+    return userLoadNode;
+  }
 
   const nameNode = (
     <Form.Item
