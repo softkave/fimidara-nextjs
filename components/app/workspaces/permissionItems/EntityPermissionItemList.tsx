@@ -1,23 +1,23 @@
+import { css, cx } from "@emotion/css";
 import { Space, Table, Typography } from "antd";
+import { ColumnsType } from "antd/lib/table";
 import React from "react";
+import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
+import { IResource, IResourceBase } from "../../../../lib/definitions/resource";
 import {
   actionLabel,
   AppResourceType,
   appResourceTypeLabel,
 } from "../../../../lib/definitions/system";
-import { appClasses } from "../../../utils/theme";
-import { css, cx } from "@emotion/css";
 import useEntityPermissionList from "../../../../lib/hooks/workspaces/useEntityPermissionList";
+import { getBaseError } from "../../../../lib/utilities/errors";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
-import { getBaseError } from "../../../../lib/utilities/errors";
-import { IResource, IResourceBase } from "../../../../lib/definitions/resource";
-import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
+import { appClasses } from "../../../utils/theme";
 import PermissionItemListResourcesContainer, {
   getResourceKey,
 } from "./PermissionItemListResourcesContainer";
-import { ColumnsType } from "antd/lib/table";
 
 export interface IEntityPermissionItemListProps {
   workspaceId: string;
@@ -33,7 +33,7 @@ const classes = {
     margin: "64px auto !important",
   }),
   cell70px: css({ display: "inline-block", minWidth: "70px" }),
-  cell200px: css({ display: "inline-block", minWidth: "216px" }),
+  cell270px: css({ display: "inline-block", minWidth: "270px" }),
 };
 
 const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
@@ -55,7 +55,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           dataIndex: "resourceId",
           key: "resourceId",
           render: (text, item) => (
-            <Typography.Text copyable className={classes.cell200px}>
+            <Typography.Text copyable className={classes.cell270px}>
               {item.resourceId}
             </Typography.Text>
           ),
@@ -85,7 +85,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           dataIndex: "itemResourceType",
           key: "itemResourceType",
           render: (text, item) => (
-            <Typography.Text className={classes.cell200px}>
+            <Typography.Text className={classes.cell270px}>
               {appResourceTypeLabel[item.itemResourceType]}
             </Typography.Text>
           ),
@@ -97,7 +97,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           render: (text, item) => (
             <Typography.Text
               copyable={!!item.itemResourceId}
-              className={classes.cell200px}
+              className={classes.cell270px}
             >
               {item.itemResourceId}
             </Typography.Text>
@@ -118,7 +118,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
               : undefined;
 
             return (
-              <Typography.Text className={classes.cell200px}>
+              <Typography.Text className={classes.cell270px}>
                 {resource?.resource?.name}
               </Typography.Text>
             );
@@ -129,7 +129,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           dataIndex: "permissionOwnerId",
           key: "permissionOwnerId",
           render: (text, item) => (
-            <Typography.Text copyable className={classes.cell200px}>
+            <Typography.Text copyable className={classes.cell270px}>
               {item.permissionOwnerId}
             </Typography.Text>
           ),
@@ -147,7 +147,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
             ] as unknown as IResourceWithName | undefined;
 
             return (
-              <Typography.Text className={classes.cell200px}>
+              <Typography.Text className={classes.cell270px}>
                 {permissionOwner?.resource.name || item.permissionOwnerId}
               </Typography.Text>
             );
@@ -158,7 +158,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
           dataIndex: "permissionOwnerType",
           key: "permissionOwnerType",
           render: (text, item) => (
-            <Typography.Text className={classes.cell200px}>
+            <Typography.Text className={classes.cell270px}>
               {appResourceTypeLabel[item.permissionOwnerType]}
             </Typography.Text>
           ),

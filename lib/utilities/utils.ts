@@ -96,10 +96,8 @@ export function filterObjectList<T extends object = object>(
   }
 
   const lowercased = searchQuery.toLowerCase();
-
   return list.filter((block) => {
     const fieldValue = block[field];
-
     if (fieldValue) {
       return (fieldValue as unknown as string)
         .toLowerCase()
@@ -118,7 +116,7 @@ export function getBackwardMsFrom(data: string) {
   return getDate(data).valueOf() - Date.now();
 }
 
-export function toLabelStr(str: string) {
+export function toLabelString(str: string) {
   return str.replace(/[_-]/, " ");
 }
 
@@ -126,8 +124,13 @@ export function capitalize(str: string) {
   if (str.length === 0) {
     return str;
   }
-
   return `${str[0].toUpperCase()}${str.slice(1)}`;
 }
 
-export async function wrapFormSubmitFn() {}
+export function withPrefix(str: string, prefix: string) {
+  return str.startsWith(prefix) ? str : `${prefix}${str}`;
+}
+
+export function stripPrefix(str: string, prefix: string) {
+  return prefix && str.startsWith(prefix) ? str.slice(prefix.length) : str;
+}
