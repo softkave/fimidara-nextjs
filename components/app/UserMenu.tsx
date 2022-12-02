@@ -1,5 +1,5 @@
 import { CaretDownOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Space } from "antd";
+import { Badge, Button, Dropdown, Menu, Popover, Space } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
@@ -11,11 +11,42 @@ import UserAvatar from "./user/UserAvatar";
 const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
-  const { renderNode, assertGet } = useUserNode();
+  const { renderNode, assertGet } = useUserNode({
+    renderNode: { withoutMargin: true },
+  });
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const renderBtnNode = (userId: string, withError?: boolean) => {
+    const userAvatarNode = (
+      <UserAvatar userId={userId} alt="Your profile picture" />
+    );
+    return (
+      <Button
+        style={{
+          padding: 0,
+          border: "none",
+          boxShadow: "none",
+        }}
+      >
+        {withError ? (
+          <Badge dot>{userAvatarNode}</Badge>
+        ) : (
+          <Space size={"small"}>
+            {userAvatarNode}
+            <CaretDownOutlined />
+          </Space>
+        )}
+      </Button>
+    );
+  };
+
   if (renderNode) {
-    return renderNode;
+    return (
+      <Popover content={renderNode} placement="bottomRight">
+        {renderBtnNode(/** userId */ "", /** withError */ true)}
+      </Popover>
+    );
   }
 
   return (
@@ -24,7 +55,6 @@ export default function UserMenu() {
       overlay={
         <Menu
           onClick={async (info) => {
-            console.log(info);
             if (info.key === LOGOUT_MENU_KEY) {
               // TODO: delete all cache keys
               router.push(appRootPaths.home);
@@ -41,21 +71,7 @@ export default function UserMenu() {
         </Menu>
       }
     >
-      <Button
-        style={{
-          padding: 0,
-          border: "none",
-          boxShadow: "none",
-        }}
-      >
-        <Space size={"small"}>
-          <UserAvatar
-            userId={assertGet().user.resourceId}
-            alt="Your profile picture"
-          />
-          <CaretDownOutlined />
-        </Space>
-      </Button>
+      {renderBtnNode(assertGet().user.resourceId)}
     </Dropdown>
   );
 }

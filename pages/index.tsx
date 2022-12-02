@@ -1,15 +1,15 @@
 import { cx } from "@emotion/css";
 import { Space, Typography } from "antd";
 import type { NextPage } from "next";
+import FimidaraHeader from "../components/FimidaraHeader";
 import { appClasses } from "../components/utils/theme";
 import Docs from "../components/web/Docs";
 import Features from "../components/web/Features";
-import WebHeader from "../components/web/WebHeader";
 
 const Home: NextPage = () => {
   return (
     <Space direction="vertical" size={128} style={{ width: "100%" }}>
-      <WebHeader />
+      <FimidaraHeader />
       <div className={cx(appClasses.main)}>
         <Typography.Title level={2}>fimidara</Typography.Title>
       </div>

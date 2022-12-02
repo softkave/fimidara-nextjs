@@ -25,7 +25,7 @@ export default function LoggedInHeader() {
     <div className={classes.root}>
       <div>
         <Link href={appWorkspacePaths.workspaces} passHref>
-          <Typography.Title level={5} style={{ margin: 0 }}>
+          <Typography.Title level={5} style={{ margin: 0, cursor: "pointer" }}>
             fimidara
           </Typography.Title>
         </Link>

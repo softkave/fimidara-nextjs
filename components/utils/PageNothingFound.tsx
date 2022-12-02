@@ -12,7 +12,13 @@ export interface IPageNothingFoundProps {
   messageText?: string;
   actions?: Array<IPageNothingFoundActions | React.ReactNode>;
   className?: string;
+  withoutMargin?: boolean;
 }
+
+export type IPageNothingFoundPassedDownProps = Pick<
+  IPageNothingFoundProps,
+  "withoutMargin"
+>;
 
 const DEFAULT_MESSAGE_TEXT = "Nothing Found!";
 const classes = {
@@ -21,8 +27,8 @@ const classes = {
     alignItems: "center",
     justifyContent: "center",
     display: "flex",
-    margin: "128px 0px",
   }),
+  withMargin: css({ margin: "128px 0px" }),
 };
 
 const isPageAction = (
@@ -53,9 +59,15 @@ export const PageNothingFoundActions: React.FC<{
 };
 
 const PageNothingFound: React.FC<IPageNothingFoundProps> = (props) => {
-  const { message, messageText, actions, className } = props;
+  const { message, messageText, actions, className, withoutMargin } = props;
   return (
-    <div className={cx(classes.root, className)}>
+    <div
+      className={cx(
+        classes.root,
+        !withoutMargin && classes.withMargin,
+        className
+      )}
+    >
       <Empty
         description={
           message || (
