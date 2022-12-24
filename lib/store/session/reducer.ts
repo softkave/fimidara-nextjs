@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { mergeData } from "../../utilities/utils";
+import { mergeData } from "../../utils/utils";
 import SessionActions from "./actions";
 import { ISessionState, SessionType } from "./types";
 

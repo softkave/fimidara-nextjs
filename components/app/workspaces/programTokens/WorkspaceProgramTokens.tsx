@@ -4,11 +4,11 @@ import React from "react";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import {
-  appWorkspacePaths,
   AppResourceType,
+  appWorkspacePaths,
 } from "../../../../lib/definitions/system";
 import useWorkspaceProgramTokenList from "../../../../lib/hooks/workspaces/useWorkspaceProgramTokenList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";

@@ -9,7 +9,7 @@ import {
   BasicCRUDActions,
   getActions,
 } from "../../../../lib/definitions/system";
-import { makeKey } from "../../../../lib/utilities/fns";
+import { makeKey } from "../../../../lib/utils/fns";
 
 export interface INewPermissionItemInputExt extends INewPermissionItemInput {
   isNew: boolean;

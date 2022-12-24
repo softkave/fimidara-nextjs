@@ -1,20 +1,20 @@
 import { Space } from "antd";
-import React from "react";
-import useClientToken from "../../../../lib/hooks/workspaces/useClientToken";
-import PageLoading from "../../../utils/PageLoading";
-import PageError from "../../../utils/PageError";
-import LabeledNode from "../../../utils/LabeledNode";
-import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import assert from "assert";
-import ComponentHeader from "../../../utils/ComponentHeader";
-import ClientTokenMenu from "./ClientTokenMenu";
 import { useRouter } from "next/router";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import React from "react";
 import { useSWRConfig } from "swr";
+import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import useClientToken from "../../../../lib/hooks/workspaces/useClientToken";
 import { getUseWorkspaceClientTokenListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceClientTokenList";
+import { formatDateTime } from "../../../../lib/utils/dateFns";
+import { getBaseError } from "../../../../lib/utils/errors";
+import ComponentHeader from "../../../utils/ComponentHeader";
+import LabeledNode from "../../../utils/LabeledNode";
+import PageError from "../../../utils/PageError";
+import PageLoading from "../../../utils/PageLoading";
 import { appClasses } from "../../../utils/theme";
-import { getBaseError } from "../../../../lib/utilities/errors";
-import { formatDateTime } from "../../../../lib/utilities/dateFns";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
+import ClientTokenMenu from "./ClientTokenMenu";
 
 export interface IClientTokenProps {
   tokenId: string;

@@ -7,7 +7,7 @@ import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 import usePermissionGroup from "../../../../../../lib/hooks/workspaces/usePermissionGroup";
-import { getBaseError } from "../../../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../../../lib/utils/errors";
 
 export type IWorkspacePermissionGroupFormPageProps = {
   workspaceId: string;

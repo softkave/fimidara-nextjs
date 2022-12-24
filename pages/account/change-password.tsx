@@ -1,29 +1,29 @@
 import { css } from "@emotion/css";
-import { Button, Form, Input, notification, Typography } from "antd";
-import * as yup from "yup";
-import { useDispatch } from "react-redux";
-import React from "react";
 import { useRequest } from "ahooks";
+import { Button, Form, Input, notification, Typography } from "antd";
 import { useRouter } from "next/router";
+import React from "react";
+import { useDispatch } from "react-redux";
+import * as yup from "yup";
 import {
   formBodyClassName,
   formContentWrapperClassName,
 } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
-import { userConstants } from "../../lib/definitions/user";
-import useFormHelpers from "../../lib/hooks/useFormHelpers";
+import { FormAlert } from "../../components/utils/FormAlert";
+import WebHeader from "../../components/web/WebHeader";
 import UserEndpoint from "../../lib/api/endpoints/user";
-import UserSessionStorageFns from "../../lib/storage/userSession";
-import SessionActions from "../../lib/store/session/actions";
+import { checkEndpointResult } from "../../lib/api/utils";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "../../lib/definitions/system";
-import { checkEndpointResult } from "../../lib/api/utils";
-import { flattenErrorList } from "../../lib/utilities/utils";
-import WebHeader from "../../components/web/WebHeader";
-import { toAppErrorsArray } from "../../lib/utilities/errors";
-import { FormAlert } from "../../components/utils/FormAlert";
+import { userConstants } from "../../lib/definitions/user";
+import useFormHelpers from "../../lib/hooks/useFormHelpers";
+import UserSessionStorageFns from "../../lib/storage/userSession";
+import SessionActions from "../../lib/store/session/actions";
+import { toAppErrorsArray } from "../../lib/utils/errors";
+import { flattenErrorList } from "../../lib/utils/utils";
 
 export interface IChangePasswordFormData {
   password: string;

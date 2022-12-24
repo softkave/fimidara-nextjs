@@ -10,7 +10,7 @@ import {
 } from "../../../../lib/definitions/permissionItem";
 import { AppResourceType } from "../../../../lib/definitions/system";
 import useResourcePermissionList from "../../../../lib/hooks/workspaces/useResourcePermissionList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";

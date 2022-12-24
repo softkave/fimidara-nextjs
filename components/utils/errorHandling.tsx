@@ -9,7 +9,7 @@ import {
   getBaseError,
   hasErrorTypes,
   toAppErrorsArray,
-} from "../../lib/utilities/errors";
+} from "../../lib/utils/errors";
 import { appComponentConstants } from "./utils";
 
 export function enrichErrorMessage(error: any) {

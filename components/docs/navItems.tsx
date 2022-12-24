@@ -3,44 +3,110 @@ import Link from "next/link";
 interface IRawNavItem {
   key: string;
   label: React.ReactNode;
-  href?: string;
+  withLink?: boolean;
   children?: IRawNavItem[];
 }
 
-function toAntDMenuItem(item: IRawNavItem): IRawNavItem {
+export const DOCS_BASE_PATH = "/docs";
+
+function toAntDMenuItem(item: IRawNavItem, parentPath: string): IRawNavItem {
+  const itemPath = `${parentPath}/${item.key}`;
   return {
     ...item,
-    label: item.href ? (
-      <Link href={item.href}>
-        <a href={item.href}>{item.label}</a>
+    label: item.withLink ? (
+      <Link href={itemPath}>
+        <a href={itemPath}>{item.label}</a>
       </Link>
     ) : (
       item.label
     ),
-    children: item.children ? item.children.map(toAntDMenuItem) : undefined,
+    children: item.children
+      ? item.children.map((item) => toAntDMenuItem(item, itemPath))
+      : undefined,
   };
 }
 
 export const docsNavItems: IRawNavItem[] = [
   {
     key: "fimidara",
-    label: "fimidara",
+    label: "Fimidara",
     children: [
       {
-        href: "/docs/fimidara/introduction",
+        withLink: true,
         label: "Introduction",
         key: "introduction",
       },
       {
-        href: "/docs/fimidara/workspace",
+        withLink: true,
         label: "Workspace",
         key: "workspace",
       },
       {
-        href: "/docs/fimidara/permissions-and-access-control",
+        withLink: true,
         label: "Permissions and Access Control",
-        key: "permissions",
+        key: "permissions-and-access-control",
       },
     ],
   },
-].map(toAntDMenuItem);
+  {
+    key: "fimidara-rest-api",
+    label: "Fimidara REST API",
+    children: [
+      {
+        withLink: true,
+        label: "Workspaces",
+        key: "workspaces",
+      },
+      {
+        withLink: true,
+        label: "Collaboration Requests",
+        key: "collaboration-requests",
+      },
+      {
+        withLink: true,
+        label: "Collaborators",
+        key: "collaborators",
+      },
+      {
+        withLink: true,
+        label: "Folders",
+        key: "folders",
+      },
+      {
+        withLink: true,
+        label: "Files",
+        key: "files",
+      },
+      {
+        withLink: true,
+        label: "Permission Groups",
+        key: "permission-groups",
+      },
+      {
+        withLink: true,
+        label: "Permission Items",
+        key: "permission-items",
+      },
+      {
+        withLink: true,
+        label: "Client Assigned Tokens",
+        key: "client-assigned-tokens",
+      },
+      {
+        withLink: true,
+        label: "Program Access Tokens",
+        key: "program-access-tokens",
+      },
+      {
+        withLink: true,
+        label: "Usage Records",
+        key: "usage-records",
+      },
+    ],
+  },
+  {
+    key: "fimidara-js-sdk",
+    label: "Fimidara JS SDK",
+    children: [],
+  },
+].map((item) => toAntDMenuItem(item, DOCS_BASE_PATH));

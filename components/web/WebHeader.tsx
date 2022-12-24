@@ -1,4 +1,4 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Button, Dropdown, Menu, Space, Typography } from "antd";
 import Link from "next/link";
 import React from "react";
@@ -8,12 +8,15 @@ import { appClasses } from "../utils/theme";
 
 export interface IWebHeaderProps {
   prefixBtn?: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 const classes = {
   root: css({
     display: "flex",
     padding: "16px",
+    borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
   }),
   sideLinks: css({
     display: "flex",
@@ -27,7 +30,7 @@ const classes = {
 };
 
 const WebHeader: React.FC<IWebHeaderProps> = (props) => {
-  const { prefixBtn } = props;
+  const { prefixBtn, className, style } = props;
   let sideLinksNode: React.ReactNode = null;
   sideLinksNode = (
     <Space size={"middle"}>
@@ -56,7 +59,7 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
   );
 
   return (
-    <div className={classes.root}>
+    <div className={cx(classes.root, className)} style={style}>
       {prefixBtn ? (
         <div className={classes.prefixBtnContainer}>{prefixBtn}</div>
       ) : null}

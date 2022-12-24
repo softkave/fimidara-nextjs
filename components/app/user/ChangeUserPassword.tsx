@@ -1,19 +1,19 @@
 import { css } from "@emotion/css";
-import { Button, Form, Input } from "antd";
-import * as yup from "yup";
-import { useDispatch } from "react-redux";
-import React from "react";
 import { useRequest } from "ahooks";
+import { Button, Form, Input } from "antd";
 import { useRouter } from "next/router";
+import React from "react";
+import { useDispatch } from "react-redux";
+import * as yup from "yup";
 import UserAPI from "../../../lib/api/endpoints/user";
 import { checkEndpointResult } from "../../../lib/api/utils";
 import { userConstants } from "../../../lib/definitions/user";
-import SessionActions from "../../../lib/store/session/actions";
-import UserSessionStorageFns from "../../../lib/storage/userSession";
-import { getFlattenedError } from "../../../lib/utilities/errors";
 import useFormHelpers from "../../../lib/hooks/useFormHelpers";
-import FormError from "../../form/FormError";
+import UserSessionStorageFns from "../../../lib/storage/userSession";
+import SessionActions from "../../../lib/store/session/actions";
+import { getFlattenedError } from "../../../lib/utils/errors";
 import { formClasses } from "../../form/classNames";
+import FormError from "../../form/FormError";
 import { FormAlert } from "../../utils/FormAlert";
 
 export interface IChangePasswordFormData {

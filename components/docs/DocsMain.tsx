@@ -1,35 +1,23 @@
-import BarsOutlined from "@ant-design/icons/lib/icons/BarsOutlined";
+import { MenuOutlined } from "@ant-design/icons";
 import Button from "antd/lib/button";
-import Dropdown from "antd/lib/dropdown";
-import Menu from "antd/lib/menu";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { useState } from "react";
+import useAppResponsive from "../../lib/hooks/useAppResponsive";
 import FimidaraHeader from "../FimidaraHeader";
-import { docsNavItems } from "./navItems";
+import { SideNav } from "./SideNav";
 
 export interface IDocsMainProps {
   pageProps: any;
   children: React.ReactNode;
 }
 
+// TODO: move header styles to headers
 const DocsMain: React.FC<IDocsMainProps> = (props) => {
   const { pageProps, children } = props;
-  const router = useRouter();
   const title = pageProps.markdoc.frontmatter.title;
   const description = pageProps.markdoc.frontmatter.description;
-  const dropdownNode = (
-    <Dropdown
-      overlay={
-        <Menu
-          items={docsNavItems}
-          defaultSelectedKeys={[router.pathname]}
-          style={{ minWidth: "145px" }}
-        />
-      }
-    >
-      <Button icon={<BarsOutlined />} />
-    </Dropdown>
-  );
+  const responsive = useAppResponsive();
+  const [showMenu, setShowMenu] = useState(!!responsive?.lg);
 
   return (
     <>
@@ -40,27 +28,65 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
         <meta name="title" content={title} />
         <meta name="description" content={description} />
       </Head>
-      <FimidaraHeader webHeaderProps={{ prefixBtn: dropdownNode }} />
       <div className="page">
-        {/* <SideNav /> */}
-        <main className="flex column">{children}</main>
+        <div className="header">
+          <FimidaraHeader
+            headerProps={{
+              prefixBtn: (
+                <Button
+                  icon={<MenuOutlined />}
+                  onClick={() => setShowMenu(!showMenu)}
+                />
+              ),
+            }}
+          />
+        </div>
+        <div className="page-without-header">
+          {showMenu ? (
+            <div className="side-nav">
+              <SideNav onClose={() => setShowMenu(false)} />
+            </div>
+          ) : (
+            <span />
+          )}
+          <main>
+            <div>{children}</div>
+          </main>
+        </div>
       </div>
       <style jsx>
         {`
           .page {
+            overflow: hidden;
+            height: 100vh;
+          }
+          .header {
             position: fixed;
-            top: var(--top-nav-height);
-            display: flex;
-            width: 100vw;
-            flex-grow: 1;
+            width: 100%;
+            background-color: white;
+          }
+          .page-without-header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            padding-top: var(--top-nav-height);
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+          }
+          .side-nav {
+            max-height: calc(100vh - var(--top-nav-height));
+            overflow: hidden;
+          }
+          .side-nav ul {
+            height: 100%;
           }
           main {
+            width: 100%;
             overflow: auto;
-            height: calc(100vh - var(--top-nav-height));
-            flex-grow: 1;
-            font-size: 16px;
-            padding: 0 1rem 1rem;
-            max-width: 1020px;
+          }
+          main > div {
+            padding: 1rem;
+            max-width: 720px;
             margin: 0 auto;
           }
         `}

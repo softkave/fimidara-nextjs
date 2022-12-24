@@ -1,7 +1,8 @@
 import assert from "assert";
 import React from "react";
+import { useUserActions } from "../../lib/hooks/actionHooks/useUserActions";
 import useUser from "../../lib/hooks/useUser";
-import { getBaseError } from "../../lib/utilities/errors";
+import { getBaseError } from "../../lib/utils/errors";
 import PageError from "../utils/PageError";
 import PageLoading from "../utils/PageLoading";
 import { IPageNothingFoundPassedDownProps } from "../utils/PageNothingFound";
@@ -20,6 +21,7 @@ export function useUserNode(
   props: { renderNode?: IPageNothingFoundPassedDownProps } = {}
 ): IUseUserNodeResult {
   const u0 = useUser();
+  const userActions = useUserActions();
   const { isLoading, error, data } = u0;
   let renderNode: React.ReactElement | null = null;
   const renderNodeProps = props.renderNode || {};
@@ -28,6 +30,9 @@ export function useUserNode(
       <PageError
         {...renderNodeProps}
         messageText={getBaseError(error) || "Error fetching user"}
+        actions={[
+          { children: "Logout", onClick: userActions.logout, danger: true },
+        ]}
       />
     );
   } else if (isLoading) {

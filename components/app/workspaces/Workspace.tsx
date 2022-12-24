@@ -7,7 +7,7 @@ import { SWRConfiguration } from "swr";
 import { appWorkspacePaths } from "../../../lib/definitions/system";
 import { IWorkspace } from "../../../lib/definitions/workspace";
 import useWorkspace from "../../../lib/hooks/workspaces/useWorkspace";
-import { getBaseError } from "../../../lib/utilities/errors";
+import { getBaseError } from "../../../lib/utils/errors";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import { appClasses } from "../../utils/theme";
@@ -116,7 +116,7 @@ const Workspace: React.FC<IWorkspaceProps> = (props) => {
         <Tabs.TabPane
           tab={
             <Link href={paths.requests}>
-              <a>Requests</a>
+              <a>Collaboration Requests</a>
             </Link>
           }
           key={paths.requests}

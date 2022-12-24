@@ -1,5 +1,5 @@
-import { getFields, makeExtract } from "../utilities/extract";
-import OperationError from "../utilities/OperationError";
+import { getFields, makeExtract } from "../utils/extract";
+import OperationError from "../utils/OperationError";
 import { IAssignedPermissionGroup } from "./permissionGroups";
 
 export interface IUserWorkspace {

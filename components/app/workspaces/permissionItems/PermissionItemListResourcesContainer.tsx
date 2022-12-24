@@ -1,14 +1,14 @@
 import React from "react";
-import { appClasses } from "../../../utils/theme";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import { getBaseError } from "../../../../lib/utilities/errors";
 import { IPermissionItem } from "../../../../lib/definitions/permissionItem";
 import {
   IGetResourceInputItem,
   IResource,
 } from "../../../../lib/definitions/resource";
 import useResourceList from "../../../../lib/hooks/workspaces/useResourceList";
+import { getBaseError } from "../../../../lib/utils/errors";
+import PageError from "../../../utils/PageError";
+import PageLoading from "../../../utils/PageLoading";
+import { appClasses } from "../../../utils/theme";
 
 export const getResourceKey = (item: IGetResourceInputItem) =>
   `${item.resourceId}-${item.resourceType}`;

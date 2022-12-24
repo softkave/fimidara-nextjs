@@ -10,15 +10,20 @@ import SessionSelectors from "../store/session/selectors";
  * is logged in, and `false` means user is not logged in
  */
 export function useUserLoggedIn() {
-  const tokenFromStore = useSelector(SessionSelectors.getUserToken);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(
-    isUndefined(tokenFromStore) || isNull(tokenFromStore) ? undefined : true
+  const tokenFromRedux = useSelector(SessionSelectors.getUserToken);
+  const [tokenFromLocalStorage, setTokenFromLocalStorage] = React.useState<
+    string | null | undefined
+  >(null);
+
+  const token = tokenFromRedux || tokenFromLocalStorage;
+  const isLoggedIn = React.useMemo(
+    () => (isUndefined(token) || isNull(token) ? false : true),
+    [token]
   );
+
   React.useEffect(() => {
-    if (isUndefined(isLoggedIn)) {
-      const tokenFromLocalStorage = UserSessionStorageFns.getUserToken();
-      setIsLoggedIn(!!tokenFromLocalStorage);
-    }
+    const tokenFromLocalStorage = UserSessionStorageFns.getUserToken();
+    setTokenFromLocalStorage(tokenFromLocalStorage);
   }, [isLoggedIn]);
 
   return isLoggedIn;

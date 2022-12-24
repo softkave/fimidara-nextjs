@@ -7,7 +7,7 @@ import {
 } from "../../definitions/file";
 import { folderConstants } from "../../definitions/folder";
 import { systemConstants } from "../../definitions/system";
-import { stripPrefix } from "../../utilities/utils";
+import { stripPrefix } from "../../utils/utils";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import {
   HTTP_HEADER_AUTHORIZATION,

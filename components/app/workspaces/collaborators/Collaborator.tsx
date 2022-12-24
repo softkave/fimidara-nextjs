@@ -1,18 +1,18 @@
 import { Space } from "antd";
-import React from "react";
-import PageLoading from "../../../utils/PageLoading";
-import PageError from "../../../utils/PageError";
-import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
-import ComponentHeader from "../../../utils/ComponentHeader";
 import { useRouter } from "next/router";
+import React from "react";
+import { useSWRConfig } from "swr";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useCollaborator from "../../../../lib/hooks/workspaces/useCollaborator";
-import { useSWRConfig } from "swr";
 import { getUseWorkspaceCollaboratorListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceCollaboratorList";
-import CollaboratorMenu from "./CollaboratorMenu";
-import { appClasses } from "../../../utils/theme";
+import { getBaseError } from "../../../../lib/utils/errors";
+import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import PageError from "../../../utils/PageError";
+import PageLoading from "../../../utils/PageLoading";
+import { appClasses } from "../../../utils/theme";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
+import CollaboratorMenu from "./CollaboratorMenu";
 
 export interface ICollaboratorProps {
   workspaceId: string;

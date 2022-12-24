@@ -7,7 +7,7 @@ import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 import useCollaborationRequest from "../../../../../../lib/hooks/requests/useRequest";
-import { getBaseError } from "../../../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../../../lib/utils/errors";
 
 export type IWorkspaceRequestFormPageProps = {
   workspaceId: string;

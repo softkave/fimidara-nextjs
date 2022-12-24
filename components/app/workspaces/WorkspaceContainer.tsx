@@ -3,7 +3,7 @@ import React from "react";
 import { SWRConfiguration } from "swr";
 import { IWorkspace } from "../../../lib/definitions/workspace";
 import useWorkspace from "../../../lib/hooks/workspaces/useWorkspace";
-import { getBaseError } from "../../../lib/utilities/errors";
+import { getBaseError } from "../../../lib/utils/errors";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import { appClasses } from "../../utils/theme";

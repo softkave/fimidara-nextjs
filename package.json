@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "env-cmd -f \".env.development\" next dev",
+    "dev-prod": "env-cmd -f \".env.production\" next dev",
     "build": "next build",
     "build-local": "env-cmd -f \".env.development\" next build",
     "start": "next start",

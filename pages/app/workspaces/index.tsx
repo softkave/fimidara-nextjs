@@ -13,7 +13,7 @@ import { appClasses } from "../../../components/utils/theme";
 import { IUserLoginResult } from "../../../lib/api/endpoints/user";
 import { appWorkspacePaths } from "../../../lib/definitions/system";
 import useUserWorkspaces from "../../../lib/hooks/workspaces/useUserWorkspaces";
-import { getBaseError } from "../../../lib/utilities/errors";
+import { getBaseError } from "../../../lib/utils/errors";
 
 const classes = {
   sideLinks: css({

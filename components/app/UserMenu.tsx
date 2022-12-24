@@ -1,21 +1,17 @@
-import { CaretDownOutlined } from "@ant-design/icons";
-import { Badge, Button, Dropdown, Menu, Popover, Space } from "antd";
+import { Badge, Button, Dropdown, Menu, Popover } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import { appRootPaths, appUserPaths } from "../../lib/definitions/system";
-import SessionActions from "../../lib/store/session/actions";
+import { appUserPaths } from "../../lib/definitions/system";
+import { useUserActions } from "../../lib/hooks/actionHooks/useUserActions";
 import { useUserNode } from "../hooks/useUserNode";
 import UserAvatar from "./user/UserAvatar";
 
 const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
+  const userActions = useUserActions();
   const { renderNode, assertGet } = useUserNode({
     renderNode: { withoutMargin: true },
   });
-  const dispatch = useDispatch();
-  const router = useRouter();
 
   const renderBtnNode = (userId: string, withError?: boolean) => {
     const userAvatarNode = (
@@ -29,14 +25,7 @@ export default function UserMenu() {
           boxShadow: "none",
         }}
       >
-        {withError ? (
-          <Badge dot>{userAvatarNode}</Badge>
-        ) : (
-          <Space size={"small"}>
-            {userAvatarNode}
-            <CaretDownOutlined />
-          </Space>
-        )}
+        {withError ? <Badge dot>{userAvatarNode}</Badge> : userAvatarNode}
       </Button>
     );
   };
@@ -56,9 +45,7 @@ export default function UserMenu() {
         <Menu
           onClick={async (info) => {
             if (info.key === LOGOUT_MENU_KEY) {
-              // TODO: delete all cache keys
-              router.push(appRootPaths.home);
-              dispatch(SessionActions.logoutUser());
+              userActions.logout();
             }
           }}
           style={{ minWidth: "150px" }}

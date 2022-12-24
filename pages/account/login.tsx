@@ -15,8 +15,8 @@ import { userConstants } from "../../lib/definitions/user";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
 import UserSessionStorageFns from "../../lib/storage/userSession";
 import SessionActions from "../../lib/store/session/actions";
-import { toAppErrorsArray } from "../../lib/utilities/errors";
-import { flattenErrorList } from "../../lib/utilities/utils";
+import { toAppErrorsArray } from "../../lib/utils/errors";
+import { flattenErrorList } from "../../lib/utils/utils";
 
 export interface ILoginFormValues {
   email: string;
