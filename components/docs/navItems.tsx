@@ -1,4 +1,6 @@
+import { isEmpty } from "lodash";
 import Link from "next/link";
+import toc from "./fimidara-rest-api-toc.json";
 
 interface IRawNavItem {
   key: string;
@@ -51,62 +53,35 @@ export const docsNavItems: IRawNavItem[] = [
   {
     key: "fimidara-rest-api",
     label: "Fimidara REST API",
-    children: [
-      {
-        withLink: true,
-        label: "Workspaces",
-        key: "workspaces",
-      },
-      {
-        withLink: true,
-        label: "Collaboration Requests",
-        key: "collaboration-requests",
-      },
-      {
-        withLink: true,
-        label: "Collaborators",
-        key: "collaborators",
-      },
-      {
-        withLink: true,
-        label: "Folders",
-        key: "folders",
-      },
-      {
-        withLink: true,
-        label: "Files",
-        key: "files",
-      },
-      {
-        withLink: true,
-        label: "Permission Groups",
-        key: "permission-groups",
-      },
-      {
-        withLink: true,
-        label: "Permission Items",
-        key: "permission-items",
-      },
-      {
-        withLink: true,
-        label: "Client Assigned Tokens",
-        key: "client-assigned-tokens",
-      },
-      {
-        withLink: true,
-        label: "Program Access Tokens",
-        key: "program-access-tokens",
-      },
-      {
-        withLink: true,
-        label: "Usage Records",
-        key: "usage-records",
-      },
-    ],
+    children: extractRestApiToc(toc),
   },
-  {
-    key: "fimidara-js-sdk",
-    label: "Fimidara JS SDK",
-    children: [],
-  },
+  // {
+  //   key: "fimidara-js-sdk",
+  //   label: "Fimidara JS SDK",
+  //   children: [],
+  // },
 ].map((item) => toAntDMenuItem(item, DOCS_BASE_PATH));
+
+type PathRecord<T = any> = Record<string, T>;
+function extractRestApiToc(records: PathRecord) {
+  const links: IRawNavItem[] = [];
+  for (const k in records) {
+    const children = records[k];
+    if (isEmpty(children)) {
+      // is leaf link
+      links.push({
+        withLink: true,
+        label: k,
+        key: k,
+      });
+    } else {
+      links.push({
+        label: k,
+        key: k,
+        children: extractRestApiToc(children),
+      });
+    }
+  }
+
+  return links;
+}

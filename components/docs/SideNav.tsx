@@ -15,11 +15,10 @@ const classes = {
   sideNavMenu: css({
     "& .ant-menu-submenu-title": {
       paddingLeft: "16px !important",
-      // height: "32px !important",
     },
-    // "& .ant-menu-item": {
-    //   height: "32px !important",
-    // },
+    "& .ant-menu-sub": {
+      paddingLeft: "8px !important",
+    },
   }),
   sideNavDesktopRoot: css({
     height: "100%",
@@ -29,6 +28,13 @@ const classes = {
     },
     "& .ant-menu-item": {
       height: "32px !important",
+      paddingLeft: "16px !important",
+    },
+    "& .ant-menu-submenu": {
+      // height: "32px !important",
+    },
+    "& .ant-menu-submenu-title": {
+      height: "32px !important",
     },
     "& .ant-menu-item:not(:last-child)": {
       marginBottom: "4px ",
@@ -37,6 +43,9 @@ const classes = {
   sideNavMobileRoot: css({
     "& .ant-menu-inline": {
       borderRight: "none !important",
+    },
+    "& .ant-menu-item": {
+      paddingLeft: "16px !important",
     },
     "& .ant-drawer-body": {
       padding: "0px !important",

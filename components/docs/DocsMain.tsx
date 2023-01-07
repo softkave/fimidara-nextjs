@@ -1,15 +1,57 @@
 import { MenuOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
+import { Tag } from "@markdoc/markdoc";
+import { MarkdocNextJsPageProps } from "@markdoc/next.js";
 import Button from "antd/lib/button";
 import Head from "next/head";
-import { useState } from "react";
+import React, { useState } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";
 import FimidaraHeader from "../FimidaraHeader";
 import { SideNav } from "./SideNav";
+import { TOCSection } from "./types";
 
 export interface IDocsMainProps {
-  pageProps: any;
+  pageProps: Required<MarkdocNextJsPageProps>;
   children: React.ReactNode;
 }
+
+const classes = {
+  docsContent: css({
+    "& tr": {
+      borderTop: "1px solid #BBB",
+      borderRight: "1px solid #BBB",
+    },
+    "& tr:last-of-type": {
+      borderBottom: "1px solid #BBB",
+    },
+    "& tr th": {
+      textAlign: "left",
+      padding: "4px",
+      borderLeft: "1px solid #BBB",
+    },
+    "& tr th:first-of-type": {
+      borderRight: "none",
+    },
+    "& tr td": {
+      textAlign: "left",
+      padding: "4px",
+      borderLeft: "1px solid #BBB",
+    },
+    "& tr td:first-of-type": {
+      borderRight: "none",
+    },
+    "& p": {
+      margin: "8px 0px",
+    },
+    "& h2": {
+      fontSize: "16px",
+      // marginTop: "48px",
+    },
+    "& h2:not(:first-of-type)": {
+      marginTop: "48px",
+    },
+  }),
+};
 
 // TODO: move header styles to headers
 const DocsMain: React.FC<IDocsMainProps> = (props) => {
@@ -18,6 +60,15 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
   const description = pageProps.markdoc.frontmatter.description;
   const responsive = useAppResponsive();
   const [showMenu, setShowMenu] = useState(!!responsive?.lg);
+  const toc = React.useMemo(
+    () =>
+      pageProps.markdoc?.content
+        ? collectHeadings(pageProps.markdoc.content)
+        : [],
+    [pageProps.markdoc.content]
+  );
+
+  console.log({ toc, pageProps });
 
   return (
     <>
@@ -50,7 +101,10 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
             <span />
           )}
           <main>
-            <div>{children}</div>
+            <div className={classes.docsContent}>
+              {/* <TableOfContents toc={toc} /> */}
+              {children}
+            </div>
           </main>
         </div>
       </div>
@@ -86,7 +140,7 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
           }
           main > div {
             padding: 1rem;
-            max-width: 720px;
+            max-width: 820px;
             margin: 0 auto;
           }
         `}
@@ -96,3 +150,26 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
 };
 
 export default DocsMain;
+
+function collectHeadings(node: unknown, sections: Array<TOCSection> = []) {
+  if (Tag.isTag(node)) {
+    if (node.name === "Heading") {
+      const title = node.children[0];
+
+      if (typeof title === "string") {
+        sections.push({
+          ...node.attributes,
+          title,
+        });
+      }
+    }
+
+    if (node.children) {
+      for (const child of node.children) {
+        collectHeadings(child, sections);
+      }
+    }
+  }
+
+  return sections;
+}
