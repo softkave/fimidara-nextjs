@@ -3,7 +3,8 @@ import {
   makeRemoveFnForKey,
   makeSetFnForKey,
   makeSetIfExistFnForKey,
-} from "../utilities/storage";
+  removeItem,
+} from "../utils/storage";
 import { StorageKeys } from "./types";
 
 export default class UserSessionStorageFns {
@@ -11,7 +12,6 @@ export default class UserSessionStorageFns {
   static saveUserToken = makeSetFnForKey(StorageKeys.UserToken);
   static deleteUserToken = makeRemoveFnForKey(StorageKeys.UserToken);
   static saveUserTokenIfExists = makeSetIfExistFnForKey(StorageKeys.UserToken);
-
   static getClientAssignedToken = makeGetFnForKey(
     StorageKeys.ClientAssignedToken
   );
@@ -24,4 +24,9 @@ export default class UserSessionStorageFns {
   static saveClientAssignedTokenIfExists = makeSetIfExistFnForKey(
     StorageKeys.ClientAssignedToken
   );
+
+  static clearSessionData = () => {
+    removeItem(StorageKeys.UserToken);
+    removeItem(StorageKeys.ClientAssignedToken);
+  };
 }

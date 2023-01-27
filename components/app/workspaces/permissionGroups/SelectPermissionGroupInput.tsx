@@ -3,7 +3,7 @@ import { Button, List, Select, Space, Typography } from "antd";
 import React from "react";
 import { IPermissionGroupInput } from "../../../../lib/definitions/permissionGroups";
 import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import { indexArray } from "../../../../lib/utilities/indexArray";
+import { indexArray } from "../../../../lib/utils/indexArray";
 import InlineError from "../../../utils/InlineError";
 import InlineLoading from "../../../utils/InlineLoading";
 import { appClasses } from "../../../utils/theme";

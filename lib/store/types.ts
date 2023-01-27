@@ -1,5 +1,5 @@
 import { AnyAction, Dispatch, ThunkDispatch } from "@reduxjs/toolkit";
-import { IMergeDataMeta } from "../utilities/utils";
+import { IMergeDataMeta } from "../utils/utils";
 import { IKeyValueState } from "./key-value/types";
 import { ISessionState } from "./session/types";
 

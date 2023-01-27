@@ -1,17 +1,17 @@
+import { useRequest } from "ahooks";
 import { Alert, Button, message, Space, Typography } from "antd";
 import React from "react";
-import { useRequest } from "ahooks";
 import UserEndpoint from "../../../lib/api/endpoints/user";
 import { checkEndpointResult } from "../../../lib/api/utils";
 import useUser from "../../../lib/hooks/useUser";
-import { getBaseError } from "../../../lib/utilities/errors";
-import InlineLoading from "../../utils/InlineLoading";
-import useCooldown from "../../hooks/useCooldown";
-import { errorMessageNotificatition } from "../../utils/errorHandling";
+import { getBaseError } from "../../../lib/utils/errors";
 import {
   formBodyClassName,
   formContentWrapperClassName,
 } from "../../form/classNames";
+import useCooldown from "../../hooks/useCooldown";
+import { errorMessageNotificatition } from "../../utils/errorHandling";
+import InlineLoading from "../../utils/InlineLoading";
 
 export default function EmailVerification() {
   const { isLoading, error, data } = useUser();

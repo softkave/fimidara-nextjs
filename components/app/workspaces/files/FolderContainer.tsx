@@ -3,7 +3,7 @@ import { KeyedMutator, SWRConfiguration } from "swr";
 import { IGetFolderEndpointResult } from "../../../../lib/api/endpoints/folder";
 import { IFolder } from "../../../../lib/definitions/folder";
 import useFolder from "../../../../lib/hooks/workspaces/useFolder";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import { appClasses } from "../../../utils/theme";

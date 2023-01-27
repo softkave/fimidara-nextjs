@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
-import { IMergeDataMeta } from "../../utilities/utils";
+import { IMergeDataMeta } from "../../utils/utils";
 import { ISessionState } from "./types";
 
 const loginUser = createAction<{

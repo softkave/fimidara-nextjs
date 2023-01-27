@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "env-cmd -f \".env.development\" next dev",
+    "dev-prod": "env-cmd -f \".env.production\" next dev",
     "build": "next build",
     "build-local": "env-cmd -f \".env.development\" next build",
     "start": "next start",
@@ -14,7 +15,8 @@
     "@ant-design/icons": "^4.7.0",
     "@emotion/core": "^11.0.0",
     "@emotion/css": "^11.7.1",
-    "@markdoc/next.js": "^0.1.6",
+    "@markdoc/markdoc": "^0.2.1",
+    "@markdoc/next.js": "^0.2.1",
     "@next/bundle-analyzer": "^12.2.5",
     "@reduxjs/toolkit": "^1.7.2",
     "ahooks": "^3.1.9",

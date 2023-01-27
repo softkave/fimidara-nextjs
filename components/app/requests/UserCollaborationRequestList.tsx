@@ -1,5 +1,5 @@
 import useUserRequests from "../../../lib/hooks/requests/useUserRequests";
-import { getBaseError } from "../../../lib/utilities/errors";
+import { getBaseError } from "../../../lib/utils/errors";
 import { useUserNode } from "../../hooks/useUserNode";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";

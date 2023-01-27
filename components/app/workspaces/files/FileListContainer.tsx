@@ -6,7 +6,7 @@ import { IFolder } from "../../../../lib/definitions/folder";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useFileList from "../../../../lib/hooks/workspaces/useFileList";
 import useWorkspace from "../../../../lib/hooks/workspaces/useWorkspace";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";

@@ -1,6 +1,11 @@
 import { useResponsive } from "ahooks/lib/useResponsive";
 import { IUseResponsiveResult } from "../definitions/types";
+import { useRerunHook } from "./useRerunHook";
 
 export default function useAppResponsive() {
-  return useResponsive() as unknown as IUseResponsiveResult;
+  const responsive = useResponsive() as unknown as
+    | IUseResponsiveResult
+    | undefined;
+  useRerunHook();
+  return responsive;
 }

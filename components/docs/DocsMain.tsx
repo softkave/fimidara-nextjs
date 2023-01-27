@@ -1,35 +1,74 @@
-import BarsOutlined from "@ant-design/icons/lib/icons/BarsOutlined";
+import { MenuOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
+import { Tag } from "@markdoc/markdoc";
+import { MarkdocNextJsPageProps } from "@markdoc/next.js";
 import Button from "antd/lib/button";
-import Dropdown from "antd/lib/dropdown";
-import Menu from "antd/lib/menu";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
+import useAppResponsive from "../../lib/hooks/useAppResponsive";
 import FimidaraHeader from "../FimidaraHeader";
-import { docsNavItems } from "./navItems";
+import { SideNav } from "./SideNav";
+import { TOCSection } from "./types";
 
 export interface IDocsMainProps {
-  pageProps: any;
+  pageProps: Required<MarkdocNextJsPageProps>;
   children: React.ReactNode;
 }
 
+const classes = {
+  docsContent: css({
+    "& tr": {
+      borderTop: "1px solid #BBB",
+      borderRight: "1px solid #BBB",
+    },
+    "& tr:last-of-type": {
+      borderBottom: "1px solid #BBB",
+    },
+    "& tr th": {
+      textAlign: "left",
+      padding: "4px",
+      borderLeft: "1px solid #BBB",
+    },
+    "& tr th:first-of-type": {
+      borderRight: "none",
+    },
+    "& tr td": {
+      textAlign: "left",
+      padding: "4px",
+      borderLeft: "1px solid #BBB",
+    },
+    "& tr td:first-of-type": {
+      borderRight: "none",
+    },
+    "& p": {
+      margin: "8px 0px",
+    },
+    "& h2": {
+      fontSize: "16px",
+      // marginTop: "48px",
+    },
+    "& h2:not(:first-of-type)": {
+      marginTop: "48px",
+    },
+  }),
+};
+
+// TODO: move header styles to headers
 const DocsMain: React.FC<IDocsMainProps> = (props) => {
   const { pageProps, children } = props;
-  const router = useRouter();
   const title = pageProps.markdoc.frontmatter.title;
   const description = pageProps.markdoc.frontmatter.description;
-  const dropdownNode = (
-    <Dropdown
-      overlay={
-        <Menu
-          items={docsNavItems}
-          defaultSelectedKeys={[router.pathname]}
-          style={{ minWidth: "145px" }}
-        />
-      }
-    >
-      <Button icon={<BarsOutlined />} />
-    </Dropdown>
+  const responsive = useAppResponsive();
+  const [showMenu, setShowMenu] = useState(!!responsive?.lg);
+  const toc = React.useMemo(
+    () =>
+      pageProps.markdoc?.content
+        ? collectHeadings(pageProps.markdoc.content)
+        : [],
+    [pageProps.markdoc.content]
   );
+
+  console.log({ toc, pageProps });
 
   return (
     <>
@@ -40,27 +79,68 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
         <meta name="title" content={title} />
         <meta name="description" content={description} />
       </Head>
-      <FimidaraHeader webHeaderProps={{ prefixBtn: dropdownNode }} />
       <div className="page">
-        {/* <SideNav /> */}
-        <main className="flex column">{children}</main>
+        <div className="header">
+          <FimidaraHeader
+            headerProps={{
+              prefixBtn: (
+                <Button
+                  icon={<MenuOutlined />}
+                  onClick={() => setShowMenu(!showMenu)}
+                />
+              ),
+            }}
+          />
+        </div>
+        <div className="page-without-header">
+          {showMenu ? (
+            <div className="side-nav">
+              <SideNav onClose={() => setShowMenu(false)} />
+            </div>
+          ) : (
+            <span />
+          )}
+          <main>
+            <div className={classes.docsContent}>
+              {/* <TableOfContents toc={toc} /> */}
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
       <style jsx>
         {`
           .page {
+            overflow: hidden;
+            height: 100vh;
+          }
+          .header {
             position: fixed;
-            top: var(--top-nav-height);
-            display: flex;
-            width: 100vw;
-            flex-grow: 1;
+            width: 100%;
+            background-color: white;
+          }
+          .page-without-header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            padding-top: var(--top-nav-height);
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+          }
+          .side-nav {
+            max-height: calc(100vh - var(--top-nav-height));
+            overflow: hidden;
+          }
+          .side-nav ul {
+            height: 100%;
           }
           main {
+            width: 100%;
             overflow: auto;
-            height: calc(100vh - var(--top-nav-height));
-            flex-grow: 1;
-            font-size: 16px;
-            padding: 0 1rem 1rem;
-            max-width: 1020px;
+          }
+          main > div {
+            padding: 1rem;
+            max-width: 820px;
             margin: 0 auto;
           }
         `}
@@ -70,3 +150,26 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
 };
 
 export default DocsMain;
+
+function collectHeadings(node: unknown, sections: Array<TOCSection> = []) {
+  if (Tag.isTag(node)) {
+    if (node.name === "Heading") {
+      const title = node.children[0];
+
+      if (typeof title === "string") {
+        sections.push({
+          ...node.attributes,
+          title,
+        });
+      }
+    }
+
+    if (node.children) {
+      for (const child of node.children) {
+        collectHeadings(child, sections);
+      }
+    }
+  }
+
+  return sections;
+}

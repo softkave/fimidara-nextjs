@@ -8,7 +8,7 @@ import {
   appWorkspacePaths,
 } from "../../../../lib/definitions/system";
 import useWorkspaceClientTokenList from "../../../../lib/hooks/workspaces/useWorkspaceClientTokenList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";

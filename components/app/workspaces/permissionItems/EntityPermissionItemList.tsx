@@ -10,7 +10,7 @@ import {
   appResourceTypeLabel,
 } from "../../../../lib/definitions/system";
 import useEntityPermissionList from "../../../../lib/hooks/workspaces/useEntityPermissionList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";

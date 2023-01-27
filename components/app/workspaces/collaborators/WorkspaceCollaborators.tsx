@@ -3,12 +3,12 @@ import { isUndefined } from "lodash";
 import React from "react";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import {
-  appWorkspacePaths,
   AppResourceType,
+  appWorkspacePaths,
 } from "../../../../lib/definitions/system";
 import { ICollaborator } from "../../../../lib/definitions/user";
 import useWorkspaceCollaboratorList from "../../../../lib/hooks/workspaces/useWorkspaceCollaboratorList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";

@@ -1,17 +1,17 @@
-import React from "react";
 import { css } from "@emotion/css";
-import { Alert, Button, Form, Input, Typography } from "antd";
-import * as yup from "yup";
 import { useRequest } from "ahooks";
+import { Alert, Button, Form, Input, Typography } from "antd";
+import React from "react";
+import * as yup from "yup";
 import { formClasses } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
 import { preSubmitCheck } from "../../components/form/formUtils";
-import useFormHelpers from "../../lib/hooks/useFormHelpers";
-import UserEndpoint from "../../lib/api/endpoints/user";
-import { flattenErrorList } from "../../lib/utilities/utils";
-import WebHeader from "../../components/web/WebHeader";
-import { toAppErrorsArray } from "../../lib/utilities/errors";
 import { FormAlert } from "../../components/utils/FormAlert";
+import WebHeader from "../../components/web/WebHeader";
+import UserEndpoint from "../../lib/api/endpoints/user";
+import useFormHelpers from "../../lib/hooks/useFormHelpers";
+import { toAppErrorsArray } from "../../lib/utils/errors";
+import { flattenErrorList } from "../../lib/utils/utils";
 
 export interface IForgotPasswordFormData {
   email: string;

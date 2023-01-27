@@ -1,18 +1,21 @@
 import { css, cx } from "@emotion/css";
-import { Button, Empty, Space, Typography } from "antd";
+import { Button, ButtonProps, Empty, Space, Typography } from "antd";
 import React from "react";
 
-export interface IPageNothingFoundActions {
-  text: string;
-  onClick: React.MouseEventHandler;
-}
+export type IPageNothingFoundAction = ButtonProps;
 
 export interface IPageNothingFoundProps {
   message?: React.ReactNode;
   messageText?: string;
-  actions?: Array<IPageNothingFoundActions | React.ReactNode>;
+  actions?: Array<IPageNothingFoundAction | React.ReactElement>;
   className?: string;
+  withoutMargin?: boolean;
 }
+
+export type IPageNothingFoundPassedDownProps = Pick<
+  IPageNothingFoundProps,
+  "withoutMargin"
+>;
 
 const DEFAULT_MESSAGE_TEXT = "Nothing Found!";
 const classes = {
@@ -21,14 +24,14 @@ const classes = {
     alignItems: "center",
     justifyContent: "center",
     display: "flex",
-    margin: "128px 0px",
   }),
+  withMargin: css({ margin: "128px 0px" }),
 };
 
 const isPageAction = (
   action: Required<IPageNothingFoundProps>["actions"][0]
-): action is IPageNothingFoundActions => {
-  return !!(action as IPageNothingFoundActions)?.text;
+): action is IPageNothingFoundAction => {
+  return !React.isValidElement(action);
 };
 
 export const PageNothingFoundActions: React.FC<{
@@ -39,11 +42,7 @@ export const PageNothingFoundActions: React.FC<{
     <Space>
       {actions?.map((action, i) => {
         if (isPageAction(action)) {
-          return (
-            <Button key={i} onClick={action.onClick}>
-              {action.text}
-            </Button>
-          );
+          return <Button key={i} {...action} />;
         } else {
           return action;
         }
@@ -53,9 +52,15 @@ export const PageNothingFoundActions: React.FC<{
 };
 
 const PageNothingFound: React.FC<IPageNothingFoundProps> = (props) => {
-  const { message, messageText, actions, className } = props;
+  const { message, messageText, actions, className, withoutMargin } = props;
   return (
-    <div className={cx(classes.root, className)}>
+    <div
+      className={cx(
+        classes.root,
+        !withoutMargin && classes.withMargin,
+        className
+      )}
+    >
       <Empty
         description={
           message || (

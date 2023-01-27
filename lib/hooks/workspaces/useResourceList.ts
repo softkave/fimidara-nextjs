@@ -6,7 +6,7 @@ import ResourceAPI, {
   ResourceURLs,
 } from "../../api/endpoints/resources";
 import { checkEndpointResult } from "../../api/utils";
-import { makeKey } from "../../utilities/fns";
+import { makeKey } from "../../utils/fns";
 import { swrDefaultConfig } from "../config";
 
 const fetcher = async (p: string, params: IGetResourcesEndpointParams) => {

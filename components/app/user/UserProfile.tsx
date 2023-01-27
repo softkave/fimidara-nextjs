@@ -1,31 +1,31 @@
 import { css } from "@emotion/css";
-import { Button, Form, Input, message } from "antd";
-import * as yup from "yup";
-import React from "react";
 import { useRequest } from "ahooks";
+import { Button, Form, Input, message } from "antd";
+import React from "react";
+import * as yup from "yup";
 import {
   formBodyClassName,
   formContentWrapperClassName,
 } from "../../../components/form/classNames";
 import FormError from "../../../components/form/FormError";
+import { preSubmitCheck } from "../../../components/form/formUtils";
+import UserEndpoint from "../../../lib/api/endpoints/user";
+import { checkEndpointResult } from "../../../lib/api/utils";
 import {
   EmailAddressNotAvailableError,
   IUser,
   IUserProfileInput,
   userConstants,
 } from "../../../lib/definitions/user";
-import { messages } from "../../../lib/messages/messages";
-import { preSubmitCheck } from "../../../components/form/formUtils";
-import { signupValidationParts } from "../../../lib/validation/user";
 import useFormHelpers from "../../../lib/hooks/useFormHelpers";
-import UserEndpoint from "../../../lib/api/endpoints/user";
-import { checkEndpointResult } from "../../../lib/api/utils";
-import { flattenErrorList } from "../../../lib/utilities/utils";
 import useUser from "../../../lib/hooks/useUser";
-import PageLoading from "../../utils/PageLoading";
-import PageError from "../../utils/PageError";
-import { getBaseError, toAppErrorsArray } from "../../../lib/utilities/errors";
+import { messages } from "../../../lib/messages/messages";
+import { getBaseError, toAppErrorsArray } from "../../../lib/utils/errors";
+import { flattenErrorList } from "../../../lib/utils/utils";
+import { signupValidationParts } from "../../../lib/validation/user";
 import { FormAlert } from "../../utils/FormAlert";
+import PageError from "../../utils/PageError";
+import PageLoading from "../../utils/PageLoading";
 
 export interface IUserProfileProps {}
 

@@ -9,7 +9,7 @@ import PageError from "../../../../components/utils/PageError";
 import PageLoading from "../../../../components/utils/PageLoading";
 import { appClasses } from "../../../../components/utils/theme";
 import useWorkspace from "../../../../lib/hooks/workspaces/useWorkspace";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 
 interface IEditWorkspacePageProps {
   workspaceId: string;

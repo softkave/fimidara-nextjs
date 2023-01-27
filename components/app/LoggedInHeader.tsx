@@ -1,15 +1,22 @@
 import { AlertOutlined, ShopOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Button, Popover, Space, Tooltip, Typography } from "antd";
 import Link from "next/link";
 import { appWorkspacePaths } from "../../lib/definitions/system";
 import UserCollaborationRequestList from "./requests/UserCollaborationRequestList";
 import UserMenu from "./UserMenu";
 
+export interface ILoggedInHeaderProps {
+  prefixBtn?: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
 const classes = {
   root: css({
     display: "flex",
     padding: "16px",
+    borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
   }),
   sideLinks: css({
     display: "flex",
@@ -18,14 +25,21 @@ const classes = {
     justifyContent: "flex-end",
   }),
   notifications: css({ minWidth: "260px", minHeight: "200px" }),
+  prefixBtnContainer: css({
+    marginRight: "16px",
+  }),
 };
 
-export default function LoggedInHeader() {
+export default function LoggedInHeader(props: ILoggedInHeaderProps) {
+  const { prefixBtn, className, style } = props;
   return (
-    <div className={classes.root}>
+    <div className={cx(classes.root, className)} style={style}>
+      {prefixBtn ? (
+        <div className={classes.prefixBtnContainer}>{prefixBtn}</div>
+      ) : null}
       <div>
         <Link href={appWorkspacePaths.workspaces} passHref>
-          <Typography.Title level={5} style={{ margin: 0 }}>
+          <Typography.Title level={5} style={{ margin: 0, cursor: "pointer" }}>
             fimidara
           </Typography.Title>
         </Link>
@@ -47,7 +61,7 @@ export default function LoggedInHeader() {
             title="Collaboration Requests"
             placement="bottomRight"
           >
-            <Tooltip title="Collaboration requests">
+            <Tooltip title="Collaboration Requests">
               <Button icon={<AlertOutlined />} />
             </Tooltip>
           </Popover>

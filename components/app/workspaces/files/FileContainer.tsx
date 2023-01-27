@@ -3,7 +3,7 @@ import { KeyedMutator, SWRConfiguration } from "swr";
 import { IGetFileDetailsEndpointResult } from "../../../../lib/api/endpoints/file";
 import { IFile } from "../../../../lib/definitions/file";
 import useFile from "../../../../lib/hooks/workspaces/useFile";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import { appClasses } from "../../../utils/theme";

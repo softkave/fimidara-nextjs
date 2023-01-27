@@ -1,23 +1,22 @@
+import { css } from "@emotion/css";
+import { useRequest } from "ahooks";
 import { Button, Dropdown, List, Menu, message, Modal } from "antd";
+import { last } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import useAppResponsive from "../../../../lib/hooks/useAppResponsive";
-import { appClasses } from "../../../utils/theme";
-import { checkEndpointResult } from "../../../../lib/api/utils";
+import { BsThreeDots } from "react-icons/bs";
 import { useSWRConfig } from "swr";
-import { useRequest } from "ahooks";
-import { SelectInfo } from "../../../utils/types";
+import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
+import { checkEndpointResult } from "../../../../lib/api/utils";
 import {
   CollaborationRequestStatusType,
   ICollaborationRequest,
 } from "../../../../lib/definitions/collaborationRequest";
-import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
+import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
-import { last } from "lodash";
-import { BsThreeDots } from "react-icons/bs";
-import { css } from "@emotion/css";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
+import { appClasses } from "../../../utils/theme";
+import { SelectInfo } from "../../../utils/types";
 
 export interface IWorkspaceRequestListProps {
   workspaceId: string;
@@ -40,7 +39,6 @@ const classes = {
 const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
   const { workspaceId, requests } = props;
   const { mutate } = useSWRConfig();
-  const responsive = useAppResponsive();
   const deleteItem = React.useCallback(
     async (itemId: string) => {
       try {

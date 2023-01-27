@@ -8,7 +8,7 @@ import { useSWRConfig } from "swr";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
 import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
 import PageError from "../../../utils/PageError";

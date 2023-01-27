@@ -1,46 +1,87 @@
+import { isEmpty } from "lodash";
 import Link from "next/link";
+import toc from "./fimidara-rest-api-toc.json";
 
 interface IRawNavItem {
   key: string;
   label: React.ReactNode;
-  href?: string;
+  withLink?: boolean;
   children?: IRawNavItem[];
 }
 
-function toAntDMenuItem(item: IRawNavItem): IRawNavItem {
+export const DOCS_BASE_PATH = "/docs";
+
+function toAntDMenuItem(item: IRawNavItem, parentPath: string): IRawNavItem {
+  const itemPath = `${parentPath}/${item.key}`;
   return {
     ...item,
-    label: item.href ? (
-      <Link href={item.href}>
-        <a href={item.href}>{item.label}</a>
+    label: item.withLink ? (
+      <Link href={itemPath}>
+        <a href={itemPath}>{item.label}</a>
       </Link>
     ) : (
       item.label
     ),
-    children: item.children ? item.children.map(toAntDMenuItem) : undefined,
+    children: item.children
+      ? item.children.map((item) => toAntDMenuItem(item, itemPath))
+      : undefined,
   };
 }
 
 export const docsNavItems: IRawNavItem[] = [
   {
     key: "fimidara",
-    label: "fimidara",
+    label: "Fimidara",
     children: [
       {
-        href: "/docs/fimidara/introduction",
+        withLink: true,
         label: "Introduction",
         key: "introduction",
       },
       {
-        href: "/docs/fimidara/workspace",
+        withLink: true,
         label: "Workspace",
         key: "workspace",
       },
       {
-        href: "/docs/fimidara/permissions-and-access-control",
+        withLink: true,
         label: "Permissions and Access Control",
-        key: "permissions",
+        key: "permissions-and-access-control",
       },
     ],
   },
-].map(toAntDMenuItem);
+  {
+    key: "fimidara-rest-api",
+    label: "Fimidara REST API",
+    children: extractRestApiToc(toc),
+  },
+  // {
+  //   key: "fimidara-js-sdk",
+  //   label: "Fimidara JS SDK",
+  //   children: [],
+  // },
+].map((item) => toAntDMenuItem(item, DOCS_BASE_PATH));
+
+type PathRecord<T = any> = Record<string, T>;
+function extractRestApiToc(records: PathRecord) {
+  const links: IRawNavItem[] = [];
+  for (const k in records) {
+    const children = records[k];
+    if (isEmpty(children)) {
+      // is leaf link
+      links.push({
+        withLink: true,
+        label: k,
+        key: k,
+      });
+    } else {
+      links.push({
+        label: k,
+        key: k,
+        children: extractRestApiToc(children),
+      });
+    }
+  }
+
+  return links;
+}

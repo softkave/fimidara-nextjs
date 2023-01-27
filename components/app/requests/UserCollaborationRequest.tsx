@@ -15,7 +15,7 @@ import {
 import useCollaborationRequest, {
   getUseCollaborationRequestHookKey,
 } from "../../../lib/hooks/requests/useRequest";
-import { getBaseError } from "../../../lib/utilities/errors";
+import { getBaseError } from "../../../lib/utils/errors";
 import withPageAuthRequiredHOC from "../../hoc/withPageAuthRequired";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
 import InlineLoading from "../../utils/InlineLoading";

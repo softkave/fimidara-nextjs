@@ -8,8 +8,8 @@ import {
 import { IWorkspace } from "../../../../lib/definitions/workspace";
 import useUsageCosts from "../../../../lib/hooks/useUsageCosts";
 import useWorkspaceSummedUsage from "../../../../lib/hooks/workspaces/useWorkspaceSummedUsage";
-import { getBaseError } from "../../../../lib/utilities/errors";
-import { cast } from "../../../../lib/utilities/fns";
+import { getBaseError } from "../../../../lib/utils/errors";
+import { cast } from "../../../../lib/utils/fns";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";

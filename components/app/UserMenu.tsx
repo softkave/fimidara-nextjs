@@ -1,21 +1,41 @@
-import { CaretDownOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Space } from "antd";
+import { Badge, Button, Dropdown, Menu, Popover } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import { appRootPaths, appUserPaths } from "../../lib/definitions/system";
-import SessionActions from "../../lib/store/session/actions";
+import { appUserPaths } from "../../lib/definitions/system";
+import { useUserActions } from "../../lib/hooks/actionHooks/useUserActions";
 import { useUserNode } from "../hooks/useUserNode";
 import UserAvatar from "./user/UserAvatar";
 
 const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
-  const { renderNode, assertGet } = useUserNode();
-  const dispatch = useDispatch();
-  const router = useRouter();
+  const userActions = useUserActions();
+  const { renderNode, assertGet } = useUserNode({
+    renderNode: { withoutMargin: true },
+  });
+
+  const renderBtnNode = (userId: string, withError?: boolean) => {
+    const userAvatarNode = (
+      <UserAvatar userId={userId} alt="Your profile picture" />
+    );
+    return (
+      <Button
+        style={{
+          padding: 0,
+          border: "none",
+          boxShadow: "none",
+        }}
+      >
+        {withError ? <Badge dot>{userAvatarNode}</Badge> : userAvatarNode}
+      </Button>
+    );
+  };
+
   if (renderNode) {
-    return renderNode;
+    return (
+      <Popover content={renderNode} placement="bottomRight">
+        {renderBtnNode(/** userId */ "", /** withError */ true)}
+      </Popover>
+    );
   }
 
   return (
@@ -24,11 +44,8 @@ export default function UserMenu() {
       overlay={
         <Menu
           onClick={async (info) => {
-            console.log(info);
             if (info.key === LOGOUT_MENU_KEY) {
-              // TODO: delete all cache keys
-              router.push(appRootPaths.home);
-              dispatch(SessionActions.logoutUser());
+              userActions.logout();
             }
           }}
           style={{ minWidth: "150px" }}
@@ -41,21 +58,7 @@ export default function UserMenu() {
         </Menu>
       }
     >
-      <Button
-        style={{
-          padding: 0,
-          border: "none",
-          boxShadow: "none",
-        }}
-      >
-        <Space size={"small"}>
-          <UserAvatar
-            userId={assertGet().user.resourceId}
-            alt="Your profile picture"
-          />
-          <CaretDownOutlined />
-        </Space>
-      </Button>
+      {renderBtnNode(assertGet().user.resourceId)}
     </Dropdown>
   );
 }

@@ -4,8 +4,8 @@ import last from "lodash/last";
 import UserSessionStorageFns from "../storage/userSession";
 import SessionSelectors from "../store/session/selectors";
 import store from "../store/store";
-import { toAppErrorsArray } from "../utilities/errors";
-import { flattenErrorList } from "../utilities/utils";
+import { toAppErrorsArray } from "../utils/errors";
+import { flattenErrorList } from "../utils/utils";
 import { getServerAddr } from "./addr";
 import { IEndpointResultBase } from "./types";
 

@@ -1,23 +1,23 @@
 import { Space } from "antd";
-import React from "react";
-import PageLoading from "../../../utils/PageLoading";
-import PageError from "../../../utils/PageError";
-import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import assert from "assert";
-import ComponentHeader from "../../../utils/ComponentHeader";
 import { useRouter } from "next/router";
-import {
-  appWorkspacePaths,
-  AppResourceType,
-} from "../../../../lib/definitions/system";
+import React from "react";
 import { useSWRConfig } from "swr";
+import {
+  AppResourceType,
+  appWorkspacePaths,
+} from "../../../../lib/definitions/system";
 import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
 import { getUseWorkspacePermissionGroupListHookKey } from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import PermissionGroupMenu from "./PermissionGroupMenu";
-import { appClasses } from "../../../utils/theme";
+import { getBaseError } from "../../../../lib/utils/errors";
+import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
+import PageError from "../../../utils/PageError";
+import PageLoading from "../../../utils/PageLoading";
+import { appClasses } from "../../../utils/theme";
 import EntityPermissionGroupList from "../permissionItems/EntityPermissionItemList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
+import PermissionGroupMenu from "./PermissionGroupMenu";
 
 export interface IPermissionGroupProps {
   permissionGroupId: string;
@@ -48,9 +48,13 @@ function PermissionGroup(props: IPermissionGroupProps) {
   const onCompleteDeletePermissionGroup = React.useCallback(async () => {
     assert(data?.permissionGroup, new Error("Permission group not found"));
     cacheMutate(
-      getUseWorkspacePermissionGroupListHookKey(data.permissionGroup.workspaceId)
+      getUseWorkspacePermissionGroupListHookKey(
+        data.permissionGroup.workspaceId
+      )
     );
-    router.push(appWorkspacePaths.collaboratorList(data.permissionGroup.workspaceId));
+    router.push(
+      appWorkspacePaths.collaboratorList(data.permissionGroup.workspaceId)
+    );
   }, [data, router, cacheMutate]);
 
   if (error) {

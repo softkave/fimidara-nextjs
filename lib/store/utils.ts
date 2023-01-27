@@ -1,7 +1,7 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import isString from "lodash/isString";
 import { IAppError } from "../definitions/system";
-import { IMergeDataMeta, mergeData } from "../utilities/utils";
+import { IMergeDataMeta, mergeData } from "../utils/utils";
 import SessionActions from "./session/actions";
 import { IAppState } from "./types";
 

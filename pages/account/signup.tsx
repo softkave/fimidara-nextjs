@@ -1,31 +1,31 @@
 import { css } from "@emotion/css";
-import { Button, Form, Input, Typography } from "antd";
-import * as yup from "yup";
-import { useDispatch } from "react-redux";
-import React from "react";
 import { useRequest } from "ahooks";
+import { Button, Form, Input, Typography } from "antd";
 import { useRouter } from "next/router";
+import React from "react";
+import { useDispatch } from "react-redux";
+import * as yup from "yup";
 import {
   formBodyClassName,
   formContentWrapperClassName,
 } from "../../components/form/classNames";
 import FormError from "../../components/form/FormError";
+import { FormAlert } from "../../components/utils/FormAlert";
+import WebHeader from "../../components/web/WebHeader";
+import UserEndpoint from "../../lib/api/endpoints/user";
+import { appWorkspacePaths } from "../../lib/definitions/system";
 import {
   EmailAddressNotAvailableError,
   IUserInput,
   userConstants,
 } from "../../lib/definitions/user";
-import { messages } from "../../lib/messages/messages";
-import { signupValidationParts } from "../../lib/validation/user";
 import useFormHelpers from "../../lib/hooks/useFormHelpers";
-import UserEndpoint from "../../lib/api/endpoints/user";
+import { messages } from "../../lib/messages/messages";
 import UserSessionStorageFns from "../../lib/storage/userSession";
 import SessionActions from "../../lib/store/session/actions";
-import { appWorkspacePaths } from "../../lib/definitions/system";
-import { flattenErrorList } from "../../lib/utilities/utils";
-import WebHeader from "../../components/web/WebHeader";
-import { toAppErrorsArray } from "../../lib/utilities/errors";
-import { FormAlert } from "../../components/utils/FormAlert";
+import { toAppErrorsArray } from "../../lib/utils/errors";
+import { flattenErrorList } from "../../lib/utils/utils";
+import { signupValidationParts } from "../../lib/validation/user";
 
 interface ISignupFormInternalData extends Required<IUserInput> {
   // confirmEmail: string;

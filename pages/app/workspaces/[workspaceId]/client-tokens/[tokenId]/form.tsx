@@ -7,7 +7,7 @@ import PageError from "../../../../../../components/utils/PageError";
 import PageLoading from "../../../../../../components/utils/PageLoading";
 import { appWorkspacePaths } from "../../../../../../lib/definitions/system";
 import useClientToken from "../../../../../../lib/hooks/workspaces/useClientToken";
-import { getBaseError } from "../../../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../../../lib/utils/errors";
 
 export type IWorkspaceClientTokenFormPageProps = {
   workspaceId: string;

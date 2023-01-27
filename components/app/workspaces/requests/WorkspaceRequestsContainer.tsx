@@ -7,7 +7,7 @@ import {
   appWorkspacePaths,
 } from "../../../../lib/definitions/system";
 import useWorkspaceRequestList from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
-import { getBaseError } from "../../../../lib/utilities/errors";
+import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
