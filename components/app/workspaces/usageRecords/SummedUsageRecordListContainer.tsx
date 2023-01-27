@@ -79,7 +79,7 @@ const SummedUsageRecordListContainer: React.FC<
       }
 
       return { dateOptions, fulfilledRecords, droppedRecords };
-    }, [records.data, usageCosts.data]);
+    }, [records.data]);
 
   if (error) {
     content = (

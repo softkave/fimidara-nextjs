@@ -28,7 +28,7 @@ const withPageAuthRequiredHOC = <P extends object>(
       } else {
         router.push(appAccountPaths.loginWithReturnPath(returnTo));
       }
-    }, [isLoggedIn, router]);
+    }, [isLoggedIn, router, returnTo]);
 
     if (isLoggedIn) return <Component {...(props as any)} />;
     return onRedirecting();

@@ -31,12 +31,9 @@ const useCooldown = (
 
   React.useEffect(() => {
     if (isInCooldown && !cooldownTimer) {
-      // TODO: remove after testing to make sure there's no infinite loop
-      console.log("Starting cooldown");
       const timeout = window.setTimeout(() => {
         endCooldown();
       }, duration);
-
       setCooldownTimer(timeout);
     }
   }, [duration, endCooldown, isInCooldown, cooldownTimer]);
