@@ -26,6 +26,14 @@ description: Update collaboration request endpoint.
 `NewCollaborationRequestInput`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`message`|`string`|Not required|Message to recipient.|
+|`permissionGroupsOnAccept`|`array` of `object`|Not required|See below for `AssignPermissionGroupInput`'s object fields.  undefined|
+
+`AssignPermissionGroupInput`
+| Field | Type | Required | Description |
+| - | - | - | - |
+|`permissionGroupId`|`string`|Not required|Resource ID.|
+|`order`|`number`|Not required||
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

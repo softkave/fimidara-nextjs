@@ -20,6 +20,8 @@ description: Delete file endpoint.
 `RevokeFileEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`filepath`|`string`|Not required|File name.|
+|`fileId`|`string`|Not required|File ID.|
 
 **200  —  Response Headers**
 | Field | Type | Description |

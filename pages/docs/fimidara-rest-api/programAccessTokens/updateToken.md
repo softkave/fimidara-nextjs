@@ -20,10 +20,21 @@ description: Update program access token endpoint.
 `UpdateProgramAccessTokenEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`tokenId`|`string`|Not required|Resource ID.|
+|`onReferenced`|`boolean`|Not required|Whether to perform action on the token used to authorize the API call when performing actions on tokens and a token ID or provided resource ID is not provided.|
 |`token`|`object`|Not required|See below for 's object fields. |
 
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`name`|`string`|Not required|Name|
+|`description`|`string`|Not required|Description|
+|`permissionGroups`|`array` of `object`|Not required|See below for `AssignPermissionGroupInput`'s object fields.  undefined|
+
+`AssignPermissionGroupInput`
+| Field | Type | Required | Description |
+| - | - | - | - |
+|`permissionGroupId`|`string`|Not required|Resource ID.|
+|`order`|`number`|Not required||
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

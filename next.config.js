@@ -8,10 +8,10 @@ const withLess = require("next-with-less")({
   },
 });
 
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
-  openAnalyzer: false,
-});
+// const withBundleAnalyzer = require("@next/bundle-analyzer")({
+//   enabled: process.env.ANALYZE === "true",
+//   openAnalyzer: false,
+// });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -27,6 +27,11 @@ const nextConfig = {
       {
         source: "/docs/fimidara",
         destination: "/docs/fimidara/introduction",
+        permanent: false,
+      },
+      {
+        source: "/docs/fimidara-rest-api",
+        destination: "/docs/fimidara-rest-api/workspaces/getWorkspace",
         permanent: false,
       },
     ];

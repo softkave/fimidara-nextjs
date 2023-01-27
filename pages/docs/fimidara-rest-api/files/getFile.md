@@ -15,6 +15,8 @@ description: Get file endpoint.
 **Request Queries**
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`w`|`string`|Not required|Resize to width if file is an image.|
+|`h`|`string`|Not required|Resize to height if file is an image.|
 
 
 **Request Headers**
@@ -27,11 +29,15 @@ description: Get file endpoint.
 `GetFileEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`filepath`|`string`|Not required|File name.|
+|`fileId`|`string`|Not required|File ID.|
 |`imageTranformation`|`object`|Not required|See below for `ImageTransformationParams`'s object fields. |
 
 `ImageTransformationParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`width`|`string`|Not required|Resize to width if file is an image.|
+|`height`|`string`|Not required|Resize to height if file is an image.|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

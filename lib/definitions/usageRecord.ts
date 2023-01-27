@@ -1,3 +1,4 @@
+import { DataQuery } from "./data";
 import { AppResourceType, BasicCRUDActions, IAgent } from "./system";
 
 export enum UsageRecordCategory {
@@ -75,6 +76,12 @@ export interface IBandwidthUsageRecordArtifact {
 }
 
 export type UsageCosts = Record<UsageRecordCategory, number>;
+export type IWorkspaceSummedUsageQuery = DataQuery<{
+  category?: UsageRecordCategory;
+  fromDate?: string;
+  toDate?: string;
+  fulfillmentStatus?: UsageRecordFulfillmentStatus;
+}>;
 
 export const getCostForUsage = (costPerUnit: number, usage: number) => {
   return costPerUnit ? costPerUnit * usage : 0;

@@ -20,6 +20,7 @@ description: Remove collaborator endpoint.
 `RevokeCollaboratorEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`collaboratorId`|`string`|Not required|Resource ID.|
 
 **200  —  Response Headers**

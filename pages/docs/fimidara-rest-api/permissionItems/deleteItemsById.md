@@ -20,6 +20,7 @@ description: Delete permission items endpoint.
 `DeletePermissionItemsByIdEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`itemIds`|`array` of `string`|Not required| Permission item ID.|
 
 **200  —  Response Headers**

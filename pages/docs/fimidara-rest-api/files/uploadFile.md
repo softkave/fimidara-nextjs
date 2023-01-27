@@ -26,7 +26,14 @@ description: Upload file endpoint.
 `UploadFileEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`filepath`|`string`|Not required|File name.|
+|`fileId`|`string`|Not required|File ID.|
 |`data`|`binary`|Required|File binary.|
+|`description`|`string`|Not required|Description|
+|`mimetype`|`string`|Not required|File MIME type|
+|`publicAccessAction`|`string`|Not required|Public access actions allowed on a file|
+|`encoding`|`string`|Not required|File encoding|
+|`extension`|`string`|Not required|File extension|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

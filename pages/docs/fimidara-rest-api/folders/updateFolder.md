@@ -20,11 +20,23 @@ description: Update folder endpoint.
 `UpdateFolderEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`folderpath`|`string`|Not required|Folder path.|
+|`folderId`|`string`|Not required|Folder ID.|
 |`folder`|`object`|Not required|See below for `UpdateFolderInput`'s object fields. |
 
 `UpdateFolderInput`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`description`|`string`|Not required|Description|
+|`publicAccessOps`|`array` of `object`|Not required|See below for `PublicAccessOpInput`'s object fields.  undefined|
+|`removePublicAccessOps`|`boolean`|Not required|Whether to clear all current public access permissions|
+
+`PublicAccessOpInput`
+| Field | Type | Required | Description |
+| - | - | - | - |
+|`action`|`string`|Required|Action|
+|`resourceType`|`string`|Required|Resource type this public access permission applies.|
+|`appliesTo`|`string`|Required|Whether this permission applies to both the containing folder and it's children, just the container, or just the children.|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

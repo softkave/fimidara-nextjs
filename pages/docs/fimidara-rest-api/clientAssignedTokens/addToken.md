@@ -20,11 +20,22 @@ description: Add client assigned token endpoint.
 `AddClientAssignedTokenEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`token`|`object`|Not required|See below for `NewClientAssignedTokenInput`'s object fields. |
 
 `NewClientAssignedTokenInput`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`providedResourceId`|`string`|Not required|Resource ID provided by you.|
+|`name`|`string`|Not required|Name|
+|`description`|`string`|Not required|Description|
+|`permissionGroups`|`array` of `object`|Not required|See below for `AssignPermissionGroupInput`'s object fields.  undefined|
+
+`AssignPermissionGroupInput`
+| Field | Type | Required | Description |
+| - | - | - | - |
+|`permissionGroupId`|`string`|Not required|Resource ID.|
+|`order`|`number`|Not required||
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

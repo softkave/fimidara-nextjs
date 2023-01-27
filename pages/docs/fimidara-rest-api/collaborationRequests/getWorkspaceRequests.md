@@ -20,6 +20,7 @@ description: Get workspace collaboration requests endpoint.
 `GetWorkspaceCollaborationRequestsEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |
