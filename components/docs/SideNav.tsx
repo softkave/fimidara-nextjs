@@ -33,6 +33,8 @@ const classes = {
     "& .ant-menu-item": {
       height: "32px !important",
       paddingLeft: "16px !important",
+      marginBottom: "0px ",
+      marginTop: "0px ",
     },
     "& .ant-menu-submenu": {
       // height: "32px !important",
@@ -40,9 +42,7 @@ const classes = {
     "& .ant-menu-submenu-title": {
       height: "32px !important",
     },
-    "& .ant-menu-item:not(:last-child)": {
-      marginBottom: "0px ",
-    },
+    // "& .ant-menu-item:not(:last-child)": {},
   }),
   sideNavMobileRoot: css({
     "& .ant-menu-inline": {
