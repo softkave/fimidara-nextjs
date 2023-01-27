@@ -20,6 +20,7 @@ description: Update collaborator permission groups endpoint.
 `UpdateCollaboratorEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`collaboratorId`|`string`|Not required|Resource ID.|
 |`permissionGroups`|`array` of `object`|Not required|See below for `AssignPermissionGroupInput`'s object fields.  undefined|
 

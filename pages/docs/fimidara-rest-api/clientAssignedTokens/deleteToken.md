@@ -20,6 +20,10 @@ description: Delete client assigned token endpoint.
 `DeleteClientAssignedTokenEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`tokenId`|`string`|Not required|Resource ID.|
+|`onReferenced`|`boolean`|Not required|Whether to perform action on the token used to authorize the API call when performing actions on tokens and a token ID or provided resource ID is not provided.|
+|`providedResourceId`|`string`|Not required|Resource ID provided by you.|
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 
 **200  —  Response Headers**
 | Field | Type | Description |

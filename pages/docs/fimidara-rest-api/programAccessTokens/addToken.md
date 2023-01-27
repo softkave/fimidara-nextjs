@@ -20,11 +20,21 @@ description: Add program access token endpoint.
 `AddProgramAccessTokenEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`token`|`object`|Not required|See below for `NewProgramAccessTokenInput`'s object fields. |
 
 `NewProgramAccessTokenInput`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`name`|`string`|Not required|Name|
+|`description`|`string`|Not required|Description|
+|`permissionGroups`|`array` of `object`|Not required|See below for `AssignPermissionGroupInput`'s object fields.  undefined|
+
+`AssignPermissionGroupInput`
+| Field | Type | Required | Description |
+| - | - | - | - |
+|`permissionGroupId`|`string`|Not required|Resource ID.|
+|`order`|`number`|Not required||
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

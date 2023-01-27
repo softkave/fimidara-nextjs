@@ -20,11 +20,14 @@ description: Update workspace endpoint.
 `UpdateWorkspaceEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`workspace`|`object`|Not required|See below for `UpdateWorkspaceInput`'s object fields. |
 
 `UpdateWorkspaceInput`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`name`|`string`|Not required|Workspace name.|
+|`description`|`string`|Not required|Workspace description.|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

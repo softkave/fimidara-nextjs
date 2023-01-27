@@ -20,6 +20,8 @@ description: Get file details endpoint.
 `GetFileDetailsEndpoint`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`filepath`|`string`|Not required|File name.|
+|`fileId`|`string`|Not required|File ID.|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

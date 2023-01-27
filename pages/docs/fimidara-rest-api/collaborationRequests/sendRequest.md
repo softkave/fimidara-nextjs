@@ -20,6 +20,7 @@ description: Add collaboration request endpoint.
 `SendCollaborationRequestEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`request`|`object`|Not required|See below for `NewCollaborationRequestInput`'s object fields. |
 
 `NewCollaborationRequestInput`
@@ -27,6 +28,13 @@ description: Add collaboration request endpoint.
 | - | - | - | - |
 |`recipientEmail`|`string`|Not required|Recipient's email address.|
 |`message`|`string`|Not required|Message to recipient.|
+|`permissionGroupsOnAccept`|`array` of `object`|Not required|See below for `AssignPermissionGroupInput`'s object fields.  undefined|
+
+`AssignPermissionGroupInput`
+| Field | Type | Required | Description |
+| - | - | - | - |
+|`permissionGroupId`|`string`|Not required|Resource ID.|
+|`order`|`number`|Not required||
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

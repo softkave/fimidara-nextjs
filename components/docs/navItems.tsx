@@ -1,4 +1,5 @@
-import { isEmpty } from "lodash";
+import { ItemType } from "antd/lib/menu/hooks/useItems";
+import { compact, flatten, isEmpty } from "lodash";
 import Link from "next/link";
 import toc from "./fimidara-rest-api-toc.json";
 
@@ -11,11 +12,12 @@ interface IRawNavItem {
 
 export const DOCS_BASE_PATH = "/docs";
 
-function toAntDMenuItem(item: IRawNavItem, parentPath: string): IRawNavItem {
+function toAntDMenuItem(item: IRawNavItem, parentPath: string): ItemType {
   const itemPath = `${parentPath}/${item.key}`;
+  const { withLink, ...itemRest } = item;
   return {
-    ...item,
-    label: item.withLink ? (
+    ...itemRest,
+    label: withLink ? (
       <Link href={itemPath}>
         <a href={itemPath}>{item.label}</a>
       </Link>
@@ -23,12 +25,28 @@ function toAntDMenuItem(item: IRawNavItem, parentPath: string): IRawNavItem {
       item.label
     ),
     children: item.children
-      ? item.children.map((item) => toAntDMenuItem(item, itemPath))
+      ? toAntDMenuItemList(item.children, itemPath)
       : undefined,
   };
 }
 
-export const docsNavItems: IRawNavItem[] = [
+function toAntDMenuItemList(
+  items: IRawNavItem[],
+  parentPath: string
+): ItemType[] {
+  return compact(
+    flatten(
+      items.map((item, i) => {
+        return [
+          toAntDMenuItem(item, parentPath),
+          i < items.length - 1 ? { type: "divider" } : undefined,
+        ];
+      })
+    )
+  );
+}
+
+const docsNavItems: IRawNavItem[] = [
   {
     key: "fimidara",
     label: "Fimidara",
@@ -60,7 +78,9 @@ export const docsNavItems: IRawNavItem[] = [
   //   label: "Fimidara JS SDK",
   //   children: [],
   // },
-].map((item) => toAntDMenuItem(item, DOCS_BASE_PATH));
+];
+
+export const antdNavItems = toAntDMenuItemList(docsNavItems, DOCS_BASE_PATH);
 
 type PathRecord<T = any> = Record<string, T>;
 function extractRestApiToc(records: PathRecord) {

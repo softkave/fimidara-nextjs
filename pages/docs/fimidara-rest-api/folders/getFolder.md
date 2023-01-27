@@ -20,6 +20,8 @@ description: Get folder endpoint.
 `GetFolderEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`folderpath`|`string`|Not required|Folder path.|
+|`folderId`|`string`|Not required|Folder ID.|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

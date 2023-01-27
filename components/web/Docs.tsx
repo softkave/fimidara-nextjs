@@ -17,7 +17,7 @@ const docs: IDoc[] = [
   {
     title: "REST API",
     icon: <FileTextOutlined />,
-    link: "https://github.com/softkave/fimidara-docs/blob/master/REST-API-latest.md",
+    link: "/docs/fimidara-rest-api",
   },
   {
     title: "JS SDK",

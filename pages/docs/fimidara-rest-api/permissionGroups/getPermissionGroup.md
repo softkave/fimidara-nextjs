@@ -20,6 +20,9 @@ description: Get permission group endpoint.
 `GetPermissionGroupEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`permissionGroupId`|`string`|Not required|Permission group ID. Either provide the permission group ID, or provide the workspace ID and permission group name.|
+|`name`|`string`|Not required|Permission group name. Either provide the permission group ID, or provide the workspace ID and permission group name.|
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.Either provide the permission group ID, or provide the workspace ID and permission group name.|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

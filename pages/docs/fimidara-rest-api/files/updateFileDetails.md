@@ -21,10 +21,15 @@ description: Update file details endpoint.
 | Field | Type | Required | Description |
 | - | - | - | - |
 |`file`|`object`|Not required|See below for `UpdateFileDetailsInput`'s object fields. |
+|`filepath`|`string`|Not required|File name.|
+|`fileId`|`string`|Not required|File ID.|
 
 `UpdateFileDetailsInput`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`description`|`string`|Not required|Description|
+|`mimetype`|`string`|Not required|File MIME type|
+|`publicAccessAction`|`string`|Not required|Public access actions allowed on a file|
 
 **4XX or 5XX  —  Response Headers**
 | Field | Type | Description |

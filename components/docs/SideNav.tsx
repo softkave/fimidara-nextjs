@@ -5,7 +5,7 @@ import { compact, last } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";
-import { docsNavItems, DOCS_BASE_PATH } from "./navItems";
+import { antdNavItems, DOCS_BASE_PATH } from "./navItems";
 
 export interface IDocsSideNavProps {
   onClose: () => void;
@@ -17,12 +17,16 @@ const classes = {
       paddingLeft: "16px !important",
     },
     "& .ant-menu-sub": {
-      paddingLeft: "8px !important",
+      paddingLeft: "12px !important",
+    },
+    "& .ant-menu-item-divider": {
+      margin: 0,
     },
   }),
   sideNavDesktopRoot: css({
     height: "100%",
     overflowY: "scroll",
+    overflowX: "hidden",
     "& .ant-menu-inline": {
       height: "100%",
     },
@@ -37,7 +41,7 @@ const classes = {
       height: "32px !important",
     },
     "& .ant-menu-item:not(:last-child)": {
-      marginBottom: "4px ",
+      marginBottom: "0px ",
     },
   }),
   sideNavMobileRoot: css({
@@ -61,7 +65,6 @@ const classes = {
     padding: "16px",
     alignItems: "center",
     borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
-
     "& h4": {
       flex: 1,
       marginRight: "16px",
@@ -85,7 +88,7 @@ export function SideNav(props: IDocsSideNavProps) {
 
   const menuNode = (
     <Menu
-      items={docsNavItems}
+      items={antdNavItems}
       mode="inline"
       style={{ minWidth: "300px" }}
       className={classes.sideNavMenu}

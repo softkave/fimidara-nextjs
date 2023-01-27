@@ -1,7 +1,7 @@
 import {
   IUsageRecord,
+  IWorkspaceSummedUsageQuery,
   UsageRecordCategory,
-  UsageRecordFulfillmentStatus,
 } from "../../definitions/usageRecord";
 import { IEndpointResultBase } from "../types";
 import { invokeEndpoint, invokeEndpointWithAuth } from "../utils";
@@ -15,11 +15,8 @@ export interface IGetUsageCostsEndpointResult extends IEndpointResultBase {
 }
 
 export interface IGetWorkspaceSummedUsageEndpointParams {
-  workspaceId: string;
-  categories?: UsageRecordCategory[];
-  fromDate?: string;
-  toDate?: string;
-  fulfillmentStatus?: UsageRecordFulfillmentStatus;
+  workspaceId?: string;
+  query?: IWorkspaceSummedUsageQuery;
 }
 
 export interface IGetWorkspaceSummedUsageEndpointResult

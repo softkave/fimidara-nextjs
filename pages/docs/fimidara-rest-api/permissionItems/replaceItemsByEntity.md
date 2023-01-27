@@ -20,14 +20,19 @@ description: Replace permission items endpoint.
 `ReplacePermissionItemsByEntityEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`permissionEntityId`|`string`|Not required|Permission entity resource ID. Permission entity is the resource granted access. This can be a user, a permission group, a permission item, or a client assigned token.|
 |`permissionEntityType`|`string`|Not required|Permission entity resource type. Permission entity is the resource granted access. This can be a user, a permission group, a permission item, or a client assigned token.|
+|`workspaceId`|`string`|Not required|Workspace ID. Will default to using workspace ID from client and program tokens if not provided.|
 |`items`|`array` of `object`|Not required|See below for `NewPermissionItemInputByEntity`'s object fields.  undefined|
 
 `NewPermissionItemInputByEntity`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`permissionOwnerId`|`string`|Not required|Resource ID of the container resource to search under. Defaults to workspace ID. Containers serve to subclass permission so that you can for example, grant access to all files in a folder without risking granting permission to all the files in a workspace.|
 |`permissionOwnerType`|`string`|Not required|Resource type of the container resource to search under. Defaults to workspace. Containers serve to subclass permission so that you can for example, grant access to all files in a folder without risking granting permission to all the files in a workspace.|
 |`grantAccess`|`boolean`|Not required|Whether access is granted or not. Access is granted if true, denied if false.|
+|`itemResourceType`|`string`|Required|Resource type to retrieve permission items for. You can pass only the resource type to retrieve all the permission items that grant access to a resource type, or also pass a resource ID to restrict it to just that resource.|
+|`itemResourceId`|`string`|Not required|Resource ID of the resource to retrieve permission items for.|
 |`action`|`string`|Required|Action|
 |`appliesTo`|`string`|Required|Whether this permission applies to both the containing folder and it's children, just the container, or just the children.|
 
@@ -67,8 +72,11 @@ description: Replace permission items endpoint.
 `PermissionItem`
 | Field | Type | Description |
 | - | - | - |
+|`permissionOwnerId`|`string`|Resource ID of the container resource to search under. Defaults to workspace ID. Containers serve to subclass permission so that you can for example, grant access to all files in a folder without risking granting permission to all the files in a workspace.|
 |`permissionOwnerType`|`string`|Resource type of the container resource to search under. Defaults to workspace. Containers serve to subclass permission so that you can for example, grant access to all files in a folder without risking granting permission to all the files in a workspace.|
+|`permissionEntityId`|`string`|Permission entity resource ID. Permission entity is the resource granted access. This can be a user, a permission group, a permission item, or a client assigned token.|
 |`permissionEntityType`|`string`|Permission entity resource type. Permission entity is the resource granted access. This can be a user, a permission group, a permission item, or a client assigned token.|
+|`itemResourceType`|`string`|Resource type to retrieve permission items for. You can pass only the resource type to retrieve all the permission items that grant access to a resource type, or also pass a resource ID to restrict it to just that resource.|
 |`resourceId`|`string`||
 |`createdBy`|`object`|See below for `Agent`'s object fields. |
 |`createdAt`|`string`|Date string.|

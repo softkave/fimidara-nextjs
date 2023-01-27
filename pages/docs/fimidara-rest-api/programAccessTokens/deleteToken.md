@@ -20,6 +20,8 @@ description: Delete program access token endpoint.
 `DeleteProgramAccessTokenEndpointParams`
 | Field | Type | Required | Description |
 | - | - | - | - |
+|`tokenId`|`string`|Not required|Resource ID.|
+|`onReferenced`|`boolean`|Not required|Whether to perform action on the token used to authorize the API call when performing actions on tokens and a token ID or provided resource ID is not provided.|
 
 **200  —  Response Headers**
 | Field | Type | Description |
