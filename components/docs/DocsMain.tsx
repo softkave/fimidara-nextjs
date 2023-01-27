@@ -60,15 +60,6 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
   const description = pageProps.markdoc.frontmatter.description;
   const responsive = useAppResponsive();
   const [showMenu, setShowMenu] = useState(!!responsive?.lg);
-  const toc = React.useMemo(
-    () =>
-      pageProps.markdoc?.content
-        ? collectHeadings(pageProps.markdoc.content)
-        : [],
-    [pageProps.markdoc.content]
-  );
-
-  console.log({ toc, pageProps });
 
   return (
     <>
