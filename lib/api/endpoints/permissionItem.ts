@@ -6,7 +6,7 @@ import { AppResourceType } from "../../definitions/system";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/permissionItems";
+const baseURL = "/v1/permissionItems";
 const addItemsURL = `${baseURL}/addItems`;
 const deleteItemsByIdURL = `${baseURL}/deleteItemsById`;
 const getEntityPermissionItemsURL = `${baseURL}/getEntityPermissionItems`;

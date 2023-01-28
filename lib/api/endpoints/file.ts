@@ -20,7 +20,7 @@ import {
 const URLSearchParams =
   require("core-js/features/url-search-params") as typeof globalThis["URLSearchParams"];
 
-const baseURL = "/files";
+const baseURL = "/v1/files";
 const deleteFileURL = `${baseURL}/deleteFile`;
 const getFileDetailsURL = `${baseURL}/getFileDetails`;
 const updateFileDetailsURL = `${baseURL}/updateFileDetails`;

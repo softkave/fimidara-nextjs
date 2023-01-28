@@ -7,7 +7,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/collaborationRequests";
+const baseURL = "/v1/collaborationRequests";
 const deleteRequestURL = `${baseURL}/deleteRequest`;
 const getWorkspaceRequestsURL = `${baseURL}/getWorkspaceRequests`;
 const getUserRequestsURL = `${baseURL}/getUserRequests`;

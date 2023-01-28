@@ -3,7 +3,7 @@ import { ICollaborator } from "../../definitions/user";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/collaborators";
+const baseURL = "/v1/collaborators";
 const removeCollaboratorURL = `${baseURL}/removeCollaborator`;
 const getWorkspaceCollaboratorsURL = `${baseURL}/getWorkspaceCollaborators`;
 const getCollaboratorURL = `${baseURL}/getCollaborator`;

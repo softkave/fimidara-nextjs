@@ -33,8 +33,8 @@ const classes = {
     "& .ant-menu-item": {
       height: "32px !important",
       paddingLeft: "16px !important",
-      marginBottom: "0px ",
-      marginTop: "0px ",
+      marginBottom: "0px !important",
+      marginTop: "0px !important",
     },
     "& .ant-menu-submenu": {
       // height: "32px !important",

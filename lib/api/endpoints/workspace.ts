@@ -7,7 +7,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/workspaces";
+const baseURL = "/v1/workspaces";
 const addWorkspaceURL = `${baseURL}/addWorkspace`;
 const deleteWorkspaceURL = `${baseURL}/deleteWorkspace`;
 const getWorkspaceURL = `${baseURL}/getWorkspace`;

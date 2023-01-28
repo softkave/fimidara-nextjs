@@ -6,7 +6,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/permissionGroups";
+const baseURL = "/v1/permissionGroups";
 const addPermissionGroupURL = `${baseURL}/addPermissionGroup`;
 const getWorkspacePermissionGroupsURL = `${baseURL}/getWorkspacePermissionGroups`;
 const getPermissionGroupURL = `${baseURL}/getPermissionGroup`;

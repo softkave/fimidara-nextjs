@@ -6,7 +6,7 @@ import {
 } from "../types";
 import { invokeEndpoint, invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/account";
+const baseURL = "/v1/account";
 const signupURL = `${baseURL}/signup`;
 const loginURL = `${baseURL}/login`;
 const updateUserURL = `${baseURL}/updateUser`;

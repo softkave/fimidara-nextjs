@@ -8,7 +8,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/folders";
+const baseURL = "/v1/folders";
 const addFolderURL = `${baseURL}/addFolder`;
 const listFolderContentURL = `${baseURL}/listFolderContent`;
 const getFolderURL = `${baseURL}/getFolder`;

@@ -6,7 +6,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/programAccessTokens";
+const baseURL = "/v1/programAccessTokens";
 const addTokenURL = `${baseURL}/addToken`;
 const getWorkspaceTokensURL = `${baseURL}/getWorkspaceTokens`;
 const getTokenURL = `${baseURL}/getToken`;

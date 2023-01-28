@@ -2,7 +2,7 @@ import { IGetResourceInputItem, IResource } from "../../definitions/resource";
 import { GetEndpointResult } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/resources";
+const baseURL = "/v1/resources";
 const getResourcesURL = `${baseURL}/getResources`;
 
 export interface IGetResourcesEndpointParams {

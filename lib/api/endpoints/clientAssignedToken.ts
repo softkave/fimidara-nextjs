@@ -5,7 +5,7 @@ import {
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
-const baseURL = "/clientAssignedTokens";
+const baseURL = "/v1/clientAssignedTokens";
 const addTokenURL = `${baseURL}/addToken`;
 const getWorkspaceTokensURL = `${baseURL}/getWorkspaceTokens`;
 const getTokenURL = `${baseURL}/getToken`;
