@@ -4,7 +4,11 @@ import {
   ICollaborationRequestInput,
   IUpdateCollaborationRequestInput,
 } from "../../definitions/collaborationRequest";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/collaborationRequests";
@@ -29,7 +33,8 @@ async function deleteRequest(props: IDeleteCollaborationRequestEndpointParams) {
   });
 }
 
-export interface IGetWorkspaceCollaborationRequestsEndpointParams {
+export interface IGetWorkspaceCollaborationRequestsEndpointParams
+  extends IPaginationQuery {
   workspaceId: string;
 }
 
@@ -53,11 +58,9 @@ export type IGetUserCollaborationRequestsEndpointResult = GetEndpointResult<{
   requests: ICollaborationRequest[];
 }>;
 
-async function getUserRequests() {
+async function getUserRequests(props?: IPaginationQuery) {
   return await invokeEndpointWithAuth<IGetUserCollaborationRequestsEndpointResult>(
-    {
-      path: getUserRequestsURL,
-    }
+    { path: getUserRequestsURL, data: props }
   );
 }
 

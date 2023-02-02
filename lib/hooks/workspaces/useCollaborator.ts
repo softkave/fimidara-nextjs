@@ -25,7 +25,6 @@ export default function useCollaborator(workspaceId: string, id?: string) {
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

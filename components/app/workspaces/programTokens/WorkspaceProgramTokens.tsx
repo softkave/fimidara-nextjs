@@ -7,9 +7,11 @@ import {
   AppResourceType,
   appWorkspacePaths,
 } from "../../../../lib/definitions/system";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useWorkspaceProgramTokenList from "../../../../lib/hooks/workspaces/useWorkspaceProgramTokenList";
 import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
+import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
@@ -29,9 +31,13 @@ const WorkspaceProgramTokens: React.FC<IWorkspaceProgramTokensProps> = (
   props
 ) => {
   const { workspaceId, menu, renderItem, renderList, renderRoot } = props;
-  const { data, error, isLoading } = useWorkspaceProgramTokenList(workspaceId);
+  const pagination = usePagination();
+  const { data, error, isLoading } = useWorkspaceProgramTokenList({
+    workspaceId,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   let content: React.ReactNode = null;
-
   if (error) {
     content = (
       <PageError
@@ -62,6 +68,7 @@ const WorkspaceProgramTokens: React.FC<IWorkspaceProgramTokensProps> = (
     );
   }
 
+  content = <PaginatedContent content={content} pagination={pagination} />;
   if (renderRoot) {
     return renderRoot(content);
   }

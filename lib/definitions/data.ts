@@ -72,21 +72,6 @@ export type DataQuery<T extends AnyObject> = {
     : void;
 };
 
-export interface IPaginatedResult {
-  page: number;
-  pageSize: number;
-  count: number;
-}
-
-export interface IPaginatedResultWithData<T = any> extends IPaginatedResult {
-  data: T;
-}
-
-export interface IEndpointQueryPaginationOptions {
-  page?: number;
-  pageSize?: number;
-}
-
 export interface IResourceContainer<T extends IResourceWithId> {
   type: AppResourceType;
   data: T;

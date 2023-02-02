@@ -3,7 +3,11 @@ import {
   IProgramAccessToken,
   IUpdateProgramAccessTokenInput,
 } from "../../definitions/programAccessToken";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/programAccessTokens";
@@ -42,7 +46,8 @@ async function deleteToken(props: IDeleteProgramAccessTokenEndpointParams) {
   });
 }
 
-export interface IGetWorkspaceProgramAccessTokenEndpointParams {
+export interface IGetWorkspaceProgramAccessTokenEndpointParams
+  extends IPaginationQuery {
   workspaceId: string;
 }
 

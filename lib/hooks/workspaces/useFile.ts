@@ -24,7 +24,6 @@ export default function useFile(
     fetcher,
     { ...swrDefaultConfig, ...config }
   );
-
   return {
     error,
     data,

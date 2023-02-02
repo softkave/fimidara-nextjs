@@ -38,7 +38,6 @@ const GrantPermissionFormContainer: React.FC<
     permissionOwnerType,
     onCancel,
   } = props;
-
   const { data, error, isLoading, mutate } = useResourcePermissionList({
     itemResourceType,
     itemResourceId,
@@ -53,25 +52,19 @@ const GrantPermissionFormContainer: React.FC<
         // TODO: invalidate all the data that has assigned permissionGroups
         // when request is successful
 
-        // console.log({ newItems, deletedItemIds });
-
         let result: IEndpointResultBase;
-
         if (deletedItemIds.length) {
           result = await PermissionItemAPI.deleteItemsById({
             itemIds: deletedItemIds,
             workspaceId: workspaceId,
           });
-
           checkEndpointResult(result);
         }
-
         if (newItems.length) {
           result = await PermissionItemAPI.addItems({
             items: newItems,
             workspaceId: workspaceId,
           });
-
           checkEndpointResult(result);
         }
 
@@ -88,7 +81,6 @@ const GrantPermissionFormContainer: React.FC<
   );
 
   const saveItemsHelper = useRequest(onSave, { manual: true });
-
   if (error) {
     return (
       <PageError

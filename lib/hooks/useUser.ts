@@ -39,7 +39,6 @@ const fetcher = async (p: string, dispatch: Dispatch, token?: string) => {
     result.token,
     result.clientAssignedToken
   );
-
   return result;
 };
 
@@ -55,7 +54,6 @@ export default function useUser(swrConfig: SWRConfiguration = {}) {
     fetcher,
     { ...swrDefaultConfig, ...swrConfig }
   );
-
   return {
     error,
     data,

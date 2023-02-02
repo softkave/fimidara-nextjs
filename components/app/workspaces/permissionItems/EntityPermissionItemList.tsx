@@ -40,7 +40,7 @@ const EntityPermissionGroupList: React.FC<IEntityPermissionItemListProps> = (
   props
 ) => {
   const { workspaceId, entityId, entityType } = props;
-  const { isLoading, error, data, mutate } = useEntityPermissionList(
+  const { isLoading, error, data } = useEntityPermissionList(
     workspaceId,
     entityId,
     entityType

@@ -5,7 +5,11 @@ import {
   INewFolderInput,
   IUpdateFolderInput,
 } from "../../definitions/folder";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/folders";
@@ -52,7 +56,9 @@ async function getFolder(props: IGetFolderEndpointParams) {
   });
 }
 
-export interface IListFolderContentEndpointParams extends IFolderMatcher {}
+export interface IListFolderContentEndpointParams
+  extends IFolderMatcher,
+    IPaginationQuery {}
 export type IListFolderContentEndpointResult = GetEndpointResult<{
   folders: IFolder[];
   files: IFile[];

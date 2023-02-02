@@ -22,7 +22,6 @@ export default function useClientToken(id?: string) {
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

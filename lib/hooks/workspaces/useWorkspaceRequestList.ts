@@ -1,31 +1,36 @@
 import useSWR from "swr";
 import CollaborationRequestAPI, {
   CollaborationRequestURLs,
+  IGetWorkspaceCollaborationRequestsEndpointParams,
   IGetWorkspaceCollaborationRequestsEndpointResult,
 } from "../../api/endpoints/collaborationRequest";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
 
-const fetcher = async (p: string, workspaceId: string) => {
+const fetcher = async (
+  p: string,
+  q: IGetWorkspaceCollaborationRequestsEndpointParams
+) => {
   return checkEndpointResult(
-    await CollaborationRequestAPI.getWorkspaceRequests({
-      workspaceId: workspaceId,
-    })
+    await CollaborationRequestAPI.getWorkspaceRequests(q)
   );
 };
 
-export function getUseWorkspaceRequestListHookKey(workspaceId: string) {
-  return [CollaborationRequestURLs.getWorkspaceRequests, workspaceId];
+export function getUseWorkspaceRequestListHookKey(
+  q: IGetWorkspaceCollaborationRequestsEndpointParams
+) {
+  return [CollaborationRequestURLs.getWorkspaceRequests, q];
 }
 
-export default function useWorkspaceRequestList(workspaceId: string) {
+export default function useWorkspaceRequestList(
+  q: IGetWorkspaceCollaborationRequestsEndpointParams
+) {
   const { data, error } =
     useSWR<IGetWorkspaceCollaborationRequestsEndpointResult>(
-      getUseWorkspaceRequestListHookKey(workspaceId),
+      getUseWorkspaceRequestListHookKey(q),
       fetcher,
       swrDefaultConfig
     );
-
   return {
     error,
     data,

@@ -1,6 +1,8 @@
 import get from "lodash/get";
 import mergeWith from "lodash/mergeWith";
 import set from "lodash/set";
+import { IPaginationQuery } from "../api/types";
+import { systemConstants } from "../definitions/system";
 import { getDate } from "./dateFns";
 import { toAppErrorsArray } from "./errors";
 
@@ -134,3 +136,27 @@ export function withPrefix(str: string, prefix: string) {
 export function stripPrefix(str: string, prefix: string) {
   return prefix && str.startsWith(prefix) ? str.slice(prefix.length) : str;
 }
+
+export const fetchEveryItem = async <T>(
+  fetchPage: (p: IPaginationQuery) => Promise<T[]> | T[]
+): Promise<T[]> => {
+  let page = systemConstants.defaultPage,
+    pageSize = 1000,
+    prevCount = 0,
+    data: Array<T> = [];
+  do {
+    const items = await fetchPage({
+      page,
+      pageSize,
+    });
+    data = data.concat(items);
+    prevCount = items.length;
+    page += 1;
+  } while (
+    // break when returned items is less than requested page size signifying
+    // we've fetched all available data
+    prevCount >= pageSize
+  );
+
+  return data;
+};

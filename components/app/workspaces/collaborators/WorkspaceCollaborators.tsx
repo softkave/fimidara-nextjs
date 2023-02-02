@@ -7,9 +7,11 @@ import {
   appWorkspacePaths,
 } from "../../../../lib/definitions/system";
 import { ICollaborator } from "../../../../lib/definitions/user";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useWorkspaceCollaboratorList from "../../../../lib/hooks/workspaces/useWorkspaceCollaboratorList";
 import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
+import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
@@ -29,9 +31,13 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
   props
 ) => {
   const { workspaceId, menu, renderList, renderRoot, renderItem } = props;
-  const { data, error, isLoading } = useWorkspaceCollaboratorList(workspaceId);
+  const pagination = usePagination();
+  const { data, error, isLoading } = useWorkspaceCollaboratorList({
+    workspaceId,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   let content: React.ReactNode = null;
-
   if (error) {
     content = (
       <PageError
@@ -60,6 +66,7 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
     );
   }
 
+  content = <PaginatedContent content={content} pagination={pagination} />;
   if (renderRoot) {
     return renderRoot(content);
   }

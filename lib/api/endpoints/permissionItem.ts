@@ -3,7 +3,11 @@ import {
   IPermissionItem,
 } from "../../definitions/permissionItem";
 import { AppResourceType } from "../../definitions/system";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/permissionItems";
@@ -43,7 +47,8 @@ async function deleteItemsById(
   });
 }
 
-export interface IGetEntityPermissionItemsEndpointParams {
+export interface IGetEntityPermissionItemsEndpointParams
+  extends IPaginationQuery {
   workspaceId: string;
   permissionEntityId: string;
   permissionEntityType: AppResourceType;
@@ -62,7 +67,8 @@ async function getEntityPermissionItems(
   });
 }
 
-export interface IGetResourcePermissionItemsEndpointParams {
+export interface IGetResourcePermissionItemsEndpointParams
+  extends IPaginationQuery {
   workspaceId: string;
   itemResourceId?: string;
   itemResourceType: AppResourceType;

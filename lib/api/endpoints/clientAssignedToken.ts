@@ -2,7 +2,11 @@ import {
   IClientAssignedToken,
   INewClientAssignedTokenInput,
 } from "../../definitions/clientAssignedToken";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/clientAssignedTokens";
@@ -42,7 +46,8 @@ async function deleteToken(props: IDeleteClientAssignedTokenEndpointParams) {
   });
 }
 
-export interface IGetWorkspaceClientAssignedTokensEndpointParams {
+export interface IGetWorkspaceClientAssignedTokensEndpointParams
+  extends IPaginationQuery {
   workspaceId: string;
 }
 

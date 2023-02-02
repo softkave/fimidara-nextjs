@@ -3,7 +3,11 @@ import {
   IPermissionGroup,
   IUpdatePermissionGroupInput,
 } from "../../definitions/permissionGroups";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/permissionGroups";
@@ -43,7 +47,8 @@ async function deletePermissionGroup(
   });
 }
 
-export interface IGetWorkspacePermissionGroupEndpointParams {
+export interface IGetWorkspacePermissionGroupEndpointParams
+  extends IPaginationQuery {
   workspaceId: string;
 }
 

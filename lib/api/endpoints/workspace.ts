@@ -4,7 +4,11 @@ import {
   IUpdateWorkspaceInput,
   IWorkspace,
 } from "../../definitions/workspace";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/workspaces";
@@ -73,9 +77,10 @@ export type IGetUserWorkspacesEndpointResult = GetEndpointResult<{
   workspaces: IWorkspace[];
 }>;
 
-async function getUserWorkspaces() {
+async function getUserWorkspaces(props?: IPaginationQuery) {
   return await invokeEndpointWithAuth<IGetUserWorkspacesEndpointResult>({
     path: getUserWorkspacesURL,
+    data: props,
   });
 }
 

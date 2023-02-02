@@ -5,9 +5,11 @@ import {
   AppResourceType,
   appWorkspacePaths,
 } from "../../../../lib/definitions/system";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useWorkspaceRequestList from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
 import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
+import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
@@ -21,9 +23,13 @@ export interface IWorkspaceRequestsProps {
 
 const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
   const { workspaceId } = props;
-  const { data, error, isLoading } = useWorkspaceRequestList(workspaceId);
+  const pagination = usePagination();
+  const { data, error, isLoading } = useWorkspaceRequestList({
+    workspaceId,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   let content: React.ReactNode = null;
-
   if (error) {
     content = (
       <PageError
@@ -67,7 +73,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
             />
           }
         />
-        {content}
+        <PaginatedContent pagination={pagination} content={content} />
       </Space>
     </div>
   );

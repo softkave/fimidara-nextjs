@@ -42,4 +42,23 @@ export const appClasses = {
     flex: 1,
     whiteSpace: "normal",
   }),
+
+  // margins
+  ml8Forced: css({
+    marginLeft: "8px !important",
+  }),
+  mr8Forced: css({
+    marginRight: "8px !important",
+  }),
+
+  // layout
+  grid: css({ display: "grid" }),
+  alignCenter: css({
+    alignItems: "center",
+  }),
+
+  // dimensions
+  h100: css({
+    height: "100%",
+  }),
 };

@@ -4,9 +4,11 @@ import React from "react";
 import { IFile } from "../../../../lib/definitions/file";
 import { IFolder } from "../../../../lib/definitions/folder";
 import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useFileList from "../../../../lib/hooks/workspaces/useFileList";
 import useWorkspace from "../../../../lib/hooks/workspaces/useWorkspace";
 import { getBaseError } from "../../../../lib/utils/errors";
+import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
@@ -51,16 +53,19 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
   } = props;
 
   const loadWorkspace = useWorkspace(workspaceId);
+  const pagination = usePagination();
   const {
     data: fileListData,
     error: loadFileListError,
     isLoading: isLoadingFileList,
   } = useFileList({
+    page: pagination.page,
+    pageSize: pagination?.pageSize,
     folderId: folder?.resourceId,
     folderpath: !folder ? workspaceRootname : undefined,
   });
 
-  let content: React.ReactNode = null;
+  let contentNode: React.ReactNode = null;
   const getParentHref = () => {
     if (!folder) {
       return "";
@@ -84,7 +89,7 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
   };
 
   if (loadFileListError || loadWorkspace.error) {
-    content = (
+    contentNode = (
       <PageError
         className={appClasses.main}
         messageText={
@@ -100,12 +105,12 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
     loadWorkspace.isLoading ||
     !loadWorkspace.data
   ) {
-    content = <PageLoading messageText="Loading files and folders..." />;
+    contentNode = <PageLoading messageText="Loading files and folders..." />;
   } else if (
     fileListData.files.length === 0 &&
     fileListData.folders.length === 0
   ) {
-    content = (
+    contentNode = (
       <Space direction="vertical" style={{ width: "100%" }}>
         {renderGotoParentList()}
         <PageNothingFound
@@ -152,7 +157,7 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
       )
     ) : null;
 
-    content = (
+    contentNode = (
       <Space direction="vertical" style={{ width: "100%" }}>
         {renderGotoParentList()}
         {folderNode}
@@ -162,7 +167,7 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
   }
 
   if (renderRoot) {
-    return renderRoot(content, workspaceRootname);
+    return renderRoot(contentNode, workspaceRootname);
   }
 
   return (
@@ -173,7 +178,7 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
           folder={folder}
           workspaceRootname={workspaceRootname}
         />
-        {content}
+        <PaginatedContent content={contentNode} pagination={pagination} />
       </Space>
     </div>
   );

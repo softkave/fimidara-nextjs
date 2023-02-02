@@ -1,6 +1,10 @@
 import { IPermissionGroupInput } from "../../definitions/permissionGroups";
 import { ICollaborator } from "../../definitions/user";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  IEndpointResultBase,
+  IPaginationQuery,
+} from "../types";
 import { invokeEndpointWithAuth } from "../utils";
 
 const baseURL = "/v1/collaborators";
@@ -25,7 +29,8 @@ async function getCollaborator(props: IGetCollaboratorEndpointParams) {
   });
 }
 
-export interface IGetWorkspaceCollaboratorsEndpointParams {
+export interface IGetWorkspaceCollaboratorsEndpointParams
+  extends IPaginationQuery {
   workspaceId: string;
 }
 

@@ -23,10 +23,7 @@ export default function useWorkspace(
   const { data, error } = useSWR<IGetWorkspaceEndpointResult>(
     id ? getUseWorkspaceHookKey(id) : null,
     fetcher,
-    {
-      ...swrDefaultConfig,
-      ...swrConfig,
-    }
+    { ...swrDefaultConfig, ...swrConfig }
   );
   return {
     error,

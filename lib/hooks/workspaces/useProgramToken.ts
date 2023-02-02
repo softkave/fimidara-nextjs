@@ -22,7 +22,6 @@ export default function useProgramToken(id?: string) {
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

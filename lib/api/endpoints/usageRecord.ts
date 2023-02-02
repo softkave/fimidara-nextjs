@@ -3,7 +3,7 @@ import {
   IWorkspaceSummedUsageQuery,
   UsageRecordCategory,
 } from "../../definitions/usageRecord";
-import { IEndpointResultBase } from "../types";
+import { IEndpointResultBase, IPaginationQuery } from "../types";
 import { invokeEndpoint, invokeEndpointWithAuth } from "../utils";
 
 const basePath = "/usageRecords";
@@ -14,7 +14,8 @@ export interface IGetUsageCostsEndpointResult extends IEndpointResultBase {
   costs: Record<UsageRecordCategory, number>;
 }
 
-export interface IGetWorkspaceSummedUsageEndpointParams {
+export interface IGetWorkspaceSummedUsageEndpointParams
+  extends IPaginationQuery {
   workspaceId?: string;
   query?: IWorkspaceSummedUsageQuery;
 }

@@ -3,7 +3,50 @@
 @font-family: -apple-system, BlinkMacSystemFont, "Work Sans", "Segoe UI", Roboto,
   "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
   "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
 @text-color: rgb(23, 43, 77);
 // @text-color-secondary: #7a869a;
 @border-radius-base: 5px;
+
+.ant-btn .anticon {
+  font-size: 16px;
+}
+
+.icon-btn.ant-btn,
+.ant-notification-notice-close {
+  line-height: 16px;
+  background-color: #d9d9d9;
+  border: 1px solid #c9c9c9;
+  height: 24px;
+  width: 24px;
+  padding: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #595959 !important;
+}
+
+.icon-btn.ant-btn:hover,
+.ant-notification-notice-close:hover {
+  background-color: #ddd;
+}
+
+.ant-notification-close-x {
+  display: inline-flex !important;
+}
+
+.icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.icon-btn.ant-btn[disabled] svg {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.anticon {
+  vertical-align: middle !important;
+}
+
+.ant-btn {
+  border-radius: 4px !important;
+}

@@ -16,6 +16,8 @@ export const systemConstants = {
   appShortName: "fimidara",
   tokenQueryKey: "t",
   confirmEmailTokenQueryParam: "cet",
+  defaultPage: 0,
+  defaultPageSize: 10,
   workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID,
   userImagesFolder: defaultTo(
     process.env.NEXT_PUBLIC_USER_IMAGES_FOLDER,

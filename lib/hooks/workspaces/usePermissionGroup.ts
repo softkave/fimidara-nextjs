@@ -22,7 +22,6 @@ export default function usePermissionGroup(id?: string) {
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

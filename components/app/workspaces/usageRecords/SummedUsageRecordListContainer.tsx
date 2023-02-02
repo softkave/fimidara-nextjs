@@ -6,11 +6,13 @@ import {
   UsageRecordFulfillmentStatus,
 } from "../../../../lib/definitions/usageRecord";
 import { IWorkspace } from "../../../../lib/definitions/workspace";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useUsageCosts from "../../../../lib/hooks/useUsageCosts";
 import useWorkspaceSummedUsage from "../../../../lib/hooks/workspaces/useWorkspaceSummedUsage";
 import { getBaseError } from "../../../../lib/utils/errors";
 import { cast } from "../../../../lib/utils/fns";
 import ListHeader from "../../../utils/ListHeader";
+import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
@@ -31,11 +33,12 @@ const SummedUsageRecordListContainer: React.FC<
     year: new Date().getFullYear(),
     month: new Date().getMonth(),
   });
-
+  const pagination = usePagination();
   const records = useWorkspaceSummedUsage({
     workspaceId: workspace.resourceId,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
   });
-
   const usageCosts = useUsageCosts();
   let content: React.ReactElement = <span />;
   const error = records.error || usageCosts.error;
@@ -122,12 +125,17 @@ const SummedUsageRecordListContainer: React.FC<
       <div className={appClasses.main}>
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
           <ListHeader title="Usage Records" actions={controls} />
-          <SummedUsageRecordList
-            fulfilledRecords={monthFulfilledRecords}
-            droppedRecords={monthDroppedRecords}
-            usageCosts={usageCosts.data!.costs}
-            workspace={workspace}
-            renderItem={renderItem}
+          <PaginatedContent
+            content={
+              <SummedUsageRecordList
+                fulfilledRecords={monthFulfilledRecords}
+                droppedRecords={monthDroppedRecords}
+                usageCosts={usageCosts.data!.costs}
+                workspace={workspace}
+                renderItem={renderItem}
+              />
+            }
+            pagination={pagination}
           />
         </Space>
       </div>

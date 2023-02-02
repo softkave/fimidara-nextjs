@@ -3,20 +3,26 @@ import CollaborationRequestAPI, {
   CollaborationRequestURLs,
   IGetUserCollaborationRequestsEndpointResult,
 } from "../../api/endpoints/collaborationRequest";
-import { withCheckEndpointResult } from "../../api/utils";
+import { IPaginationQuery } from "../../api/types";
+import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
 
-const fetcher = withCheckEndpointResult(
-  CollaborationRequestAPI.getUserRequests
-);
+const fetcher = async (
+  endpointPath: string,
+  id?: string,
+  params?: IPaginationQuery
+) => {
+  return checkEndpointResult(
+    await CollaborationRequestAPI.getUserRequests(params)
+  );
+};
 
-export default function useUserRequests(id?: string) {
+export default function useUserRequests(id?: string, p?: IPaginationQuery) {
   const { data, error } = useSWR<IGetUserCollaborationRequestsEndpointResult>(
-    id ? [CollaborationRequestURLs.getUserRequests, id] : null,
+    id ? [CollaborationRequestURLs.getUserRequests, id, p] : null,
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

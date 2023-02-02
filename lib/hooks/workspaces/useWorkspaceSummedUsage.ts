@@ -25,11 +25,10 @@ export default function useWorkspaceSummedUsage(
 ) {
   const { data, error, mutate } =
     useSWR<IGetWorkspaceSummedUsageEndpointResult>(
-      q.workspaceId ? getUseWorkspaceSummedUsageHookKey(q) : null,
+      getUseWorkspaceSummedUsageHookKey(q),
       fetcher,
       swrDefaultConfig
     );
-
   return {
     error,
     data,

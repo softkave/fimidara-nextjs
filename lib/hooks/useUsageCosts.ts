@@ -20,7 +20,6 @@ export default function useUsageCosts() {
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

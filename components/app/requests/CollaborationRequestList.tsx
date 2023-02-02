@@ -1,6 +1,5 @@
 import { List, Typography } from "antd";
 import Link from "next/link";
-import React from "react";
 import { ICollaborationRequest } from "../../../lib/definitions/collaborationRequest";
 import { appRequestsPaths } from "../../../lib/definitions/system";
 
@@ -12,7 +11,6 @@ export default function CollaborationRequestList(
   props: ICollaborationRequestListProps
 ) {
   const { requests } = props;
-
   return (
     <List
       itemLayout="horizontal"

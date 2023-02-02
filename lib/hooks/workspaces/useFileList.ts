@@ -23,7 +23,6 @@ export default function useFileList(params?: IListFolderContentEndpointParams) {
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

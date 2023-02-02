@@ -5,16 +5,26 @@ import PermissionItemAPI, {
   PermissionItemURLs,
 } from "../../api/endpoints/permissionItem";
 import { checkEndpointResult } from "../../api/utils";
-import { AppResourceType } from "../../definitions/system";
+import { fetchEveryItem } from "../../utils/utils";
 import { swrDefaultConfig } from "../config";
+
+const fetchPageItems = async (
+  params: IGetResourcePermissionItemsEndpointParams
+) => {
+  const result = checkEndpointResult(
+    await PermissionItemAPI.getResourcePermissionItems(params)
+  );
+  return result.items;
+};
 
 const fetcher = async (
   p: string,
   params: IGetResourcePermissionItemsEndpointParams
-) => {
-  return checkEndpointResult(
-    await PermissionItemAPI.getResourcePermissionItems(params)
+): Promise<IGetResourcePermissionItemsEndpointResult> => {
+  const items = await fetchEveryItem(async (p) =>
+    fetchPageItems({ ...params, ...p })
   );
+  return { items };
 };
 
 export function getUseResourcePermissionListHookKey(
@@ -32,7 +42,6 @@ export default function useResourcePermissionList(
       fetcher,
       swrDefaultConfig
     );
-
   return {
     error,
     data,

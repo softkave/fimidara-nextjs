@@ -2,9 +2,11 @@ import { css, cx } from "@emotion/css";
 import { List, Space, Typography } from "antd";
 import React from "react";
 import { IAssignedPermissionGroup } from "../../../../lib/definitions/permissionGroups";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { getBaseError } from "../../../../lib/utils/errors";
 import { indexArray } from "../../../../lib/utils/indexArray";
+import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
@@ -37,8 +39,12 @@ const AssignedPermissionGroupList: React.FC<
   IAssignedPermissionGroupListProps
 > = (props) => {
   const { workspaceId, permissionGroups, className, title } = props;
-  const { isLoading, error, data } =
-    useWorkspacePermissionGroupList(workspaceId);
+  const pagination = usePagination();
+  const { data, error, isLoading } = useWorkspacePermissionGroupList({
+    workspaceId,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   let content: React.ReactNode = null;
   const permissionGroupsMap = React.useMemo(() => {
     return indexArray(data?.permissionGroups, { path: "resourceId" });
@@ -67,7 +73,6 @@ const AssignedPermissionGroupList: React.FC<
         dataSource={permissionGroups}
         renderItem={(item) => {
           const permissionGroup = permissionGroupsMap[item.permissionGroupId];
-
           if (permissionGroup) {
             return (
               <List.Item key={item.permissionGroupId}>
@@ -92,7 +97,7 @@ const AssignedPermissionGroupList: React.FC<
       <Typography.Title level={5} style={{ margin: 0 }}>
         {title || "Assigned Permission Groups"}
       </Typography.Title>
-      {content}
+      <PaginatedContent content={content} pagination={pagination} />
     </Space>
   );
 };

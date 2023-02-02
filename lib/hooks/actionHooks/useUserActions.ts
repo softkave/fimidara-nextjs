@@ -17,6 +17,5 @@ export function useUserActions(): IUserActions {
     UserSessionStorageFns.clearSessionData();
     dispatch(SessionActions.logoutUser());
   };
-
   return { logout };
 }

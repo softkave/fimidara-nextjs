@@ -23,7 +23,6 @@ export default function useCollaborationRequest(id?: string) {
       fetcher,
       swrDefaultConfig
     );
-
   return {
     error,
     data,

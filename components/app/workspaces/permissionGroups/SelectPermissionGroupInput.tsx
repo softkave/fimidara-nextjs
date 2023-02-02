@@ -1,11 +1,13 @@
 import { DeleteOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
-import { Button, List, Select, Space, Typography } from "antd";
+import { Button, Divider, List, Select, Space, Typography } from "antd";
 import React from "react";
 import { IPermissionGroupInput } from "../../../../lib/definitions/permissionGroups";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { indexArray } from "../../../../lib/utils/indexArray";
 import InlineError from "../../../utils/InlineError";
 import InlineLoading from "../../../utils/InlineLoading";
+import { AppPagination } from "../../../utils/page/AppPagination";
 import { appClasses } from "../../../utils/theme";
 
 export interface ISelectPermissionGroupInputProps {
@@ -23,9 +25,12 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
   props
 ) => {
   const { workspaceId, value, disabled, onChange } = props;
-  const { isLoading, error, data, mutate } =
-    useWorkspacePermissionGroupList(workspaceId);
-
+  const pagination = usePagination();
+  const { data, error, isLoading, mutate } = useWorkspacePermissionGroupList({
+    workspaceId,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   const onDeleteItem = React.useCallback(
     (id: string) => {
       const newValue = value.filter((item) => item.permissionGroupId !== id);
@@ -99,7 +104,6 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
             key={item.permissionGroupId}
             actions={[
               <Button
-                // type="text"
                 key="up"
                 className={appClasses.iconBtn}
                 icon={<UpOutlined />}
@@ -107,7 +111,6 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
                 disabled={index === 0}
               />,
               <Button
-                // type="text"
                 key={"down"}
                 className={appClasses.iconBtn}
                 icon={<DownOutlined />}
@@ -115,7 +118,6 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
                 disabled={index === assignedPermissionGroups.length - 1}
               />,
               <Button
-                // type="text"
                 key="delete"
                 className={appClasses.iconBtn}
                 icon={<DeleteOutlined />}
@@ -154,6 +156,13 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
         const label02 = optionB?.label as string;
         return label01.toLowerCase().localeCompare(label02.toLowerCase());
       }}
+      dropdownRender={(menu) => (
+        <>
+          {menu}
+          <Divider style={{ margin: "8px 0" }} />
+          <AppPagination {...pagination} />
+        </>
+      )}
     >
       {data.permissionGroups.map((item) => (
         <Select.Option

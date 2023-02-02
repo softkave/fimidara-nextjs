@@ -25,3 +25,4 @@ export type ConvertDatesToStrings<T extends object> = ConvertTypeOneToTypeTwo<
 
 export type AnyFn = (...args: any) => any;
 export type AnyObject = { [k: string | number | symbol]: any };
+export type Omit1<T, K extends keyof T> = Omit<T, K>;

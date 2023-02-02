@@ -24,7 +24,6 @@ export default function useFolder(
     fetcher,
     { ...swrDefaultConfig, ...config }
   );
-
   return {
     error,
     data,

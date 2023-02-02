@@ -12,7 +12,6 @@ export interface IPageLoadingAndErrorProps {
 
 const PageLoadingAndError: React.FC<IPageLoadingAndErrorProps> = (props) => {
   const { isLoading, error, loadingText, errorText } = props;
-
   if (error) {
     return (
       <PageError
@@ -21,7 +20,6 @@ const PageLoadingAndError: React.FC<IPageLoadingAndErrorProps> = (props) => {
       />
     );
   }
-
   if (isLoading) {
     return <PageLoading messageText={loadingText || "Loading..."} />;
   }

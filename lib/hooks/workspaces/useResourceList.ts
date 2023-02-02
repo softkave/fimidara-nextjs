@@ -28,7 +28,6 @@ export default function useResourceList(params: IGetResourcesEndpointParams) {
     fetcher,
     swrDefaultConfig
   );
-
   return {
     error,
     data,

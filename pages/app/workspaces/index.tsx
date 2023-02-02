@@ -6,12 +6,14 @@ import Link from "next/link";
 import LoggedInHeader from "../../../components/app/LoggedInHeader";
 import WorkspaceAvatar from "../../../components/app/workspaces/WorkspaceAvatar";
 import withPageAuthRequiredHOC from "../../../components/hoc/withPageAuthRequired";
+import { PaginatedContent } from "../../../components/utils/page/PaginatedContent";
 import PageError from "../../../components/utils/PageError";
 import PageLoading from "../../../components/utils/PageLoading";
 import PageNothingFound from "../../../components/utils/PageNothingFound";
 import { appClasses } from "../../../components/utils/theme";
 import { IUserLoginResult } from "../../../lib/api/endpoints/user";
 import { appWorkspacePaths } from "../../../lib/definitions/system";
+import usePagination from "../../../lib/hooks/usePagination";
 import useUserWorkspaces from "../../../lib/hooks/workspaces/useUserWorkspaces";
 import { getBaseError } from "../../../lib/utils/errors";
 
@@ -25,9 +27,12 @@ const classes = {
 export interface IWorkspacesPageProps extends IUserLoginResult {}
 
 const Workspaces: NextPage<IWorkspacesPageProps> = () => {
-  const { isLoading, error, data } = useUserWorkspaces();
+  const pagination = usePagination();
+  const { isLoading, error, data } = useUserWorkspaces({
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   let content: React.ReactNode = null;
-
   if (error) {
     content = (
       <PageError
@@ -88,7 +93,7 @@ const Workspaces: NextPage<IWorkspacesPageProps> = () => {
           </Link>
         </Col>
       </Row>
-      {content}
+      <PaginatedContent content={content} pagination={pagination} />
     </Space>
   );
 };

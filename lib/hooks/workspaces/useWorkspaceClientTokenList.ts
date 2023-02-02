@@ -1,31 +1,36 @@
 import useSWR from "swr";
 import ClientAssignedTokenAPI, {
   ClientAssignedTokenURLs,
+  IGetWorkspaceClientAssignedTokensEndpointParams,
   IGetWorkspaceClientAssignedTokensEndpointResult,
 } from "../../api/endpoints/clientAssignedToken";
 import { checkEndpointResult } from "../../api/utils";
 import { swrDefaultConfig } from "../config";
 
-const fetcher = async (p: string, workspaceId: string) => {
+const fetcher = async (
+  p: string,
+  q: IGetWorkspaceClientAssignedTokensEndpointParams
+) => {
   return checkEndpointResult(
-    await ClientAssignedTokenAPI.getWorkspaceTokens({
-      workspaceId: workspaceId,
-    })
+    await ClientAssignedTokenAPI.getWorkspaceTokens(q)
   );
 };
 
-export function getUseWorkspaceClientTokenListHookKey(workspaceId: string) {
-  return [ClientAssignedTokenURLs.getWorkspaceTokens, workspaceId];
+export function getUseWorkspaceClientTokenListHookKey(
+  q: IGetWorkspaceClientAssignedTokensEndpointParams
+) {
+  return [ClientAssignedTokenURLs.getWorkspaceTokens, q];
 }
 
-export default function useWorkspaceClientTokenList(workspaceId: string) {
+export default function useWorkspaceClientTokenList(
+  q: IGetWorkspaceClientAssignedTokensEndpointParams
+) {
   const { data, error } =
     useSWR<IGetWorkspaceClientAssignedTokensEndpointResult>(
-      getUseWorkspaceClientTokenListHookKey(workspaceId),
+      getUseWorkspaceClientTokenListHookKey(q),
       fetcher,
       swrDefaultConfig
     );
-
   return {
     error,
     data,

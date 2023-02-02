@@ -1,14 +1,15 @@
 import { Space } from "antd";
 import React from "react";
-import { ICollaborationRequest } from "../../../../lib/definitions/collaborationRequest";
 import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
 import {
   AppResourceType,
   appWorkspacePaths,
 } from "../../../../lib/definitions/system";
+import usePagination from "../../../../lib/hooks/usePagination";
 import useWorkspaceRequestList from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
 import { getBaseError } from "../../../../lib/utils/errors";
 import ListHeader from "../../../utils/ListHeader";
+import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import { appClasses } from "../../../utils/theme";
@@ -17,18 +18,18 @@ import WorkspaceRequestList from "./WorkspaceRequestList";
 
 export interface IWorkspaceRequestsContainerProps {
   workspaceId: string;
-  render: (
-    loading: boolean,
-    error: any,
-    requests?: ICollaborationRequest
-  ) => React.ReactNode;
 }
 
 const WorkspaceRequestsContainer: React.FC<IWorkspaceRequestsContainerProps> = (
   props
 ) => {
-  const { workspaceId, render } = props;
-  const { data, error, isLoading } = useWorkspaceRequestList(workspaceId);
+  const { workspaceId } = props;
+  const pagination = usePagination();
+  const { data, error, isLoading } = useWorkspaceRequestList({
+    workspaceId,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   let content: React.ReactNode = null;
   if (error) {
     content = (
@@ -66,7 +67,7 @@ const WorkspaceRequestsContainer: React.FC<IWorkspaceRequestsContainerProps> = (
             />
           }
         />
-        {content}
+        <PaginatedContent content={content} pagination={pagination} />
       </Space>
     </div>
   );
