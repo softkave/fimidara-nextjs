@@ -1,6 +1,5 @@
 import {
   INewWorkspaceInput,
-  IRequestWorkspace,
   IUpdateWorkspaceInput,
   IWorkspace,
 } from "../../definitions/workspace";
@@ -15,7 +14,6 @@ const baseURL = "/v1/workspaces";
 const addWorkspaceURL = `${baseURL}/addWorkspace`;
 const deleteWorkspaceURL = `${baseURL}/deleteWorkspace`;
 const getWorkspaceURL = `${baseURL}/getWorkspace`;
-const getRequestWorkspaceURL = `${baseURL}/getRequestWorkspace`;
 const getUserWorkspacesURL = `${baseURL}/getUserWorkspaces`;
 const updateWorkspaceURL = `${baseURL}/updateWorkspace`;
 
@@ -58,21 +56,6 @@ async function getWorkspace(props: IGetWorkspaceEndpointParams) {
   });
 }
 
-export interface IGetRequestWorkspaceEndpointParams {
-  workspaceId: string;
-}
-
-export type IGetRequestWorkspaceEndpointResult = GetEndpointResult<{
-  workspace: IRequestWorkspace;
-}>;
-
-async function getRequestWorkspace(props: IGetRequestWorkspaceEndpointParams) {
-  return await invokeEndpointWithAuth<IGetRequestWorkspaceEndpointResult>({
-    path: getRequestWorkspaceURL,
-    data: props,
-  });
-}
-
 export type IGetUserWorkspacesEndpointResult = GetEndpointResult<{
   workspaces: IWorkspace[];
 }>;
@@ -104,7 +87,6 @@ export default class WorkspaceAPI {
   static addWorkspace = addWorkspace;
   static deleteWorkspace = deleteWorkspace;
   static getWorkspace = getWorkspace;
-  static getRequestWorkspace = getRequestWorkspace;
   static getUserWorkspaces = getUserWorkspaces;
   static updateWorkspace = updateWorkspace;
 }
@@ -113,7 +95,6 @@ export class WorkspaceURLs {
   static addWorkspace = addWorkspaceURL;
   static deleteWorkspace = deleteWorkspaceURL;
   static getWorkspace = getWorkspaceURL;
-  static getRequestWorkspace = getRequestWorkspaceURL;
   static getUserWorkspaces = getUserWorkspacesURL;
   static updateWorkspace = updateWorkspaceURL;
 }

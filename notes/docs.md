@@ -8,7 +8,7 @@
   - [ ] Files and folders
   - [ ] Permission groups, permission items, and tokens
     - [ ] Public permission group
-    - [ ] Permission entities, permission owners, and item resources
+    - [ ] Permission entities, permission containers, and item resources
     - [ ] How to assign permissions to permission entities
     - [ ] How to check what permissions an entity has
   - [ ] Usage records

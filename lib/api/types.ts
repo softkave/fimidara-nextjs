@@ -1,4 +1,4 @@
-import { IAppError } from "../definitions/system";
+import { IAppError } from "../utils/errors";
 
 export interface IEndpointResultBase {
   errors?: IAppError[];

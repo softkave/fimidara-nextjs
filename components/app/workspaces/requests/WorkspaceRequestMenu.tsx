@@ -35,10 +35,10 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   const { request, onCompleteDeleteRequest } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: request.workspaceId,
-    itemResourceType: AppResourceType.CollaborationRequest,
-    permissionOwnerId: request.workspaceId,
-    permissionOwnerType: AppResourceType.Workspace,
-    itemResourceId: request.resourceId,
+    targetType: AppResourceType.CollaborationRequest,
+    containerId: request.workspaceId,
+    containerType: AppResourceType.Workspace,
+    targetId: request.resourceId,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 

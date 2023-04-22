@@ -1,8 +1,8 @@
-import { IAppError } from "../definitions/system";
 import KeyValueActions from "../store/key-value/actions";
 import { KeyValueKeys } from "../store/key-value/types";
 import SessionActions from "../store/session/actions";
 import store from "../store/store";
+import { IAppError } from "../utils/errors";
 
 export enum ServerRecommendedActions {
   LoginAgain = "LoginAgain",

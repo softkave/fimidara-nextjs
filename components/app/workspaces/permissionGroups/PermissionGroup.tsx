@@ -15,7 +15,7 @@ import LabeledNode from "../../../utils/LabeledNode";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import { appClasses } from "../../../utils/theme";
-import EntityPermissionGroupList from "../permissionItems/EntityPermissionItemList";
+import EntityPermissionItemList from "../permissionItems/EntityPermissionItemList";
 import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
@@ -48,9 +48,9 @@ function PermissionGroup(props: IPermissionGroupProps) {
   const onCompleteDeletePermissionGroup = React.useCallback(async () => {
     assert(data?.permissionGroup, new Error("Permission group not found"));
     cacheMutate(
-      getUseWorkspacePermissionGroupListHookKey(
-        data.permissionGroup.workspaceId
-      )
+      getUseWorkspacePermissionGroupListHookKey({
+        workspaceId: data.permissionGroup.workspaceId,
+      })
     );
     router.push(
       appWorkspacePaths.collaboratorList(data.permissionGroup.workspaceId)
@@ -109,7 +109,7 @@ function PermissionGroup(props: IPermissionGroupProps) {
             permissionGroups={permissionGroup.permissionGroups}
           />
         </div>
-        <EntityPermissionGroupList
+        <EntityPermissionItemList
           workspaceId={permissionGroup.workspaceId}
           entityId={permissionGroup.resourceId}
           entityType={AppResourceType.PermissionGroup}

@@ -48,11 +48,11 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
   const { cache } = useSWRConfig();
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: workspace.resourceId,
-    itemResourceType: AppResourceType.Workspace,
-    permissionOwnerId: workspace.resourceId,
-    permissionOwnerType: AppResourceType.Workspace,
-    itemResourceId: workspace.resourceId,
-    appliesTo: PermissionItemAppliesTo.Owner,
+    targetType: AppResourceType.Workspace,
+    containerId: workspace.resourceId,
+    containerType: AppResourceType.Workspace,
+    targetId: workspace.resourceId,
+    appliesTo: PermissionItemAppliesTo.Container,
   });
 
   const onGoBack = React.useCallback(() => {

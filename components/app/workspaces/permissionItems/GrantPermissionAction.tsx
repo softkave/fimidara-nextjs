@@ -3,12 +3,12 @@ import { Radio, Space, Switch, Typography } from "antd";
 import React from "react";
 
 export interface IGrantPermissionActionChange {
-  isForPermissionOwnerOnly?: boolean;
+  isForPermissionContainerOnly?: boolean;
 }
 
 export interface IGrantPermissionActionProps {
   permitted?: boolean;
-  isForOwner?: boolean;
+  isForContainer?: boolean;
   hasChildren?: boolean;
   disabled?: boolean;
   label: string;
@@ -28,7 +28,7 @@ const classes = {
 const GrantPermissionAction: React.FC<IGrantPermissionActionProps> = (
   props
 ) => {
-  const { permitted, isForOwner, label, hasChildren, disabled, onChange } =
+  const { permitted, isForContainer, label, hasChildren, disabled, onChange } =
     props;
 
   return (
@@ -46,13 +46,13 @@ const GrantPermissionAction: React.FC<IGrantPermissionActionProps> = (
           <Radio.Group
             onChange={(evt) =>
               onChange(true, {
-                isForPermissionOwnerOnly:
+                isForPermissionContainerOnly:
                   evt.target.value === RadioKeys.ForResourceOnly ? true : false,
               })
             }
             disabled={disabled || !permitted}
             value={
-              isForOwner
+              isForContainer
                 ? RadioKeys.ForResourceOnly
                 : RadioKeys.ForResourceAndChildren
             }

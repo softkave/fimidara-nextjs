@@ -88,9 +88,9 @@ const WorkspaceClientTokens: React.FC<IWorkspaceClientTokensProps> = (
             ) : (
               <GrantPermissionMenu
                 workspaceId={workspaceId}
-                itemResourceType={AppResourceType.ClientAssignedToken}
-                permissionOwnerId={workspaceId}
-                permissionOwnerType={AppResourceType.Workspace}
+                targetType={AppResourceType.ClientAssignedToken}
+                containerId={workspaceId}
+                containerType={AppResourceType.Workspace}
                 appliesTo={PermissionItemAppliesTo.Children}
               />
             )

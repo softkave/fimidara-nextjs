@@ -32,10 +32,10 @@ const CollaboratorMenu: React.FC<ICollaboratorMenuProps> = (props) => {
   const { workspaceId, collaborator, onCompleteRemove } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId,
-    itemResourceType: AppResourceType.User,
-    permissionOwnerId: workspaceId,
-    permissionOwnerType: AppResourceType.Workspace,
-    itemResourceId: collaborator.resourceId,
+    targetType: AppResourceType.User,
+    containerId: workspaceId,
+    containerType: AppResourceType.Workspace,
+    targetId: collaborator.resourceId,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 

@@ -31,10 +31,10 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
   const { permissionGroup, onCompleteDelete } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: permissionGroup.workspaceId,
-    itemResourceType: AppResourceType.PermissionGroup,
-    permissionOwnerId: permissionGroup.workspaceId,
-    permissionOwnerType: AppResourceType.Workspace,
-    itemResourceId: permissionGroup.resourceId,
+    targetType: AppResourceType.PermissionGroup,
+    containerId: permissionGroup.workspaceId,
+    containerType: AppResourceType.Workspace,
+    targetId: permissionGroup.resourceId,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 

@@ -38,12 +38,12 @@ const FileMenu: React.FC<IFileMenuProps> = (props) => {
   const { file, workspaceRootname } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: file.workspaceId,
-    itemResourceType: AppResourceType.File,
-    permissionOwnerId: file.folderId || file.workspaceId,
-    permissionOwnerType: file.folderId
+    targetType: AppResourceType.File,
+    containerId: file.folderId || file.workspaceId,
+    containerType: file.folderId
       ? AppResourceType.Folder
       : AppResourceType.Workspace,
-    itemResourceId: file.resourceId,
+    targetId: file.resourceId,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 

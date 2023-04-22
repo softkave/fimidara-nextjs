@@ -31,6 +31,11 @@ export const systemConstants = {
     process.env.NEXT_PUBLIC_SERVER_ADDR,
     "http://localhost:5000"
   ),
+  complaintEmailAddress: "abayomi@softkave.com",
+  demoQueryKey: "isDemo",
+  demoUserEmail: "boards-demo-user@softkave.com",
+  demoUserName: "Demo User",
+  maxPageSize: 100,
 };
 
 export interface ISelectedIdRouteMatch {
@@ -132,12 +137,6 @@ export const actionLabel: Record<BasicCRUDActions, string> = {
   [BasicCRUDActions.Delete]: "Delete",
   [BasicCRUDActions.GrantPermission]: "Grant permission",
 };
-
-export interface IAppError extends Error {
-  field?: string;
-  action?: string;
-  value?: any;
-}
 
 export const appRootPaths = {
   home: "/",

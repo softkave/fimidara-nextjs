@@ -19,10 +19,10 @@ import GrantPermissionForm from "./GrantPermissionForm";
 
 export interface IGrantPermissionFormContainerProps {
   workspaceId: string;
-  permissionOwnerId: string;
-  permissionOwnerType: AppResourceType;
-  itemResourceId?: string;
-  itemResourceType: AppResourceType;
+  containerId: string;
+  containerType: AppResourceType;
+  targetId?: string;
+  targetType: AppResourceType;
   appliesTo: PermissionItemAppliesTo;
   onCancel: () => void;
 }
@@ -32,17 +32,17 @@ const GrantPermissionFormContainer: React.FC<
 > = (props) => {
   const {
     workspaceId,
-    itemResourceType,
-    itemResourceId,
-    permissionOwnerId,
-    permissionOwnerType,
+    targetType,
+    targetId,
+    containerId,
+    containerType,
     onCancel,
   } = props;
   const { data, error, isLoading, mutate } = useResourcePermissionList({
-    itemResourceType,
-    itemResourceId,
-    permissionOwnerId,
-    permissionOwnerType,
+    targetType,
+    targetId,
+    containerId,
+    containerType,
     workspaceId: workspaceId,
   });
 

@@ -2,7 +2,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import NextNProgress from "nextjs-progressbar";
 import { Provider } from "react-redux";
-import DocsMain from "../components/docs/DocsMain";
+import MarkdocDocsMain from "../components/docs/MarkdocDocsMain";
 import store from "../lib/store/store";
 import "../styles/antd.less";
 import "../styles/globals.css";
@@ -10,7 +10,7 @@ import "../styles/globals.css";
 function FilesApp({ Component, pageProps }: AppProps) {
   let node: React.ReactNode = <Component {...pageProps} />;
   if (pageProps.markdoc) {
-    node = <DocsMain pageProps={pageProps}>{node}</DocsMain>;
+    node = <MarkdocDocsMain pageProps={pageProps}>{node}</MarkdocDocsMain>;
   }
 
   return (

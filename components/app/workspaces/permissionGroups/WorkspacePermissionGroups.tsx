@@ -85,9 +85,9 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
             ) : (
               <GrantPermissionMenu
                 workspaceId={workspaceId}
-                itemResourceType={AppResourceType.PermissionGroup}
-                permissionOwnerId={workspaceId}
-                permissionOwnerType={AppResourceType.Workspace}
+                targetType={AppResourceType.PermissionGroup}
+                containerId={workspaceId}
+                containerType={AppResourceType.Workspace}
                 appliesTo={PermissionItemAppliesTo.Children}
               />
             )

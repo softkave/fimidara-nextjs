@@ -47,7 +47,7 @@ function Collaborator(props: ICollaboratorProps) {
   // );
 
   const onCompeleteRemoveCollaborator = React.useCallback(async () => {
-    cacheMutate(getUseWorkspaceCollaboratorListHookKey(workspaceId));
+    cacheMutate(getUseWorkspaceCollaboratorListHookKey({ workspaceId }));
     router.push(appWorkspacePaths.collaboratorList(workspaceId));
   }, [workspaceId, router, cacheMutate]);
 

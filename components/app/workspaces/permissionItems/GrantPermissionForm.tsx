@@ -4,12 +4,12 @@ import { Collapse, Modal, Tabs } from "antd";
 import { omit } from "lodash";
 import React from "react";
 import { IClientAssignedToken } from "../../../../lib/definitions/clientAssignedToken";
+import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
 import {
   INewPermissionItemInput,
   IPermissionItem,
   PermissionItemAppliesTo,
 } from "../../../../lib/definitions/permissionItem";
-import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
 import { IProgramAccessToken } from "../../../../lib/definitions/programAccessToken";
 import {
   AppResourceType,
@@ -26,10 +26,10 @@ import PermissionItemsByResourceController from "./PermissionItemsController";
 export interface IGrantPermissionFormProps {
   loading?: boolean;
   workspaceId: string;
-  itemResourceId?: string;
-  itemResourceType: AppResourceType;
-  permissionOwnerId: string;
-  permissionOwnerType: AppResourceType;
+  targetId?: string;
+  targetType: AppResourceType;
+  containerId: string;
+  containerType: AppResourceType;
   existingPermissionItems: IPermissionItem[];
   appliesTo: PermissionItemAppliesTo;
   onSave: (
@@ -65,10 +65,10 @@ const classes = {
 const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
   const {
     workspaceId,
-    itemResourceId,
-    itemResourceType,
-    permissionOwnerType,
-    permissionOwnerId,
+    targetId,
+    targetType,
+    containerType,
+    containerId,
     existingPermissionItems,
     loading,
     appliesTo,
@@ -81,11 +81,11 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
     React.useState<PermissionItemsByResourceController>(() =>
       PermissionItemsByResourceController.fromPermissionItems(
         existingPermissionItems,
-        permissionOwnerId,
-        permissionOwnerType,
-        itemResourceType,
+        containerId,
+        containerType,
+        targetType,
         appliesTo,
-        itemResourceId
+        targetId
       )
     );
 
@@ -117,7 +117,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
         <Collapse.Panel key={permissionEntityId} header={name}>
           <GrantPermissionFormItem
             key={permissionEntityId}
-            itemResourceType={itemResourceType}
+            targetType={targetType}
             onChange={updateItem}
             permissionEntityId={permissionEntityId}
             permissionEntityType={permissionEntityType}
@@ -127,7 +127,7 @@ const GrantPermissionForm: React.FC<IGrantPermissionFormProps> = (props) => {
         </Collapse.Panel>
       );
     },
-    [controller, itemResourceType, loading, updateItem]
+    [controller, targetType, loading, updateItem]
   );
 
   const renderPermissionGroup = React.useCallback(

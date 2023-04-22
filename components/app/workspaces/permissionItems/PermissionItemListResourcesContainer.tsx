@@ -16,7 +16,7 @@ export const getResourceKey = (item: IGetResourceInputItem) =>
 export interface IPermissionItemListResourcesContainerProps {
   workspaceId: string;
   items: IPermissionItem[];
-  includePermissionOwner?: boolean;
+  includePermissionContainer?: boolean;
   includeEntity?: boolean;
   includeItemResource?: boolean;
   render: (
@@ -33,7 +33,7 @@ const PermissionItemListResourcesContainer: React.FC<
     items,
     includeItemResource,
     includeEntity,
-    includePermissionOwner,
+    includePermissionContainer,
     render,
   } = props;
 
@@ -44,10 +44,10 @@ const PermissionItemListResourcesContainer: React.FC<
     };
 
     items.forEach((item) => {
-      if (includeItemResource && item.itemResourceId) {
+      if (includeItemResource && item.targetId) {
         addItem({
-          resourceId: item.itemResourceId,
-          resourceType: item.itemResourceType,
+          resourceId: item.targetId,
+          resourceType: item.targetType,
         });
       }
 
@@ -58,16 +58,16 @@ const PermissionItemListResourcesContainer: React.FC<
         });
       }
 
-      if (includePermissionOwner) {
+      if (includePermissionContainer) {
         addItem({
-          resourceId: item.permissionOwnerId,
-          resourceType: item.permissionOwnerType,
+          resourceId: item.containerId,
+          resourceType: item.containerType,
         });
       }
     });
 
     return Object.values(map);
-  }, [items, includeEntity, includeItemResource, includePermissionOwner]);
+  }, [items, includeEntity, includeItemResource, includePermissionContainer]);
 
   const { isLoading, error, data } = useResourceList({
     workspaceId: workspaceId,

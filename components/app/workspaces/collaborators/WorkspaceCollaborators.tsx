@@ -83,9 +83,9 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
             ) : (
               <GrantPermissionMenu
                 workspaceId={workspaceId}
-                itemResourceType={AppResourceType.User}
-                permissionOwnerId={workspaceId}
-                permissionOwnerType={AppResourceType.Workspace}
+                targetType={AppResourceType.User}
+                containerId={workspaceId}
+                containerType={AppResourceType.Workspace}
                 appliesTo={PermissionItemAppliesTo.Children}
               />
             )

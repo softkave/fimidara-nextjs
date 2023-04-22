@@ -20,17 +20,17 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
   const { workspaceId } = props;
   const childrenFoldersGrantPermission = useGrantPermission({
     workspaceId,
-    itemResourceType: AppResourceType.Folder,
-    permissionOwnerId: workspaceId,
-    permissionOwnerType: AppResourceType.Workspace,
+    targetType: AppResourceType.Folder,
+    containerId: workspaceId,
+    containerType: AppResourceType.Workspace,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const childrenFilesGrantPermission = useGrantPermission({
     workspaceId,
-    itemResourceType: AppResourceType.File,
-    permissionOwnerId: workspaceId,
-    permissionOwnerType: AppResourceType.Workspace,
+    targetType: AppResourceType.File,
+    containerId: workspaceId,
+    containerType: AppResourceType.Workspace,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 

@@ -1,7 +1,7 @@
 import { css, cx } from "@emotion/css";
 import { compact, isString } from "lodash";
 import React from "react";
-import { IAppError } from "../../lib/definitions/system";
+import { IAppError } from "../../lib/utils/errors";
 
 type FormMessageType = "error" | "message";
 type MessageWithVisible = { message: string; visible?: boolean };

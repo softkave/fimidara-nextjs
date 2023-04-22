@@ -85,9 +85,9 @@ const WorkspaceProgramTokens: React.FC<IWorkspaceProgramTokensProps> = (
             ) : (
               <GrantPermissionMenu
                 workspaceId={workspaceId}
-                itemResourceType={AppResourceType.ProgramAccessToken}
-                permissionOwnerId={workspaceId}
-                permissionOwnerType={AppResourceType.Workspace}
+                targetType={AppResourceType.ProgramAccessToken}
+                containerId={workspaceId}
+                containerType={AppResourceType.Workspace}
                 appliesTo={PermissionItemAppliesTo.Children}
               />
             )

@@ -21,3 +21,9 @@ export function includeFirstNode<T1>(
   }
   return null;
 }
+
+export const htmlCharacterCodes = {
+  openBracket: "&#123;",
+  closeBracket: "&#125;",
+  doubleDash: "—",
+};

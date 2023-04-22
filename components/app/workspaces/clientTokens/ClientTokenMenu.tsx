@@ -31,10 +31,10 @@ const ClientTokenMenu: React.FC<IClientTokenMenuProps> = (props) => {
   const { token, onCompleteDelete } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: token.workspaceId,
-    itemResourceType: AppResourceType.ClientAssignedToken,
-    permissionOwnerId: token.workspaceId,
-    permissionOwnerType: AppResourceType.Workspace,
-    itemResourceId: token.resourceId,
+    targetType: AppResourceType.ClientAssignedToken,
+    containerId: token.workspaceId,
+    containerType: AppResourceType.Workspace,
+    targetId: token.resourceId,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 

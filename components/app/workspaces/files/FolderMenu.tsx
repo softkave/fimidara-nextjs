@@ -41,28 +41,28 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
   const { folder, workspaceRootname } = props;
   const folderGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
-    itemResourceType: AppResourceType.Folder,
-    permissionOwnerId: folder.parentId || folder.workspaceId,
-    permissionOwnerType: folder.parentId
+    targetType: AppResourceType.Folder,
+    containerId: folder.parentId || folder.workspaceId,
+    containerType: folder.parentId
       ? AppResourceType.Folder
       : AppResourceType.Workspace,
-    itemResourceId: folder.resourceId,
-    appliesTo: PermissionItemAppliesTo.Owner,
+    targetId: folder.resourceId,
+    appliesTo: PermissionItemAppliesTo.Container,
   });
 
   const childrenFoldersGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
-    itemResourceType: AppResourceType.Folder,
-    permissionOwnerId: folder.resourceId,
-    permissionOwnerType: AppResourceType.Folder,
+    targetType: AppResourceType.Folder,
+    containerId: folder.resourceId,
+    containerType: AppResourceType.Folder,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 
   const childrenFilesGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
-    itemResourceType: AppResourceType.File,
-    permissionOwnerId: folder.resourceId,
-    permissionOwnerType: AppResourceType.Folder,
+    targetType: AppResourceType.File,
+    containerId: folder.resourceId,
+    containerType: AppResourceType.Folder,
     appliesTo: PermissionItemAppliesTo.Children,
   });
 

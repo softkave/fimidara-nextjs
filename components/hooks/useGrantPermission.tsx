@@ -5,10 +5,10 @@ import GrantPermissionFormContainer from "../app/workspaces/permissionItems/Gran
 
 export interface IUseGrantPermissionProps {
   workspaceId: string;
-  permissionOwnerId: string;
-  permissionOwnerType: AppResourceType;
-  itemResourceId?: string;
-  itemResourceType: AppResourceType;
+  containerId: string;
+  containerType: AppResourceType;
+  targetId?: string;
+  targetType: AppResourceType;
   appliesTo: PermissionItemAppliesTo;
 }
 
@@ -19,10 +19,10 @@ export enum GrantPermissionKey {
 export default function useGrantPermission(props: IUseGrantPermissionProps) {
   const {
     workspaceId,
-    itemResourceType,
-    itemResourceId,
-    permissionOwnerId,
-    permissionOwnerType,
+    targetType,
+    targetId,
+    containerId,
+    containerType,
     appliesTo,
   } = props;
   const [visible, setVisibility] = React.useState(false);
@@ -35,10 +35,10 @@ export default function useGrantPermission(props: IUseGrantPermissionProps) {
       return (
         <GrantPermissionFormContainer
           workspaceId={workspaceId}
-          itemResourceType={itemResourceType}
-          itemResourceId={itemResourceId}
-          permissionOwnerId={permissionOwnerId}
-          permissionOwnerType={permissionOwnerType}
+          targetType={targetType}
+          targetId={targetId}
+          containerId={containerId}
+          containerType={containerType}
           appliesTo={appliesTo}
           onCancel={toggleVisibility}
         />
@@ -50,10 +50,10 @@ export default function useGrantPermission(props: IUseGrantPermissionProps) {
     visible,
     toggleVisibility,
     workspaceId,
-    itemResourceType,
-    itemResourceId,
-    permissionOwnerId,
-    permissionOwnerType,
+    targetType,
+    targetId,
+    containerId,
+    containerType,
     appliesTo,
   ]);
 

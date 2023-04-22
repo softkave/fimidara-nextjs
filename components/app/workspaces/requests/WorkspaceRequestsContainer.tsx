@@ -60,9 +60,9 @@ const WorkspaceRequestsContainer: React.FC<IWorkspaceRequestsContainerProps> = (
           actions={
             <GrantPermissionMenu
               workspaceId={workspaceId}
-              itemResourceType={AppResourceType.CollaborationRequest}
-              permissionOwnerId={workspaceId}
-              permissionOwnerType={AppResourceType.Workspace}
+              targetType={AppResourceType.CollaborationRequest}
+              containerId={workspaceId}
+              containerType={AppResourceType.Workspace}
               appliesTo={PermissionItemAppliesTo.Children}
             />
           }

@@ -13,7 +13,7 @@ export interface IGrantPermissionFormItemProps {
   loading?: boolean;
   permissionEntityId: string;
   permissionEntityType: AppResourceType;
-  itemResourceType: AppResourceType;
+  targetType: AppResourceType;
   controller: PermissionItemsByResourceController;
   onChange: (
     permissionEntityId: string,
@@ -27,7 +27,7 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
   props
 ) => {
   const {
-    itemResourceType,
+    targetType,
     loading,
     permissionEntityId,
     permissionEntityType,
@@ -37,7 +37,7 @@ const GrantPermissionFormItem: React.FC<IGrantPermissionFormItemProps> = (
 
   return (
     <List
-      dataSource={getActions(itemResourceType, true)}
+      dataSource={getActions(targetType, true)}
       renderItem={(action) => {
         let actionPermitted = controller.canPerformAction(
           permissionEntityId,

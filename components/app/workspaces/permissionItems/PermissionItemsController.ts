@@ -37,10 +37,10 @@ export default class PermissionItemsByResourceController {
       action: item.action,
       grantAccess: item.grantAccess,
       appliesTo: item.appliesTo,
-      permissionOwnerId: item.permissionOwnerId,
-      permissionOwnerType: item.permissionOwnerType,
-      itemResourceType: item.itemResourceType,
-      itemResourceId: item.itemResourceId,
+      containerId: item.containerId,
+      containerType: item.containerType,
+      targetType: item.targetType,
+      targetId: item.targetId,
       isNew: false,
       resourceId: item.resourceId,
     };
@@ -83,46 +83,46 @@ export default class PermissionItemsByResourceController {
 
   static fromPermissionItems(
     inputItems: IPermissionItem[],
-    permissionOwnerId: string,
-    permissionOwnerType: AppResourceType,
-    itemResourceType: AppResourceType,
+    containerId: string,
+    containerType: AppResourceType,
+    targetType: AppResourceType,
     appliesTo: PermissionItemAppliesTo,
-    itemResourceId?: string
+    targetId?: string
   ) {
     const itemsMap = PermissionItemsByResourceController.indexItems(inputItems);
     PermissionItemsByResourceController.sortItems(itemsMap);
     return new PermissionItemsByResourceController(
       itemsMap,
-      permissionOwnerId,
-      permissionOwnerType,
-      itemResourceType,
+      containerId,
+      containerType,
+      targetType,
       appliesTo,
-      itemResourceId
+      targetId
     );
   }
 
   private itemsMap: NewPermissionItemInputMap;
-  private permissionOwnerId: string;
-  private permissionOwnerType: AppResourceType;
-  private itemResourceId?: string;
-  private itemResourceType: AppResourceType;
+  private containerId: string;
+  private containerType: AppResourceType;
+  private targetId?: string;
+  private targetType: AppResourceType;
   private deletedItemIds: string[] = [];
   private appliesTo: PermissionItemAppliesTo;
 
   constructor(
     inputItems: NewPermissionItemInputMap,
-    permissionOwnerId: string,
-    permissionOwnerType: AppResourceType,
-    itemResourceType: AppResourceType,
+    containerId: string,
+    containerType: AppResourceType,
+    targetType: AppResourceType,
     appliesTo: PermissionItemAppliesTo,
-    itemResourceId?: string,
+    targetId?: string,
     deletedItemIds?: string[]
   ) {
     this.itemsMap = inputItems;
-    this.permissionOwnerId = permissionOwnerId;
-    this.permissionOwnerType = permissionOwnerType;
-    this.itemResourceId = itemResourceId;
-    this.itemResourceType = itemResourceType;
+    this.containerId = containerId;
+    this.containerType = containerType;
+    this.targetId = targetId;
+    this.targetType = targetType;
     this.deletedItemIds = deletedItemIds || [];
     this.appliesTo = appliesTo;
   }
@@ -133,18 +133,18 @@ export default class PermissionItemsByResourceController {
     action: BasicCRUDActions
   ) {
     if (action === BasicCRUDActions.All) {
-      for (const nextAction of getActions(this.itemResourceType)) {
+      for (const nextAction of getActions(this.targetType)) {
         if (nextAction === BasicCRUDActions.All) {
           continue;
         }
 
-        const hasAccess = this.actionCheckFunc(
+        const hasFullOrLimitedAccess = this.actionCheckFunc(
           permissionEntityId,
           permissionEntityType,
           nextAction
         );
 
-        if (!hasAccess) {
+        if (!hasFullOrLimitedAccess) {
           return false;
         }
       }
@@ -164,13 +164,13 @@ export default class PermissionItemsByResourceController {
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
   ) {
-    let hasAccess = this.canPerformAction(
+    let hasFullOrLimitedAccess = this.canPerformAction(
       permissionEntityId,
       permissionEntityType,
       action
     );
 
-    if (hasAccess) {
+    if (hasFullOrLimitedAccess) {
       return this;
     }
 
@@ -197,18 +197,18 @@ export default class PermissionItemsByResourceController {
           permissionEntityId,
           permissionEntityType,
           action: actionParam,
-          permissionOwnerId: this.permissionOwnerId,
-          permissionOwnerType: this.permissionOwnerType,
+          containerId: this.containerId,
+          containerType: this.containerType,
           isNew: true,
-          itemResourceType: this.itemResourceType,
-          itemResourceId: this.itemResourceId,
+          targetType: this.targetType,
+          targetId: this.targetId,
           appliesTo: this.appliesTo,
           grantAccess: true,
         });
       };
 
       const addPermissionForEveryActionFunc = () => {
-        getActions(this.itemResourceType).forEach((nextAction) => {
+        getActions(this.targetType).forEach((nextAction) => {
           if (nextAction !== BasicCRUDActions.All) {
             addPermissionFunc(nextAction);
           }
@@ -219,7 +219,7 @@ export default class PermissionItemsByResourceController {
         actionRemoveExclusionFunc(nextAction);
       });
 
-      getActions(this.itemResourceType, true).forEach((nextAction) => {
+      getActions(this.targetType, true).forEach((nextAction) => {
         if (
           !this.actionCheckFunc(
             permissionEntityId,
@@ -259,11 +259,11 @@ export default class PermissionItemsByResourceController {
           action,
           permissionEntityId,
           permissionEntityType,
-          permissionOwnerId: this.permissionOwnerId,
-          permissionOwnerType: this.permissionOwnerType,
+          containerId: this.containerId,
+          containerType: this.containerType,
           isNew: true,
-          itemResourceType: this.itemResourceType,
-          itemResourceId: this.itemResourceId,
+          targetType: this.targetType,
+          targetId: this.targetId,
           appliesTo: this.appliesTo,
           grantAccess: true,
         });
@@ -281,13 +281,13 @@ export default class PermissionItemsByResourceController {
     permissionEntityType: AppResourceType,
     action: BasicCRUDActions
   ) {
-    let hasAccess = this.canPerformAction(
+    let hasFullOrLimitedAccess = this.canPerformAction(
       permissionEntityId,
       permissionEntityType,
       action
     );
 
-    if (!hasAccess) {
+    if (!hasFullOrLimitedAccess) {
       return this;
     }
 
@@ -318,18 +318,18 @@ export default class PermissionItemsByResourceController {
           permissionEntityId,
           permissionEntityType,
           action: actionParam,
-          permissionOwnerId: this.permissionOwnerId,
-          permissionOwnerType: this.permissionOwnerType,
+          containerId: this.containerId,
+          containerType: this.containerType,
           grantAccess: false,
           isNew: true,
-          itemResourceType: this.itemResourceType,
-          itemResourceId: this.itemResourceId,
+          targetType: this.targetType,
+          targetId: this.targetId,
           appliesTo: this.appliesTo,
         });
       };
 
       const addExclusionForAllActionsFunc = () => {
-        getActions(this.itemResourceType).forEach((nextAction) => {
+        getActions(this.targetType).forEach((nextAction) => {
           if (action !== BasicCRUDActions.All) {
             addExclusionFunc(nextAction);
           }
@@ -340,7 +340,7 @@ export default class PermissionItemsByResourceController {
         actionClearFunc(nextAction);
       });
 
-      getActions(this.itemResourceType, true).forEach((nextAction) => {
+      getActions(this.targetType, true).forEach((nextAction) => {
         if (
           this.actionCheckFunc(
             permissionEntityId,
@@ -385,12 +385,12 @@ export default class PermissionItemsByResourceController {
           action,
           permissionEntityId,
           permissionEntityType,
-          permissionOwnerId: this.permissionOwnerId,
-          permissionOwnerType: this.permissionOwnerType,
+          containerId: this.containerId,
+          containerType: this.containerType,
           grantAccess: false,
           isNew: true,
-          itemResourceType: this.itemResourceType,
-          itemResourceId: this.itemResourceId,
+          targetType: this.targetType,
+          targetId: this.targetId,
           appliesTo: this.appliesTo,
         });
       }
@@ -428,8 +428,8 @@ export default class PermissionItemsByResourceController {
   private removeExclusions(itemList: INewPermissionItemInputExt[]) {
     return itemList.filter((item) => {
       const isForResource =
-        item.itemResourceId == this.itemResourceId && // we want null == undefined
-        item.itemResourceType === this.itemResourceType;
+        item.targetId == this.targetId && // we want null == undefined
+        item.targetType === this.targetType;
 
       if (!item.grantAccess && isForResource) {
         if (item.resourceId) {
@@ -449,8 +449,8 @@ export default class PermissionItemsByResourceController {
   ) {
     return itemList.filter((item) => {
       const isForResource =
-        item.itemResourceId == this.itemResourceId && // we want null == undefined
-        item.itemResourceType === this.itemResourceType;
+        item.targetId == this.targetId && // we want null == undefined
+        item.targetType === this.targetType;
 
       if (!isForResource || item.action !== action) {
         return true;
@@ -523,11 +523,11 @@ export default class PermissionItemsByResourceController {
   private getNewController() {
     return new PermissionItemsByResourceController(
       this.itemsMap,
-      this.permissionOwnerId,
-      this.permissionOwnerType,
-      this.itemResourceType,
+      this.containerId,
+      this.containerType,
+      this.targetType,
       this.appliesTo,
-      this.itemResourceId,
+      this.targetId,
       this.deletedItemIds
     );
   }

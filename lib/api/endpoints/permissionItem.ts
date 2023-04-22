@@ -70,10 +70,10 @@ async function getEntityPermissionItems(
 export interface IGetResourcePermissionItemsEndpointParams
   extends IPaginationQuery {
   workspaceId: string;
-  itemResourceId?: string;
-  itemResourceType: AppResourceType;
-  permissionOwnerId?: string;
-  permissionOwnerType?: AppResourceType;
+  targetId?: string;
+  targetType: AppResourceType;
+  containerId?: string;
+  containerType?: AppResourceType;
 }
 
 export type IGetResourcePermissionItemsEndpointResult = GetEndpointResult<{
