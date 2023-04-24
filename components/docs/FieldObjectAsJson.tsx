@@ -1,3 +1,5 @@
+import { css } from "@emotion/css";
+import { Typography } from "antd";
 import { map } from "lodash";
 import React from "react";
 import FieldDescription from "./FieldDescription";
@@ -19,6 +21,19 @@ import {
 export interface FieldObjectAsJsonProps {
   fieldObject: FieldObject;
 }
+
+const classes = {
+  jsonRoot: css({ margin: "24px 0px" }),
+  jsonEntry: css({
+    margin: "4px 16px",
+  }),
+  jsonContent: css({
+    "& *": {
+      fontFamily: `'Source Code Pro', monospace !important`,
+    },
+  }),
+  title: css({ margin: "0px 0px 4px 0px !important" }),
+};
 
 const FieldObjectAsJson: React.FC<FieldObjectAsJsonProps> = (props) => {
   const { fieldObject } = props;
@@ -55,7 +70,8 @@ export function renderFieldType(data: any): React.ReactNode {
     const containedTypeNode = renderFieldType(data.type);
     return (
       <span>
-        Array{"<"}${containedTypeNode}
+        Array{"<"}
+        {containedTypeNode}
         {">"}
       </span>
     );
@@ -63,7 +79,7 @@ export function renderFieldType(data: any): React.ReactNode {
     return <a href={`#${data.name}`}>{data.name}</a>;
   } else if (isFieldOrCombination(data)) {
     if (!data.types) return "";
-    return data.types.map(renderFieldType).join(" | ");
+    return map(data.types, renderFieldType).join(" | ");
   } else if (isFieldBinary(data)) {
     return "binary";
   }
@@ -87,24 +103,29 @@ export function renderFieldComment(data: any): React.ReactNode {
 function renderFieldObjectAsJson(nextObject: FieldObject) {
   const rows = map(nextObject.fields, (fieldbase, key) => {
     const keyNode = <span>{key}</span>;
-    const typeNode = renderFieldType(fieldbase);
-    const commentNode = renderFieldComment(fieldbase);
+    const typeNode = renderFieldType(fieldbase.data);
     return (
-      <p>
-        {commentNode}
+      <div className={classes.jsonEntry}>
         {keyNode}: {typeNode}
-      </p>
+      </div>
     );
   });
 
   return (
-    <div>
-      <h5 id={nextObject.name}>{nextObject.name}</h5>
-      &#123;
-      <br />
-      {rows}
-      <br />
-      &#125;
+    <div className={classes.jsonRoot}>
+      <Typography.Title
+        id={nextObject.name}
+        level={5}
+        className={classes.title}
+        type="secondary"
+      >
+        {nextObject.name}
+      </Typography.Title>
+      <div className={classes.jsonContent}>
+        &#123;
+        {rows}
+        &#125;
+      </div>
     </div>
   );
 }

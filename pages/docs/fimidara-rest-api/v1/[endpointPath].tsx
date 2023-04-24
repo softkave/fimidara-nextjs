@@ -1,14 +1,14 @@
-import assert from "assert";
 import { promises } from "fs";
 import { GetServerSideProps, NextPage } from "next";
 import DocsMain from "../../../../components/docs/DocsMain";
 import HttpEndpointDoc from "../../../../components/docs/HttpEndpointDoc";
 import { HttpEndpointDefinition } from "../../../../components/docs/types";
 import PageNothingFound from "../../../../components/utils/PageNothingFound";
+import { systemConstants } from "../../../../lib/definitions/system";
 
 interface FimidaraRestApiEndpointDocPageProps {
   endpoint?: HttpEndpointDefinition;
-  endpointPath: string;
+  endpointPath?: string;
 }
 
 type PagePathParams = {
@@ -51,21 +51,35 @@ export const getServerSideProps: GetServerSideProps<
   PagePathParams
 > = async (context) => {
   const endpointPath = context.params?.endpointPath;
-  assert(endpointPath);
 
-  const prefix = process.env.ENDPOINT_INFO_PATH;
-  assert(prefix);
-  const endpointInfoPath = prefix + "/" + endpointPath + ".json";
+  if (endpointPath) {
+    const [groupName, endpointName] = endpointPath.split("__");
+    const endpointInfoPath =
+      process.cwd() +
+      systemConstants.endpointInfoPath +
+      "/" +
+      groupName +
+      "/" +
+      endpointName +
+      ".json";
 
-  if ((await promises.stat(endpointInfoPath)).isFile()) {
-    const endpointInfoRaw = await promises.readFile(endpointInfoPath);
-    const endpointInfoJson = JSON.parse(endpointInfoRaw.toString("utf-8"));
-    return {
-      props: {
-        endpointPath,
-        endpoint: endpointInfoJson as HttpEndpointDefinition,
-      },
-    };
+    console.log({
+      endpointPath,
+      groupName,
+      endpointName,
+      endpointInfoPath,
+    });
+
+    if ((await promises.stat(endpointInfoPath)).isFile()) {
+      const endpointInfoRaw = await promises.readFile(endpointInfoPath);
+      const endpointInfoJson = JSON.parse(endpointInfoRaw.toString("utf-8"));
+      return {
+        props: {
+          endpointPath,
+          endpoint: endpointInfoJson as HttpEndpointDefinition,
+        },
+      };
+    }
   }
 
   return { props: { endpointPath } };

@@ -81,7 +81,10 @@ export type FieldObject = {
   required?: boolean;
   description?: string;
   name?: string | undefined;
-  fields?: Record<string, FieldBase>;
+  fields?: Record<
+    string,
+    { data: FieldBase; required: boolean; optional: boolean }
+  >;
 };
 
 export type FieldOrCombination = {
@@ -118,3 +121,11 @@ export type HttpEndpointDefinition = {
   errorResponseHeaders?: FieldObject;
   errorResponseBody?: FieldObject;
 };
+
+export type RestApiDocsTableOfContentType = Array<string | [string, string[]]>;
+export interface IRawNavItem {
+  key: string;
+  label: React.ReactNode;
+  withLink?: boolean;
+  children?: IRawNavItem[];
+}

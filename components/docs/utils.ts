@@ -87,7 +87,7 @@ export function extractContainedFieldObjects(data: any): FieldObject[] {
 
     if (data.fields) {
       containedObjects = containedObjects.concat(
-        ...map(data.fields, extractContainedFieldObjects)
+        ...map(data.fields, (field) => extractContainedFieldObjects(field.data))
       );
     }
 
@@ -96,7 +96,7 @@ export function extractContainedFieldObjects(data: any): FieldObject[] {
     if (data.types) {
       const containedObjects: FieldObject[] = [];
       return containedObjects.concat(
-        ...data.types.map(extractContainedFieldObjects)
+        ...map(data.types, extractContainedFieldObjects)
       );
     }
   }

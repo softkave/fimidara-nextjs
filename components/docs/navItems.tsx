@@ -1,44 +1,43 @@
 import { ItemType } from "antd/lib/menu/hooks/useItems";
-import { compact, flatten, isEmpty } from "lodash";
+import { compact, first, flatten, isString } from "lodash";
 import Link from "next/link";
-import toc from "./fimidara-rest-api-toc.json";
-
-interface IRawNavItem {
-  key: string;
-  label: React.ReactNode;
-  withLink?: boolean;
-  children?: IRawNavItem[];
-}
+import restApiTableOfContent from "./raw/toc/v1/table-of-content.json";
+import { IRawNavItem, RestApiDocsTableOfContentType } from "./types";
 
 export const DOCS_BASE_PATH = "/docs";
 
-function toAntDMenuItem(item: IRawNavItem, parentPath: string): ItemType {
-  const itemPath = `${parentPath}/${item.key}`;
+export function getNavItemPath(item: IRawNavItem, rootItem: IRawNavItem) {
+  return `${DOCS_BASE_PATH}/${rootItem.key}/${item.key}`;
+}
+
+export function renderRawNavItemLink(item: IRawNavItem, rootItem: IRawNavItem) {
+  const itemPath = getNavItemPath(item, rootItem);
+  return <Link href={itemPath}>{item.label}</Link>;
+}
+
+function renderToAntDMenuItem(
+  item: IRawNavItem,
+  rootItem: IRawNavItem
+): ItemType {
   const { withLink, ...itemRest } = item;
   return {
     ...itemRest,
-    label: withLink ? (
-      <Link href={itemPath}>
-        <a href={itemPath}>{item.label}</a>
-      </Link>
-    ) : (
-      item.label
-    ),
+    label: withLink ? renderRawNavItemLink(item, rootItem) : item.label,
     children: item.children
-      ? toAntDMenuItemList(item.children, itemPath)
+      ? renderToAntDMenuItemList(item.children, rootItem)
       : undefined,
   };
 }
 
-function toAntDMenuItemList(
+function renderToAntDMenuItemList(
   items: IRawNavItem[],
-  parentPath: string
+  rootItem: IRawNavItem
 ): ItemType[] {
   return compact(
     flatten(
       items.map((item, i) => {
         return [
-          toAntDMenuItem(item, parentPath),
+          renderToAntDMenuItem(item, rootItem),
           i < items.length - 1 ? { type: "divider" } : undefined,
         ];
       })
@@ -46,7 +45,11 @@ function toAntDMenuItemList(
   );
 }
 
-const docsNavItems: IRawNavItem[] = [
+export const restApiRawNavItems = extractRestApiFromRawTableOfC(
+  restApiTableOfContent as RestApiDocsTableOfContentType
+);
+
+const fimidaraNavItems: IRawNavItem[] = [
   {
     key: "fimidara",
     label: "Fimidara",
@@ -68,40 +71,51 @@ const docsNavItems: IRawNavItem[] = [
       },
     ],
   },
+];
+const fimidaraRestApiNavItems: IRawNavItem[] = [
   {
     key: "fimidara-rest-api",
     label: "Fimidara REST API",
-    children: extractRestApiToc(toc),
+    children: restApiRawNavItems,
   },
-  // {
-  //   key: "fimidara-js-sdk",
-  //   label: "Fimidara JS SDK",
-  //   children: [],
-  // },
 ];
 
-export const antdNavItems = toAntDMenuItemList(docsNavItems, DOCS_BASE_PATH);
+export const fimidaraAntdNavItems = renderToAntDMenuItemList(
+  fimidaraNavItems,
+  first(fimidaraNavItems)!
+);
+export const fimidaraRestApiAntdNavItems = renderToAntDMenuItemList(
+  fimidaraRestApiNavItems,
+  first(fimidaraRestApiNavItems)!
+);
 
-type PathRecord<T = any> = Record<string, T>;
-function extractRestApiToc(records: PathRecord) {
+function extractRestApiFromRawTableOfC(records: RestApiDocsTableOfContentType) {
   const links: IRawNavItem[] = [];
-  for (const k in records) {
-    const children = records[k];
-    if (isEmpty(children)) {
+
+  function getLinkFromPath(entry: string): IRawNavItem {
+    const entrySplit = compact(entry.split("/"));
+    const [version, groupName, fnName] = entrySplit;
+    const key = version + "/" + groupName + "__" + fnName;
+    return {
+      key,
+      withLink: true,
+      label: fnName,
+    };
+  }
+
+  records.forEach((entry) => {
+    if (isString(entry)) {
       // is leaf link
-      links.push({
-        withLink: true,
-        label: k,
-        key: k,
-      });
+      links.push(getLinkFromPath(entry));
     } else {
+      const [groupName, fnNameList] = entry;
       links.push({
-        label: k,
-        key: k,
-        children: extractRestApiToc(children),
+        label: groupName,
+        key: groupName,
+        children: fnNameList.map(getLinkFromPath),
       });
     }
-  }
+  });
 
   return links;
 }

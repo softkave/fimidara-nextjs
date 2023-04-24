@@ -6,16 +6,18 @@ import { extractContainedFieldObjects } from "./utils";
 export function useContainedFieldObjects(props: { fieldObject: FieldObject }) {
   const { fieldObject } = props;
   const containedObjects = React.useMemo(() => {
-    const objectsMap: Map<FieldObject, FieldObject> = new Map([
-      [fieldObject, fieldObject],
+    const objectsMap: Map<string | undefined, FieldObject> = new Map([
+      [fieldObject.name, fieldObject],
     ]);
 
     objectsMap.forEach((nextObject) => {
       const nextContainedObjects = flatten(
-        map(nextObject.fields, extractContainedFieldObjects)
+        map(nextObject.fields, (field) =>
+          extractContainedFieldObjects(field.data)
+        )
       );
       nextContainedObjects.forEach((fieldbase) =>
-        objectsMap.set(fieldbase, fieldbase)
+        objectsMap.set(fieldbase.name, fieldbase)
       );
     });
 

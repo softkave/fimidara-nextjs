@@ -1,5 +1,5 @@
-import Table, { ColumnsType } from "antd/es/table";
-import { map } from "lodash";
+import { Table, TableColumnType, Typography } from "antd";
+import { forEach, map } from "lodash";
 import React from "react";
 import FieldDescription from "./FieldDescription";
 import { useContainedFieldObjects } from "./hooks";
@@ -47,51 +47,74 @@ type FieldObjectTableColumns = {
 
 export function renderFieldType(data: any): React.ReactNode {
   if (isFieldString(data)) {
-    return "string";
+    return <code>string</code>;
   } else if (isFieldNumber(data)) {
-    return "number";
+    return <code>number</code>;
   } else if (isFieldBoolean(data)) {
-    return "boolean";
+    return <code>boolean</code>;
   } else if (isFieldNull(data)) {
-    return "null";
+    return <code>null</code>;
   } else if (isFieldUndefined(data)) {
-    return "undefined";
+    return <code>undefined</code>;
   } else if (isFieldDate(data)) {
-    return "number";
+    return <code>number</code>;
   } else if (isFieldArray(data)) {
     if (!data.type) return "";
     const containedTypeNode = renderFieldType(data.type);
-    return <span>array of ${containedTypeNode}</span>;
+    return (
+      <span>
+        <code>array</code> of {containedTypeNode}
+      </span>
+    );
   } else if (isFieldObject(data)) {
-    return <a href={`#${data.name}`}>{data.name}</a>;
+    return (
+      <a href={`#{data.name}`}>
+        <code>{data.name}</code>
+      </a>
+    );
   } else if (isFieldOrCombination(data)) {
     if (!data.types) return "";
-    return data.types.map(renderFieldType).join(", or ");
+    const nodes: React.ReactNode[] = [];
+
+    forEach(data.types, (type) => {
+      const node = renderFieldType(type);
+      if (nodes.length) nodes.push(" or ", node);
+      else nodes.push(node);
+    });
+
+    return nodes;
   } else if (isFieldBinary(data)) {
-    return "binary";
+    return <code>binary</code>;
   }
 
-  return "unknown";
+  return <code>unknown</code>;
 }
 
-const columns: ColumnsType<FieldObjectTableColumns> = [
+const columns: TableColumnType<FieldObjectTableColumns>[] = [
   {
     title: "Field",
     dataIndex: "field",
     key: "field",
+    width: "150px",
+    render: (value) => <code>{value}</code>,
   },
   {
     title: "Type",
     dataIndex: "type",
     key: "type",
-    render: (value: any) => {
-      return renderFieldType(value);
+    render: (value: any, data) => {
+      return renderFieldType(data.fieldbase);
     },
+    width: "150px",
   },
   {
     title: "Required",
     dataIndex: "required",
     key: "required",
+    render: (required, data) => {
+      return required ? "Yes" : "No";
+    },
+    width: "80px",
   },
   {
     title: "Description",
@@ -108,23 +131,26 @@ function renderFieldObjectAsTable(nextObject: FieldObject) {
     nextObject.fields,
     (fieldbase, key): FieldObjectTableColumns => {
       return {
-        fieldbase,
         field: key,
+        fieldbase: fieldbase.data,
         required: fieldbase.required,
-        description: fieldbase.description,
+        description: fieldbase.data.description,
       };
     }
   );
 
   return (
     <div>
-      <h5 id={nextObject.name}>{nextObject.name}</h5>
+      <Typography.Title id={nextObject.name} level={5} type="secondary">
+        {nextObject.name}
+      </Typography.Title>
       <Table
         bordered
         key={nextObject.name}
         columns={columns}
         dataSource={rows}
         size="small"
+        pagination={false}
       />
     </div>
   );

@@ -27,6 +27,10 @@ export const systemConstants = {
     process.env.NEXT_PUBLIC_WORKSPACE_IMAGES_FOLDER,
     `/${workspaceRootname}/files/images/workspaces`
   ),
+  endpointInfoPath: defaultTo(
+    process.env.ENDPOINT_INFO_PATH,
+    `/components/docs/raw/endpoints/v1`
+  ),
   serverAddr: defaultTo(
     process.env.NEXT_PUBLIC_SERVER_ADDR,
     "http://localhost:5000"

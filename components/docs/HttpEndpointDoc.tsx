@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import { Typography } from "antd";
 import React from "react";
 import { htmlCharacterCodes } from "../utils/utils";
@@ -14,83 +15,100 @@ export interface HttpEndpointDocProps {
   endpoint: HttpEndpointDefinition;
 }
 
+const classes = {
+  endpointPath: css({ display: "inline-block" }),
+};
+
 const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
   const { endpoint } = props;
 
+  const notApplicableNode = <Typography.Text>Not Applicable</Typography.Text>;
   return (
     <div>
       <div>
-        <Typography.Text>{endpoint.basePathname}</Typography.Text>
-        {htmlCharacterCodes.doubleDash}
-        <Typography.Text>{endpoint.method}</Typography.Text>
+        <Typography.Title copyable level={5} className={classes.endpointPath}>
+          <code>{endpoint.basePathname}</code>
+        </Typography.Title>{" "}
+        {htmlCharacterCodes.doubleDash}{" "}
+        <Typography.Title level={5} className={classes.endpointPath}>
+          <code>{endpoint.method}</code>
+        </Typography.Title>
       </div>
       <div>
-        <h4>Path Parameters</h4>
+        <Typography.Title level={5}>Path Parameters</Typography.Title>
         {endpoint.pathParamaters ? (
           <FieldObjectAsTable fieldObject={endpoint.pathParamaters} />
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
       <div>
-        <h4>Request Headers</h4>
+        <Typography.Title level={5}>Request Headers</Typography.Title>
         {endpoint.requestHeaders ? (
           <FieldObjectAsTable fieldObject={endpoint.requestHeaders} />
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
       <div>
-        <h4>Request Query</h4>
+        <Typography.Title level={5}>Request Query</Typography.Title>
         {endpoint.query ? (
           <FieldObjectAsTable fieldObject={endpoint.query} />
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
       <div>
-        <h4>Request Body</h4>
+        <Typography.Title level={5}>Request Body</Typography.Title>
         {isFieldObject(endpoint.requestBody) ? (
           <FieldObjectRender fieldObject={endpoint.requestBody} />
         ) : isHttpEndpointMultipartFormdata(endpoint.requestBody) &&
           endpoint.requestBody.items ? (
           <FieldObjectAsTable fieldObject={endpoint.requestBody.items} />
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
       <div>
-        <h4>200 ${htmlCharacterCodes.doubleDash} Response Headers</h4>
+        <Typography.Title level={5}>
+          200 {htmlCharacterCodes.doubleDash} Response Headers
+        </Typography.Title>
         {endpoint.responseHeaders ? (
           <FieldObjectAsTable fieldObject={endpoint.responseHeaders} />
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
       <div>
-        <h4>200 Response Body</h4>
+        <Typography.Title level={5}>
+          200 {htmlCharacterCodes.doubleDash} Response Body
+        </Typography.Title>
         {isFieldObject(endpoint.responseBody) ? (
           <FieldObjectRender fieldObject={endpoint.responseBody} />
         ) : isFieldBinary(endpoint.responseBody) ? (
           <code>binary</code>
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
       <div>
-        <h4>4XX or 5XX ${htmlCharacterCodes.doubleDash} Response Headers</h4>
+        <Typography.Title level={5}>
+          4XX or 5XX {htmlCharacterCodes.doubleDash} Response Headers
+        </Typography.Title>
         {endpoint.errorResponseHeaders ? (
           <FieldObjectAsTable fieldObject={endpoint.errorResponseHeaders} />
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
       <div>
-        <h4>4XX or 5XX ${htmlCharacterCodes.doubleDash} Response Body</h4>
+        <Typography.Title level={5}>
+          4XX or 5XX {htmlCharacterCodes.doubleDash} Response Body
+        </Typography.Title>
         {endpoint.errorResponseBody ? (
-          <FieldObjectAsTable fieldObject={endpoint.errorResponseBody} />
+          <FieldObjectRender fieldObject={endpoint.errorResponseBody} />
         ) : (
-          "Not Applicable"
+          notApplicableNode
         )}
       </div>
     </div>

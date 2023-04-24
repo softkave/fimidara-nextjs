@@ -84,8 +84,7 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
             height: 100%;
           }
           main {
-            width: 100%;
-            overflow: auto;
+            overflow-y: scroll;
           }
           main > div {
             padding: 1rem;

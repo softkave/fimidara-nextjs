@@ -1,10 +1,10 @@
+import { ConfigProvider } from "antd";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import NextNProgress from "nextjs-progressbar";
 import { Provider } from "react-redux";
 import MarkdocDocsMain from "../components/docs/MarkdocDocsMain";
 import store from "../lib/store/store";
-import "../styles/antd.less";
 import "../styles/globals.css";
 
 function FilesApp({ Component, pageProps }: AppProps) {
@@ -20,7 +20,18 @@ function FilesApp({ Component, pageProps }: AppProps) {
         <title>fimidara</title>
       </Head>
       <NextNProgress options={{ showSpinner: false }} />
-      {node}
+      <ConfigProvider
+        theme={{
+          token: {
+            fontFamily: `-apple-system, BlinkMacSystemFont, "Work Sans", "Segoe UI",
+            Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+            "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
+            fontFamilyCode: `'Source Code Pro', monospace`,
+          },
+        }}
+      >
+        {node}
+      </ConfigProvider>
     </Provider>
   );
 }

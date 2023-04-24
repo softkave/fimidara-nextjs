@@ -5,7 +5,11 @@ import { compact, last } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";
-import { DOCS_BASE_PATH, antdNavItems } from "./navItems";
+import {
+  DOCS_BASE_PATH,
+  fimidaraAntdNavItems,
+  fimidaraRestApiAntdNavItems,
+} from "./navItems";
 
 export interface IDocsSideNavProps {
   onClose: () => void;
@@ -88,7 +92,7 @@ export function DocsSideNav(props: IDocsSideNavProps) {
 
   const menuNode = (
     <Menu
-      items={antdNavItems}
+      items={fimidaraAntdNavItems.concat(fimidaraRestApiAntdNavItems)}
       mode="inline"
       style={{ minWidth: "300px" }}
       className={classes.sideNavMenu}
@@ -98,7 +102,7 @@ export function DocsSideNav(props: IDocsSideNavProps) {
   );
 
   const isLg = responsive?.lg;
-  // const isLg = false;
+
   if (isLg) {
     return <div className={classes.sideNavDesktopRoot}>{menuNode}</div>;
   } else {
