@@ -4,6 +4,7 @@ import Head from "next/head";
 import NextNProgress from "nextjs-progressbar";
 import { Provider } from "react-redux";
 import MarkdocDocsMain from "../components/docs/MarkdocDocsMain";
+import ErrorBoundary from "../components/utils/page/ErrorBoundary";
 import store from "../lib/store/store";
 import "../styles/globals.css";
 
@@ -14,25 +15,27 @@ function FilesApp({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <Provider store={store}>
-      <Head>
-        {/* <link rel="shortcut icon" href="/fimidara.svg" /> */}
-        <title>fimidara</title>
-      </Head>
-      <NextNProgress options={{ showSpinner: false }} />
-      <ConfigProvider
-        theme={{
-          token: {
-            fontFamily: `-apple-system, BlinkMacSystemFont, "Work Sans", "Segoe UI",
+    <ErrorBoundary>
+      <Provider store={store}>
+        <Head>
+          {/* <link rel="shortcut icon" href="/fimidara.svg" /> */}
+          <title>fimidara</title>
+        </Head>
+        <NextNProgress options={{ showSpinner: false }} />
+        <ConfigProvider
+          theme={{
+            token: {
+              fontFamily: `-apple-system, BlinkMacSystemFont, "Work Sans", "Segoe UI",
             Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
             "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
-            fontFamilyCode: `'Source Code Pro', monospace`,
-          },
-        }}
-      >
-        {node}
-      </ConfigProvider>
-    </Provider>
+              fontFamilyCode: `'Source Code Pro', monospace`,
+            },
+          }}
+        >
+          {node}
+        </ConfigProvider>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

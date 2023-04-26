@@ -1,32 +1,32 @@
 import { promises } from "fs";
 import { GetServerSideProps, NextPage } from "next";
 import DocsMain from "../../../../components/docs/DocsMain";
-import HttpEndpointDoc from "../../../../components/docs/HttpEndpointDoc";
+import JsSdkEndpointDoc from "../../../../components/docs/JsSdkEndpointDoc";
 import { HttpEndpointDefinition } from "../../../../components/docs/types";
 import PageNothingFound from "../../../../components/utils/PageNothingFound";
 import { systemConstants } from "../../../../lib/definitions/system";
 
-interface FimidaraRestApiEndpointDocPageProps {
+interface FimidaraJsSdkEndpointDocPageProps {
   endpoint?: HttpEndpointDefinition;
-  endpointPath?: string;
+  endpointMethod?: string;
 }
 
 type PagePathParams = {
-  endpointPath: string;
+  endpointMethod: string;
 };
 
-const FimidaraRestApiEndpointDocPage: NextPage<
-  FimidaraRestApiEndpointDocPageProps
+const FimidaraJsSdkEndpointDocPage: NextPage<
+  FimidaraJsSdkEndpointDocPageProps
 > = (props) => {
-  const { endpoint, endpointPath } = props;
+  const { endpoint, endpointMethod } = props;
 
   if (!endpoint) {
     return (
-      <DocsMain pageTitle="Fimidara REST endpoint not found">
+      <DocsMain pageTitle="Fimidara JS SDK method not found">
         <PageNothingFound
           message={
             <p>
-              Endpoint <code>{endpointPath}</code> not found!
+              Method <code>{endpointMethod}</code> not found!
             </p>
           }
         />
@@ -36,24 +36,24 @@ const FimidaraRestApiEndpointDocPage: NextPage<
 
   return (
     <DocsMain
-      pageTitle={endpoint.name ?? "Fimidara REST endpoint"}
+      pageTitle={endpoint.name ?? "Fimidara JS SDK endpoint method"}
       pageDescription={endpoint.description}
     >
-      <HttpEndpointDoc endpoint={endpoint} />
+      <JsSdkEndpointDoc endpoint={endpoint} />
     </DocsMain>
   );
 };
 
-export default FimidaraRestApiEndpointDocPage;
+export default FimidaraJsSdkEndpointDocPage;
 
 export const getServerSideProps: GetServerSideProps<
-  FimidaraRestApiEndpointDocPageProps,
+  FimidaraJsSdkEndpointDocPageProps,
   PagePathParams
 > = async (context) => {
-  const endpointPath = context.params?.endpointPath;
+  const endpointMethod = context.params?.endpointMethod;
 
-  if (endpointPath) {
-    const [groupName, endpointName] = endpointPath.split("__");
+  if (endpointMethod) {
+    const [groupName, endpointName] = endpointMethod.split("__");
     const endpointInfoPath =
       process.cwd() +
       systemConstants.endpointInfoPath +
@@ -68,12 +68,12 @@ export const getServerSideProps: GetServerSideProps<
       const endpointInfoJson = JSON.parse(endpointInfoRaw.toString("utf-8"));
       return {
         props: {
-          endpointPath,
+          endpointMethod,
           endpoint: endpointInfoJson as HttpEndpointDefinition,
         },
       };
     }
   }
 
-  return { props: { endpointPath } };
+  return { props: { endpointMethod } };
 };

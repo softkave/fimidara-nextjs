@@ -22,6 +22,16 @@ const nextConfig = {
         destination: "/docs/fimidara/introduction",
         permanent: false,
       },
+      {
+        source: "/docs/fimidara-rest-api",
+        destination: "/docs/fimidara-rest-api/v1",
+        permanent: false,
+      },
+      {
+        source: "/docs/fimidara-js-sdk",
+        destination: "/docs/fimidara-js-sdk/v1",
+        permanent: false,
+      },
     ];
   },
 };

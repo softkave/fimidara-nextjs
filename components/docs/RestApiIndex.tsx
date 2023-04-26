@@ -1,7 +1,12 @@
 import { Typography } from "antd";
+import { first } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { getNavItemPath, restApiRawNavItems } from "./navItems";
+import {
+  fimidaraRestApiNavItems,
+  getNavItemPath,
+  restApiRawNavItems,
+} from "./navItems";
 import { IRawNavItem } from "./types";
 
 export interface RestApiIndexProps {}
@@ -22,13 +27,11 @@ function renderNavItemList(
   parentLabel: React.ReactNode
 ) {
   const nodes = items.map((item) => {
-    const itemPath = getNavItemPath(item);
+    const itemPath = getNavItemPath(item, first(fimidaraRestApiNavItems)!);
     if (item.withLink) {
       return (
         <li key={item.key}>
-          <Link href={itemPath}>
-            <Typography.Link>{item.label}</Typography.Link>
-          </Link>
+          <Link href={itemPath}>{item.label}</Link>
         </li>
       );
     } else if (item.children) {
@@ -38,7 +41,7 @@ function renderNavItemList(
 
   return (
     <div>
-      <Typography.Title level={4}>{parentLabel}</Typography.Title>
+      <Typography.Title level={5}>{parentLabel}</Typography.Title>
       <ul key={parentPath}>{nodes}</ul>
     </div>
   );

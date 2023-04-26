@@ -23,7 +23,5 @@ export function includeFirstNode<T1>(
 }
 
 export const htmlCharacterCodes = {
-  openBracket: "&#123;",
-  closeBracket: "&#125;",
   doubleDash: "—",
 };

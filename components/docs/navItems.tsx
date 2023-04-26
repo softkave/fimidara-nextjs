@@ -45,14 +45,14 @@ function renderToAntDMenuItemList(
   );
 }
 
-export const restApiRawNavItems = extractRestApiFromRawTableOfC(
+export const restApiRawNavItems = extractRestApiFromRawTableOfContent(
   restApiTableOfContent as RestApiDocsTableOfContentType
 );
 
-const fimidaraNavItems: IRawNavItem[] = [
+export const fimidaraNavItems: IRawNavItem[] = [
   {
     key: "fimidara",
-    label: "Fimidara",
+    label: "fimidara",
     children: [
       {
         withLink: true,
@@ -72,13 +72,42 @@ const fimidaraNavItems: IRawNavItem[] = [
     ],
   },
 ];
-const fimidaraRestApiNavItems: IRawNavItem[] = [
+export const fimidaraRestApiNavItems: IRawNavItem[] = [
   {
     key: "fimidara-rest-api",
-    label: "Fimidara REST API",
-    children: restApiRawNavItems,
+    label: "fimidara REST API",
+    children: (
+      [
+        {
+          withLink: true,
+          label: "index page",
+          key: "",
+        },
+      ] as IRawNavItem[]
+    ).concat(restApiRawNavItems),
   },
 ];
+export const fimidaraJsSdkNavItems: IRawNavItem[] = [
+  {
+    key: "fimidara-js-sdk",
+    label: "fimidara JS SDK",
+    children: (
+      [
+        {
+          withLink: true,
+          label: "index page",
+          key: "",
+        },
+      ] as IRawNavItem[]
+    ).concat(restApiRawNavItems),
+  },
+];
+
+console.log({
+  fimidaraNavItems,
+  fimidaraJsSdkNavItems,
+  fimidaraRestApiNavItems,
+});
 
 export const fimidaraAntdNavItems = renderToAntDMenuItemList(
   fimidaraNavItems,
@@ -88,8 +117,14 @@ export const fimidaraRestApiAntdNavItems = renderToAntDMenuItemList(
   fimidaraRestApiNavItems,
   first(fimidaraRestApiNavItems)!
 );
+export const fimidaraJsSdkAntdNavItems = renderToAntDMenuItemList(
+  fimidaraJsSdkNavItems,
+  first(fimidaraJsSdkNavItems)!
+);
 
-function extractRestApiFromRawTableOfC(records: RestApiDocsTableOfContentType) {
+function extractRestApiFromRawTableOfContent(
+  records: RestApiDocsTableOfContentType
+) {
   const links: IRawNavItem[] = [];
 
   function getLinkFromPath(entry: string): IRawNavItem {

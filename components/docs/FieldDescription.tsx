@@ -8,6 +8,7 @@ import {
   isFieldArray,
   isFieldBinary,
   isFieldBoolean,
+  isFieldCustomType,
   isFieldDate,
   isFieldNumber,
   isFieldString,
@@ -163,6 +164,18 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
         <Typography.Paragraph className={classes.p} key="binary-max">
           <b>Max bytes: </b>
           {prettyBytes(fieldbase.max)}
+        </Typography.Paragraph>
+      );
+    }
+  } else if (isFieldCustomType(fieldbase)) {
+    if (fieldbase.descriptionLink) {
+      nodes.push(
+        <Typography.Paragraph
+          className={classes.p}
+          key="custom-type-description-link"
+        >
+          <b>Link: </b>
+          <a href={fieldbase.descriptionLink}>{fieldbase.descriptionLink}</a>
         </Typography.Paragraph>
       );
     }

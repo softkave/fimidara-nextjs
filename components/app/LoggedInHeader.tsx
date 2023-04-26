@@ -3,8 +3,8 @@ import { css, cx } from "@emotion/css";
 import { Button, Popover, Space, Tooltip, Typography } from "antd";
 import Link from "next/link";
 import { appWorkspacePaths } from "../../lib/definitions/system";
-import UserCollaborationRequestList from "./requests/UserCollaborationRequestList";
 import UserMenu from "./UserMenu";
+import UserCollaborationRequestList from "./requests/UserCollaborationRequestList";
 
 export interface ILoggedInHeaderProps {
   prefixBtn?: React.ReactNode;
@@ -38,7 +38,7 @@ export default function LoggedInHeader(props: ILoggedInHeaderProps) {
         <div className={classes.prefixBtnContainer}>{prefixBtn}</div>
       ) : null}
       <div>
-        <Link href={appWorkspacePaths.workspaces} passHref>
+        <Link href={appWorkspacePaths.workspaces}>
           <Typography.Title level={5} style={{ margin: 0, cursor: "pointer" }}>
             fimidara
           </Typography.Title>
@@ -46,7 +46,7 @@ export default function LoggedInHeader(props: ILoggedInHeaderProps) {
       </div>
       <div className={classes.sideLinks}>
         <Space size="middle">
-          <Link href={appWorkspacePaths.workspaces} passHref>
+          <Link href={appWorkspacePaths.workspaces}>
             <Tooltip title="Workspaces">
               <Button icon={<ShopOutlined />} />
             </Tooltip>

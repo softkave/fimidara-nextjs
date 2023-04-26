@@ -4,7 +4,7 @@ import RestApiIndex from "../../../../components/docs/RestApiIndex";
 
 interface FimidaraRestApiIndexDocPageProps {}
 
-const FimidaraRestApiEndpointDocPage: NextPage<
+const FimidaraRestApiIndexDocPage: NextPage<
   FimidaraRestApiIndexDocPageProps
 > = (props) => {
   return (
@@ -14,4 +14,4 @@ const FimidaraRestApiEndpointDocPage: NextPage<
   );
 };
 
-export default FimidaraRestApiEndpointDocPage;
+export default FimidaraRestApiIndexDocPage;

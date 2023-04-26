@@ -22,7 +22,7 @@ const docs: IDoc[] = [
   {
     title: "JS SDK",
     icon: <ApiOutlined />,
-    link: "https://github.com/softkave/fimidara-js",
+    link: "/docs/fimidara-js-sdk/v1",
   },
 ];
 

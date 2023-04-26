@@ -11,23 +11,37 @@ const kJsonMode = "json" as const;
 export interface FieldObjectRenderProps {
   fieldObject: FieldObject;
   modes?: Array<typeof kJsonMode | typeof kTableMode>;
+  propName?: string;
+  isForJsSdk?: boolean;
 }
 
 const FieldObjectRender: React.FC<FieldObjectRenderProps> = (props) => {
-  const { fieldObject, modes } = props;
+  const { fieldObject, modes, propName, isForJsSdk } = props;
   const items: TabsProps["items"] = [];
 
   if (modes?.includes(kJsonMode))
     items.push({
       key: kJsonMode,
       label: `JSON`,
-      children: <FieldObjectAsJson fieldObject={fieldObject} />,
+      children: (
+        <FieldObjectAsJson
+          fieldObject={fieldObject}
+          propName={propName}
+          isForJsSdk={isForJsSdk}
+        />
+      ),
     });
   if (modes?.includes(kTableMode))
     items.push({
       key: kTableMode,
       label: `Table`,
-      children: <FieldObjectAsTable fieldObject={fieldObject} />,
+      children: (
+        <FieldObjectAsTable
+          fieldObject={fieldObject}
+          propName={propName}
+          isForJsSdk={isForJsSdk}
+        />
+      ),
     });
 
   return <Tabs defaultActiveKey={first(modes)} items={items} />;

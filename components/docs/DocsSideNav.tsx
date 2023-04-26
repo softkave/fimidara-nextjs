@@ -8,6 +8,7 @@ import useAppResponsive from "../../lib/hooks/useAppResponsive";
 import {
   DOCS_BASE_PATH,
   fimidaraAntdNavItems,
+  fimidaraJsSdkAntdNavItems,
   fimidaraRestApiAntdNavItems,
 } from "./navItems";
 
@@ -92,7 +93,10 @@ export function DocsSideNav(props: IDocsSideNavProps) {
 
   const menuNode = (
     <Menu
-      items={fimidaraAntdNavItems.concat(fimidaraRestApiAntdNavItems)}
+      items={fimidaraAntdNavItems.concat(
+        fimidaraRestApiAntdNavItems,
+        fimidaraJsSdkAntdNavItems
+      )}
       mode="inline"
       style={{ minWidth: "300px" }}
       className={classes.sideNavMenu}

@@ -12,14 +12,12 @@ export enum HttpEndpointMethod {
 
 export type FieldBase = {
   __id: "FieldBase";
-  stringType: "any";
   required?: boolean;
   description?: string;
 };
 
 export type FieldString = {
   __id: "FieldString";
-  stringType: "string";
   required?: boolean;
   description?: string;
   example?: string;
@@ -31,7 +29,6 @@ export type FieldString = {
 
 export type FieldNumber = {
   __id: "FieldNumber";
-  stringType: "number";
   required?: boolean;
   description?: string;
   example?: number;
@@ -42,7 +39,6 @@ export type FieldNumber = {
 
 export type FieldBoolean = {
   __id: "FieldBoolean";
-  stringType: "boolean";
   required?: boolean;
   description?: string;
   example?: boolean;
@@ -50,17 +46,16 @@ export type FieldBoolean = {
 
 export type FieldNull = {
   __id: "FieldNull";
-  stringType: "null";
+  description?: string;
 };
 
 export type FieldUndefined = {
   __id: "FieldUndefined";
-  stringType: "undefined";
+  description?: string;
 };
 
 export type FieldDate = {
   __id: "FieldDate";
-  stringType: "number";
   required?: boolean;
   description?: string;
   example?: string;
@@ -70,36 +65,59 @@ export type FieldArray = {
   __id: "FieldArray";
   required?: boolean;
   description?: string;
-  type?: FieldBase;
+  type?: FieldType;
   min?: number;
   max?: number;
 };
 
 export type FieldObject = {
   __id: "FieldObject";
-  stringType: "object";
   required?: boolean;
   description?: string;
   name?: string | undefined;
   fields?: Record<
     string,
-    { data: FieldBase; required: boolean; optional: boolean }
+    {
+      data: FieldType;
+      required?: boolean;
+      optional?: boolean;
+    }
   >;
+};
+
+export type FieldCustomType = {
+  __id: "FieldCustomType";
+  required?: boolean;
+  description?: string;
+  descriptionLink?: string;
+  name: string;
 };
 
 export type FieldOrCombination = {
   __id: "FieldOrCombination";
   required?: boolean;
   description?: string;
-  types?: Array<FieldBase>;
+  types?: Array<FieldType>;
 };
 
 export type FieldBinary = {
   __id: "FieldBinary";
-  stringType: "binary";
+  description?: string;
   min?: number;
   max?: number;
 };
+
+export type FieldType =
+  | FieldBase
+  | FieldNumber
+  | FieldString
+  | FieldArray
+  | FieldOrCombination
+  | FieldNull
+  | FieldUndefined
+  | FieldCustomType
+  | FieldBinary
+  | FieldObject;
 
 export type HttpEndpointMultipartFormdata = {
   __id: "HttpEndpointMultipartFormdata";

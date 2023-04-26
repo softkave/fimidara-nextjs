@@ -34,22 +34,16 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
   let sideLinksNode: React.ReactNode = null;
   sideLinksNode = (
     <Space size={"middle"}>
-      <Link href={appAccountPaths.login}>
-        <Typography.Link>Login</Typography.Link>
-      </Link>
+      <Link href={appAccountPaths.login}>Login</Link>
       <Dropdown
         overlay={
           <Menu>
             <Menu.Item key={appAccountPaths.signup}>
-              <Link href={appAccountPaths.signup}>
-                <Typography.Link>Signup</Typography.Link>
-              </Link>
+              <Link href={appAccountPaths.signup}>Signup</Link>
             </Menu.Item>
             <Menu.Divider key={"divider-01"} />
             <Menu.Item key={appAccountPaths.login}>
-              <Link href={appAccountPaths.login}>
-                <Typography.Link>Login</Typography.Link>
-              </Link>
+              <Link href={appAccountPaths.login}>Login</Link>
             </Menu.Item>
             <Menu.Divider key={"divider-02"} />
             <Menu.Item key={appAccountPaths.forgotPassword}>

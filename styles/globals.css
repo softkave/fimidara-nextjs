@@ -2,7 +2,7 @@
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Work Sans", "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
   font-size: 14px;
 }
 
@@ -17,7 +17,7 @@ code {
   border: 1px solid rgba(100, 100, 100, 0.2);
   padding: 0px 6px;
   border-radius: 6px;
-  font-family: "Source Code Pro", monospace;
+  font-family: "Source Code Pro", monospace !important;
 }
 
 .ant-btn .anticon {

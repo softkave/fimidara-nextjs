@@ -4,6 +4,7 @@ import {
   FieldBase,
   FieldBinary,
   FieldBoolean,
+  FieldCustomType,
   FieldDate,
   FieldNull,
   FieldNumber,
@@ -77,6 +78,10 @@ export function isHttpEndpointDefinition(
   );
 }
 
+export function isFieldCustomType(data: any): data is FieldCustomType {
+  return data && (data as FieldCustomType).__id === "FieldCustomType";
+}
+
 export function extractContainedFieldObjects(data: any): FieldObject[] {
   if (isFieldArray(data)) {
     if (data.type) {
@@ -102,4 +107,10 @@ export function extractContainedFieldObjects(data: any): FieldObject[] {
   }
 
   return [];
+}
+
+export function fieldObjectHasRequiredFields(item: FieldObject) {
+  return item.fields
+    ? Object.values(item.fields).findIndex((next) => next.required) !== -1
+    : false;
 }
