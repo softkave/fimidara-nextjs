@@ -1,28 +1,16 @@
-import { css } from "@emotion/css";
-import { List, Space, Typography } from "antd";
+import { Space, Typography } from "antd";
+import { UsageCosts, UsageRecord, Workspace } from "fimidara";
 import React from "react";
-import {
-  IUsageRecord,
-  UsageCosts,
-} from "../../../../lib/definitions/usageRecord";
-import { IWorkspace } from "../../../../lib/definitions/workspace";
+import ItemList from "../../../utils/list/ItemList";
 import SummedUsageRecordListItem from "./SummedUsageRecordListItem";
 
 export interface ISummedUsageRecordListProps {
-  workspace: IWorkspace;
-  fulfilledRecords: IUsageRecord[];
-  droppedRecords: IUsageRecord[];
+  workspace: Workspace;
+  fulfilledRecords: UsageRecord[];
+  droppedRecords: UsageRecord[];
   usageCosts: UsageCosts;
-  renderItem?: (item: IUsageRecord, costPerUnit: number) => React.ReactNode;
+  renderItem?: (item: UsageRecord, costPerUnit: number) => React.ReactNode;
 }
-
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
 
 const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
   props
@@ -36,22 +24,20 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
   } = props;
 
   const internalRenderItem = React.useCallback(
-    (item: IUsageRecord) => {
+    (item: UsageRecord) => {
       if (renderItem) {
         return renderItem(item, usageCosts[item.category]);
       }
 
       return (
-        <List.Item key={item.resourceId}>
-          <SummedUsageRecordListItem
-            category={item.category}
-            usage={item.usage}
-            usageCost={item.usageCost}
-            costPerUnit={usageCosts[item.category]}
-            workspace={workspace}
-            fulfillmentStatus={item.fulfillmentStatus}
-          />
-        </List.Item>
+        <SummedUsageRecordListItem
+          category={item.category}
+          usage={item.usage}
+          usageCost={item.usageCost}
+          costPerUnit={usageCosts[item.category]}
+          workspace={workspace}
+          fulfillmentStatus={item.fulfillmentStatus}
+        />
       );
     },
     [workspace, renderItem, usageCosts]
@@ -61,21 +47,11 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
     <Space direction="vertical" style={{ width: "100%" }} size="large">
       <Space direction="vertical" style={{ width: "100%" }} size="small">
         <Typography.Title level={4}>Fulfilled Requests</Typography.Title>
-        <List
-          className={classes.list}
-          itemLayout="horizontal"
-          dataSource={fulfilledRecords}
-          renderItem={internalRenderItem}
-        />
+        <ItemList items={fulfilledRecords} renderItem={internalRenderItem} />
       </Space>
       <Space direction="vertical" style={{ width: "100%" }} size="small">
         <Typography.Title level={4}>Dropped Requests</Typography.Title>
-        <List
-          className={classes.list}
-          itemLayout="horizontal"
-          dataSource={droppedRecords}
-          renderItem={internalRenderItem}
-        />
+        <ItemList items={droppedRecords} renderItem={internalRenderItem} />
       </Space>
     </Space>
   );

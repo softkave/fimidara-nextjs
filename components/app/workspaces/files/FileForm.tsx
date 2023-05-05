@@ -1,40 +1,39 @@
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { UploadFilePublicAccessActions } from "@/lib/definitions/file";
+import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
+import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { getUseFileHookKey } from "@/lib/hooks/workspaces/useFile";
+import { getUseFileListHookKey } from "@/lib/hooks/workspaces/useFileList";
+import { messages } from "@/lib/messages/messages";
+import { fileValidationParts } from "@/lib/validation/file";
+import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Form, Input, message, Space, Typography, Upload } from "antd";
-import { UploadFile } from "antd/lib/upload/interface";
+import {
+  Button,
+  Form,
+  Input,
+  Space,
+  Typography,
+  Upload,
+  UploadFile,
+  message,
+} from "antd";
+import { File } from "fimidara";
 import { first } from "lodash";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSWRConfig } from "swr";
 import * as yup from "yup";
-import FileAPI from "../../../../lib/api/endpoints/file";
-import { IEndpointResultBase } from "../../../../lib/api/types";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import {
-  IFile,
-  UploadFilePublicAccessActions,
-} from "../../../../lib/definitions/file";
-import {
-  addRootnameToPath,
-  folderConstants,
-} from "../../../../lib/definitions/folder";
-import {
-  appWorkspacePaths,
-  systemConstants,
-} from "../../../../lib/definitions/system";
-import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getUseFileHookKey } from "../../../../lib/hooks/workspaces/useFile";
-import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
-import { messages } from "../../../../lib/messages/messages";
-import { fileValidationParts } from "../../../../lib/validation/file";
-import { systemValidation } from "../../../../lib/validation/system";
-import { formClasses } from "../../../form/classNames";
 import FormError from "../../../form/FormError";
+import { formClasses } from "../../../form/classNames";
 import { useUserNode } from "../../../hooks/useUserNode";
 import { FormAlert } from "../../../utils/FormAlert";
+import IconButton from "../../../utils/buttons/IconButton";
 
-export interface IFileFormValue {
+export interface FileFormValue {
   description?: string;
   encoding?: string;
   extension?: string;
@@ -45,12 +44,12 @@ export interface IFileFormValue {
   publicAccessAction?: UploadFilePublicAccessActions;
 }
 
-const initialValues: IFileFormValue = {
+const initialValues: FileFormValue = {
   name: "",
   file: [],
 };
 
-function getFileFormInputFromFile(item: IFile): IFileFormValue {
+function getFileFormInputFromFile(item: File): FileFormValue {
   return {
     name: item.name,
     description: item.description,
@@ -58,8 +57,8 @@ function getFileFormInputFromFile(item: IFile): IFileFormValue {
   };
 }
 
-export interface IFileFormProps {
-  file?: IFile;
+export interface FileFormProps {
+  file?: File;
   className?: string;
   folderId?: string;
 
@@ -69,7 +68,7 @@ export interface IFileFormProps {
   workspaceRootname: string;
 }
 
-export default function FileForm(props: IFileFormProps) {
+export default function FileForm(props: FileFormProps) {
   const {
     file,
     className,
@@ -80,71 +79,63 @@ export default function FileForm(props: IFileFormProps) {
   } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
-  const { renderNode: userLoadNode, assertGet: assertGetUserData } =
+  const { renderedNode: userLoadNode, assertGet: assertGetUserData } =
     useUserNode();
   const onSubmit = React.useCallback(
-    async (data: IFileFormValue) => {
-      let fileId: string | null = null;
+    async (data: FileFormValue) => {
       const inputFile = first(data.file);
-      const token = assertGetUserData().token;
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+      let resultFile: File | undefined = undefined;
+
       if (file) {
-        let result: IEndpointResultBase;
         if (inputFile) {
-          result = await FileAPI.uploadFile({
-            token,
-            fileId: file.resourceId,
-            description: data.description,
-            data: inputFile as any,
-            mimetype: inputFile.type,
-          });
-        } else {
-          result = await FileAPI.updateFileDetails({
-            fileId: file.resourceId,
-            file: {
+          const result = await endpoints.files.uploadFile({
+            body: {
+              fileId: file.resourceId,
               description: data.description,
+              data: inputFile as any,
+              mimetype: inputFile.type,
             },
           });
+          resultFile = result.body.file;
+        } else {
+          const result = await endpoints.files.updateFileDetails({
+            body: {
+              fileId: file.resourceId,
+              file: { description: data.description },
+            },
+          });
+          resultFile = result.body.file;
         }
 
-        checkEndpointResult(result);
-        fileId = file.resourceId;
-        message.success("File updated");
-        mutate(getUseFileListHookKey({ folderId }));
-        mutate(
-          getUseFileHookKey({
-            fileId: file.resourceId,
-          })
-        );
+        message.success("File updated.");
       } else {
         if (!inputFile) {
           // TODO: show error
           return;
         }
 
-        const result = await FileAPI.uploadFile({
-          token: token,
-          filepath: addRootnameToPath(
-            folderpath
-              ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
-              : data.name,
-            workspaceRootname
-          ),
-          description: data.description,
-          data: inputFile as any,
-          mimetype: inputFile.type,
+        const result = await endpoints.files.uploadFile({
+          body: {
+            filepath: addRootnameToPath(
+              folderpath
+                ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
+                : data.name,
+              workspaceRootname
+            ),
+            description: data.description,
+            data: inputFile as any,
+            mimetype: inputFile.type,
+          },
         });
 
-        checkEndpointResult(result);
-        fileId = result.file.resourceId;
-        message.success("File created");
-        mutate(
-          getUseFileListHookKey({
-            folderId,
-          })
-        );
+        resultFile = result.body.file;
+        message.success("File uploaded.");
       }
 
-      router.push(appWorkspacePaths.file(workspaceId, fileId));
+      mutate(getUseFileListHookKey({ folderId }));
+      mutate(getUseFileHookKey({ fileId: resultFile.resourceId }));
+      router.push(appWorkspacePaths.file(workspaceId, resultFile.resourceId));
     },
     [
       file,
@@ -264,47 +255,13 @@ export default function FileForm(props: IFileFormProps) {
           formik.setFieldValue("file", []);
         }}
       >
-        <Button icon={<UploadOutlined />}>
-          {file ? "Replace File" : "Select File"}
-        </Button>
+        <IconButton
+          icon={<UploadOutlined />}
+          title={file ? "Replace File" : "Select File"}
+        />
       </Upload>
     </Form.Item>
   );
-
-  // const publicAccessOpNode = (
-  //   <Form.Item
-  //     label="Public Access Action"
-  //     labelCol={{ span: 24 }}
-  //     wrapperCol={{ span: 24 }}
-  //     help={
-  //       formik.touched?.publicAccessAction &&
-  //       formik.errors?.publicAccessAction && (
-  //         <FormError
-  //           visible={formik.touched.publicAccessAction}
-  //           error={formik.errors.publicAccessAction}
-  //         />
-  //       )
-  //     }
-  //   >
-  //     <Select
-  //       showSearch
-  //       disabled
-  //       style={{ width: "100%" }}
-  //       placeholder="Action"
-  //       optionLabelProp="label"
-  //       value={formik.values.publicAccessAction}
-  //       optionFilterProp="label"
-  //       filterOption={filterOption}
-  //       filterSort={filterSort}
-  //     >
-  //       {Object.values(UploadFilePublicAccessActions).map((item) => (
-  //         <Select.Option key={item} label={item} value={item}>
-  //           {uploadFilePublicAccessActionsLabel[item]}
-  //         </Select.Option>
-  //       ))}
-  //     </Select>
-  //   </Form.Item>
-  // );
 
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
@@ -317,7 +274,6 @@ export default function FileForm(props: IFileFormProps) {
           {nameNode}
           {descriptionNode}
           {selectFileNode}
-          {/* {publicAccessOpNode} */}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

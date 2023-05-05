@@ -10,7 +10,7 @@ const sessionReducer = createReducer<ISessionState>(
       state.sessionType = SessionType.App;
       state.token = action.payload.userToken;
       state.userId = action.payload.userId;
-      state.clientAssignedToken = action.payload.clientAssignedToken;
+      state.agentToken = action.payload.clientAssignedToken;
     });
 
     builder.addCase(SessionActions.setSessionToWeb, (state) => {

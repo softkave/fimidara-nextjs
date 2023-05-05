@@ -1,10 +1,7 @@
-import { MenuOutlined } from "@ant-design/icons";
 import { cx } from "@emotion/css";
-import Button from "antd/lib/button";
 import Head from "next/head";
 import React, { useState } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";
-import FimidaraHeader from "../FimidaraHeader";
 import { DocsSideNav } from "./DocsSideNav";
 
 export interface IDocsMainProps {
@@ -32,18 +29,6 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
         <meta name="description" content={pageDescription} />
       </Head>
       <div className={cx("page", className)}>
-        <div className="header">
-          <FimidaraHeader
-            headerProps={{
-              prefixBtn: (
-                <Button
-                  icon={<MenuOutlined />}
-                  onClick={() => setShowMenu(!showMenu)}
-                />
-              ),
-            }}
-          />
-        </div>
         <div className="page-without-header">
           {showMenu ? (
             <div className="side-nav">
@@ -62,11 +47,6 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
           .page {
             overflow: hidden;
             height: 100vh;
-          }
-          .header {
-            position: fixed;
-            width: 100%;
-            background-color: white;
           }
           .page-without-header {
             display: grid;

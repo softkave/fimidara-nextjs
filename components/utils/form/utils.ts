@@ -1,11 +1,11 @@
+import { AppError, flattenErrorList } from "@/lib/utils/errors";
+import { AnyObject } from "@/lib/utils/types";
 import { message } from "antd";
 import { FormikTouched } from "formik";
 import { get } from "lodash";
 import isArray from "lodash/isArray";
 import isObject from "lodash/isObject";
 import { AnySchema, ValidationError } from "yup";
-import { flattenErrorList, IAppError } from "../../../lib/utils/errors";
-import { AnyObject } from "../../../lib/utils/types";
 import { IFormBag, IFormBagHelpers, IFormItem } from "./types";
 
 export const validateWithYupSchema = (
@@ -50,7 +50,7 @@ export const getFormikTouched = <T extends AnyObject>(
 };
 
 export function handleFormError(
-  loadingState: { error?: IAppError[] | null },
+  loadingState: { error?: AppError[] | null },
   helpers: IFormBagHelpers<any>,
   defaultMessage = "An error occurred.",
   errorStartFrom?: string

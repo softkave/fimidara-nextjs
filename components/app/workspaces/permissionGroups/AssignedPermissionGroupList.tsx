@@ -1,37 +1,21 @@
-import { css, cx } from "@emotion/css";
-import { List, Space, Typography } from "antd";
+import usePagination from "@/lib/hooks/usePagination";
+import useWorkspacePermissionGroupList from "@/lib/hooks/workspaces/useWorkspacePermissionGroupList";
+import { getBaseError } from "@/lib/utils/errors";
+import { indexArray } from "@/lib/utils/indexArray";
+import { Typography } from "antd";
+import { PermissionGroup } from "fimidara";
 import React from "react";
-import { IAssignedPermissionGroup } from "../../../../lib/definitions/permissionGroups";
-import usePagination from "../../../../lib/hooks/usePagination";
-import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import { getBaseError } from "../../../../lib/utils/errors";
-import { indexArray } from "../../../../lib/utils/indexArray";
-import { PaginatedContent } from "../../../utils/page/PaginatedContent";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
+import ItemList from "../../../utils/list/ItemList";
+import PaginatedContent from "../../../utils/page/PaginatedContent";
 
 export interface IAssignedPermissionGroupListProps {
   workspaceId: string;
-  permissionGroups: IAssignedPermissionGroup[];
+  permissionGroups: PermissionGroup[];
   className?: string;
   title?: string;
 }
-
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-
-    // "& .ant-list-item": {
-    //   padding: "0px !important",
-    // },
-  }),
-  noPermissionGroups: css({
-    margin: "64px auto !important",
-  }),
-};
 
 // TODO: add bulk remove, and add bulk actions to other lists
 
@@ -53,52 +37,34 @@ const AssignedPermissionGroupList: React.FC<
   if (error) {
     content = (
       <PageError
-        messageText={getBaseError(error) || "Error fetching permission groups"}
+        messageText={getBaseError(error) || "Error fetching permission groups."}
       />
     );
   } else if (isLoading || !data) {
     content = <PageLoading messageText="Loading permission groups..." />;
-  } else if (permissionGroups.length === 0) {
-    content = (
-      <PageNothingFound
-        messageText="No assigned permission groups yet"
-        className={classes.noPermissionGroups}
-      />
-    );
   } else {
     content = (
-      <List
-        className={cx(classes.list)}
-        itemLayout="horizontal"
-        dataSource={permissionGroups}
-        renderItem={(item) => {
-          const permissionGroup = permissionGroupsMap[item.permissionGroupId];
-          if (permissionGroup) {
-            return (
-              <List.Item key={item.permissionGroupId}>
-                <List.Item.Meta title={permissionGroup.name} />
-              </List.Item>
-            );
-          }
-
-          return null;
+      <ItemList
+        items={permissionGroups}
+        renderItem={(item: PermissionGroup) => {
+          return <div>{item.name}</div>;
         }}
+        getId={(item: PermissionGroup) => item.resourceId}
+        emptyMessage={"No assigned permission groups yet."}
       />
     );
   }
 
   return (
-    <Space
-      direction="vertical"
-      size={"small"}
-      style={{ width: "100%" }}
+    <PaginatedContent
       className={className}
-    >
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        {title || "Assigned Permission Groups"}
-      </Typography.Title>
-      <PaginatedContent content={content} pagination={pagination} />
-    </Space>
+      header={
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          {title || "Assigned Permission Groups"}
+        </Typography.Title>
+      }
+      content={content}
+    />
   );
 };
 

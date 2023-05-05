@@ -14,12 +14,15 @@ export interface IDropdownButtonProps extends Pick<DropdownProps, "trigger"> {
 }
 
 const DropdownButton: React.FC<IDropdownButtonProps> = (props) => {
-  const { style, className, children, menu, trigger, disabled, triggerNode } = props;
+  const { style, className, children, menu, trigger, disabled, triggerNode } =
+    props;
   return (
     <ButtonGroup className={className} style={style}>
       {children}
       <Dropdown menu={menu} trigger={trigger || ["click"]} disabled={disabled}>
-        {triggerNode || <IconButton icon={<CaretDownOutlined />} disabled={disabled} />}
+        {triggerNode || (
+          <IconButton icon={<CaretDownOutlined />} disabled={disabled} />
+        )}
       </Dropdown>
     </ButtonGroup>
   );

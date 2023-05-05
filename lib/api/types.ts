@@ -1,7 +1,7 @@
-import { IAppError } from "../utils/errors";
+import { AppError } from "../utils/errors";
 
 export interface IEndpointResultBase {
-  errors?: IAppError[];
+  errors?: AppError[];
 }
 
 export type GetEndpointResult<T extends object = object> = T &

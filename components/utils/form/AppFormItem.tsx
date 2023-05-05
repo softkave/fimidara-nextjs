@@ -1,3 +1,5 @@
+import { getErrorMessage } from "@/lib/utils/errors";
+import { flattenErrorList } from "@/lib/utils/utils";
 import { css } from "@emotion/css";
 import { Typography } from "antd";
 import {
@@ -10,8 +12,6 @@ import {
 } from "lodash";
 import React from "react";
 import { AnyObject } from "yup/lib/types";
-import { getErrorMessage } from "../../../lib/utils/errors";
-import { flattenErrorList } from "../../../lib/utils/utils";
 import { ElementError } from "../types";
 import FormField, { IFormFieldRenderFnProps } from "./FormField";
 import FormItemInputText from "./FormItemInputText";

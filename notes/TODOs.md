@@ -1,5 +1,19 @@
 # TODOs
 
+## Now
+
+- [ ] use fetch hooks
+- [ ] mutation hooks with resource update
+- [ ] support other for all secondary fetch hooks
+- [ ] entity assigned permission groups fetch hooks, resolve permissions fetch hooks
+- [ ] retaining/clearing data cause currently data on primary key change
+- [ ] fetch user data, token, client token
+- [ ] implement remove and update in components
+- [ ] Only fetch single item if it doesn't exist
+- [ ] A refresh system that doesn't show loading screen but notification
+
+## Later
+
 - [ ] increase SEO
 - [ ] use new FormAlert and errorMessageNotification functions
 - [ ] auto route to app when logged in

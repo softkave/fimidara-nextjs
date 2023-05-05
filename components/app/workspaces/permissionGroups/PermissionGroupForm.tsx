@@ -1,26 +1,22 @@
-import { css, cx } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Button, Form, Input, message, Typography } from "antd";
-import { useRouter } from "next/router";
-import React from "react";
-import * as yup from "yup";
-import PermissionGroupAPI from "../../../../lib/api/endpoints/permissionGroup";
-import { checkEndpointResult } from "../../../../lib/api/utils";
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import {
   INewPermissionGroupInput,
   IPermissionGroup,
   permissionGroupPermissionsGroupConstants,
-} from "../../../../lib/definitions/permissionGroups";
-import {
-  appWorkspacePaths,
-  systemConstants,
-} from "../../../../lib/definitions/system";
-import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
-import { messages } from "../../../../lib/messages/messages";
-import { systemValidation } from "../../../../lib/validation/system";
-import { formClasses } from "../../../form/classNames";
+} from "@/lib/definitions/permissionGroups";
+import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import usePermissionGroup from "@/lib/hooks/workspaces/usePermissionGroup";
+import { messages } from "@/lib/messages/messages";
+import { systemValidation } from "@/lib/validation/system";
+import { css, cx } from "@emotion/css";
+import { useRequest } from "ahooks";
+import { Button, Form, Input, Typography, message } from "antd";
+import { useRouter } from "next/router";
+import React from "react";
+import * as yup from "yup";
 import FormError from "../../../form/FormError";
+import { formClasses } from "../../../form/classNames";
 import { FormAlert } from "../../../utils/FormAlert";
 import SelectPermissionGroupInput from "./SelectPermissionGroupInput";
 
@@ -61,29 +57,27 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   const { permissionGroup, className, workspaceId } = props;
   const router = useRouter();
   const { mutate } = usePermissionGroup(permissionGroup?.resourceId);
+
   const onSubmit = React.useCallback(
     async (data: INewPermissionGroupInput) => {
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
       let permissionGroupId: string | null = null;
 
       if (permissionGroup) {
-        const result = await PermissionGroupAPI.updatePermissionGroup({
-          permissionGroup: data,
-          permissionGroupId: permissionGroup.resourceId,
+        const result = await endpoints.permissionGroups.updatePermissionGroup({
+          body: { data, permissionGroupId: permissionGroup.resourceId },
         });
 
-        checkEndpointResult(result);
-        permissionGroupId = result.permissionGroup.resourceId;
+        permissionGroupId = result.body.permissionGroup.resourceId;
         mutate(result);
-        message.success("Permission group updated");
+        message.success("Permission group updated.");
       } else {
-        const result = await PermissionGroupAPI.addPermissionGroup({
-          workspaceId: workspaceId,
-          permissionGroup: data,
+        const result = await endpoints.permissionGroups.addPermissionGroup({
+          body: { workspaceId: workspaceId, permissionGroup: data },
         });
 
-        checkEndpointResult(result);
-        permissionGroupId = result.permissionGroup.resourceId;
-        message.success("Permission group created");
+        permissionGroupId = result.body.permissionGroup.resourceId;
+        message.success("Permission group created.");
       }
 
       router.push(

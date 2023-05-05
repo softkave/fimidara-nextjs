@@ -1,68 +1,53 @@
+import { addRootnameToPath } from "@/lib/definitions/folder";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import usePagination from "@/lib/hooks/usePagination";
+import { getBaseError } from "@/lib/utils/errors";
 import { Button, Space } from "antd";
+import { File, Folder, Workspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { IFile } from "../../../../lib/definitions/file";
-import { IFolder } from "../../../../lib/definitions/folder";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import usePagination from "../../../../lib/hooks/usePagination";
-import useFileList from "../../../../lib/hooks/workspaces/useFileList";
-import useWorkspace from "../../../../lib/hooks/workspaces/useWorkspace";
-import { getBaseError } from "../../../../lib/utils/errors";
-import { PaginatedContent } from "../../../utils/page/PaginatedContent";
+import { useWorkspaceFilesFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
+import PaginatedContent from "../../../utils/page/PaginatedContent";
+import { IPaginationData } from "../../../utils/page/utils";
 import { appClasses } from "../../../utils/theme";
 import AppFileList from "./AppFileList";
 import FileListContainerHeader from "./FileListContainerHeader";
-import FolderList from "./FolderList";
 
-export interface IFileListContainerProps {
-  workspaceId: string;
-  workspaceRootname: string;
-  folder?: IFolder;
-  renderFolderItem?: (
-    item: IFolder,
-    workspaceRootname: string
-  ) => React.ReactNode;
-  renderFolderList?: (
-    items: IFolder[],
-    workspaceRootname: string
-  ) => React.ReactNode;
-  renderFileItem?: (item: IFile, workspaceRootname: string) => React.ReactNode;
+export interface FileListContainerProps {
+  workspace: Workspace;
+  folder?: Folder;
+  renderFileItem?: (item: File, workspaceRootname: string) => React.ReactNode;
   renderFileList?: (
-    items: IFile[],
+    items: File[],
     workspaceRootname: string
   ) => React.ReactNode;
   renderRoot?: (
     node: React.ReactNode,
-    workspaceRootname: string
+    workspaceRootname: string,
+    pagination: IPaginationData
   ) => React.ReactElement;
 }
 
-const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
-  const {
-    workspaceId,
-    workspaceRootname,
-    folder,
-    renderFileItem,
-    renderFileList,
-    renderFolderItem,
-    renderFolderList,
-    renderRoot,
-  } = props;
-
-  const loadWorkspace = useWorkspace(workspaceId);
+const FileListContainer: React.FC<FileListContainerProps> = (props) => {
+  const { workspace, folder, renderFileItem, renderFileList, renderRoot } =
+    props;
   const pagination = usePagination();
-  const {
-    data: fileListData,
-    error: loadFileListError,
-    isLoading: isLoadingFileList,
-  } = useFileList({
+  const data = useWorkspaceFilesFetchHook({
     page: pagination.page,
     pageSize: pagination?.pageSize,
     folderId: folder?.resourceId,
-    folderpath: !folder ? workspaceRootname : undefined,
+    folderpath: folder
+      ? addRootnameToPath(folder.namePath, workspace.rootname).join("/")
+      : workspace.rootname,
+  });
+  const error = data.store.error;
+  const isLoading = data.store.loading || !data.store.initialized;
+  const { count, resourceList } = data.store.get({
+    page: pagination.page,
+    pageSize: pagination.pageSize,
   });
 
   let contentNode: React.ReactNode = null;
@@ -72,58 +57,40 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
     }
 
     return folder.parentId
-      ? appWorkspacePaths.folder(workspaceId, folder.parentId)
-      : appWorkspacePaths.rootFolderList(workspaceId);
+      ? appWorkspacePaths.folder(workspace.resourceId, folder.parentId)
+      : appWorkspacePaths.rootFolderList(workspace.resourceId);
   };
 
   const renderGotoParentList = () => {
     return (
       folder && (
         <Link href={getParentHref()}>
-          <a>
-            <span style={{ fontSize: "20px" }}>..</span> {folder.name}
-          </a>
+          <span style={{ fontSize: "20px" }}>..</span> {folder.name}
         </Link>
       )
     );
   };
 
-  if (loadFileListError || loadWorkspace.error) {
+  if (error) {
     contentNode = (
       <PageError
         className={appClasses.main}
-        messageText={
-          getBaseError(loadFileListError) ||
-          getBaseError(loadWorkspace.error) ||
-          "Error fetching files and folders"
-        }
+        messageText={getBaseError(error) || "Error fetching files."}
       />
     );
-  } else if (
-    isLoadingFileList ||
-    !fileListData ||
-    loadWorkspace.isLoading ||
-    !loadWorkspace.data
-  ) {
-    contentNode = <PageLoading messageText="Loading files and folders..." />;
-  } else if (
-    fileListData.files.length === 0 &&
-    fileListData.folders.length === 0
-  ) {
+  } else if (isLoading) {
+    contentNode = <PageLoading messageText="Loading files..." />;
+  } else if (resourceList.length === 0) {
     contentNode = (
       <Space direction="vertical" style={{ width: "100%" }}>
         {renderGotoParentList()}
         <PageNothingFound
           className={appClasses.maxWidth420}
-          messageText="No files and folders yet. Create one using the plus button above."
+          messageText="No files yet. Create one using the plus button above."
           actions={
             folder
               ? [
-                  <Link
-                    passHref
-                    key="go-to-parent-list-btn"
-                    href={getParentHref()}
-                  >
+                  <Link key="go-to-parent-list-btn" href={getParentHref()}>
                     <Button type="link">Go to parent list</Button>
                   </Link>,
                 ]
@@ -133,52 +100,45 @@ const FileListContainer: React.FC<IFileListContainerProps> = (props) => {
       </Space>
     );
   } else {
-    const folderNode = fileListData.folders.length ? (
-      renderFolderList ? (
-        renderFolderList(fileListData.folders, workspaceRootname)
-      ) : (
-        <FolderList
-          folders={fileListData.folders}
-          workspaceRootname={workspaceRootname}
-          renderFolderItem={renderFolderItem}
-        />
-      )
-    ) : null;
-
-    const fileNode = fileListData.files.length ? (
-      renderFileList ? (
-        renderFileList(fileListData.files, workspaceRootname)
-      ) : (
-        <AppFileList
-          files={fileListData.files}
-          renderFileItem={renderFileItem}
-          workspaceRootname={loadWorkspace.data.workspace.rootname}
-        />
-      )
-    ) : null;
+    const fileNode = renderFileList ? (
+      renderFileList(resourceList, workspace.rootname)
+    ) : (
+      <AppFileList
+        files={resourceList}
+        renderFileItem={renderFileItem}
+        workspaceRootname={workspace.rootname}
+      />
+    );
 
     contentNode = (
       <Space direction="vertical" style={{ width: "100%" }}>
         {renderGotoParentList()}
-        {folderNode}
         {fileNode}
       </Space>
     );
   }
 
   if (renderRoot) {
-    return renderRoot(contentNode, workspaceRootname);
+    // TODO: handle pagination
+    return renderRoot(contentNode, workspace.rootname, {
+      ...pagination,
+      count,
+    });
   }
 
+  // TODO: file list count
   return (
     <div className={appClasses.main}>
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <FileListContainerHeader
-          workspaceId={workspaceId}
+          workspaceId={workspace.resourceId}
           folder={folder}
-          workspaceRootname={workspaceRootname}
+          workspaceRootname={workspace.rootname}
         />
-        <PaginatedContent content={contentNode} pagination={pagination} />
+        <PaginatedContent
+          content={contentNode}
+          pagination={{ ...pagination, count }}
+        />
       </Space>
     </div>
   );

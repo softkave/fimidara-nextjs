@@ -1,4 +1,4 @@
-import { systemConstants } from "../../../../lib/definitions/system";
+import { systemConstants } from "@/lib/definitions/system";
 import {
   FormItemInputType,
   IFormItemInputDropdown,

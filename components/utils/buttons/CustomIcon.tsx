@@ -1,9 +1,9 @@
+import { Omit1 } from "@/lib/utils/types";
 import Icon from "@ant-design/icons/lib/components/Icon";
 import { css, cx } from "@emotion/css";
 import { isFunction } from "lodash";
 import React from "react";
 import { IconType } from "react-icons/lib";
-import { Omit1 } from "../../../lib/utils/types";
 
 export interface ICustomIconProps {
   style?: React.CSSProperties;

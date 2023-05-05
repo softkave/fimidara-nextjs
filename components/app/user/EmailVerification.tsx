@@ -1,26 +1,25 @@
+import { getPrivateFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import useUser from "@/lib/hooks/useUser";
+import { getBaseError } from "@/lib/utils/errors";
 import { useRequest } from "ahooks";
 import { Alert, Button, message, Space, Typography } from "antd";
 import React from "react";
-import UserEndpoint from "../../../lib/api/endpoints/user";
-import { checkEndpointResult } from "../../../lib/api/utils";
-import useUser from "../../../lib/hooks/useUser";
-import { getBaseError } from "../../../lib/utils/errors";
 import {
   formBodyClassName,
   formContentWrapperClassName,
 } from "../../form/classNames";
 import useCooldown from "../../hooks/useCooldown";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
-import InlineLoading from "../../utils/InlineLoading";
+import InlineLoading from "../../utils/page/InlineLoading";
 
 export default function EmailVerification() {
   const { isLoading, error, data } = useUser();
   const { startCooldown, isInCooldown } = useCooldown();
   const onSubmit = React.useCallback(async () => {
     try {
-      const result = await UserEndpoint.sendEmailVerificationCode();
-      checkEndpointResult(result);
-      message.success("Email verification link sent");
+      const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+      await endpoints.users.sendEmailVerificationCode();
+      message.success("Email verification link sent.");
       startCooldown();
     } catch (error: any) {
       errorMessageNotificatition(error);
@@ -34,7 +33,7 @@ export default function EmailVerification() {
     rootNode = (
       <Alert
         type="error"
-        message={getBaseError(error) || "Error fetching user"}
+        message={getBaseError(error) || "Error fetching user."}
       />
     );
   } else if (isLoading || !data) {

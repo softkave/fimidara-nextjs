@@ -1,16 +1,16 @@
 import { Space } from "antd";
-import { IFolder } from "../../../../lib/definitions/folder";
+import { Folder } from "fimidara";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
 import { appClasses } from "../../../utils/theme";
 import FolderMenu from "./FolderMenu";
 
-export interface IFolderProps {
-  folder: IFolder;
+export interface FolderProps {
+  folder: Folder;
   workspaceRootname: string;
 }
 
-function Folder(props: IFolderProps) {
+function Folder(props: FolderProps) {
   const { folder, workspaceRootname } = props;
   return (
     <div className={appClasses.main}>

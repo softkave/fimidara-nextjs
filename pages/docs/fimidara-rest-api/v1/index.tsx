@@ -1,6 +1,6 @@
+import DocsMain from "@/components/docs/DocsMain";
+import RestApiIndex from "@/components/docs/RestApiIndex";
 import { NextPage } from "next";
-import DocsMain from "../../../../components/docs/DocsMain";
-import RestApiIndex from "../../../../components/docs/RestApiIndex";
 
 interface FimidaraRestApiIndexDocPageProps {}
 

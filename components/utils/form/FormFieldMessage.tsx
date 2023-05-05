@@ -1,6 +1,6 @@
+import { ErrorLike } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
 import React from "react";
-import { ErrorLike } from "../../../lib/utils/errors";
 
 type FormMessageType = "error" | "message";
 

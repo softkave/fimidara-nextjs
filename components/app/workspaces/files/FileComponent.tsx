@@ -1,16 +1,16 @@
 import { Space } from "antd";
-import { IFile } from "../../../../lib/definitions/file";
+import { File } from "fimidara";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
 import { appClasses } from "../../../utils/theme";
 import FileMenu from "./FileMenu";
 
-export interface IFileComponentProps {
-  file: IFile;
+export interface FileComponentProps {
+  file: File;
   workspaceRootname: string;
 }
 
-function FileComponent(props: IFileComponentProps) {
+function FileComponent(props: FileComponentProps) {
   const { file, workspaceRootname } = props;
   return (
     <div className={appClasses.main}>

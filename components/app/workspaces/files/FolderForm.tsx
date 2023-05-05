@@ -1,35 +1,23 @@
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
+import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { getUseFileListHookKey } from "@/lib/hooks/workspaces/useFileList";
+import { getUseFolderHookKey } from "@/lib/hooks/workspaces/useFolder";
+import { messages } from "@/lib/messages/messages";
+import { fileValidationParts } from "@/lib/validation/file";
+import { systemValidation } from "@/lib/validation/system";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, Typography, message } from "antd";
+import { Folder } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSWRConfig } from "swr";
 import * as yup from "yup";
-import FolderAPI from "../../../../lib/api/endpoints/folder";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import {
-  addRootnameToPath,
-  folderConstants,
-  IFolder,
-} from "../../../../lib/definitions/folder";
-import {
-  AppResourceType,
-  appWorkspacePaths,
-  systemConstants,
-} from "../../../../lib/definitions/system";
-import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
-import { getUseFolderHookKey } from "../../../../lib/hooks/workspaces/useFolder";
-import { messages } from "../../../../lib/messages/messages";
-import { fileValidationParts } from "../../../../lib/validation/file";
-import { systemValidation } from "../../../../lib/validation/system";
-import { formClasses } from "../../../form/classNames";
 import FormError from "../../../form/FormError";
+import { formClasses } from "../../../form/classNames";
 import { FormAlert } from "../../../utils/FormAlert";
-import {
-  IResourcePublicAccessActions,
-  resourceListPublicAccessActionsToPublicAccessOps,
-} from "./FolderPublicAccessOpsInput";
 
 const folderValidation = yup.object().shape({
   name: fileValidationParts.filename.required(messages.fieldIsRequired),
@@ -40,41 +28,24 @@ const folderValidation = yup.object().shape({
   //   .nullable(),
 });
 
-export interface IFolderFormValues {
+export interface FolderFormValues {
   name: string;
   description?: string;
-  publicAccessOps: IResourcePublicAccessActions[];
 }
 
-const initialValues: IFolderFormValues = {
+const initialValues: FolderFormValues = {
   name: "",
-  publicAccessOps: [
-    { resourceType: AppResourceType.Folder, actions: [] },
-    { resourceType: AppResourceType.File, actions: [] },
-  ],
 };
 
-function getFolderFormInputFromFolder(item: IFolder): IFolderFormValues {
-  const publicAccessOps: IResourcePublicAccessActions[] = [
-    { resourceType: AppResourceType.Folder, actions: [] },
-    { resourceType: AppResourceType.File, actions: [] },
-  ];
-
-  item.publicAccessOps.forEach((publicAccessOp) => {
-    const index =
-      publicAccessOp.resourceType === AppResourceType.Folder ? 0 : 1;
-    publicAccessOps[index].actions.push(publicAccessOp.action);
-  });
-
+function getFolderFormInputFromFolder(item: Folder): FolderFormValues {
   return {
-    publicAccessOps,
     name: item.name,
     description: item.description,
   };
 }
 
-export interface IFolderFormProps {
-  folder?: IFolder;
+export interface FolderFormProps {
+  folder?: Folder;
   className?: string;
   parentId?: string;
 
@@ -86,7 +57,7 @@ export interface IFolderFormProps {
 
 // TODO: show path to parent folder
 
-export default function FolderForm(props: IFolderFormProps) {
+export default function FolderForm(props: FolderFormProps) {
   const {
     folder,
     className,
@@ -98,68 +69,54 @@ export default function FolderForm(props: IFolderFormProps) {
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
-    async (data: IFolderFormValues) => {
+    async (data: FolderFormValues) => {
       let folderId: string | null = null;
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+      let resultFolder: Folder | undefined = undefined;
+
       if (folder) {
-        const result = await FolderAPI.updateFolder({
-          folderId: folder.resourceId,
-          folder: {
-            description: data.description,
-            publicAccessOps: resourceListPublicAccessActionsToPublicAccessOps(
-              data.publicAccessOps
-            ),
+        const result = await endpoints.folders.updateFolder({
+          body: {
+            folderId: folder.resourceId,
+            folder: { description: data.description },
           },
         });
 
-        checkEndpointResult(result);
-        folderId = folder.resourceId;
-        message.success("Folder updated");
-        mutate(
-          getUseFileListHookKey({
-            folderId: parentId,
-          })
-        );
-
-        mutate(
-          getUseFolderHookKey({
-            folderId: folder.resourceId,
-          })
-        );
+        resultFolder = result.body.folder;
+        message.success("Folder updated.");
+        mutate(getUseFileListHookKey({ folderId: parentId }));
+        mutate(getUseFolderHookKey({ folderId: folder.resourceId }));
       } else {
         const folderpath = parentPath
           ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
           : data.name;
 
-        const result = await FolderAPI.addFolder({
-          folder: {
-            folderpath: addRootnameToPath(folderpath, workspaceRootname),
-            description: data.description,
-            publicAccessOps: resourceListPublicAccessActionsToPublicAccessOps(
-              data.publicAccessOps
-            ),
+        const result = await endpoints.folders.addFolder({
+          body: {
+            folder: {
+              folderpath: addRootnameToPath(folderpath, workspaceRootname),
+              description: data.description,
+            },
           },
         });
 
-        checkEndpointResult(result);
-        folderId = result.folder.resourceId;
-        message.success("Folder created");
-        mutate(
-          getUseFileListHookKey({
-            folderId: parentId,
-          })
-        );
+        resultFolder = result.body.folder;
+        message.success("Folder created.");
+        mutate(getUseFileListHookKey({ folderId: parentId }));
       }
 
-      router.push(appWorkspacePaths.folder(workspaceId, folderId));
+      router.push(
+        appWorkspacePaths.folder(workspaceId, resultFolder.resourceId)
+      );
     },
     [
       folder,
       parentId,
       workspaceRootname,
       parentPath,
-      mutate,
       router,
       workspaceId,
+      mutate,
     ]
   );
 
@@ -229,36 +186,6 @@ export default function FolderForm(props: IFolderFormProps) {
     </Form.Item>
   );
 
-  // const publicAccessOpsNode = (
-  //   <Form.Item
-  //     label="Public Access Ops"
-  //     help={
-  //       formik.touched?.publicAccessOps &&
-  //       formik.errors?.publicAccessOps && (
-  //         <FormError
-  //           visible={
-  //             isBoolean(formik.touched.publicAccessOps) &&
-  //             formik.touched.publicAccessOps
-  //           }
-  //           error={
-  //             isString(formik.errors.publicAccessOps)
-  //               ? formik.errors.publicAccessOps
-  //               : null
-  //           }
-  //         />
-  //       )
-  //     }
-  //     labelCol={{ span: 24 }}
-  //     wrapperCol={{ span: 24 }}
-  //   >
-  //     <FolderPublicAccessOpsInput
-  //       disabled={submitResult.loading}
-  //       value={formik.values.publicAccessOps}
-  //       onChange={(update) => formik.setFieldValue("publicAccessOps", update)}
-  //     />
-  //   </Form.Item>
-  // );
-
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
@@ -269,7 +196,6 @@ export default function FolderForm(props: IFolderFormProps) {
           <FormAlert error={submitResult.error} />
           {nameNode}
           {descriptionNode}
-          {/* {publicAccessOpsNode} */}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

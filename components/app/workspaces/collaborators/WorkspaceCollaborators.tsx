@@ -1,28 +1,25 @@
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import usePagination from "@/lib/hooks/usePagination";
+import { getBaseError } from "@/lib/utils/errors";
+import { PlusOutlined } from "@ant-design/icons";
 import { Space } from "antd";
-import { isUndefined } from "lodash";
+import { Collaborator } from "fimidara";
+import Link from "next/link";
 import React from "react";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
-import {
-  AppResourceType,
-  appWorkspacePaths,
-} from "../../../../lib/definitions/system";
-import { ICollaborator } from "../../../../lib/definitions/user";
-import usePagination from "../../../../lib/hooks/usePagination";
-import useWorkspaceCollaboratorList from "../../../../lib/hooks/workspaces/useWorkspaceCollaboratorList";
-import { getBaseError } from "../../../../lib/utils/errors";
-import ListHeader from "../../../utils/ListHeader";
-import { PaginatedContent } from "../../../utils/page/PaginatedContent";
+import { useWorkspaceCollaboratorsFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
+import IconButton from "../../../utils/buttons/IconButton";
+import ListHeader from "../../../utils/list/ListHeader";
+import PaginatedContent from "../../../utils/page/PaginatedContent";
 import { appClasses } from "../../../utils/theme";
-import GrantPermissionMenu from "../permissionItems/GrantPermissionMenu";
 import CollaboratorList from "./CollaboratorList";
 
 export interface IWorkspaceCollaboratorsProps {
   workspaceId: string;
-  renderItem?: (item: ICollaborator) => React.ReactNode;
-  renderList?: (items: ICollaborator[]) => React.ReactNode;
+  renderItem?: (item: Collaborator) => React.ReactNode;
+  renderList?: (items: Collaborator[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
   menu?: React.ReactNode;
 }
@@ -32,22 +29,30 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
 ) => {
   const { workspaceId, menu, renderList, renderRoot, renderItem } = props;
   const pagination = usePagination();
-  const { data, error, isLoading } = useWorkspaceCollaboratorList({
+  const collaborators = useWorkspaceCollaboratorsFetchHook({
     workspaceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
+  const error = collaborators.store.error;
+  const isLoading =
+    collaborators.store.loading || !collaborators.store.initialized;
+  const { count, resourceList } = collaborators.store.get({
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
   let content: React.ReactNode = null;
+
   if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching collaborators"}
+        messageText={getBaseError(error) || "Error fetching collaborators."}
       />
     );
-  } else if (isLoading || !data) {
+  } else if (isLoading) {
     content = <PageLoading messageText="Loading collaborators..." />;
-  } else if (data.collaborators.length === 0) {
+  } else if (resourceList.length === 0) {
     content = (
       <PageNothingFound
         className={appClasses.maxWidth420}
@@ -56,17 +61,23 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
     );
   } else {
     content = renderList ? (
-      renderList(data.collaborators)
+      renderList(resourceList as Collaborator[])
     ) : (
       <CollaboratorList
         workspaceId={workspaceId}
-        collaborators={data.collaborators}
+        collaborators={resourceList as Collaborator[]}
         renderItem={renderItem}
       />
     );
   }
 
-  content = <PaginatedContent content={content} pagination={pagination} />;
+  content = (
+    <PaginatedContent
+      content={content}
+      pagination={count ? { ...pagination, count } : undefined}
+    />
+  );
+
   if (renderRoot) {
     return renderRoot(content);
   }
@@ -75,20 +86,14 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
     <div className={appClasses.main}>
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <ListHeader
-          title="Collaborators"
-          formLinkPath={appWorkspacePaths.createRequestForm(workspaceId)}
-          actions={
-            !isUndefined(menu) ? (
-              menu
-            ) : (
-              <GrantPermissionMenu
-                workspaceId={workspaceId}
-                targetType={AppResourceType.User}
-                containerId={workspaceId}
-                containerType={AppResourceType.Workspace}
-                appliesTo={PermissionItemAppliesTo.Children}
-              />
-            )
+          label="Collaborators"
+          buttons={
+            <Space>
+              <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
+                <IconButton icon={<PlusOutlined />} />
+              </Link>
+              {menu}
+            </Space>
           }
         />
         {content}

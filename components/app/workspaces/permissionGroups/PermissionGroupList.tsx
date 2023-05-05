@@ -1,28 +1,21 @@
-import { List } from "antd";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { getUseWorkspacePermissionGroupListHookKey } from "@/lib/hooks/workspaces/useWorkspacePermissionGroupList";
+import { getResourceId } from "@/lib/utils/resource";
+import { PermissionGroup } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import { useSWRConfig } from "swr";
-import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
-import { getUseWorkspacePermissionGroupListHookKey } from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import { css } from "@emotion/css";
+import ItemList from "../../../utils/list/ItemList";
+import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
-export interface IPermissionGroupListProps {
+export interface PermissionGroupListProps {
   workspaceId: string;
-  permissionGroups: IPermissionGroup[];
-  renderItem?: (item: IPermissionGroup) => React.ReactNode;
+  permissionGroups: PermissionGroup[];
+  renderItem?: (item: PermissionGroup) => React.ReactNode;
 }
 
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
-
-const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
+const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
   const { workspaceId, permissionGroups, renderItem } = props;
   const { mutate } = useSWRConfig();
   const onCompleteDeletePermissionGroup = React.useCallback(async () => {
@@ -30,19 +23,11 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
   }, [workspaceId, mutate]);
 
   const internalRenderItem = React.useCallback(
-    (item: IPermissionGroup) => (
-      <List.Item
+    (item: PermissionGroup) => (
+      <ThumbnailContent
         key={item.resourceId}
-        actions={[
-          <PermissionGroupMenu
-            key="menu"
-            permissionGroup={item}
-            onCompleteDelete={onCompleteDeletePermissionGroup}
-          />,
-        ]}
-      >
-        <List.Item.Meta
-          title={
+        main={
+          <div>
             <Link
               href={appWorkspacePaths.permissionGroup(
                 workspaceId,
@@ -51,20 +36,26 @@ const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
             >
               {item.name}
             </Link>
-          }
-          description={item.description}
-        />
-      </List.Item>
+            {item.description}
+          </div>
+        }
+        menu={
+          <PermissionGroupMenu
+            key="menu"
+            permissionGroup={item}
+            onCompleteDelete={onCompleteDeletePermissionGroup}
+          />
+        }
+      />
     ),
     [onCompleteDeletePermissionGroup, workspaceId]
   );
 
   return (
-    <List
-      className={classes.list}
-      itemLayout="horizontal"
-      dataSource={permissionGroups}
+    <ItemList
+      items={permissionGroups}
       renderItem={renderItem || internalRenderItem}
+      getId={getResourceId}
     />
   );
 };

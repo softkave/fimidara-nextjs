@@ -1,6 +1,8 @@
+import { FimidaraEndpointError } from "fimidara";
 import {
   defaultTo,
   first,
+  flatten,
   get,
   isArray,
   isObject,
@@ -37,7 +39,7 @@ export class EmailAddressNotVerifiedError extends OperationError {
 }
 
 export function getFlattenedError(error?: any) {
-  const errArray = toAppErrorsArray(error);
+  const errArray = toAppErrorList(error);
   const flattenedErrors = flattenErrorList(errArray);
   return flattenedErrors;
 }
@@ -62,25 +64,31 @@ export function hasErrorTypes(error: any, types: string[]) {
   return getErrorTypes(error, types).length > 0;
 }
 
-export const toAppError = (err: Error | IAppError | string): IAppError => {
+export const toAppError = (err: Error | AppError | string): AppError[] => {
+  if (err instanceof FimidaraEndpointError) {
+    return flatten(err.errors.map(toAppError));
+  }
+
   const error = isString(err) ? new Error(err) : err;
-  return {
-    name: error.name,
-    message: error.message,
-    action: (error as any).action,
-    field: (error as any).field,
-  };
+  return [
+    {
+      name: error.name,
+      message: error.message,
+      action: (error as any).action,
+      field: (error as any).field,
+    },
+  ];
 };
 
-export const toAppErrorsArray = (err: any) => {
+export const toAppErrorList = (err: any) => {
   if (!err) {
     return [];
   }
 
   if (Array.isArray(err)) {
-    return err.map((error) => toAppError(error));
+    return flatten(err.map((error) => toAppError(error)));
   } else {
-    return [toAppError(err)];
+    return toAppError(err);
   }
 };
 
@@ -107,10 +115,10 @@ export type ErrorLike =
   | string[]
   | Error
   | Error[]
-  | IAppError
-  | IAppError[];
+  | AppError
+  | AppError[];
 
-export interface IAppError extends Error {
+export interface AppError extends Error {
   field?: string;
   action?: string;
   value?: any;
@@ -130,8 +138,9 @@ export type FlattenedError<
 } & { error?: E };
 
 const DEFAULT_FORM_ERROR_FIELD_NAME = "error";
+
 export const flattenErrorList = <T extends AnyObject = AnyObject>(
-  errors: IAppError[],
+  errors: AppError[],
   firstErrorOnly = false
 ): Partial<T> => {
   if (!errors) return {};

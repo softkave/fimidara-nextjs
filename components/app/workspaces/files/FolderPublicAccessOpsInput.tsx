@@ -1,13 +1,13 @@
+import {
+  AppResourceType,
+  BasicCRUDActions,
+  IPublicAccessOpInput,
+  actionLabel,
+  appResourceTypeLabel,
+  getActions,
+} from "@/lib/definitions/system";
 import { List, Select, Space } from "antd";
 import React from "react";
-import {
-  actionLabel,
-  AppResourceType,
-  appResourceTypeLabel,
-  BasicCRUDActions,
-  getActions,
-  IPublicAccessOpInput,
-} from "../../../../lib/definitions/system";
 import { filterOption, filterSort } from "../../../form/formUtils";
 
 export type ResourcePublicAccessAction = BasicCRUDActions;

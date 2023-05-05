@@ -1,46 +1,38 @@
-import { Space } from "antd";
+import { getBaseError } from "@/lib/utils/errors";
+import { Workspace } from "fimidara";
 import React from "react";
-import { SWRConfiguration } from "swr";
-import { IWorkspace } from "../../../lib/definitions/workspace";
-import useWorkspace from "../../../lib/hooks/workspaces/useWorkspace";
-import { getBaseError } from "../../../lib/utils/errors";
+import { useUserWorkspaceFetchHook } from "../../../lib/hooks/fetchHooks";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
+import PageNothingFound from "../../utils/PageNothingFound";
 import { appClasses } from "../../utils/theme";
-import LoggedInHeader from "../LoggedInHeader";
 
-export interface IWorkspaceContainerProps {
+export interface WorkspaceContainerProps {
   workspaceId: string;
-  swrConfig?: SWRConfiguration;
-  render?: (workspace: IWorkspace) => React.ReactElement;
+  render?: (workspace: Workspace) => React.ReactElement;
 }
 
-const WorkspaceContainer: React.FC<IWorkspaceContainerProps> = (props) => {
-  const { workspaceId, swrConfig, render, children } = props;
-  const { data, error, isLoading } = useWorkspace(workspaceId, swrConfig);
+const WorkspaceContainer: React.FC<WorkspaceContainerProps> = (props) => {
+  const { workspaceId, render, children } = props;
+  const data = useUserWorkspaceFetchHook({ workspaceId });
+  const error = data.store.error;
+  const { resource } = data.store.get(undefined);
+  const isLoading = data.store.loading || !data.store.initialized;
+
   if (error) {
     return (
-      <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-        <LoggedInHeader />
-        <PageError
-          className={appClasses.main}
-          messageText={getBaseError(error) || "Error fetching workspace"}
-        />
-      </Space>
+      <PageError
+        className={appClasses.main}
+        messageText={getBaseError(error) || "Error fetching workspace."}
+      />
     );
+  } else if (isLoading) {
+    return <PageLoading messageText="Loading workspace..." />;
+  } else if (!resource) {
+    return <PageNothingFound messageText="Workspace not found." />;
   }
 
-  if (isLoading || !data) {
-    return (
-      <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-        <LoggedInHeader />
-        <PageLoading messageText="Loading workspace..." />
-      </Space>
-    );
-  }
-
-  const workspace = data?.workspace!;
-  const contentNode = render ? render(workspace) : children;
+  const contentNode = render ? render(resource) : children;
   return <React.Fragment>{contentNode}</React.Fragment>;
 };
 

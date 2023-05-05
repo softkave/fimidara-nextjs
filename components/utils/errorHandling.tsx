@@ -8,9 +8,9 @@ import {
   EmailAddressNotVerifiedError,
   getBaseError,
   hasErrorTypes,
-  toAppErrorsArray,
+  toAppErrorList,
 } from "../../lib/utils/errors";
-import { appComponentConstants } from "./utils";
+import { appComponentConstants, htmlCharacterCodes } from "./utils";
 
 export function enrichErrorMessage(error: any) {
   if (!error) {
@@ -25,9 +25,8 @@ export function enrichErrorMessage(error: any) {
   if (hasEmailNotVerifiedError) {
     errorMessage = (
       <Typography.Text>
-        {errorMessage}
-        {" - "}
-        <Link passHref href={appUserPaths.settings}>
+        {errorMessage} {htmlCharacterCodes.doubleDash}{" "}
+        <Link href={appUserPaths.settings}>
           <a>Goto Settings</a>
         </Link>{" "}
         to verify your email address.
@@ -53,7 +52,7 @@ export function errorMessageNotificatition(
 }
 
 export function throwErrorForUseRequestHandling(error: any) {
-  const errorList = toAppErrorsArray(error);
+  const errorList = toAppErrorList(error);
 
   if (errorList.length > 0) {
     throw errorList[0];

@@ -1,10 +1,10 @@
+import DocsMain from "@/components/docs/DocsMain";
+import JsSdkEndpointDoc from "@/components/docs/JsSdkEndpointDoc";
+import { HttpEndpointDefinition } from "@/components/docs/types";
+import PageNothingFound from "@/components/utils/PageNothingFound";
+import { systemConstants } from "@/lib/definitions/system";
 import { promises } from "fs";
 import { GetServerSideProps, NextPage } from "next";
-import DocsMain from "../../../../components/docs/DocsMain";
-import JsSdkEndpointDoc from "../../../../components/docs/JsSdkEndpointDoc";
-import { HttpEndpointDefinition } from "../../../../components/docs/types";
-import PageNothingFound from "../../../../components/utils/PageNothingFound";
-import { systemConstants } from "../../../../lib/definitions/system";
 
 interface FimidaraJsSdkEndpointDocPageProps {
   endpoint?: HttpEndpointDefinition;

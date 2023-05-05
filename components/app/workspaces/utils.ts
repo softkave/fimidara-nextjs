@@ -1,5 +1,5 @@
+import { fileValidationParts } from "@/lib/validation/file";
 import { GetServerSideProps } from "next";
-import { fileValidationParts } from "../../../lib/validation/file";
 
 export type IWorkspaceComponentProps = {
   workspaceId: string;

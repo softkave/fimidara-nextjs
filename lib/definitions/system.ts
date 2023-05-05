@@ -39,7 +39,9 @@ export const systemConstants = {
   demoQueryKey: "isDemo",
   demoUserEmail: "boards-demo-user@softkave.com",
   demoUserName: "Demo User",
-  maxPageSize: 100,
+  minPage: 0,
+  minPageSize: 1,
+  maxPageSize: 1000,
 };
 
 export interface ISelectedIdRouteMatch {
@@ -144,17 +146,14 @@ export const actionLabel: Record<BasicCRUDActions, string> = {
 
 export const appRootPaths = {
   home: "/",
-  app: "/app",
-  account: "/account",
 };
 
 export const appWorkspacePaths = {
-  workspaces: appRootPaths.app + "/workspaces",
-  createWorkspaceForm: appRootPaths.app + "/workspaces/form",
-  workspace: (workspaceId: string) =>
-    appRootPaths.app + `/workspaces/${workspaceId}`,
-  editWorkspaceForm(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/form`;
+  workspaces: "/workspaces",
+  createWorkspaceForm: "/workspaces/form",
+  workspace: (workspaceId: string) => `/workspaces/${workspaceId}`,
+  updateWorkspaceForm(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/update`;
   },
 
   // File
@@ -223,18 +222,18 @@ export const appWorkspacePaths = {
     return `${this.request(workspaceId, requestId)}/form`;
   },
 
-  // Program token
-  programTokenList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/program-tokens`;
+  // Agent token
+  agentTokenList(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/agent-tokens`;
   },
-  createProgramTokenForm(workspaceId: string) {
-    return `${this.programTokenList(workspaceId)}/form`;
+  createAgentTokenForm(workspaceId: string) {
+    return `${this.agentTokenList(workspaceId)}/form`;
   },
-  programToken(workspaceId: string, tokenId: string) {
-    return `${this.programTokenList(workspaceId)}/${tokenId}`;
+  agentToken(workspaceId: string, tokenId: string) {
+    return `${this.agentTokenList(workspaceId)}/${tokenId}`;
   },
-  programTokenForm(workspaceId: string, tokenId: string) {
-    return `${this.programToken(workspaceId, tokenId)}/form`;
+  agentTokenForm(workspaceId: string, tokenId: string) {
+    return `${this.agentToken(workspaceId, tokenId)}/form`;
   },
 
   // Client token
@@ -266,27 +265,28 @@ export const appWorkspacePaths = {
   },
 
   // usage records
-  usageRecordList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/usage-records`;
+  usage(workspaceId: string) {
+    return `${this.workspace(workspaceId)}/usage`;
   },
 };
 
 export const appAccountPaths = {
-  signup: appRootPaths.account + "/signup",
-  login: appRootPaths.account + "/login",
+  signup: "/signup",
+  login: "/login",
   loginWithReturnPath(returnTo: string) {
     return `${this.login}?returnTo=${encodeURIComponent(returnTo)}`;
   },
 
-  verifyEmail: appRootPaths.account + "/verify-email",
-  forgotPassword: appRootPaths.account + "/forgot-password",
-  changePassword: appRootPaths.account + "/change-password",
+  verifyEmail: "/verify-email",
+  forgotPassword: "/forgot-password",
+  changePassword: "/change-password",
 };
 
 export const appUserPaths = {
-  settings: appRootPaths.app + "/user/settings",
-};
-
-export const appRequestsPaths = {
-  requests: appRootPaths.app + "/requests",
+  settings: "/settings",
+  requests: "/collaboration-requests",
+  request(id: string) {
+    return `${this.requests}/${id}`;
+  },
+  workspaces: "/workspaces",
 };

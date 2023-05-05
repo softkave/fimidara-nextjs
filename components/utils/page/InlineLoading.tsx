@@ -2,9 +2,9 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Alert, Space } from "antd";
 import React from "react";
-import { IStyleableComponent } from "../styling/types";
+import { StyleableComponentProps } from "../styling/types";
 
-export interface IInlineLoadingProps extends IStyleableComponent {
+export interface IInlineLoadingProps extends StyleableComponentProps {
   messageText?: string;
 }
 

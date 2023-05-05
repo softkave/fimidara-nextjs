@@ -1,28 +1,26 @@
+import usePagination from "@/lib/hooks/usePagination";
+import { getBaseError } from "@/lib/utils/errors";
+import { cast } from "@/lib/utils/fns";
 import { Space } from "antd";
+import { UsageRecord, Workspace } from "fimidara";
 import { first } from "lodash";
 import React from "react";
 import {
-  IUsageRecord,
-  UsageRecordFulfillmentStatus,
-} from "../../../../lib/definitions/usageRecord";
-import { IWorkspace } from "../../../../lib/definitions/workspace";
-import usePagination from "../../../../lib/hooks/usePagination";
-import useUsageCosts from "../../../../lib/hooks/useUsageCosts";
-import useWorkspaceSummedUsage from "../../../../lib/hooks/workspaces/useWorkspaceSummedUsage";
-import { getBaseError } from "../../../../lib/utils/errors";
-import { cast } from "../../../../lib/utils/fns";
-import ListHeader from "../../../utils/ListHeader";
-import { PaginatedContent } from "../../../utils/page/PaginatedContent";
+  useUsageCostsFetchHook,
+  useWorkspaceUsageRecordsFetchHook,
+} from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";
+import ListHeader from "../../../utils/list/ListHeader";
+import PaginatedContent from "../../../utils/page/PaginatedContent";
 import { appClasses } from "../../../utils/theme";
 import SummedUsageRecordList from "./SummedUsageRecordList";
 import SummedUsageRecordListControls from "./SummedUsageRecordListControls";
 
 export interface ISummedUsageRecordListContainerProps {
-  workspace: IWorkspace;
-  renderItem?: (item: IUsageRecord, costPerUnit: number) => React.ReactNode;
+  workspace: Workspace;
+  renderItem?: (item: UsageRecord, costPerUnit: number) => React.ReactNode;
 }
 
 const SummedUsageRecordListContainer: React.FC<
@@ -34,30 +32,40 @@ const SummedUsageRecordListContainer: React.FC<
     month: new Date().getMonth(),
   });
   const pagination = usePagination();
-  const records = useWorkspaceSummedUsage({
+  const data = useWorkspaceUsageRecordsFetchHook({
     workspaceId: workspace.resourceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const usageCosts = useUsageCosts();
+  const usageCosts = useUsageCostsFetchHook(undefined);
+
+  const { count, resourceList } = data.store.get({
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+  });
+  const { costs } = usageCosts.store.get(undefined);
+  const error = data.store.error || usageCosts.store.error;
+  const isLoading =
+    data.store.loading ||
+    !data.store.initialized ||
+    usageCosts.store.loading ||
+    !usageCosts.store.initialized;
+
   let content: React.ReactElement = <span />;
-  const error = records.error || usageCosts.error;
-  const isLoading = records.isLoading || usageCosts.isLoading;
-  const hasData = records.data && usageCosts.data;
+
   const { fulfilledRecords, droppedRecords, dateOptions } =
     React.useMemo(() => {
       const fulfilledRecords: Record<
         number,
-        Record<number, IUsageRecord[]>
+        Record<number, UsageRecord[]>
       > = {};
-      const droppedRecords: Record<number, Record<number, IUsageRecord[]>> = {};
+      const droppedRecords: Record<number, Record<number, UsageRecord[]>> = {};
       const dateOptionsMap: Record<number, Record<number, number>> = {};
       const dateOptions: Record<number, number[]> = {};
-      if (records.data) {
-        records.data.records.forEach((record) => {
-          if (
-            record.fulfillmentStatus === UsageRecordFulfillmentStatus.Fulfilled
-          ) {
+
+      if (resourceList) {
+        resourceList.forEach((record) => {
+          if (record.fulfillmentStatus === "fulfilled") {
             const yearRecords = fulfilledRecords[record.year] || {};
             const monthRecords = yearRecords[record.month] || [];
             monthRecords.push(record);
@@ -82,18 +90,18 @@ const SummedUsageRecordListContainer: React.FC<
       }
 
       return { dateOptions, fulfilledRecords, droppedRecords };
-    }, [records.data]);
+    }, [resourceList]);
 
   if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={getBaseError(error) || "Error loading usage records"}
+        messageText={getBaseError(error) || "Error loading usage records."}
       />
     );
-  } else if (isLoading || !hasData) {
+  } else if (isLoading) {
     content = <PageLoading messageText="Loading usage records..." />;
-  } else if (records.data?.records.length === 0) {
+  } else if (resourceList.length === 0) {
     content = (
       <PageNothingFound
         className={appClasses.maxWidth420}
@@ -124,18 +132,18 @@ const SummedUsageRecordListContainer: React.FC<
     content = (
       <div className={appClasses.main}>
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          <ListHeader title="Usage Records" actions={controls} />
           <PaginatedContent
+            header={<ListHeader label="Usage Records" buttons={controls} />}
             content={
               <SummedUsageRecordList
                 fulfilledRecords={monthFulfilledRecords}
                 droppedRecords={monthDroppedRecords}
-                usageCosts={usageCosts.data!.costs}
+                usageCosts={costs}
                 workspace={workspace}
                 renderItem={renderItem}
               />
             }
-            pagination={pagination}
+            pagination={{ ...pagination, count }}
           />
         </Space>
       </div>

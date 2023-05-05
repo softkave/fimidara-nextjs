@@ -1,13 +1,13 @@
+import { AppError, isError } from "@/lib/utils/errors";
 import { css, cx } from "@emotion/css";
 import { Alert, AlertProps } from "antd";
 import React from "react";
-import { IAppError, isError } from "../../../lib/utils/errors";
-import { IStyleableComponent } from "../styling/types";
+import { StyleableComponentProps } from "../styling/types";
 
 export interface IAlertGroupProps
   extends Pick<AlertProps, "closable" | "type">,
-    IStyleableComponent {
-  messages: string[] | IAppError[];
+    StyleableComponentProps {
+  messages: string[] | AppError[];
 }
 
 const classes = {

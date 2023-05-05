@@ -1,23 +1,19 @@
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useRequest } from "ahooks";
-import { Button, Dropdown, Menu, message, Modal } from "antd";
+import { Dropdown, MenuProps, message, Modal } from "antd";
+import { PermissionGroup } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import PermissionGroupAPI from "../../../../lib/api/endpoints/permissionGroup";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
-import {
-  AppResourceType,
-  appWorkspacePaths,
-} from "../../../../lib/definitions/system";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
 
-export interface IPermissionGroupMenuProps {
-  permissionGroup: IPermissionGroup;
+export interface PermissionGroupMenuProps {
+  permissionGroup: PermissionGroup;
   onCompleteDelete: () => any;
 }
 
@@ -27,15 +23,15 @@ enum MenuKeys {
   GrantPermission = "grant-permission",
 }
 
-const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
+const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
   const { permissionGroup, onCompleteDelete } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: permissionGroup.workspaceId,
-    targetType: AppResourceType.PermissionGroup,
+    targetType: "permissionGroup",
     containerId: permissionGroup.workspaceId,
-    containerType: AppResourceType.Workspace,
+    containerType: "workspace",
     targetId: permissionGroup.resourceId,
-    appliesTo: PermissionItemAppliesTo.Children,
+    appliesTo: "children",
   });
 
   const deleteItem = React.useCallback(async () => {
@@ -43,15 +39,15 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
       // TODO: invalidate all the data that has assigned permissionGroups
       // when request is successful
 
-      const result = await PermissionGroupAPI.deletePermissionGroup({
-        permissionGroupId: permissionGroup.resourceId,
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+      const result = await endpoints.permissionGroups.deletePermissionGroup({
+        body: { permissionGroupId: permissionGroup.resourceId },
       });
 
-      checkEndpointResult(result);
-      message.success("Permission group deleted");
+      message.success("Permission group deleted.");
       await onCompleteDelete();
     } catch (error: any) {
-      errorMessageNotificatition(error, "Error deleting permission group");
+      errorMessageNotificatition(error, "Error deleting permission group.");
     }
   }, [permissionGroup, onCompleteDelete]);
 
@@ -79,37 +75,42 @@ const PermissionGroupMenu: React.FC<IPermissionGroupMenuProps> = (props) => {
     [deleteItemHelper, toggleVisibility]
   );
 
+  const items: MenuProps["items"] = [
+    {
+      key: MenuKeys.UpdateItem,
+      label: (
+        <Link
+          href={appWorkspacePaths.permissionGroupForm(
+            permissionGroup.workspaceId,
+            permissionGroup.resourceId
+          )}
+        >
+          Update Permission Group
+        </Link>
+      ),
+    },
+    {
+      key: MenuKeys.GrantPermission,
+      label: "Permissions",
+    },
+    {
+      key: MenuKeys.DeleteItem,
+      label: "Delete Permission Group",
+    },
+  ];
+
   return (
     <React.Fragment>
       <Dropdown
         disabled={deleteItemHelper.loading}
         trigger={["click"]}
-        overlay={
-          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
-            <Menu.Item key={MenuKeys.UpdateItem}>
-              <Link
-                href={appWorkspacePaths.permissionGroupForm(
-                  permissionGroup.workspaceId,
-                  permissionGroup.resourceId
-                )}
-              >
-                Update Group
-              </Link>
-            </Menu.Item>
-            <Menu.Divider key={"divider-01"} />
-            <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Access To Resource
-            </Menu.Item>
-            <Menu.Divider key={"divider-02"} />
-            <Menu.Item key={MenuKeys.DeleteItem}>Delete Group</Menu.Item>
-          </Menu>
-        }
+        menu={{
+          items,
+          style: { minWidth: "150px" },
+          onClick: onSelectMenuItem,
+        }}
       >
-        <Button
-          // type="text"
-          className={appClasses.iconBtn}
-          icon={<BsThreeDots />}
-        ></Button>
+        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
       {grantPermissionFormNode}
     </React.Fragment>

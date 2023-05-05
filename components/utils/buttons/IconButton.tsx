@@ -1,7 +1,7 @@
+import { Omit1 } from "@/lib/utils/types";
 import { cx } from "@emotion/css";
 import { Button, Tooltip } from "antd";
 import React from "react";
-import { Omit1 } from "../../../lib/utils/types";
 
 export interface IIconButtonProps {
   style?: React.CSSProperties;

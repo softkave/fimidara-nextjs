@@ -1,12 +1,9 @@
+import { systemConstants } from "@/lib/definitions/system";
+import KeyValueActions from "@/lib/store/key-value/actions";
+import { KeyValueDynamicKeys } from "@/lib/store/key-value/utils";
+import { getReadFileURL, getUploadFileURL } from "fimidara";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { withServerAddr } from "../../../lib/api/addr";
-import {
-  getFetchWorkspaceImagePath,
-  getUploadWorkspaceImagePath,
-} from "../../../lib/api/endpoints/file";
-import KeyValueActions from "../../../lib/store/key-value/actions";
-import { KeyValueDynamicKeys } from "../../../lib/store/key-value/utils";
 import { formClasses } from "../../form/classNames";
 import ImageAndUploadAvatar from "../../utils/ImageAndUploadAvatar";
 import { appDimensions } from "../../utils/theme";
@@ -35,15 +32,15 @@ export default function UploadWorkspaceAvatar(
     <div className={formClasses.formContentWrapperClassName}>
       <ImageAndUploadAvatar
         refreshKey={refreshKey}
-        uploadPath={withServerAddr(getUploadWorkspaceImagePath(workspaceId))}
+        uploadPath={getUploadFileURL({
+          filepath: systemConstants.workspaceImagesFolder + "/" + workspaceId,
+        })}
         onCompleteUpload={onCompleteUpload}
-        src={withServerAddr(
-          getFetchWorkspaceImagePath(
-            workspaceId,
-            appDimensions.avatar.width,
-            appDimensions.avatar.height
-          )
-        )}
+        src={getReadFileURL({
+          filepath: systemConstants.workspaceImagesFolder + "/" + workspaceId,
+          width: appDimensions.avatar.width,
+          height: appDimensions.avatar.height,
+        })}
         alt="Your profile picture"
       />
     </div>

@@ -1,19 +1,16 @@
 import { css, cx } from "@emotion/css";
-import { Divider } from "antd";
 import { isString } from "lodash";
 import React from "react";
 import PageMessage from "../page/PageMessage";
-import { IStyleableComponent } from "../styling/types";
+import { StyleableComponentProps } from "../styling/types";
 import { appClasses } from "../theme";
+import ListHeader from "./ListHeader";
 
-export interface IItemListExportedProps extends IStyleableComponent {
+export interface IItemListExportedProps extends StyleableComponentProps {
   emptyMessage?: string | React.ReactNode;
   bordered?: boolean;
-  padEmptyMessage?: boolean;
-  borderTop?: boolean;
-  borderBottom?: boolean;
-  emptyClassName?: string;
-  emptyStyle?: React.CSSProperties;
+  label?: React.ReactNode;
+  buttons?: React.ReactNode;
 }
 
 export interface IItemListProps<T = any> extends IItemListExportedProps {
@@ -23,10 +20,9 @@ export interface IItemListProps<T = any> extends IItemListExportedProps {
 }
 
 const classes = {
-  root: css({
-    "& .ant-divider": {
-      margin: "0px !important",
-    },
+  root: css({}),
+  bordered: css({
+    marginBottom: "1px solid black",
   }),
 };
 
@@ -35,39 +31,40 @@ function ItemList<T>(props: IItemListProps<T>) {
     items,
     emptyMessage,
     bordered,
-    borderTop,
-    borderBottom,
-    padEmptyMessage,
     className,
-    emptyClassName,
-    emptyStyle,
     style,
+    label,
+    buttons,
     renderItem,
     getId,
   } = props;
-  const _renderItem = (item: T, index: number) => {
-    const node = renderItem(item, index);
-    return bordered && (borderBottom || index !== items.length - 1) ? (
+
+  const handleRenderItem = (item: T, index: number) => {
+    let node = renderItem(item, index);
+    node =
+      bordered && index !== items.length - 1 ? (
+        <div className={classes.bordered}>{node}</div>
+      ) : (
+        node
+      );
+    return (
       <React.Fragment key={getId ? getId(item, index) : index}>
         {node}
-        <Divider />
       </React.Fragment>
-    ) : (
-      node
     );
   };
 
+  let contentNode: React.ReactNode = null;
+  let headerNode: React.ReactNode = <ListHeader {...props} />;
+
   if (items.length === 0) {
-    return isString(emptyMessage) ? (
-      <PageMessage
-        shouldPad={padEmptyMessage}
-        message={emptyMessage}
-        className={emptyClassName}
-        style={emptyStyle}
-      />
+    contentNode = isString(emptyMessage) ? (
+      <PageMessage message={emptyMessage} />
     ) : (
       emptyMessage
     );
+  } else {
+    contentNode = items.map(handleRenderItem);
   }
 
   return (
@@ -75,8 +72,8 @@ function ItemList<T>(props: IItemListProps<T>) {
       style={style}
       className={cx(className, appClasses.pageListRoot, classes.root)}
     >
-      {borderTop && <Divider />}
-      {items.map(_renderItem)}
+      {headerNode}
+      {contentNode}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { FormikConfig, FormikProps, useFormik } from "formik";
 import React from "react";
+import { flattenErrorList, toAppErrorList } from "../utils/errors";
 
 export interface IUseFormHelpersFormikProps<T> {
   formikProps: FormikConfig<T>;
@@ -17,7 +18,9 @@ const useFormHelpers = <T extends object>(
 
   React.useEffect(() => {
     if (props.errors) {
-      formik.setErrors(props.errors);
+      const errorArr = toAppErrorList(props.errors);
+      const fErrors = flattenErrorList(errorArr);
+      formik.setErrors(fErrors);
     }
   }, [props.errors, formik]);
 

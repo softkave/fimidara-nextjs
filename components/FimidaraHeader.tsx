@@ -1,16 +1,16 @@
 import { useUserLoggedIn } from "../lib/hooks/useUserLoggedIn";
-import LoggedInHeader, { ILoggedInHeaderProps } from "./app/LoggedInHeader";
+import AppHeader, { IAppHeaderProps } from "./app/AppHeader";
 import WebHeader, { IWebHeaderProps } from "./web/WebHeader";
 
 export interface IFimidaraHeaderProps {
-  headerProps?: Extract<IWebHeaderProps, ILoggedInHeaderProps>;
+  headerProps?: Extract<IWebHeaderProps, IAppHeaderProps>;
 }
 
 export default function FimidaraHeader(props: IFimidaraHeaderProps) {
   const isLoggedIn = useUserLoggedIn();
   const headerProps = props.headerProps ?? {};
   if (isLoggedIn) {
-    return <LoggedInHeader {...headerProps} />;
+    return <AppHeader {...headerProps} />;
   } else {
     return <WebHeader {...headerProps} />;
   }

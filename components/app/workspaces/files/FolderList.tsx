@@ -1,50 +1,34 @@
+import { appWorkspacePaths } from "@/lib/definitions/system";
 import { FolderOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { List } from "antd";
+import { Folder } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { IFolder } from "../../../../lib/definitions/folder";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import ItemList from "../../../utils/list/ItemList";
+import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import FolderMenu from "./FolderMenu";
 
-export interface IFolderListProps {
-  folders: IFolder[];
+export interface FolderListProps {
+  folders: Folder[];
   workspaceRootname: string;
   renderFolderItem?: (
-    item: IFolder,
+    item: Folder,
     workspaceRootname: string
   ) => React.ReactNode;
 }
 
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
-
-const FolderList: React.FC<IFolderListProps> = (props) => {
+const FolderList: React.FC<FolderListProps> = (props) => {
   const { folders, workspaceRootname, renderFolderItem } = props;
   const internalRenderItem = React.useCallback(
-    (item: IFolder) => {
+    (item: Folder) => {
       if (renderFolderItem) {
         return renderFolderItem(item, workspaceRootname);
       }
 
       return (
-        <List.Item
+        <ThumbnailContent
           key={item.resourceId}
-          actions={[
-            <FolderMenu
-              key="menu"
-              folder={item}
-              workspaceRootname={workspaceRootname}
-            />,
-          ]}
-        >
-          <List.Item.Meta
-            title={
+          main={
+            <div>
               <Link
                 href={appWorkspacePaths.folder(
                   item.workspaceId,
@@ -53,22 +37,28 @@ const FolderList: React.FC<IFolderListProps> = (props) => {
               >
                 {item.name}
               </Link>
-            }
-            description={item.description}
-            avatar={<FolderOutlined />}
-          />
-        </List.Item>
+              {item.description}
+            </div>
+          }
+          menu={
+            <FolderMenu
+              key="menu"
+              folder={item}
+              workspaceRootname={workspaceRootname}
+            />
+          }
+          prefixNode={<FolderOutlined />}
+        />
       );
     },
     [renderFolderItem, workspaceRootname]
   );
 
   return (
-    <List
-      className={classes.list}
-      itemLayout="horizontal"
-      dataSource={folders}
+    <ItemList
+      items={folders}
       renderItem={internalRenderItem}
+      getId={(item: Folder) => item.resourceId}
     />
   );
 };

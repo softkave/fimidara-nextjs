@@ -1,5 +1,5 @@
+import { ErrorLike } from "@/lib/utils/errors";
 import React from "react";
-import { ErrorLike } from "../../../lib/utils/errors";
 import FormFieldMessage from "./FormFieldMessage";
 
 export interface IFormFieldErrorProps {

@@ -1,14 +1,13 @@
+import { PermissionItemAppliesTo, WorkspaceAppResourceType } from "fimidara";
 import React from "react";
-import { PermissionItemAppliesTo } from "../../lib/definitions/permissionItem";
-import { AppResourceType } from "../../lib/definitions/system";
 import GrantPermissionFormContainer from "../app/workspaces/permissionItems/GrantPermissionFormContainer";
 
 export interface IUseGrantPermissionProps {
   workspaceId: string;
   containerId: string;
-  containerType: AppResourceType;
+  containerType: WorkspaceAppResourceType;
   targetId?: string;
-  targetType: AppResourceType;
+  targetType: WorkspaceAppResourceType;
   appliesTo: PermissionItemAppliesTo;
 }
 

@@ -1,4 +1,4 @@
-import { compact } from "lodash";
+import { compact, flatten } from "lodash";
 import moment from "moment";
 
 export function cast<ToType>(resource: any): ToType {
@@ -43,4 +43,28 @@ export function makeKey(fields: any[], separator = "-", omitFalsy = true) {
   }
 
   return fields.join(separator);
+}
+
+export function toArray<T>(...args: Array<T | T[]>) {
+  const arrays = args.map((item) => {
+    if (Array.isArray(item)) {
+      return item;
+    } else {
+      return [item];
+    }
+  });
+  return flatten(arrays);
+}
+
+export function toNonNullableArray<T>(...args: Array<NonNullable<T | T[]>>) {
+  return toArray(...args);
+}
+
+export function toCompactArray<T>(...args: Array<T | T[]>) {
+  const array = toArray(...args);
+  return compact(array as Array<NonNullable<T> | undefined>);
+}
+
+export function defaultArrayTo<T>(array: T[], data: NonNullable<T | T[]>) {
+  return array.length ? array : toCompactArray(data);
 }

@@ -8,7 +8,7 @@ import PageLoading from "../utils/PageLoading";
 import { IPageNothingFoundPassedDownProps } from "../utils/PageNothingFound";
 
 export interface IUseUserNodeResult extends ReturnType<typeof useUser> {
-  renderNode: React.ReactElement | null;
+  renderedNode: React.ReactElement | null;
 
   /**
    * Make sure to check for and return `renderNode` or make sure to check that
@@ -46,5 +46,5 @@ export function useUserNode(
     return data;
   }, [data]);
 
-  return { renderNode, assertGet, ...u0 };
+  return { renderedNode: renderNode, assertGet, ...u0 };
 }

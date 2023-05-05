@@ -1,13 +1,13 @@
+import { IPermissionGroupInput } from "@/lib/definitions/permissionGroups";
+import usePagination from "@/lib/hooks/usePagination";
+import useWorkspacePermissionGroupList from "@/lib/hooks/workspaces/useWorkspacePermissionGroupList";
+import { indexArray } from "@/lib/utils/indexArray";
 import { DeleteOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Button, Divider, List, Select, Space, Typography } from "antd";
 import React from "react";
-import { IPermissionGroupInput } from "../../../../lib/definitions/permissionGroups";
-import usePagination from "../../../../lib/hooks/usePagination";
-import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import { indexArray } from "../../../../lib/utils/indexArray";
-import InlineError from "../../../utils/InlineError";
-import InlineLoading from "../../../utils/InlineLoading";
-import { AppPagination } from "../../../utils/page/AppPagination";
+import InlineError from "../../../utils/page/InlineError";
+import InlineLoading from "../../../utils/page/InlineLoading";
+import PagePagination from "../../../utils/page/PagePagination";
 import { appClasses } from "../../../utils/theme";
 
 export interface ISelectPermissionGroupInputProps {
@@ -26,11 +26,13 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
 ) => {
   const { workspaceId, value, disabled, onChange } = props;
   const pagination = usePagination();
-  const { data, error, isLoading, mutate } = useWorkspacePermissionGroupList({
-    workspaceId,
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
+  const { data, error, isLoading, count, mutate } =
+    useWorkspacePermissionGroupList({
+      workspaceId,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+    });
+
   const onDeleteItem = React.useCallback(
     (id: string) => {
       const newValue = value.filter((item) => item.permissionGroupId !== id);
@@ -87,7 +89,7 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
   } else if (error) {
     return (
       <InlineError
-        messageText={error?.message || "Error fetching permission groups"}
+        messageText={error?.message || "Error fetching permission groups."}
         reload={() => mutate(undefined, true)}
       />
     );
@@ -157,11 +159,13 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
         return label01.toLowerCase().localeCompare(label02.toLowerCase());
       }}
       dropdownRender={(menu) => (
-        <>
+        <React.Fragment>
           {menu}
           <Divider style={{ margin: "8px 0" }} />
-          <AppPagination {...pagination} />
-        </>
+          {count ? (
+            <PagePagination count={count.count} {...pagination} />
+          ) : null}
+        </React.Fragment>
       )}
     >
       {data.permissionGroups.map((item) => (

@@ -1,4 +1,4 @@
-import { indexArray } from "../../../lib/utils/indexArray";
+import { indexArray } from "@/lib/utils/indexArray";
 import { SelectedItemsMap } from "./types";
 
 export function toSelectedItemsMap(

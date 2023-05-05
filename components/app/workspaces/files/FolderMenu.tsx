@@ -1,30 +1,24 @@
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
+import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
+import { AppResourceType, appWorkspacePaths } from "@/lib/definitions/system";
+import { getUseFileListHookKey } from "@/lib/hooks/workspaces/useFileList";
+import { getUseFolderHookKey } from "@/lib/hooks/workspaces/useFolder";
 import { useRequest } from "ahooks";
-import { Button, Dropdown, Menu, message, Modal } from "antd";
+import { Dropdown, MenuProps, message, Modal } from "antd";
+import { Folder } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useSWRConfig } from "swr";
-import FolderAPI from "../../../../lib/api/endpoints/folder";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import {
-  addRootnameToPath,
-  folderConstants,
-  IFolder,
-} from "../../../../lib/definitions/folder";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
-import {
-  AppResourceType,
-  appWorkspacePaths,
-} from "../../../../lib/definitions/system";
-import { getUseFileListHookKey } from "../../../../lib/hooks/workspaces/useFileList";
-import { getUseFolderHookKey } from "../../../../lib/hooks/workspaces/useFolder";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
 
-export interface IFolderMenuProps {
-  folder: IFolder;
+export interface FolderMenuProps {
+  folder: Folder;
   workspaceRootname: string;
 }
 
@@ -37,7 +31,7 @@ enum MenuKeys {
   ChildrenFilesGrantPermission = "children-files-grant-permission",
 }
 
-const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
+const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   const { folder, workspaceRootname } = props;
   const folderGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
@@ -69,28 +63,21 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
   const { mutate: cacheMutate } = useSWRConfig();
   const deleteItem = React.useCallback(async () => {
     try {
-      const result = await FolderAPI.deleteFolder({
-        folderpath: addRootnameToPath(
-          folder.namePath.join(folderConstants.nameSeparator),
-          workspaceRootname
-        ),
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+      await endpoints.folders.deleteFolder({
+        body: {
+          folderpath: addRootnameToPath(
+            folder.namePath.join(folderConstants.nameSeparator),
+            workspaceRootname
+          ),
+        },
       });
 
-      checkEndpointResult(result);
-      message.success("Folder deleted");
-      cacheMutate(
-        getUseFileListHookKey({
-          folderId: folder.parentId,
-        })
-      );
-
-      cacheMutate(
-        getUseFolderHookKey({
-          folderId: folder.resourceId,
-        })
-      );
+      message.success("Folder deleted.");
+      cacheMutate(getUseFileListHookKey({ folderId: folder.parentId }));
+      cacheMutate(getUseFolderHookKey({ folderId: folder.resourceId }));
     } catch (error: any) {
-      errorMessageNotificatition(error, "Error deleting folder");
+      errorMessageNotificatition(error, "Error deleting folder.");
     }
   }, [folder, cacheMutate, workspaceRootname]);
 
@@ -127,56 +114,59 @@ const FolderMenu: React.FC<IFolderMenuProps> = (props) => {
     ]
   );
 
+  const items: MenuProps["items"] = [
+    {
+      key: MenuKeys.ViewItem,
+      label: (
+        <Link
+          href={appWorkspacePaths.folderPage(
+            folder.workspaceId,
+            folder.resourceId
+          )}
+        >
+          Open Folder
+        </Link>
+      ),
+    },
+    {
+      key: MenuKeys.UpdateItem,
+      label: (
+        <Link
+          href={appWorkspacePaths.folderForm(
+            folder.workspaceId,
+            folder.resourceId
+          )}
+        >
+          Update Folder
+        </Link>
+      ),
+    },
+    {
+      key: MenuKeys.GrantPermission,
+      label: "Folder Permissions",
+    },
+    {
+      key: MenuKeys.ChildrenFilesGrantPermission,
+      label: "Children File Permissions",
+    },
+    {
+      key: MenuKeys.ChildrenFoldersGrantPermission,
+      label: "Children Folder Permissions",
+    },
+  ];
+
   return (
     <React.Fragment>
       <Dropdown
         disabled={deleteItemHelper.loading}
         trigger={["click"]}
-        overlay={
-          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
-            <Menu.Item key={MenuKeys.ViewItem}>
-              <Link
-                href={appWorkspacePaths.folderPage(
-                  folder.workspaceId,
-                  folder.resourceId
-                )}
-              >
-                View Folder
-              </Link>
-            </Menu.Item>
-            <Menu.Divider key={"divider-00"} />
-            <Menu.Item key={MenuKeys.UpdateItem}>
-              <Link
-                href={appWorkspacePaths.folderForm(
-                  folder.workspaceId,
-                  folder.resourceId
-                )}
-              >
-                Update Folder
-              </Link>
-            </Menu.Item>
-            <Menu.Divider key={"divider-01"} />
-            <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Access To Folder
-            </Menu.Item>
-            <Menu.Divider key={"divider-02"} />
-            <Menu.Item key={MenuKeys.ChildrenFoldersGrantPermission}>
-              Grant Access To Children Folders
-            </Menu.Item>
-            <Menu.Divider key={"divider-03"} />
-            <Menu.Item key={MenuKeys.ChildrenFilesGrantPermission}>
-              Grant Access To Children Files
-            </Menu.Item>
-            <Menu.Divider key={"divider-04"} />
-            <Menu.Item key={MenuKeys.DeleteItem}>Delete Folder</Menu.Item>
-          </Menu>
-        }
+        menu={{
+          items,
+          style: { minWidth: "150px" },
+          onClick: onSelectMenuItem,
+        }}
       >
-        <Button
-          // type="text"
-          className={appClasses.iconBtn}
-          icon={<BsThreeDots />}
-        ></Button>
+        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
       {folderGrantPermission.grantPermissionFormNode}
       {childrenFoldersGrantPermission.grantPermissionFormNode}

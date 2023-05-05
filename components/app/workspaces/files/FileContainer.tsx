@@ -1,26 +1,25 @@
+import { getBaseError } from "@/lib/utils/errors";
+import { File } from "fimidara";
 import React from "react";
-import { KeyedMutator, SWRConfiguration } from "swr";
-import { IGetFileDetailsEndpointResult } from "../../../../lib/api/endpoints/file";
-import { IFile } from "../../../../lib/definitions/file";
-import useFile from "../../../../lib/hooks/workspaces/useFile";
-import { getBaseError } from "../../../../lib/utils/errors";
+import { useWorkspaceFileFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
 
-export interface IFileContainerProps {
+export interface FileContainerProps {
   workspaceId: string;
   fileId: string;
-  render: (
-    file: IFile,
-    mutate: KeyedMutator<IGetFileDetailsEndpointResult>
-  ) => React.ReactElement;
-  swrConfig?: SWRConfiguration;
+  render: (file: File) => React.ReactElement;
 }
 
-const FileContainer: React.FC<IFileContainerProps> = (props) => {
-  const { fileId, swrConfig, render } = props;
-  const { data, error, isLoading, mutate } = useFile({ fileId }, swrConfig);
+const FileContainer: React.FC<FileContainerProps> = (props) => {
+  const { fileId, render } = props;
+  const data = useWorkspaceFileFetchHook({ fileId });
+  const error = data.store.error;
+  const { resource } = data.store.get(undefined);
+  const isLoading = data.store.loading || !data.store.initialized;
+
   if (error) {
     return (
       <PageError
@@ -28,11 +27,13 @@ const FileContainer: React.FC<IFileContainerProps> = (props) => {
         messageText={getBaseError(error) || "Error fetching file"}
       />
     );
-  } else if (isLoading || !data) {
+  } else if (isLoading) {
     return <PageLoading messageText="Loading file..." />;
+  } else if (!resource) {
+    return <PageNothingFound messageText="File not found." />;
   }
 
-  return render(data.file, mutate);
+  return render(resource);
 };
 
 export default FileContainer;

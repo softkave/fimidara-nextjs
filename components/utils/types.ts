@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import { IAppError } from "../../lib/utils/errors";
+import { AppError } from "../../lib/utils/errors";
 
 export type SelectInfo = Parameters<
   Required<React.ComponentProps<typeof Menu>>["onSelect"]
@@ -14,5 +14,5 @@ export type ElementError =
   | string[]
   | Error
   | Error[]
-  | IAppError
-  | IAppError[];
+  | AppError
+  | AppError[];

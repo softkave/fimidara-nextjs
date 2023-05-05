@@ -1,11 +1,11 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import isString from "lodash/isString";
-import { IAppError } from "../utils/errors";
+import { AppError } from "../utils/errors";
 import { IMergeDataMeta, mergeData } from "../utils/utils";
 import SessionActions from "./session/actions";
 import { IAppState } from "./types";
 
-export const errorToAppError = (err: Error | IAppError | string): IAppError => {
+export const errorToAppError = (err: Error | AppError | string): AppError => {
   const error = isString(err) ? new Error(err) : err;
 
   return {

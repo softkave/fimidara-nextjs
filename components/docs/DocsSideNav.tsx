@@ -1,10 +1,11 @@
 import { CloseOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Button, Drawer, Menu, Typography } from "antd";
+import { Drawer, Menu, Typography } from "antd";
 import { compact, last } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";
+import IconButton from "../utils/buttons/IconButton";
 import {
   DOCS_BASE_PATH,
   fimidaraAntdNavItems,
@@ -121,7 +122,7 @@ export function DocsSideNav(props: IDocsSideNavProps) {
         <div className={classes.sideNavMobileRoot02}>
           <div className={classes.sideNavMobileHeader}>
             <Typography.Title level={4}>Fimidara Docs</Typography.Title>
-            <Button icon={<CloseOutlined />} onClick={onClose} />
+            <IconButton icon={<CloseOutlined />} onClick={onClose} />
           </div>
           {menuNode}
         </div>

@@ -1,15 +1,15 @@
+import { getUsageForCost } from "@/lib/definitions/usageRecord";
 import { Space, Typography } from "antd";
-import pb from "pretty-bytes";
-import React from "react";
 import {
-  getUsageForCost,
   UsageRecordCategory,
   UsageRecordFulfillmentStatus,
-} from "../../../../lib/definitions/usageRecord";
-import { IWorkspace } from "../../../../lib/definitions/workspace";
+  Workspace,
+} from "fimidara";
+import pb from "pretty-bytes";
+import React from "react";
 
 export interface ISummedUsageRecordListItemProps {
-  workspace: IWorkspace;
+  workspace: Workspace;
   category: UsageRecordCategory;
   usage: number;
   usageCost: number;
@@ -32,25 +32,17 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
   const threshold = thresholds[category];
   let usageText = "";
   let labelText = "";
-  const usedText =
-    fulfillmentStatus === UsageRecordFulfillmentStatus.Fulfilled
-      ? "used"
-      : "not fulfilled";
-  const isFulfilled =
-    fulfillmentStatus === UsageRecordFulfillmentStatus.Fulfilled;
+  const usedText = fulfillmentStatus === "fulfilled" ? "used" : "not fulfilled";
+  const isFulfilled = fulfillmentStatus === "fulfilled";
 
-  if (
-    category === UsageRecordCategory.Storage ||
-    category === UsageRecordCategory.BandwidthIn ||
-    category === UsageRecordCategory.BandwidthOut
-  ) {
+  if (category === "storage" || category === "bin" || category === "bout") {
     if (threshold && isFulfilled) {
       const thresholdUsage = getUsageForCost(costPerUnit, threshold.budget);
       usageText = `${pb(usage)} of ${pb(thresholdUsage)} ${usedText}`;
     } else {
       usageText = `${pb(usage)} ${usedText}`;
     }
-  } else if (category === UsageRecordCategory.Total) {
+  } else if (category === "total") {
     if (threshold && isFulfilled) {
       usageText = `${usageCost.toFixed(4)} USD of ${threshold.budget.toFixed(
         4
@@ -62,13 +54,13 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
     }
   }
 
-  if (category === UsageRecordCategory.Storage) {
+  if (category === "storage") {
     labelText = "Storage";
-  } else if (category === UsageRecordCategory.BandwidthIn) {
+  } else if (category === "bin") {
     labelText = "Bandwidth In";
-  } else if (category === UsageRecordCategory.BandwidthOut) {
+  } else if (category === "bout") {
     labelText = "Bandwidth Out";
-  } else if (category === UsageRecordCategory.Total) {
+  } else if (category === "total") {
     labelText = "Total Cost";
   }
 

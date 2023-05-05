@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import NextNProgress from "nextjs-progressbar";
 import { Provider } from "react-redux";
+import FimidaraHeader from "../components/FimidaraHeader";
 import MarkdocDocsMain from "../components/docs/MarkdocDocsMain";
 import ErrorBoundary from "../components/utils/page/ErrorBoundary";
 import store from "../lib/store/store";
@@ -18,7 +19,6 @@ function FilesApp({ Component, pageProps }: AppProps) {
     <ErrorBoundary>
       <Provider store={store}>
         <Head>
-          {/* <link rel="shortcut icon" href="/fimidara.svg" /> */}
           <title>fimidara</title>
         </Head>
         <NextNProgress options={{ showSpinner: false }} />
@@ -32,6 +32,7 @@ function FilesApp({ Component, pageProps }: AppProps) {
             },
           }}
         >
+          <FimidaraHeader />
           {node}
         </ConfigProvider>
       </Provider>

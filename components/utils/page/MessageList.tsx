@@ -1,17 +1,17 @@
+import { AppError } from "@/lib/utils/errors";
 import { css, cx } from "@emotion/css";
 import { AlertProps } from "antd";
 import { TextProps } from "antd/es/typography/Text";
 import { isBoolean, isNumber, merge } from "lodash";
 import isString from "lodash/isString";
 import React from "react";
-import { IAppError } from "../../../lib/utils/errors";
-import { IStyleableComponent } from "../styling/types";
+import { StyleableComponentProps } from "../styling/types";
 import { appClasses } from "../theme";
 import { AlertGroup } from "./AlertGroup";
 import EmptyMessage from "./EmptyMessage";
 
-export interface IMessageListProps extends IStyleableComponent {
-  messages: string | IAppError | Array<string | IAppError> | null;
+export interface IMessageListProps extends StyleableComponentProps {
+  messages: string | AppError | Array<string | AppError> | null;
   shouldFillParent?: boolean;
   shouldPad?: boolean;
   type?: TextProps["type"];
@@ -49,7 +49,7 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
   } = props;
 
   // TODO: should we show a generic error instead of []
-  let errorList: IAppError[] = [];
+  let errorList: AppError[] = [];
   if (messages) {
     if (Array.isArray(messages)) {
       errorList = messages.map((error) =>

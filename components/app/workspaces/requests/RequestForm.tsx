@@ -1,27 +1,24 @@
+import CollaborationRequestAPI from "@/lib/api/endpoints/collaborationRequest";
+import { checkEndpointResult } from "@/lib/api/utils";
+import {
+  ICollaborationRequest,
+  ICollaborationRequestInput,
+} from "@/lib/definitions/collaborationRequest";
+import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import useCollaborationRequest from "@/lib/hooks/requests/useUserCollaborationRequest";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { messages } from "@/lib/messages/messages";
+import { systemValidation } from "@/lib/validation/system";
+import { signupValidationParts } from "@/lib/validation/user";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, DatePicker, Form, Input, message, Typography } from "antd";
+import { Button, DatePicker, Form, Input, Typography, message } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import * as yup from "yup";
-import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import {
-  ICollaborationRequest,
-  ICollaborationRequestInput,
-} from "../../../../lib/definitions/collaborationRequest";
-import {
-  appWorkspacePaths,
-  systemConstants,
-} from "../../../../lib/definitions/system";
-import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
-import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import { messages } from "../../../../lib/messages/messages";
-import { systemValidation } from "../../../../lib/validation/system";
-import { signupValidationParts } from "../../../../lib/validation/user";
-import { formClasses } from "../../../form/classNames";
 import FormError from "../../../form/FormError";
+import { formClasses } from "../../../form/classNames";
 import { FormAlert } from "../../../utils/FormAlert";
 import SelectPermissionGroupInput from "../permissionGroups/SelectPermissionGroupInput";
 

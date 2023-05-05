@@ -12,7 +12,7 @@ export interface IThumbnailContentProps {
   prefixNode?: React.ReactNode;
   suffixNode?: React.ReactNode;
   main: React.ReactNode;
-  menu?: MenuProps;
+  menu?: MenuProps | React.ReactElement;
   selectable?: boolean;
   selected?: boolean;
   withCheckbox?: boolean;
@@ -47,7 +47,11 @@ const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
   } = props;
   let menuNode: React.ReactNode = null;
   if (menu) {
-    menuNode = <DropdownButton menu={menu} triggerNode={<MenuButton />} />;
+    menuNode = React.isValidElement(menu) ? (
+      menu
+    ) : (
+      <DropdownButton menu={menu as MenuProps} triggerNode={<MenuButton />} />
+    );
   }
 
   const columnsLayout: GridTemplateLayout = [

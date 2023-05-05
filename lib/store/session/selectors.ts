@@ -4,6 +4,10 @@ function getUserToken(state: IAppState) {
   return state.session.token;
 }
 
+function getUserFimidaraAgentToken(state: IAppState) {
+  return state.session.agentToken;
+}
+
 function isUserSignedIn(state: IAppState) {
   return !!state.session.token && !!state.session.userId;
 }
@@ -22,6 +26,7 @@ function getUserId(state: IAppState) {
 
 export default class SessionSelectors {
   static getUserToken = getUserToken;
+  static getUserFimidaraAgentToken = getUserFimidaraAgentToken;
   static isUserSignedIn = isUserSignedIn;
   static getSessionType = getSessionType;
   static getSessionData = getSessionData;

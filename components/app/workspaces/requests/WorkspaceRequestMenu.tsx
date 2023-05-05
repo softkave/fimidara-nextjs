@@ -1,27 +1,19 @@
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useRequest } from "ahooks";
-import { Button, Dropdown, Menu, message, Modal } from "antd";
-import { last } from "lodash";
+import { Dropdown, MenuProps, message, Modal } from "antd";
+import { CollaborationRequestForWorkspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import {
-  CollaborationRequestStatusType,
-  ICollaborationRequest,
-} from "../../../../lib/definitions/collaborationRequest";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
-import {
-  AppResourceType,
-  appWorkspacePaths,
-} from "../../../../lib/definitions/system";
 import useGrantPermission from "../../../hooks/useGrantPermission";
+import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
 
 export interface IWorkspaceRequestMenuProps {
-  request: ICollaborationRequest;
+  request: CollaborationRequestForWorkspace;
   onCompleteDeleteRequest: () => void;
 }
 
@@ -35,24 +27,27 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   const { request, onCompleteDeleteRequest } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: request.workspaceId,
-    targetType: AppResourceType.CollaborationRequest,
+    targetType: "collaborationRequest",
     containerId: request.workspaceId,
-    containerType: AppResourceType.Workspace,
+    containerType: "workspace",
     targetId: request.resourceId,
-    appliesTo: PermissionItemAppliesTo.Children,
+    appliesTo: "children",
   });
 
   const deleteItem = React.useCallback(async () => {
     try {
-      const result = await CollaborationRequestAPI.deleteRequest({
-        requestId: request.resourceId,
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+      const result = await endpoints.collaborationRequests.deleteRequest({
+        body: { requestId: request.resourceId },
       });
 
-      checkEndpointResult(result);
-      message.success("Request sent");
+      message.success("Collaboration request sent.");
       await onCompleteDeleteRequest();
     } catch (error: any) {
-      errorMessageNotificatition(error, "Error deleting request");
+      errorMessageNotificatition(
+        error,
+        "Error deleting collaboration request."
+      );
     }
   }, [request, onCompleteDeleteRequest]);
 
@@ -80,41 +75,50 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
     [deleteItemHelper, toggleVisibility]
   );
 
-  const status = last(request.statusHistory);
-  const isPending = status?.status === CollaborationRequestStatusType.Pending;
+  const isPending = request.status === "pending";
+  const items: MenuProps["items"] = [
+    {
+      // TODO: only show if user has permission
+      key: MenuKeys.UpdateItem,
+      label: (
+        <Link
+          href={
+            isPending
+              ? "#"
+              : appWorkspacePaths.requestForm(
+                  request.workspaceId,
+                  request.resourceId
+                )
+          }
+        >
+          Update Request
+        </Link>
+      ),
+      disabled: isPending,
+    },
+    {
+      key: MenuKeys.GrantPermission,
+      label: "Permissions",
+    },
+    {
+      key: MenuKeys.DeleteItem,
+      label: "Delete Request",
+      disabled: isPending,
+    },
+  ];
+
   return (
     <React.Fragment>
       <Dropdown
         disabled={deleteItemHelper.loading}
         trigger={["click"]}
-        overlay={
-          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
-            <Menu.Item key={MenuKeys.UpdateItem} disabled={!isPending}>
-              <Link
-                href={appWorkspacePaths.requestForm(
-                  request.workspaceId,
-                  request.resourceId
-                )}
-              >
-                Update Request
-              </Link>
-            </Menu.Item>
-            <Menu.Divider key={"divider-01"} />
-            <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Access To Resource
-            </Menu.Item>
-            <Menu.Divider key={"divider-02"} />
-            <Menu.Item key={MenuKeys.DeleteItem} disabled={!isPending}>
-              Delete Request
-            </Menu.Item>
-          </Menu>
-        }
+        menu={{
+          items,
+          style: { minWidth: "150px" },
+          onClick: onSelectMenuItem,
+        }}
       >
-        <Button
-          // type="text"
-          className={appClasses.iconBtn}
-          icon={<BsThreeDots />}
-        ></Button>
+        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
       {grantPermissionFormNode}
     </React.Fragment>

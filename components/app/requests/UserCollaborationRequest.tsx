@@ -1,28 +1,22 @@
-import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Button, message, Space, Typography } from "antd";
-import assert from "assert";
-import { formatRelative } from "date-fns";
-import { last } from "lodash";
-import React from "react";
-import { useSWRConfig } from "swr";
-import CollaborationRequestAPI from "../../../lib/api/endpoints/collaborationRequest";
-import { checkEndpointResult } from "../../../lib/api/utils";
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import {
   CollaborationRequestResponse,
   CollaborationRequestStatusType,
-} from "../../../lib/definitions/collaborationRequest";
-import useCollaborationRequest, {
-  getUseCollaborationRequestHookKey,
-} from "../../../lib/hooks/requests/useRequest";
-import { getBaseError } from "../../../lib/utils/errors";
-import withPageAuthRequiredHOC from "../../hoc/withPageAuthRequired";
-import { errorMessageNotificatition } from "../../utils/errorHandling";
-import InlineLoading from "../../utils/InlineLoading";
+} from "@/lib/definitions/collaborationRequest";
+import { getBaseError } from "@/lib/utils/errors";
+import { css } from "@emotion/css";
+import { useRequest } from "ahooks";
+import { Button, Space, Typography, message } from "antd";
+import assert from "assert";
+import { formatRelative } from "date-fns";
+import React from "react";
+import { useUserCollaborationRequestFetchHook } from "../../../lib/hooks/fetchHooks";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
+import PageNothingFound from "../../utils/PageNothingFound";
+import { errorMessageNotificatition } from "../../utils/errorHandling";
+import InlineLoading from "../../utils/page/InlineLoading";
 import { appDimensions } from "../../utils/theme";
-import LoggedInHeader from "../LoggedInHeader";
 
 export interface IUserCollaborationRequestProps {
   requestId: string;
@@ -38,58 +32,65 @@ const classes = {
 
 function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
   const { requestId } = props;
-  const { error, isLoading, data } = useCollaborationRequest(requestId);
-  const { mutate } = useSWRConfig();
+  const data = useUserCollaborationRequestFetchHook({ requestId });
+  const error = data.store.error;
+  const { resource } = data.store.get(undefined);
+  const isLoading = data.store.loading || !data.store.initialized;
+
   const onRespond = React.useCallback(
     async (response: CollaborationRequestResponse) => {
       try {
-        assert(data);
-        const result = await CollaborationRequestAPI.respondToRequest({
-          response,
-          requestId: data.request.resourceId,
+        assert(resource);
+        const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+        const result = await endpoints.collaborationRequests.respondToRequest({
+          body: { response, requestId: resource.resourceId },
         });
 
-        checkEndpointResult(result);
-        mutate(getUseCollaborationRequestHookKey(requestId), result, false);
-        message.success("Response submitted");
+        message.success("Response submitted.");
       } catch (error) {
         errorMessageNotificatition(error);
       }
     },
-    [requestId, data, mutate]
+    [requestId, resource]
   );
 
   const respondResult = useRequest(onRespond, { manual: true });
-  let content: React.ReactNode = null;
 
   if (error) {
-    content = (
+    return (
       <PageError
-        messageText={getBaseError(error) || "Error fetching request"}
+        messageText={
+          getBaseError(error) || "Error fetching collaboration request."
+        }
       />
     );
-  } else if (isLoading || !data) {
-    content = <PageLoading messageText="Loading request..." />;
+  } else if (isLoading) {
+    return <PageLoading messageText="Loading request..." />;
+  } else if (!resource) {
+    return <PageNothingFound messageText="Collaboration request not found." />;
   } else {
-    const request = data.request;
-    const createdDate = formatRelative(new Date(request.createdAt), new Date());
+    const createdDate = formatRelative(
+      new Date(resource.createdAt),
+      new Date()
+    );
     const expirationDate =
-      request.expiresAt &&
-      formatRelative(new Date(request.expiresAt), new Date());
-    const status = last(request.statusHistory);
-    const statusDate =
-      status?.date && formatRelative(new Date(status.date), new Date());
+      resource.expiresAt &&
+      formatRelative(new Date(resource.expiresAt), new Date());
+    const statusDate = formatRelative(
+      new Date(resource.statusDate),
+      new Date()
+    );
     const statusText =
-      status?.status === CollaborationRequestStatusType.Accepted
+      resource.status === CollaborationRequestStatusType.Accepted
         ? "accepted"
-        : status?.status === CollaborationRequestStatusType.Declined
+        : resource.status === CollaborationRequestStatusType.Declined
         ? "declined"
-        : status?.status === CollaborationRequestStatusType.Revoked
+        : resource.status === CollaborationRequestStatusType.Revoked
         ? "revoked"
         : "pending";
 
     const actions =
-      status?.status === CollaborationRequestStatusType.Pending ? (
+      resource.status === CollaborationRequestStatusType.Pending ? (
         respondResult.loading ? (
           <InlineLoading />
         ) : (
@@ -120,19 +121,19 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
         </Typography.Text>
       );
 
-    content = (
+    return (
       <div className={classes.main}>
         <Space direction="vertical" size={"large"}>
           <Space direction="vertical" size={2}>
             <Typography.Title level={4} style={{ margin: 0 }}>
-              Collaboration Request from {request.workspaceName}
+              Collaboration Request from {resource.workspaceName}
             </Typography.Title>
             <Typography.Text type="secondary">
               Sent {createdDate}
             </Typography.Text>
           </Space>
           <Space direction="vertical" size={2}>
-            <Typography.Paragraph>{request.message}</Typography.Paragraph>
+            <Typography.Paragraph>{resource.message}</Typography.Paragraph>
             {expirationDate && (
               <Typography.Text type="secondary">
                 Expires {expirationDate}
@@ -144,13 +145,6 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
       </div>
     );
   }
-
-  return (
-    <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-      <LoggedInHeader />
-      {content}
-    </Space>
-  );
 }
 
-export default withPageAuthRequiredHOC(UserCollaborationRequest);
+export default UserCollaborationRequest;

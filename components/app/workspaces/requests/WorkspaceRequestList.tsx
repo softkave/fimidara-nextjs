@@ -1,26 +1,22 @@
-import { css } from "@emotion/css";
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { getUseWorkspaceRequestListHookKey } from "@/lib/hooks/workspaces/useWorkspaceRequestList";
+import { getResourceId } from "@/lib/utils/resource";
 import { useRequest } from "ahooks";
-import { Button, Dropdown, List, Menu, message, Modal } from "antd";
-import { last } from "lodash";
+import { message, Modal } from "antd";
+import { CollaborationRequestForWorkspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
 import { useSWRConfig } from "swr";
-import CollaborationRequestAPI from "../../../../lib/api/endpoints/collaborationRequest";
-import { checkEndpointResult } from "../../../../lib/api/utils";
-import {
-  CollaborationRequestStatusType,
-  ICollaborationRequest,
-} from "../../../../lib/definitions/collaborationRequest";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
-import { appClasses } from "../../../utils/theme";
+import ItemList from "../../../utils/list/ItemList";
+import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import { SelectInfo } from "../../../utils/types";
+import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 
 export interface IWorkspaceRequestListProps {
   workspaceId: string;
-  requests: ICollaborationRequest[];
+  requests: CollaborationRequestForWorkspace[];
 }
 
 enum MenuKeys {
@@ -28,29 +24,24 @@ enum MenuKeys {
   UpdateItem = "update-item",
 }
 
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
-
 const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
   const { workspaceId, requests } = props;
   const { mutate } = useSWRConfig();
   const deleteItem = React.useCallback(
     async (itemId: string) => {
       try {
-        const result = await CollaborationRequestAPI.deleteRequest({
-          requestId: itemId,
+        const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+        const result = await endpoints.collaborationRequests.deleteRequest({
+          body: { requestId: itemId },
         });
 
-        checkEndpointResult(result);
         mutate(getUseWorkspaceRequestListHookKey(workspaceId));
-        message.success("Request sent");
+        message.success("Collaboration request sent.");
       } catch (error: any) {
-        errorMessageNotificatition(error, "Error deleting request");
+        errorMessageNotificatition(
+          error,
+          "Error deleting collaboration request."
+        );
       }
     },
     [workspaceId, mutate]
@@ -78,63 +69,28 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
     [deleteItemHelper]
   );
 
-  const renderMenu = (item: ICollaborationRequest) => {
-    const status = last(item.statusHistory);
-    const isPending = status?.status === CollaborationRequestStatusType.Pending;
-    return (
-      <Dropdown
-        disabled={deleteItemHelper.loading}
-        trigger={["click"]}
-        overlay={
-          <Menu
-            onSelect={(info) => onSelectMenuItem(info, item.resourceId)}
-            style={{ minWidth: "150px" }}
-          >
-            <Menu.Item key={MenuKeys.UpdateItem} disabled={!isPending}>
-              <Link
-                href={appWorkspacePaths.requestForm(
-                  workspaceId,
-                  item.resourceId
-                )}
-              >
-                Update Request
-              </Link>
-            </Menu.Item>
-            <Menu.Divider key={"divider-01"} />
-            <Menu.Item key={MenuKeys.DeleteItem} disabled={!isPending}>
-              Delete Request
-            </Menu.Item>
-          </Menu>
-        }
-      >
-        <Button
-          // type="text"
-          className={appClasses.iconBtn}
-          icon={<BsThreeDots />}
-        ></Button>
-      </Dropdown>
-    );
-  };
-
   return (
-    <List
-      className={classes.list}
-      itemLayout="horizontal"
-      dataSource={requests}
-      renderItem={(item) => (
-        <List.Item key={item.resourceId} actions={[renderMenu(item)]}>
-          <List.Item.Meta
-            title={
+    <ItemList
+      items={requests}
+      renderItem={(item: CollaborationRequestForWorkspace) => (
+        <ThumbnailContent
+          key={item.resourceId}
+          main={
+            <div>
               <Link
                 href={appWorkspacePaths.request(workspaceId, item.resourceId)}
               >
                 {item.recipientEmail}
               </Link>
-            }
-            description={last(item.statusHistory)?.status}
-          />
-        </List.Item>
+              {item.status}
+            </div>
+          }
+          menu={<WorkspaceRequestMenu request={item} onCompleteDeleteRequest={() => {
+            TODO: change mutate
+          }} />}
+        />
       )}
+      getId={getResourceId}
     />
   );
 };

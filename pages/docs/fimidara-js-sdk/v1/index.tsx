@@ -1,6 +1,6 @@
+import DocsMain from "@/components/docs/DocsMain";
+import JsSdkIndex from "@/components/docs/JsSdkIndex";
 import { NextPage } from "next";
-import DocsMain from "../../../../components/docs/DocsMain";
-import JsSdkIndex from "../../../../components/docs/JsSdkIndex";
 
 interface FimidaraJsSdkIndexDocPageProps {}
 

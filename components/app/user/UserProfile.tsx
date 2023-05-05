@@ -1,28 +1,23 @@
-import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Button, Form, Input, message } from "antd";
-import React from "react";
-import * as yup from "yup";
+import FormError from "@/components/form/FormError";
 import {
   formBodyClassName,
   formContentWrapperClassName,
-} from "../../../components/form/classNames";
-import FormError from "../../../components/form/FormError";
-import { preSubmitCheck } from "../../../components/form/formUtils";
-import UserEndpoint from "../../../lib/api/endpoints/user";
-import { checkEndpointResult } from "../../../lib/api/utils";
-import {
-  EmailAddressNotAvailableError,
-  IUser,
-  IUserProfileInput,
-  userConstants,
-} from "../../../lib/definitions/user";
-import useFormHelpers from "../../../lib/hooks/useFormHelpers";
-import useUser from "../../../lib/hooks/useUser";
-import { messages } from "../../../lib/messages/messages";
-import { getBaseError, toAppErrorsArray } from "../../../lib/utils/errors";
-import { flattenErrorList } from "../../../lib/utils/utils";
-import { signupValidationParts } from "../../../lib/validation/user";
+} from "@/components/form/classNames";
+import { preSubmitCheck } from "@/components/form/formUtils";
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { userConstants } from "@/lib/definitions/user";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import useUser from "@/lib/hooks/useUser";
+import { messages } from "@/lib/messages/messages";
+import { getBaseError } from "@/lib/utils/errors";
+import { signupValidationParts } from "@/lib/validation/user";
+import { css } from "@emotion/css";
+import { useRequest } from "ahooks";
+import { Button, Form, Input, message } from "antd";
+import assert from "assert";
+import { PublicUser, UpdateUserEndpointParams } from "fimidara";
+import React from "react";
+import * as yup from "yup";
 import { FormAlert } from "../../utils/FormAlert";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
@@ -35,7 +30,7 @@ const userSettingsValidation = yup.object().shape({
   email: signupValidationParts.email.required(messages.emailRequired),
 });
 
-function getInitialValues(user?: IUser): IUserProfileInput {
+function getInitialValues(user?: PublicUser): UpdateUserEndpointParams {
   if (!user) {
     return {
       firstName: "",
@@ -54,25 +49,12 @@ function getInitialValues(user?: IUser): IUserProfileInput {
 export default function UserProfile(props: IUserProfileProps) {
   const { isLoading, error, data, mutate } = useUser();
   const onSubmit = React.useCallback(
-    async (data: IUserProfileInput) => {
-      try {
-        const result = await UserEndpoint.updateUser(data);
-        checkEndpointResult(result);
-        mutate(result, false);
-        message.success("Profile updated");
-      } catch (error) {
-        const errArray = toAppErrorsArray(error);
-        const flattenedErrors = flattenErrorList(errArray);
-        const emailExistsErr = errArray.find((err) => {
-          return err.name === EmailAddressNotAvailableError.name;
-        });
-
-        if (emailExistsErr) {
-          flattenedErrors["email"] = [emailExistsErr.message];
-        }
-
-        throw flattenedErrors;
-      }
+    async (input: UpdateUserEndpointParams) => {
+      assert(data);
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+      const result = await endpoints.users.updateUser({ body: input });
+      mutate({ ...data, user: result.body.user }, false);
+      message.success("Profile updated.");
     },
     [mutate]
   );

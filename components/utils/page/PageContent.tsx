@@ -2,22 +2,22 @@ import { cx } from "@emotion/css";
 import { defaultTo, isFunction } from "lodash";
 import React from "react";
 import { GridHelpers, GridPortions, GridTemplateLayout } from "../styling/grid";
-import { IStyleableComponent } from "../styling/types";
+import { StyleableComponentProps } from "../styling/types";
 import { appClasses } from "../theme";
 import EmptyMessage from "./EmptyMessage";
 import InlineLoading from "./InlineLoading";
 import LoadingEllipsis from "./LoadingEllipsis";
 import MessageList, { IMessageListProps } from "./MessageList";
 
-export interface IPageContentProps<T = any> extends IStyleableComponent {
+export interface IPageContentProps<T = any> extends StyleableComponentProps {
   isLoading?: boolean;
   error?: IMessageListProps["messages"];
   emptyMessage?: string;
   data?: T;
   render: ((item: T) => React.ReactNode) | React.ReactNode;
-  styleInlineLoading?: IStyleableComponent;
-  styleMessageList?: IStyleableComponent;
-  styleRender?: IStyleableComponent;
+  styleInlineLoading?: StyleableComponentProps;
+  styleMessageList?: StyleableComponentProps;
+  styleRender?: StyleableComponentProps;
 }
 
 function PageContent<T>(props: IPageContentProps<T>) {

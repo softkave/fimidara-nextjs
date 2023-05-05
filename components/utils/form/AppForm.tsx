@@ -1,8 +1,8 @@
+import { getErrorMessage } from "@/lib/utils/errors";
 import { css, cx } from "@emotion/css";
 import { Alert, Button, Form } from "antd";
 import React from "react";
 import { AnyObject } from "yup/lib/types";
-import { getErrorMessage } from "../../../lib/utils/errors";
 import AppFormItem from "./AppFormItem";
 import { IFormBag, IFormItem } from "./types";
 

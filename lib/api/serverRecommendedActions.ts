@@ -2,20 +2,20 @@ import KeyValueActions from "../store/key-value/actions";
 import { KeyValueKeys } from "../store/key-value/types";
 import SessionActions from "../store/session/actions";
 import store from "../store/store";
-import { IAppError } from "../utils/errors";
+import { AppError } from "../utils/errors";
 
 export enum ServerRecommendedActions {
   LoginAgain = "LoginAgain",
   Logout = "Logout",
 }
 
-function getErrorsWithServerRecommendedActions(errors: IAppError[]) {
+function getErrorsWithServerRecommendedActions(errors: AppError[]) {
   return errors.filter((error) => {
     return !!error.action;
   });
 }
 
-const shouldLoginAgain = (error: IAppError) => {
+const shouldLoginAgain = (error: AppError) => {
   if (
     error.action === ServerRecommendedActions.LoginAgain ||
     error.action === ServerRecommendedActions.Logout
@@ -36,7 +36,7 @@ export function handleLoginAgainError() {
   );
 }
 
-export function processServerRecommendedActions(errors: IAppError[]) {
+export function processServerRecommendedActions(errors: AppError[]) {
   const errorsWithActions = getErrorsWithServerRecommendedActions(errors);
 
   if (errorsWithActions.length === 0) {

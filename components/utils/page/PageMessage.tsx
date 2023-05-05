@@ -1,13 +1,13 @@
+import { AppError } from "@/lib/utils/errors";
 import { Typography } from "antd";
 import { TextProps } from "antd/es/typography/Text";
 import isString from "lodash/isString";
 import React from "react";
-import { IAppError } from "../../../lib/utils/errors";
 import EmptyMessage, { IEmptyMessageProps } from "./EmptyMessage";
 
 export interface IPageMessageProps extends IEmptyMessageProps {
   type?: TextProps["type"];
-  message: Error | Pick<IAppError, "message"> | string;
+  message: Error | Pick<AppError, "message"> | string;
 
   /** Don't wrap in EmptyMessage which renders a large icon and a message */
   showMessageOnly?: boolean;

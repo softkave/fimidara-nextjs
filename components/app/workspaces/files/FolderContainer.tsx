@@ -1,28 +1,23 @@
+import { getBaseError } from "@/lib/utils/errors";
+import { Folder } from "fimidara";
 import React from "react";
-import { KeyedMutator, SWRConfiguration } from "swr";
-import { IGetFolderEndpointResult } from "../../../../lib/api/endpoints/folder";
-import { IFolder } from "../../../../lib/definitions/folder";
-import useFolder from "../../../../lib/hooks/workspaces/useFolder";
-import { getBaseError } from "../../../../lib/utils/errors";
+import { useWorkspaceFolderFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
+import PageNothingFound from "../../../utils/PageNothingFound";
 import { appClasses } from "../../../utils/theme";
 
-export interface IFolderContainerProps {
+export interface FolderContainerProps {
   folderId: string;
-  render: (
-    folder: IFolder,
-    mutate: KeyedMutator<IGetFolderEndpointResult>
-  ) => React.ReactElement;
-  fetchConfig?: SWRConfiguration;
+  render: (folder: Folder) => React.ReactElement;
 }
 
-const FolderContainer: React.FC<IFolderContainerProps> = (props) => {
-  const { folderId, fetchConfig, render } = props;
-  const { data, error, isLoading, mutate } = useFolder(
-    { folderId },
-    fetchConfig
-  );
+const FolderContainer: React.FC<FolderContainerProps> = (props) => {
+  const { folderId, render } = props;
+  const data = useWorkspaceFolderFetchHook({ folderId });
+  const error = data.store.error;
+  const { resource } = data.store.get(undefined);
+  const isLoading = data.store.loading || !data.store.initialized;
 
   if (error) {
     return (
@@ -31,11 +26,13 @@ const FolderContainer: React.FC<IFolderContainerProps> = (props) => {
         messageText={getBaseError(error) || "Error fetching folder"}
       />
     );
-  } else if (isLoading || !data) {
+  } else if (isLoading) {
     return <PageLoading messageText="Loading folder..." />;
+  } else if (!resource) {
+    return <PageNothingFound messageText="Folder not found." />;
   }
 
-  return render(data.folder, mutate);
+  return render(resource);
 };
 
 export default FolderContainer;

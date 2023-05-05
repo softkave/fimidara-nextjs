@@ -1,22 +1,18 @@
+import { getPublicFimidaraEndpointsUsingFimidaraAgentToken } from "@/lib/api/fimidaraEndpoints";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { IWorkspace } from "@/lib/definitions/workspace";
+import { getUseWorkspaceHookKey } from "@/lib/hooks/workspaces/useWorkspace";
 import { LeftOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
+import { Dropdown, MenuProps, Modal, Space, Typography } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useSWRConfig } from "swr";
-import WorkspaceAPI from "../../../lib/api/endpoints/workspace";
-import { checkEndpointResult } from "../../../lib/api/utils";
-import { PermissionItemAppliesTo } from "../../../lib/definitions/permissionItem";
-import {
-  AppResourceType,
-  appWorkspacePaths,
-} from "../../../lib/definitions/system";
-import { IWorkspace } from "../../../lib/definitions/workspace";
-import { getUseWorkspaceHookKey } from "../../../lib/hooks/workspaces/useWorkspace";
 import useGrantPermission from "../../hooks/useGrantPermission";
+import IconButton from "../../utils/buttons/IconButton";
 import { appClasses } from "../../utils/theme";
 import { MenuInfo } from "../../utils/types";
 import WorkspaceAvatar from "./WorkspaceAvatar";
@@ -48,11 +44,11 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
   const { cache } = useSWRConfig();
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: workspace.resourceId,
-    targetType: AppResourceType.Workspace,
+    targetType: "workspace",
     containerId: workspace.resourceId,
-    containerType: AppResourceType.Workspace,
+    containerType: "workspace",
     targetId: workspace.resourceId,
-    appliesTo: PermissionItemAppliesTo.Container,
+    appliesTo: "self",
   });
 
   const onGoBack = React.useCallback(() => {
@@ -60,11 +56,11 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
   }, [router]);
 
   const deleteWorkspace = React.useCallback(async () => {
-    const result = await WorkspaceAPI.deleteWorkspace({
-      workspaceId: workspace.resourceId,
+    const endpoints = getPublicFimidaraEndpointsUsingFimidaraAgentToken();
+    const result = await endpoints.workspaces.deleteWorkspace({
+      body: { workspaceId: workspace.resourceId },
     });
 
-    checkEndpointResult(result);
     router.push(appWorkspacePaths.workspaces);
 
     // TODO: delete all cache keys
@@ -95,13 +91,28 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
     [toggleVisibility, deleteWorkspaceHelper]
   );
 
-  const editWorkspacePath = appWorkspacePaths.editWorkspaceForm(
+  const editWorkspacePath = appWorkspacePaths.updateWorkspaceForm(
     workspace.resourceId
   );
+  const items: MenuProps["items"] = [
+    {
+      key: editWorkspacePath,
+      label: <Link href={editWorkspacePath}>Update Workspace</Link>,
+    },
+    {
+      key: MenuKeys.GrantPermission,
+      label: "Permissions",
+    },
+    {
+      key: MenuKeys.DeleteWorkspace,
+      label: "Delete Workspace",
+    },
+  ];
+
   return (
     <div className={classes.root}>
       {grantPermissionFormNode}
-      <Button icon={<LeftOutlined />} onClick={onGoBack} />
+      <IconButton icon={<LeftOutlined />} onClick={onGoBack} />
       <Space className={classes.name}>
         <WorkspaceAvatar
           workspaceId={workspace.resourceId}
@@ -114,25 +125,13 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
       <Dropdown
         disabled={deleteWorkspaceHelper.loading}
         trigger={["click"]}
-        overlay={
-          <Menu onClick={onSelectMenuItem} style={{ minWidth: "150px" }}>
-            <Menu.Item key={editWorkspacePath}>
-              <Link href={editWorkspacePath}>Edit</Link>
-            </Menu.Item>
-            <Menu.Divider key={"divider-01"} />
-            <Menu.Item key={MenuKeys.GrantPermission}>
-              Grant Access To Resource
-            </Menu.Item>
-            <Menu.Divider key={"divider-02"} />
-            <Menu.Item key={MenuKeys.DeleteWorkspace}>Delete</Menu.Item>
-          </Menu>
-        }
+        menu={{
+          items,
+          style: { minWidth: "150px" },
+          onClick: onSelectMenuItem,
+        }}
       >
-        <Button
-          className={appClasses.iconBtn}
-          // type="text"
-          icon={<BsThreeDots />}
-        ></Button>
+        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
     </div>
   );

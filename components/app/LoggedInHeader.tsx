@@ -1,8 +1,9 @@
 import { AlertOutlined, ShopOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Button, Popover, Space, Tooltip, Typography } from "antd";
+import { Popover, Space, Tooltip, Typography } from "antd";
 import Link from "next/link";
 import { appWorkspacePaths } from "../../lib/definitions/system";
+import IconButton from "../utils/buttons/IconButton";
 import UserMenu from "./UserMenu";
 import UserCollaborationRequestList from "./requests/UserCollaborationRequestList";
 
@@ -48,7 +49,7 @@ export default function LoggedInHeader(props: ILoggedInHeaderProps) {
         <Space size="middle">
           <Link href={appWorkspacePaths.workspaces}>
             <Tooltip title="Workspaces">
-              <Button icon={<ShopOutlined />} />
+              <IconButton icon={<ShopOutlined />} />
             </Tooltip>
           </Link>
           <Popover
@@ -62,7 +63,7 @@ export default function LoggedInHeader(props: ILoggedInHeaderProps) {
             placement="bottomRight"
           >
             <Tooltip title="Collaboration Requests">
-              <Button icon={<AlertOutlined />} />
+              <IconButton icon={<AlertOutlined />} />
             </Tooltip>
           </Popover>
           <UserMenu />

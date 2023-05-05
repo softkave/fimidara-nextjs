@@ -1,7 +1,7 @@
+import { AnyObject } from "@/lib/utils/types";
 import { FormItemProps, RadioGroupProps, SelectProps } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
-import { AnyObject } from "../../../lib/utils/types";
 import { IFormFieldProps, IFormFieldRenderFnProps } from "./FormField";
 
 /** Record of path -> boolean (true or false for saving or not), and string (for

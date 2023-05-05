@@ -1,28 +1,21 @@
+import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
+import { folderConstants } from "@/lib/definitions/folder";
+import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { getUseWorkspaceHookKey } from "@/lib/hooks/workspaces/useWorkspace";
+import { messages } from "@/lib/messages/messages";
+import { fileValidationParts } from "@/lib/validation/file";
+import { systemValidation } from "@/lib/validation/system";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Form, Input, message, Space, Typography } from "antd";
+import { Button, Form, Input, Space, Typography, message } from "antd";
+import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSWRConfig } from "swr";
 import * as yup from "yup";
-import WorkspaceAPI from "../../../lib/api/endpoints/workspace";
-import { checkEndpointResult } from "../../../lib/api/utils";
-import { folderConstants } from "../../../lib/definitions/folder";
-import {
-  appWorkspacePaths,
-  systemConstants,
-} from "../../../lib/definitions/system";
-import {
-  INewWorkspaceInput,
-  IWorkspace,
-} from "../../../lib/definitions/workspace";
-import useFormHelpers from "../../../lib/hooks/useFormHelpers";
-import { getUseWorkspaceHookKey } from "../../../lib/hooks/workspaces/useWorkspace";
-import { messages } from "../../../lib/messages/messages";
-import { fileValidationParts } from "../../../lib/validation/file";
-import { systemValidation } from "../../../lib/validation/system";
-import { formClasses } from "../../form/classNames";
 import FormError from "../../form/FormError";
+import { formClasses } from "../../form/classNames";
 import { FormAlert } from "../../utils/FormAlert";
 import { getRootnameFromName } from "./utils";
 
@@ -32,15 +25,15 @@ const workspaceValidation = yup.object().shape({
   description: systemValidation.description,
 });
 
-const initialValues: INewWorkspaceInput = {
+const initialValues: AddWorkspaceEndpointParams = {
   name: "",
   rootname: "",
   description: "",
 };
 
 function getWorkspaceFormInputFromWorkspace(
-  item: IWorkspace
-): INewWorkspaceInput {
+  item: Workspace
+): AddWorkspaceEndpointParams {
   return {
     name: item.name,
     rootname: item.rootname,
@@ -48,40 +41,39 @@ function getWorkspaceFormInputFromWorkspace(
   };
 }
 
-export interface IWorkspaceFormProps {
-  workspace?: IWorkspace;
+export interface WorkspaceFormProps {
+  workspace?: Workspace;
   className?: string;
 }
 
-export default function WorkspaceForm(props: IWorkspaceFormProps) {
+export default function WorkspaceForm(props: WorkspaceFormProps) {
   const { workspace, className } = props;
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const onSubmit = React.useCallback(
-    async (data: INewWorkspaceInput) => {
+    async (data: AddWorkspaceEndpointParams) => {
       let workspaceId: string | null = null;
+      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+
       if (workspace) {
-        const result = await WorkspaceAPI.updateWorkspace({
-          workspace: data,
-          workspaceId: workspace.resourceId,
+        const result = await endpoints.workspaces.updateWorkspace({
+          body: { workspace: data, workspaceId: workspace.resourceId },
         });
 
-        checkEndpointResult(result);
-        workspaceId = result.workspace.resourceId;
+        workspaceId = result.body.workspace.resourceId;
         mutate(
           getUseWorkspaceHookKey(workspace.resourceId),
-          result.workspace,
+          result.body.workspace,
           false
         );
-        message.success("Workspace updated");
+        message.success("Workspace updated.");
       } else {
-        const result = await WorkspaceAPI.addWorkspace(data);
-        checkEndpointResult(result);
-        workspaceId = result.workspace.resourceId;
-        message.success("Workspace created");
+        const result = await endpoints.workspaces.addWorkspace({ body: data });
+        workspaceId = result.body.workspace.resourceId;
+        message.success("Workspace created.");
       }
 
-      router.push(`${appWorkspacePaths.workspaces}/${workspaceId}`);
+      router.push(appWorkspacePaths.rootFolderList(workspaceId));
     },
     [workspace, mutate, router]
   );
