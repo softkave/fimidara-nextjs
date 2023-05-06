@@ -1,11 +1,10 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
 import { AppResourceType } from "@/lib/definitions/system";
-import { useRequest } from "ahooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { Collaborator } from "fimidara";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { useWorkspaceCollaboratorDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
@@ -35,24 +34,16 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
     appliesTo: PermissionItemAppliesTo.Children,
   });
 
-  const deleteItem = React.useCallback(async () => {
-    try {
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.collaborators.removeCollaborator({
-        body: {
-          workspaceId: workspaceId,
-          collaboratorId: collaborator.resourceId,
-        },
-      });
-
+  const deleteHook = useWorkspaceCollaboratorDeleteMutationHook({
+    onSuccess(data, params) {
       message.success("Collaborator removed.");
-      await onCompleteRemove();
-    } catch (error: any) {
-      errorMessageNotificatition(error, "Error removing collaborator.");
-    }
-  }, [workspaceId, collaborator, onCompleteRemove]);
+      onCompleteRemove();
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error removing collaborator.");
+    },
+  });
 
-  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
@@ -63,7 +54,9 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteItemHelper.runAsync();
+            await deleteHook.runAsync({
+              body: { workspaceId, collaboratorId: collaborator.resourceId },
+            });
           },
           onCancel() {
             // do nothing
@@ -73,7 +66,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
         toggleVisibility();
       }
     },
-    [deleteItemHelper, toggleVisibility]
+    [deleteHook, toggleVisibility]
   );
 
   const items: MenuProps["items"] = [
@@ -90,7 +83,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
   return (
     <React.Fragment>
       <Dropdown
-        disabled={deleteItemHelper.loading}
+        disabled={deleteHook.loading}
         trigger={["click"]}
         menu={{
           items,

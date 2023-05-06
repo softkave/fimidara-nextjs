@@ -1,16 +1,9 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
-import {
-  CollaborationRequestResponse,
-  CollaborationRequestStatusType,
-} from "@/lib/definitions/collaborationRequest";
 import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
 import { Button, Space, Typography, message } from "antd";
-import assert from "assert";
 import { formatRelative } from "date-fns";
-import React from "react";
 import { useUserCollaborationRequestFetchHook } from "../../../lib/hooks/fetchHooks";
+import { useUserCollaborationRequestResponseMutationHook } from "../../../lib/hooks/mutationHooks";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import PageNothingFound from "../../utils/PageNothingFound";
@@ -36,25 +29,14 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
   const error = data.store.error;
   const { resource } = data.store.get(undefined);
   const isLoading = data.store.loading || !data.store.initialized;
-
-  const onRespond = React.useCallback(
-    async (response: CollaborationRequestResponse) => {
-      try {
-        assert(resource);
-        const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-        const result = await endpoints.collaborationRequests.respondToRequest({
-          body: { response, requestId: resource.resourceId },
-        });
-
-        message.success("Response submitted.");
-      } catch (error) {
-        errorMessageNotificatition(error);
-      }
+  const respondHook = useUserCollaborationRequestResponseMutationHook({
+    onSuccess(data, params) {
+      message.success("Response submitted.");
     },
-    [requestId, resource]
-  );
-
-  const respondResult = useRequest(onRespond, { manual: true });
+    onError(e, params) {
+      errorMessageNotificatition(e);
+    },
+  });
 
   if (error) {
     return (
@@ -81,33 +63,43 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
       new Date()
     );
     const statusText =
-      resource.status === CollaborationRequestStatusType.Accepted
+      resource.status === "accepted"
         ? "accepted"
-        : resource.status === CollaborationRequestStatusType.Declined
+        : resource.status === "declined"
         ? "declined"
-        : resource.status === CollaborationRequestStatusType.Revoked
+        : resource.status === "revoked"
         ? "revoked"
         : "pending";
 
     const actions =
-      resource.status === CollaborationRequestStatusType.Pending ? (
-        respondResult.loading ? (
+      resource.status === "pending" ? (
+        respondHook.loading ? (
           <InlineLoading />
         ) : (
           <Space size={"middle"}>
             <Button
               danger
-              loading={respondResult.loading}
+              loading={respondHook.loading}
               onClick={() =>
-                respondResult.run(CollaborationRequestStatusType.Declined)
+                respondHook.run({
+                  body: {
+                    requestId: resource.resourceId,
+                    response: "declined",
+                  },
+                })
               }
             >
               Decline Request
             </Button>
             <Button
-              loading={respondResult.loading}
+              loading={respondHook.loading}
               onClick={() =>
-                respondResult.run(CollaborationRequestStatusType.Accepted)
+                respondHook.run({
+                  body: {
+                    requestId: resource.resourceId,
+                    response: "accepted",
+                  },
+                })
               }
             >
               Accept Request

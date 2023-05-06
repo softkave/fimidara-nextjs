@@ -1,62 +1,57 @@
-import { useRequest } from "ahooks";
+import { useMount } from "ahooks";
 import { message, notification, Typography } from "antd";
 import { useRouter } from "next/router";
-import React from "react";
-import { useDispatch } from "react-redux";
 import { formBodyClassName } from "../components/form/classNames";
 import { errorMessageNotificatition } from "../components/utils/errorHandling";
 import { appComponentConstants } from "../components/utils/utils";
-import { getPrivateFimidaraEndpointsUsingUserToken } from "../lib/api/fimidaraEndpoints";
 import {
   appRootPaths,
   appWorkspacePaths,
   systemConstants,
 } from "../lib/definitions/system";
-import { saveUserTokenLocal } from "../lib/hooks/useUser";
+import { useUserConfirmEmailMutationHook } from "../lib/hooks/mutationHooks";
 
 export interface IVerifyEmailProps {}
 
 export default function VerifyEmail(props: IVerifyEmailProps) {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const onSubmit = React.useCallback(async () => {
-    try {
-      const query = new URLSearchParams(window.location.search);
-      const token = query.get(systemConstants.confirmEmailTokenQueryParam);
-      const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const verifyEmailHook = useUserConfirmEmailMutationHook({
+    onSuccess(data, params) {
+      router.push(appWorkspacePaths.workspaces);
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error verifying email address.");
+      router.push(appRootPaths.home);
+    },
+  });
 
-      if (!token) {
-        notification.error({
-          message: "Email address confirmation token not found.",
-          description:
-            "Please ensure you are using the email confirmation link sent to your email address.",
-        });
+  useMount(() => {
+    const query = new URLSearchParams(window.location.search);
+    const token = query.get(systemConstants.confirmEmailTokenQueryParam);
 
-        return;
-      }
-
-      const result = await endpoints.users.confirmEmailAddress({
-        authToken: token,
-      });
-      saveUserTokenLocal(
-        dispatch,
-        result.body.user.resourceId,
-        result.body.token,
-        result.body.clientAssignedToken
-      );
-      message.success({
-        type: "success",
-        content: "Email address verified.",
+    if (!token) {
+      notification.error({
+        message: "Email address confirmation token not found.",
+        description:
+          "Please ensure you are using the email confirmation link sent to your email address.",
         duration: appComponentConstants.messageDuration,
       });
-      router.push(appWorkspacePaths.workspaces);
-    } catch (error) {
-      errorMessageNotificatition(error, "Error verifying email address.");
-      router.push(appRootPaths.home);
+      return;
     }
-  }, [router, dispatch]);
 
-  useRequest(onSubmit);
+    verifyEmailHook
+      .runAsync({
+        authToken: token,
+      })
+      .then((result) => {
+        message.success({
+          type: "success",
+          content: `Email address ${result.body.user.email} verified.`,
+          duration: appComponentConstants.messageDuration,
+        });
+      });
+  });
+
   return (
     <div className={formBodyClassName}>
       <Typography.Text>Verifying email address...</Typography.Text>

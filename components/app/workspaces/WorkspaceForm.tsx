@@ -1,19 +1,19 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import { getUseWorkspaceHookKey } from "@/lib/hooks/workspaces/useWorkspace";
 import { messages } from "@/lib/messages/messages";
 import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { css, cx } from "@emotion/css";
-import { useRequest } from "ahooks";
 import { Button, Form, Input, Space, Typography, message } from "antd";
 import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
 import { useRouter } from "next/router";
-import React from "react";
-import { useSWRConfig } from "swr";
 import * as yup from "yup";
+import {
+  useMergeMutationHooksLoadingAndError,
+  useWorkspaceAddMutationHook,
+  useWorkspaceUpdateMutationHook,
+} from "../../../lib/hooks/mutationHooks";
 import FormError from "../../form/FormError";
 import { formClasses } from "../../form/classNames";
 import { FormAlert } from "../../utils/FormAlert";
@@ -49,44 +49,40 @@ export interface WorkspaceFormProps {
 export default function WorkspaceForm(props: WorkspaceFormProps) {
   const { workspace, className } = props;
   const router = useRouter();
-  const { mutate } = useSWRConfig();
-  const onSubmit = React.useCallback(
-    async (data: AddWorkspaceEndpointParams) => {
-      let workspaceId: string | null = null;
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-
-      if (workspace) {
-        const result = await endpoints.workspaces.updateWorkspace({
-          body: { workspace: data, workspaceId: workspace.resourceId },
-        });
-
-        workspaceId = result.body.workspace.resourceId;
-        mutate(
-          getUseWorkspaceHookKey(workspace.resourceId),
-          result.body.workspace,
-          false
-        );
-        message.success("Workspace updated.");
-      } else {
-        const result = await endpoints.workspaces.addWorkspace({ body: data });
-        workspaceId = result.body.workspace.resourceId;
-        message.success("Workspace created.");
-      }
-
-      router.push(appWorkspacePaths.rootFolderList(workspaceId));
+  const updateHook = useWorkspaceUpdateMutationHook({
+    onSuccess(data, params) {
+      message.success("Workspace updated.");
+      router.push(
+        appWorkspacePaths.rootFolderList(data.body.workspace.resourceId)
+      );
     },
-    [workspace, mutate, router]
+  });
+  const createHook = useWorkspaceAddMutationHook({
+    onSuccess(data, params) {
+      message.success("Workspace created.");
+      router.push(
+        appWorkspacePaths.rootFolderList(data.body.workspace.resourceId)
+      );
+    },
+  });
+  const mergedHook = useMergeMutationHooksLoadingAndError(
+    createHook,
+    updateHook
   );
 
-  const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: mergedHook.error,
     formikProps: {
       validationSchema: workspaceValidation,
       initialValues: workspace
         ? getWorkspaceFormInputFromWorkspace(workspace)
         : initialValues,
-      onSubmit: submitResult.run,
+      onSubmit: (body) =>
+        workspace
+          ? updateHook.runAsync({
+              body: { workspaceId: workspace.resourceId, workspace: body },
+            })
+          : createHook.runAsync({ body }),
     },
   });
 
@@ -109,7 +105,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter workspace name"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={systemConstants.maxNameLength}
         autoComplete="off"
       />
@@ -128,7 +124,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
           />
         ) : (
           "Used for namespacing when working with files and folders. " +
-          'For example "my-workspace-root-name/my-folder/my-file.txt"'
+          'For example "my-workspace-root-name/my-folder/my-file.txt".'
         )
       }
       labelCol={{ span: 24 }}
@@ -141,7 +137,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
           placeholder="Enter workspace root name"
-          disabled={submitResult.loading || !!workspace}
+          disabled={mergedHook.loading || !!workspace}
           maxLength={folderConstants.maxFolderNameLength}
           autoComplete="off"
         />
@@ -184,7 +180,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter workspace description"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
         autoSize={{ minRows: 3 }}
       />
@@ -198,7 +194,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Workspace Form</Typography.Title>
           </Form.Item>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={mergedHook.error} />
           {nameNode}
           {rootnameNode}
           {descriptionNode}
@@ -207,7 +203,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={mergedHook.loading}
             >
               {workspace ? "Update Workspace" : "Create Workspace"}
             </Button>

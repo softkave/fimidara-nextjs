@@ -1,8 +1,6 @@
 import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
 import { Button, Form, Input, Typography } from "antd";
 import { useRouter } from "next/router";
-import React from "react";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import FormError from "../components/form/FormError";
@@ -11,13 +9,11 @@ import {
   formContentWrapperClassName,
 } from "../components/form/classNames";
 import { FormAlert } from "../components/utils/FormAlert";
-import { getPrivateFimidaraEndpointsUsingUserToken } from "../lib/api/fimidaraEndpoints";
 import { appWorkspacePaths } from "../lib/definitions/system";
 import { IUserInput, userConstants } from "../lib/definitions/user";
+import { useUserSignupMutationHook } from "../lib/hooks/mutationHooks";
 import useFormHelpers from "../lib/hooks/useFormHelpers";
 import { messages } from "../lib/messages/messages";
-import UserSessionStorageFns from "../lib/storage/userSession";
-import SessionActions from "../lib/store/session/actions";
 import { signupValidationParts } from "../lib/validation/user";
 
 interface ISignupFormValues extends Required<IUserInput> {
@@ -48,34 +44,18 @@ const initialValues: ISignupFormValues = {
 export default function Signup(props: ISignupProps) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const onSubmit = React.useCallback(
-    async (data: ISignupFormValues) => {
-      const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.users.signup({ body: data });
-      UserSessionStorageFns.saveUserToken(result.body.token);
-      UserSessionStorageFns.saveClientAssignedToken(
-        result.body.clientAssignedToken
-      );
-      dispatch(
-        SessionActions.loginUser({
-          userToken: result.body.token,
-          userId: result.body.user.resourceId,
-          clientAssignedToken: result.body.clientAssignedToken,
-        })
-      );
-
+  const signupHook = useUserSignupMutationHook({
+    onSuccess(data, params) {
       router.push(appWorkspacePaths.workspaces);
     },
-    [dispatch, router]
-  );
+  });
 
-  const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: signupHook.error,
     formikProps: {
       validationSchema: signupValidation,
       initialValues: initialValues,
-      onSubmit: submitResult.run,
+      onSubmit: (body) => signupHook.runAsync({ body }),
     },
   });
 
@@ -102,7 +82,7 @@ export default function Signup(props: ISignupProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter your first name"
-        disabled={submitResult.loading}
+        disabled={signupHook.loading}
         maxLength={userConstants.maxNameLength}
       />
     </Form.Item>
@@ -131,7 +111,7 @@ export default function Signup(props: ISignupProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter your last name"
-        disabled={submitResult.loading}
+        disabled={signupHook.loading}
         maxLength={userConstants.maxNameLength}
       />
     </Form.Item>
@@ -159,7 +139,7 @@ export default function Signup(props: ISignupProps) {
         value={formik.values.email}
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        disabled={submitResult.loading}
+        disabled={signupHook.loading}
         placeholder="Enter your email address"
       />
     </Form.Item>
@@ -189,7 +169,7 @@ export default function Signup(props: ISignupProps) {
         value={formik.values.password}
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        disabled={submitResult.loading}
+        disabled={signupHook.loading}
         placeholder="Enter new password"
         maxLength={userConstants.maxPasswordLength}
       />
@@ -217,7 +197,7 @@ export default function Signup(props: ISignupProps) {
         <Form.Item>
           <Typography.Title level={4}>Signup</Typography.Title>
         </Form.Item>
-        <FormAlert error={submitResult.error} />
+        <FormAlert error={signupHook.error} />
         {firstNameNode}
         {lastNameNode}
         {emailNode}
@@ -228,9 +208,9 @@ export default function Signup(props: ISignupProps) {
             block
             type="primary"
             htmlType="submit"
-            loading={submitResult.loading}
+            loading={signupHook.loading}
           >
-            {submitResult.loading ? "Creating Account" : "Create Account"}
+            {signupHook.loading ? "Creating Account" : "Create Account"}
           </Button>
         </Form.Item>
       </form>

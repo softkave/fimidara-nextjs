@@ -1,16 +1,12 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
 import { AppResourceType, appWorkspacePaths } from "@/lib/definitions/system";
-import { getUseFileListHookKey } from "@/lib/hooks/workspaces/useFileList";
-import { getUseFolderHookKey } from "@/lib/hooks/workspaces/useFolder";
-import { useRequest } from "ahooks";
-import { Dropdown, MenuProps, message, Modal } from "antd";
+import { Dropdown, MenuProps, Modal, message } from "antd";
 import { Folder } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useSWRConfig } from "swr";
+import { useWorkspaceFolderDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
@@ -41,7 +37,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
       ? AppResourceType.Folder
       : AppResourceType.Workspace,
     targetId: folder.resourceId,
-    appliesTo: PermissionItemAppliesTo.Container,
+    appliesTo: "self",
   });
 
   const childrenFoldersGrantPermission = useGrantPermission({
@@ -60,28 +56,15 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
     appliesTo: PermissionItemAppliesTo.Children,
   });
 
-  const { mutate: cacheMutate } = useSWRConfig();
-  const deleteItem = React.useCallback(async () => {
-    try {
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      await endpoints.folders.deleteFolder({
-        body: {
-          folderpath: addRootnameToPath(
-            folder.namePath.join(folderConstants.nameSeparator),
-            workspaceRootname
-          ),
-        },
-      });
+  const deleteHook = useWorkspaceFolderDeleteMutationHook({
+    onSuccess(data, params) {
+      message.success("Folder scheduled for deletion deleted.");
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error deleting folder.");
+    },
+  });
 
-      message.success("Folder deleted.");
-      cacheMutate(getUseFileListHookKey({ folderId: folder.parentId }));
-      cacheMutate(getUseFolderHookKey({ folderId: folder.resourceId }));
-    } catch (error: any) {
-      errorMessageNotificatition(error, "Error deleting folder.");
-    }
-  }, [folder, cacheMutate, workspaceRootname]);
-
-  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
@@ -92,7 +75,14 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteItemHelper.runAsync();
+            await deleteHook.runAsync({
+              body: {
+                folderpath: addRootnameToPath(
+                  folder.namePath.join(folderConstants.nameSeparator),
+                  workspaceRootname
+                ),
+              },
+            });
           },
           onCancel() {
             // do nothing
@@ -107,7 +97,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
       }
     },
     [
-      deleteItemHelper,
+      deleteHook,
       folderGrantPermission,
       childrenFilesGrantPermission,
       childrenFoldersGrantPermission,
@@ -158,7 +148,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   return (
     <React.Fragment>
       <Dropdown
-        disabled={deleteItemHelper.loading}
+        disabled={deleteHook.loading}
         trigger={["click"]}
         menu={{
           items,

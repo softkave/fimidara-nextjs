@@ -1,12 +1,11 @@
+import ItemList from "@/components/utils/list/ItemList";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { getUseWorkspacePermissionGroupListHookKey } from "@/lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { getResourceId } from "@/lib/utils/resource";
 import { PermissionGroup } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { useSWRConfig } from "swr";
-import ItemList from "../../../utils/list/ItemList";
-import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
 export interface PermissionGroupListProps {
@@ -17,10 +16,6 @@ export interface PermissionGroupListProps {
 
 const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
   const { workspaceId, permissionGroups, renderItem } = props;
-  const { mutate } = useSWRConfig();
-  const onCompleteDeletePermissionGroup = React.useCallback(async () => {
-    mutate(getUseWorkspacePermissionGroupListHookKey(workspaceId));
-  }, [workspaceId, mutate]);
 
   const internalRenderItem = React.useCallback(
     (item: PermissionGroup) => (
@@ -43,12 +38,12 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
           <PermissionGroupMenu
             key="menu"
             permissionGroup={item}
-            onCompleteDelete={onCompleteDeletePermissionGroup}
+            onCompleteDelete={noop}
           />
         }
       />
     ),
-    [onCompleteDeletePermissionGroup, workspaceId]
+    [workspaceId]
   );
 
   return (

@@ -1,66 +1,56 @@
-import { getPrivateFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
-import useUser from "@/lib/hooks/useUser";
-import { getBaseError } from "@/lib/utils/errors";
-import { useRequest } from "ahooks";
-import { Alert, Button, message, Space, Typography } from "antd";
+import { Button, message, Space, Typography } from "antd";
+import { LoginResult } from "fimidara";
 import React from "react";
+import { useUserSendEmailVerificationCodeMutationHook } from "../../../lib/hooks/mutationHooks";
 import {
   formBodyClassName,
   formContentWrapperClassName,
 } from "../../form/classNames";
 import useCooldown from "../../hooks/useCooldown";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
-import InlineLoading from "../../utils/page/InlineLoading";
 
-export default function EmailVerification() {
-  const { isLoading, error, data } = useUser();
-  const { startCooldown, isInCooldown } = useCooldown();
-  const onSubmit = React.useCallback(async () => {
-    try {
-      const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
-      await endpoints.users.sendEmailVerificationCode();
-      message.success("Email verification link sent.");
-      startCooldown();
-    } catch (error: any) {
-      errorMessageNotificatition(error);
-    }
-  }, [startCooldown]);
+export interface EmailVerificationProps {
+  session: LoginResult;
+}
 
-  const submitResult = useRequest(onSubmit, { manual: true });
+export default function EmailVerification(props: EmailVerificationProps) {
+  const { session } = props;
+  const cooldown = useCooldown();
+  const sendEmailVerificationHook =
+    useUserSendEmailVerificationCodeMutationHook({
+      onError(e, params) {
+        errorMessageNotificatition(e);
+      },
+      onSuccess(data, params) {
+        message.success(
+          `Email verification link sent to ${session.user.email}.`
+        );
+        cooldown.startCooldown();
+      },
+    });
   let rootNode: React.ReactNode = null;
 
-  if (error) {
-    rootNode = (
-      <Alert
-        type="error"
-        message={getBaseError(error) || "Error fetching user."}
-      />
-    );
-  } else if (isLoading || !data) {
-    rootNode = <InlineLoading messageText="Loading user..." />;
-  } else if (data?.user.isEmailVerified) {
+  if (session.user.isEmailVerified) {
     rootNode = (
       <Typography.Text type="success">
         Your email address is verified
       </Typography.Text>
     );
-  } else if (data && !data.user.isEmailVerified) {
+  } else {
     rootNode = (
       <Space direction="vertical">
         <Typography.Text type="danger">
           Your email address is not verified.
         </Typography.Text>
         <Button
-          onClick={submitResult.run}
-          loading={submitResult.loading}
-          disabled={isInCooldown}
+          onClick={sendEmailVerificationHook.run}
+          loading={sendEmailVerificationHook.loading}
+          disabled={cooldown.isInCooldown}
         >
-          Send Email Verification Link to {data.user.email}
+          Send Email Verification Link to {session.user.email}
         </Button>
       </Space>
     );
-  } else {
-    rootNode = <Typography.Text>Hello there!</Typography.Text>;
   }
 
   return (

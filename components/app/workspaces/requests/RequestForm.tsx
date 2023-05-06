@@ -1,26 +1,23 @@
-import CollaborationRequestAPI from "@/lib/api/endpoints/collaborationRequest";
-import { checkEndpointResult } from "@/lib/api/utils";
-import {
-  ICollaborationRequest,
-  ICollaborationRequestInput,
-} from "@/lib/definitions/collaborationRequest";
+import { ICollaborationRequestInput } from "@/lib/definitions/collaborationRequest";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
-import useCollaborationRequest from "@/lib/hooks/requests/useUserCollaborationRequest";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
 import { signupValidationParts } from "@/lib/validation/user";
 import { css, cx } from "@emotion/css";
-import { useRequest } from "ahooks";
 import { Button, DatePicker, Form, Input, Typography, message } from "antd";
-import moment from "moment";
+import dayjs from "dayjs";
+import { CollaborationRequestForWorkspace } from "fimidara";
 import { useRouter } from "next/router";
-import React from "react";
 import * as yup from "yup";
+import {
+  useMergeMutationHooksLoadingAndError,
+  useWorkspaceCollaborationRequestAddMutationHook,
+  useWorkspaceCollaborationRequestUpdateMutationHook,
+} from "../../../../lib/hooks/mutationHooks";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { FormAlert } from "../../../utils/FormAlert";
-import SelectPermissionGroupInput from "../permissionGroups/SelectPermissionGroupInput";
 
 const requestValidation = yup.object().shape({
   recipientEmail: signupValidationParts.email.required(messages.emailRequired),
@@ -35,19 +32,17 @@ const initialValues: ICollaborationRequestInput = {
 };
 
 function getRequestFormInputFromRequest(
-  item: ICollaborationRequest
+  item: CollaborationRequestForWorkspace
 ): ICollaborationRequestInput {
   return {
     recipientEmail: item.recipientEmail,
     message: item.message,
-    expires: item.expiresAt
-      ? new Date(item.expiresAt).toISOString()
-      : undefined,
+    expires: item.expiresAt ? new Date(item.expiresAt).valueOf() : undefined,
   };
 }
 
 export interface IRequestFormProps {
-  request?: ICollaborationRequest;
+  request?: CollaborationRequestForWorkspace;
   className?: string;
   workspaceId: string;
 }
@@ -55,46 +50,54 @@ export interface IRequestFormProps {
 export default function RequestForm(props: IRequestFormProps) {
   const { request, className, workspaceId } = props;
   const router = useRouter();
-  const { mutate } = useCollaborationRequest(request?.resourceId);
-  const onSubmit = React.useCallback(
-    async (data: ICollaborationRequestInput) => {
-      let requestId: string | null = null;
-
-      if (request) {
-        const result = await CollaborationRequestAPI.updateRequest({
-          requestId: request.resourceId,
-          request: data,
-        });
-
-        checkEndpointResult(result);
-        requestId = result.request.resourceId;
-        mutate(result);
-        message.success("Collaboration request updated");
-      } else {
-        const result = await CollaborationRequestAPI.sendRequest({
-          workspaceId: workspaceId,
-          request: data,
-        });
-
-        checkEndpointResult(result);
-        requestId = result.request.resourceId;
-        message.success("Collaboration request created");
-      }
-
-      router.push(appWorkspacePaths.request(workspaceId, requestId));
+  const updateHook = useWorkspaceCollaborationRequestUpdateMutationHook({
+    onSuccess(data, params) {
+      message.success("Collaboration request created.");
+      router.push(
+        appWorkspacePaths.request(
+          data.body.request.workspaceId,
+          data.body.request.resourceId
+        )
+      );
     },
-    [request, workspaceId, mutate, router]
+  });
+  const createHook = useWorkspaceCollaborationRequestAddMutationHook({
+    onSuccess(data, params) {
+      message.success("Collaboration request created.");
+      router.push(
+        appWorkspacePaths.request(
+          data.body.request.workspaceId,
+          data.body.request.resourceId
+        )
+      );
+    },
+  });
+  const mergedHook = useMergeMutationHooksLoadingAndError(
+    createHook,
+    updateHook
   );
 
-  const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: mergedHook.error,
     formikProps: {
       validationSchema: requestValidation,
       initialValues: request
         ? getRequestFormInputFromRequest(request)
         : initialValues,
-      onSubmit: submitResult.run,
+      onSubmit: (body) =>
+        request
+          ? updateHook.runAsync({
+              body: {
+                requestId: request.resourceId,
+                request: body,
+              },
+            })
+          : createHook.runAsync({
+              body: {
+                workspaceId,
+                request: body,
+              },
+            }),
     },
   });
 
@@ -120,7 +123,7 @@ export default function RequestForm(props: IRequestFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter recipient email"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={systemConstants.maxNameLength}
         autoComplete="off"
       />
@@ -148,7 +151,7 @@ export default function RequestForm(props: IRequestFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter request message"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
         autoSize={{ minRows: 3 }}
       />
@@ -174,39 +177,11 @@ export default function RequestForm(props: IRequestFormProps) {
         showTime
         use12Hours
         // format="h:mm A"
-        value={
-          formik.values.expires ? moment(formik.values.expires) : undefined
-        }
+        value={formik.values.expires ? dayjs(formik.values.expires) : undefined}
         onChange={(date) =>
           formik.setFieldValue("expires", date?.toISOString())
         }
         placeholder="Request expiration date"
-      />
-    </Form.Item>
-  );
-
-  const permissionGroupsOnAcceptNode = (
-    <Form.Item
-      label="Assigned Permission Groups"
-      help={
-        formik.touched?.permissionGroupsOnAccept &&
-        formik.errors?.permissionGroupsOnAccept && (
-          <FormError
-            visible={formik.touched.permissionGroupsOnAccept}
-            error={formik.errors.permissionGroupsOnAccept}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <SelectPermissionGroupInput
-        workspaceId={workspaceId}
-        value={formik.values.permissionGroupsOnAccept || []}
-        disabled={submitResult.loading}
-        onChange={(items) =>
-          formik.setFieldValue("permissionGroupsOnAccept", items)
-        }
       />
     </Form.Item>
   );
@@ -220,17 +195,16 @@ export default function RequestForm(props: IRequestFormProps) {
               Collaboration Request Form
             </Typography.Title>
           </Form.Item>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={mergedHook.error} />
           {recipientEmailNode}
           {messageNode}
           {expiresNode}
-          {permissionGroupsOnAcceptNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={mergedHook.loading}
             >
               {request ? "Update Request" : "Create Request"}
             </Button>

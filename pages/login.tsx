@@ -1,19 +1,15 @@
 import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
 import { Button, Checkbox, Form, Input, Typography } from "antd";
 import { useRouter } from "next/router";
-import React from "react";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import FormError from "../components/form/FormError";
 import { formClasses } from "../components/form/classNames";
 import { FormAlert } from "../components/utils/FormAlert";
-import { getPrivateFimidaraEndpointsUsingUserToken } from "../lib/api/fimidaraEndpoints";
 import { appWorkspacePaths } from "../lib/definitions/system";
 import { userConstants } from "../lib/definitions/user";
+import { useUserLoginMutationHook } from "../lib/hooks/mutationHooks";
 import useFormHelpers from "../lib/hooks/useFormHelpers";
-import UserSessionStorageFns from "../lib/storage/userSession";
-import SessionActions from "../lib/store/session/actions";
 
 export interface ILoginFormValues {
   email: string;
@@ -37,39 +33,17 @@ const initialValues: ILoginFormValues = {
 export default function Login(props: ILoginProps) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const onSubmit = React.useCallback(
-    async (data: ILoginFormValues) => {
-      const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.users.login({
-        body: { email: data.email, password: data.password },
-      });
-
-      if (data.remember) {
-        UserSessionStorageFns.saveUserToken(result.body.token);
-        UserSessionStorageFns.saveClientAssignedToken(
-          result.body.clientAssignedToken
-        );
-      }
-
-      dispatch(
-        SessionActions.loginUser({
-          userToken: result.body.token,
-          userId: result.body.user.resourceId,
-          clientAssignedToken: result.body.clientAssignedToken,
-        })
-      );
+  const loginHook = useUserLoginMutationHook({
+    onSuccess(data, params) {
       router.push(appWorkspacePaths.workspaces);
     },
-    [dispatch, router]
-  );
-
-  const submitResult = useRequest(onSubmit, { manual: true });
+  });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: loginHook.error,
     formikProps: {
       validationSchema,
-      initialValues: initialValues,
-      onSubmit: submitResult.run,
+      initialValues,
+      onSubmit: (body) => loginHook.runAsync({ body }),
     },
   });
 
@@ -93,7 +67,7 @@ export default function Login(props: ILoginProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         value={formik.values.email}
-        disabled={submitResult.loading}
+        disabled={loginHook.loading}
         placeholder="Enter your email address"
       />
     </Form.Item>
@@ -120,7 +94,7 @@ export default function Login(props: ILoginProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         value={formik.values.password}
-        disabled={submitResult.loading}
+        disabled={loginHook.loading}
         placeholder="Enter your password"
         maxLength={userConstants.maxPasswordLength}
       />
@@ -133,7 +107,7 @@ export default function Login(props: ILoginProps) {
         name="remember"
         onChange={formik.handleChange}
         checked={formik.values.remember}
-        disabled={submitResult.loading}
+        disabled={loginHook.loading}
       >
         Remember Me
       </Checkbox>
@@ -147,7 +121,7 @@ export default function Login(props: ILoginProps) {
           <Form.Item>
             <Typography.Title level={4}>Login</Typography.Title>
           </Form.Item>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={loginHook.error} />
           {emailNode}
           {passwordNode}
           {rememberNode}
@@ -156,9 +130,9 @@ export default function Login(props: ILoginProps) {
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={loginHook.loading}
             >
-              {submitResult.loading ? "Logging In" : "Log In"}
+              {loginHook.loading ? "Logging In" : "Log In"}
             </Button>
           </Form.Item>
         </form>

@@ -1,27 +1,29 @@
+import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
+import PageError from "@/components/utils/PageError";
+import PageLoading from "@/components/utils/PageLoading";
+import PageNothingFound from "@/components/utils/PageNothingFound";
+import IconButton from "@/components/utils/buttons/IconButton";
+import ItemList from "@/components/utils/list/ItemList";
+import ListHeader from "@/components/utils/list/ListHeader";
+import PaginatedContent from "@/components/utils/page/PaginatedContent";
+import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import useUser from "@/lib/hooks/useUser";
 import { getBaseError } from "@/lib/utils/errors";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import { Workspace } from "fimidara";
+import { PublicUser, Workspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { useUserWorkspacesFetchHook } from "../../../lib/hooks/fetchHooks";
-import withPageAuthRequiredHOC from "../../hoc/withPageAuthRequired";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
-import PageNothingFound from "../../utils/PageNothingFound";
-import IconButton from "../../utils/buttons/IconButton";
-import ItemList from "../../utils/list/ItemList";
-import ListHeader from "../../utils/list/ListHeader";
-import PaginatedContent from "../../utils/page/PaginatedContent";
-import { appClasses } from "../../utils/theme";
 import WorkspaceAvatar from "./WorkspaceAvatar";
 
-export interface IWorkspaceListProps {}
+export interface IWorkspaceListProps {
+  user: PublicUser;
+}
 
-const WorkspaceList: React.FC<IWorkspaceListProps> = () => {
+const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
+  const { user } = props;
   const pagination = usePagination();
   const data = useUserWorkspacesFetchHook({
     page: pagination.page,
@@ -33,7 +35,6 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = () => {
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const user = useUser();
 
   let content: React.ReactNode = null;
 
@@ -69,7 +70,7 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = () => {
           <PageNothingFound
             className={appClasses.main}
             messageText={
-              user.data?.user.isOnWaitlist
+              user.isOnWaitlist
                 ? "You are currently on the waitlist so you can't create workspaces, " +
                   "but you can be added to an existing workspace." +
                   "Once you've been upgraded from the waitlist, we'll send an email to you confirming the upgrade."
@@ -89,7 +90,7 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = () => {
         <ListHeader
           label="Workspaces"
           buttons={
-            user.data?.user.isOnWaitlist ? (
+            user.isOnWaitlist ? (
               <Button disabled icon={<PlusOutlined />} />
             ) : (
               <Link href={appWorkspacePaths.createWorkspaceForm}>

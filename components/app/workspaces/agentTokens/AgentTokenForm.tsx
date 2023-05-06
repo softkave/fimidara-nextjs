@@ -1,31 +1,26 @@
-import AgentTokenAPI from "@/lib/api/endpoints/agentToken";
-import { checkEndpointResult } from "@/lib/api/utils";
+import { formClasses } from "@/components/form/classNames";
+import FormError from "@/components/form/FormError";
+import { FormAlert } from "@/components/utils/FormAlert";
 import {
-  IAgentToken,
-  INewAgentTokenInput,
   agentTokenConstants,
+  INewAgentTokenInput,
 } from "@/lib/definitions/agentToken";
-import { permissionGroupPermissionsGroupConstants } from "@/lib/definitions/permissionGroups";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import {
+  useMergeMutationHooksLoadingAndError,
+  useWorkspaceAgentTokenAddMutationHook,
+  useWorkspaceAgentTokenUpdateMutationHook,
+} from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import useAgentToken from "@/lib/hooks/workspaces/useAgentToken";
 import { css, cx } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Button, DatePicker, Form, Input, Typography, message } from "antd";
-import moment from "moment";
+import { Button, DatePicker, Form, Input, message, Typography } from "antd";
+import dayjs from "dayjs";
+import { AgentToken } from "fimidara";
 import { useRouter } from "next/router";
-import React from "react";
 import * as yup from "yup";
-import FormError from "../../../form/FormError";
-import { formClasses } from "../../../form/classNames";
-import { FormAlert } from "../../../utils/FormAlert";
-import SelectPermissionGroupInput from "../permissionGroups/SelectPermissionGroupInput";
 
 const agentTokenValidation = yup.object().shape({
   expires: yup.string(),
-  permissionGroups: yup
-    .array()
-    .max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
   providedResourceId: yup
     .string()
     .max(agentTokenConstants.providedResourceMaxLength),
@@ -33,25 +28,20 @@ const agentTokenValidation = yup.object().shape({
 
 const initialValues: INewAgentTokenInput = {
   expires: undefined,
-  permissionGroups: [],
   providedResourceId: undefined,
 };
 
 function getAgentTokenFormInputFromToken(
-  item: IAgentToken
+  item: AgentToken
 ): INewAgentTokenInput {
   return {
     expires: item.expires,
     providedResourceId: item.providedResourceId,
-    permissionGroups: item.permissionGroups.map((item) => ({
-      permissionGroupId: item.permissionGroupId,
-      order: item.order,
-    })),
   };
 }
 
 export interface IAgentTokenFormProps {
-  agentToken?: IAgentToken;
+  agentToken?: AgentToken;
   className?: string;
   workspaceId: string;
 }
@@ -59,46 +49,46 @@ export interface IAgentTokenFormProps {
 export default function AgentTokenForm(props: IAgentTokenFormProps) {
   const { agentToken, className, workspaceId } = props;
   const router = useRouter();
-  const { mutate } = useAgentToken(agentToken?.resourceId);
-  const onSubmit = React.useCallback(
-    async (data: INewAgentTokenInput) => {
-      let agentTokenId: string | null = null;
-
-      if (agentToken) {
-        const result = await AgentTokenAPI.updateToken({
-          token: data,
-          tokenId: agentToken.resourceId,
-        });
-
-        checkEndpointResult(result);
-        agentTokenId = result.token.resourceId;
-        mutate(result);
-        message.success("Agent assigned token updated");
-      } else {
-        const result = await AgentTokenAPI.addToken({
-          workspaceId: workspaceId,
-          token: data,
-        });
-
-        checkEndpointResult(result);
-        agentTokenId = result.token.resourceId;
-        message.success("Agent assigned token created");
-      }
-
-      router.push(appWorkspacePaths.agentToken(workspaceId, agentTokenId));
+  const updateHook = useWorkspaceAgentTokenUpdateMutationHook({
+    onSuccess(data, params) {
+      message.success("Agent token updated.");
+      router.push(
+        appWorkspacePaths.agentToken(
+          data.body.token.workspaceId,
+          data.body.token.resourceId
+        )
+      );
     },
-    [agentToken, workspaceId, mutate, router]
+  });
+  const createHook = useWorkspaceAgentTokenAddMutationHook({
+    onSuccess(data, params) {
+      message.success("Agent token created.");
+      router.push(
+        appWorkspacePaths.agentToken(
+          data.body.token.workspaceId,
+          data.body.token.resourceId
+        )
+      );
+    },
+  });
+  const mergedHook = useMergeMutationHooksLoadingAndError(
+    createHook,
+    updateHook
   );
 
-  const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: mergedHook.error,
     formikProps: {
       validationSchema: agentTokenValidation,
       initialValues: agentToken
         ? getAgentTokenFormInputFromToken(agentToken)
         : initialValues,
-      onSubmit: submitResult.run,
+      onSubmit: (body) =>
+        agentToken
+          ? updateHook.runAsync({
+              body: { tokenId: agentToken.resourceId, token: body },
+            })
+          : createHook.runAsync({ body: { workspaceId, token: body } }),
     },
   });
 
@@ -121,9 +111,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         showTime
         use12Hours
         // format="h:mm A"
-        value={
-          formik.values.expires ? moment(formik.values.expires) : undefined
-        }
+        value={formik.values.expires ? dayjs(formik.values.expires) : undefined}
         onChange={(date) => {
           formik.setFieldValue("expires", date?.toISOString());
         }}
@@ -153,33 +141,9 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter token provided resource ID"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={agentTokenConstants.providedResourceMaxLength}
         autoSize={{ minRows: 2 }}
-      />
-    </Form.Item>
-  );
-
-  const assignedPermissionGroupsNode = (
-    <Form.Item
-      label="Assigned PermissionGroups"
-      help={
-        formik.touched?.permissionGroups &&
-        formik.errors?.permissionGroups && (
-          <FormError
-            visible={formik.touched.permissionGroups}
-            error={formik.errors.permissionGroups}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <SelectPermissionGroupInput
-        workspaceId={workspaceId}
-        value={formik.values.permissionGroups || []}
-        disabled={submitResult.loading}
-        onChange={(items) => formik.setFieldValue("permissionGroups", items)}
       />
     </Form.Item>
   );
@@ -193,16 +157,15 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
               Agent Assigned Token Form
             </Typography.Title>
           </Form.Item>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={mergedHook.error} />
           {expiresNode}
           {providedResourceIdNode}
-          {assignedPermissionGroupsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={mergedHook.loading}
             >
               {agentToken ? "Update Token" : "Create Token"}
             </Button>

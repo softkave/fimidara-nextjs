@@ -1,18 +1,16 @@
-import { getPublicFimidaraEndpointsUsingFimidaraAgentToken } from "@/lib/api/fimidaraEndpoints";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { IWorkspace } from "@/lib/definitions/workspace";
-import { getUseWorkspaceHookKey } from "@/lib/hooks/workspaces/useWorkspace";
 import { LeftOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Dropdown, MenuProps, Modal, Space, Typography } from "antd";
+import { Dropdown, MenuProps, Modal, Space, Typography, message } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useSWRConfig } from "swr";
+import { useWorkspaceDeleteMutationHook } from "../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../hooks/useGrantPermission";
 import IconButton from "../../utils/buttons/IconButton";
+import { errorMessageNotificatition } from "../../utils/errorHandling";
 import { appClasses } from "../../utils/theme";
 import { MenuInfo } from "../../utils/types";
 import WorkspaceAvatar from "./WorkspaceAvatar";
@@ -41,7 +39,6 @@ const classes = {
 const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
   const { workspace } = props;
   const router = useRouter();
-  const { cache } = useSWRConfig();
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: workspace.resourceId,
     targetType: "workspace",
@@ -55,19 +52,16 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
     router.push(appWorkspacePaths.workspaces);
   }, [router]);
 
-  const deleteWorkspace = React.useCallback(async () => {
-    const endpoints = getPublicFimidaraEndpointsUsingFimidaraAgentToken();
-    const result = await endpoints.workspaces.deleteWorkspace({
-      body: { workspaceId: workspace.resourceId },
-    });
+  const deleteHook = useWorkspaceDeleteMutationHook({
+    onSuccess(data, params) {
+      message.success("Workspace scheduled for deletion.");
+      router.push(appWorkspacePaths.workspaces);
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error deleting workspace.");
+    },
+  });
 
-    router.push(appWorkspacePaths.workspaces);
-
-    // TODO: delete all cache keys
-    cache.delete(getUseWorkspaceHookKey(workspace.resourceId));
-  }, [workspace, router, cache]);
-
-  const deleteWorkspaceHelper = useRequest(deleteWorkspace, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteWorkspace) {
@@ -78,7 +72,9 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteWorkspaceHelper.runAsync();
+            await deleteHook.runAsync({
+              body: { workspaceId: workspace.resourceId },
+            });
           },
           onCancel() {
             // do nothing
@@ -88,7 +84,7 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
         toggleVisibility();
       }
     },
-    [toggleVisibility, deleteWorkspaceHelper]
+    [toggleVisibility, deleteHook]
   );
 
   const editWorkspacePath = appWorkspacePaths.updateWorkspaceForm(
@@ -123,7 +119,7 @@ const WorkspaceHeader: React.FC<IWorkspaceHeaderProps> = (props) => {
         </Typography.Title>
       </Space>
       <Dropdown
-        disabled={deleteWorkspaceHelper.loading}
+        disabled={deleteHook.loading}
         trigger={["click"]}
         menu={{
           items,

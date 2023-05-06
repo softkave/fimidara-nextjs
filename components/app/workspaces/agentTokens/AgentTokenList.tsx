@@ -1,11 +1,11 @@
+import ItemList from "@/components/utils/list/ItemList";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
 import { AgentToken } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { useSWRConfig } from "swr";
-import ItemList from "../../../utils/list/ItemList";
-import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import AgentTokenMenu from "./AgentTokenMenu";
 
 export interface AgentTokenListProps {
@@ -16,10 +16,6 @@ export interface AgentTokenListProps {
 
 const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
   const { workspaceId, tokens, renderItem } = props;
-  const { mutate } = useSWRConfig();
-  const onCompleteDelete = React.useCallback(async () => {
-    mutate(getUseWorkspaceAgentTokenListHookKey(workspaceId));
-  }, [workspaceId, mutate]);
 
   // TODO: add a way to differentiate between the provided ID
   // and the resource ID
@@ -38,15 +34,11 @@ const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
           </div>
         }
         menu={
-          <AgentTokenMenu
-            key="menu"
-            token={item}
-            onCompleteDelete={onCompleteDelete}
-          />
+          <AgentTokenMenu key="menu" token={item} onCompleteDelete={noop} />
         }
       />
     ),
-    [onCompleteDelete, workspaceId]
+    [workspaceId]
   );
 
   return (

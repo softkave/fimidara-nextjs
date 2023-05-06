@@ -1,25 +1,15 @@
-import { getPrivateFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { userConstants } from "@/lib/definitions/user";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import UserSessionStorageFns from "@/lib/storage/userSession";
-import SessionActions from "@/lib/store/session/actions";
 import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Button, Form, Input } from "antd";
-import React from "react";
-import { useDispatch } from "react-redux";
+import { Button, Form, Input, message } from "antd";
 import * as yup from "yup";
+import { useUserChangePasswordWithCurrentPasswordMutationHook } from "../../../lib/hooks/mutationHooks";
 import FormError from "../../form/FormError";
 import { formClasses } from "../../form/classNames";
 import { FormAlert } from "../../utils/FormAlert";
 
-export interface IChangePasswordFormData {
-  newPassword: string;
-  currentPassword: string;
-}
-
 const validationSchema = yup.object().shape({
-  newPassword: yup
+  password: yup
     .string()
     .min(userConstants.minPasswordLength)
     .max(userConstants.maxPasswordLength)
@@ -28,33 +18,18 @@ const validationSchema = yup.object().shape({
 });
 
 export default function ChangePasswordWithCurrentPassword() {
-  const dispatch = useDispatch();
-  const onSubmit = React.useCallback(
-    async (data: IChangePasswordFormData) => {
-      const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.users.changePasswordWithCurrentPassword({
-        body: {
-          password: data.newPassword,
-          currentPassword: data.currentPassword,
-        },
-      });
-
-      UserSessionStorageFns.saveUserToken(result.body.token);
-      UserSessionStorageFns.saveClientAssignedToken(
-        result.body.clientAssignedToken
-      );
-      dispatch(SessionActions.update({ data: { token: result.body.token } }));
-    },
-    [dispatch]
-  );
-
-  const submitResult = useRequest(onSubmit, { manual: true });
+  const changePasswordHook =
+    useUserChangePasswordWithCurrentPasswordMutationHook({
+      onSuccess(data, params) {
+        message.success(`Password changed.`);
+      },
+    });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: changePasswordHook.error,
     formikProps: {
       validationSchema,
-      initialValues: { password: undefined } as any,
-      onSubmit: submitResult.run,
+      initialValues: { password: "", currentPassword: "" },
+      onSubmit: (body) => changePasswordHook.runAsync({ body }),
     },
   });
 
@@ -63,9 +38,9 @@ export default function ChangePasswordWithCurrentPassword() {
       required
       label="New Password"
       help={
-        formik.touched.newPassword && (
-          <FormError visible={formik.touched.newPassword}>
-            {formik.errors.newPassword}
+        formik.touched.password && (
+          <FormError visible={formik.touched.password}>
+            {formik.errors.password}
           </FormError>
         )
       }
@@ -78,9 +53,9 @@ export default function ChangePasswordWithCurrentPassword() {
         name="password"
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        value={formik.values.newPassword}
+        value={formik.values.password}
         placeholder="Enter new password"
-        disabled={submitResult.loading}
+        disabled={changePasswordHook.loading}
         maxLength={userConstants.maxPasswordLength}
       />
     </Form.Item>
@@ -108,7 +83,7 @@ export default function ChangePasswordWithCurrentPassword() {
         onChange={formik.handleChange}
         value={formik.values.currentPassword}
         placeholder="Enter current password"
-        disabled={submitResult.loading}
+        disabled={changePasswordHook.loading}
         maxLength={userConstants.maxPasswordLength}
       />
     </Form.Item>
@@ -118,16 +93,19 @@ export default function ChangePasswordWithCurrentPassword() {
     <div className={formClasses.formBodyClassName}>
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={changePasswordHook.error} />
+          {currentPasswordNode}
           {newPasswordNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={changePasswordHook.loading}
             >
-              {submitResult.loading ? "Changing Password" : "Change Password"}
+              {changePasswordHook.loading
+                ? "Changing Password"
+                : "Change Password"}
             </Button>
           </Form.Item>
         </form>

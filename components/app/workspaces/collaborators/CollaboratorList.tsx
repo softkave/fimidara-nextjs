@@ -1,11 +1,10 @@
+import ItemList from "@/components/utils/list/ItemList";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { getUseWorkspaceRequestListHookKey } from "@/lib/hooks/workspaces/useWorkspaceRequestList";
 import { Collaborator } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { useSWRConfig } from "swr";
-import ItemList from "../../../utils/list/ItemList";
-import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import CollaboratorMenu from "./CollaboratorMenu";
 
 export interface CollaboratorListProps {
@@ -16,10 +15,6 @@ export interface CollaboratorListProps {
 
 const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
   const { workspaceId, collaborators, renderItem } = props;
-  const { mutate } = useSWRConfig();
-  const onCompleteRemoveUser = React.useCallback(async () => {
-    mutate(getUseWorkspaceRequestListHookKey(workspaceId));
-  }, [workspaceId, mutate]);
 
   const internalRenderItem = React.useCallback(
     (item: Collaborator) => (
@@ -43,12 +38,12 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
             key="menu"
             collaborator={item}
             workspaceId={workspaceId}
-            onCompleteRemove={onCompleteRemoveUser}
+            onCompleteRemove={noop}
           />
         }
       />
     ),
-    [onCompleteRemoveUser, workspaceId]
+    [workspaceId]
   );
 
   return (

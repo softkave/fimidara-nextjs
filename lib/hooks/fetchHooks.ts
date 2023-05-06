@@ -33,6 +33,7 @@ import {
   FetchPaginatedResourceListGetFnParams02,
   FetchPaginatedResourceListReturnedData,
   FetchSingleResourceFetchFnData,
+  GetFetchSingleResourceFetchFnOther,
   makeFetchPaginatedResourceListFetchFn,
   makeFetchPaginatedResourceListGetFn,
   makeFetchPaginatedResourceListOnMountFn,
@@ -48,7 +49,8 @@ import {
   makeResourceListStore,
 } from "./makeResourceListStore";
 
-export const useUsersStore = makeResourceListStore<PublicUser | Collaborator>();
+export const useUsersStore = makeResourceListStore<PublicUser>();
+export const useCollaboratorsStore = makeResourceListStore<Collaborator>();
 export const useUserCollaborationRequestsStore =
   makeResourceListStore<CollaborationRequestForUser>();
 export const useWorkspaceCollaborationRequestsStore =
@@ -159,12 +161,6 @@ async function workspaceUsageRecordsInputFetchFn(
   return { count: count.body.count, resourceList: data.body.records };
 }
 
-async function usageCostsInputFetchFn() {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.usageRecords.getUsageCosts();
-  return data.body;
-}
-
 async function userWorkspaceInputFetchFn(
   params: GetWorkspaceEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<Workspace>> {
@@ -237,6 +233,23 @@ async function workspacePermissionGroupInputFetchFn(
   });
   return { resource: data.body.permissionGroup };
 }
+async function getUserDataInputFetchFn() {
+  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const data = await endpoints.users.getUserData();
+  return {
+    resource: data.body.user,
+    other: {
+      userToken: data.body.token,
+      clientToken: data.body.clientAssignedToken,
+    },
+  };
+}
+
+async function usageCostsInputFetchFn() {
+  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const data = await endpoints.usageRecords.getUsageCosts();
+  return data.body;
+}
 
 function makePaginatedFetchHookAndStore<
   TResource extends { resourceId: string },
@@ -271,7 +284,10 @@ function makeSingleFetchHookAndStore<
   TResource extends { resourceId: string },
   Fn extends AnyFn<any, Promise<FetchSingleResourceFetchFnData<TResource>>>
 >(useResourceListStore: ResourceZustandStore<TResource>, inputFetchFn: Fn) {
-  const getFn = makeFetchSingleResourceGetFn<TResource>(useResourceListStore);
+  const getFn = makeFetchSingleResourceGetFn<
+    TResource,
+    GetFetchSingleResourceFetchFnOther<Fn>
+  >(useResourceListStore);
   const useFetchStore = makeFetchResourceStoreHook(getFn);
   const fetchFn = makeFetchSingleResourceFetchFn(
     inputFetchFn,
@@ -288,7 +304,7 @@ function makeSingleFetchHookAndStore<
     onMountFn
   );
 
-  return { useFetchStore, useFetchHook };
+  return { useFetchStore, useFetchHook, fetchFn, getFn };
 }
 
 export const {
@@ -316,7 +332,7 @@ export const {
   useFetchStore: useWorkspaceCollaboratorsFetchStore,
   useFetchHook: useWorkspaceCollaboratorsFetchHook,
 } = makePaginatedFetchHookAndStore(
-  useUsersStore,
+  useCollaboratorsStore,
   workspaceCollaboratorsInputFetchFn
 );
 export const {
@@ -377,7 +393,7 @@ export const {
   useFetchStore: useWorkspaceCollaboratorFetchStore,
   useFetchHook: useWorkspaceCollaboratorFetchHook,
 } = makeSingleFetchHookAndStore(
-  useUsersStore,
+  useCollaboratorsStore,
   workspaceCollaboratorInputFetchFn
 );
 export const {
@@ -408,6 +424,10 @@ export const {
   useWorkspacePermissionGroupsStore,
   workspacePermissionGroupInputFetchFn
 );
+export const {
+  useFetchStore: useUserDataFetchStore,
+  useFetchHook: useUserDataFetchHook,
+} = makeSingleFetchHookAndStore(useUsersStore, getUserDataInputFetchFn);
 
 export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
   GetUsageCostsEndpointResult,

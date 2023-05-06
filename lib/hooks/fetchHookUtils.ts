@@ -160,22 +160,38 @@ export function makeFetchResourceHook<
 }
 
 /** fetch hook defining behaviour for fetching a single resource. */
-export type FetchSingleResourceData = { id: string };
-export type FetchSingleResourceReturnedData<T extends { resourceId: string }> =
-  { resource?: T };
-export type FetchSingleResourceFetchFnData<T extends { resourceId: string }> = {
-  resource: T;
+export type FetchSingleResourceData<TOther = any> = {
+  id: string;
+  other?: TOther;
 };
+export type FetchSingleResourceReturnedData<
+  T extends { resourceId: string },
+  TOther = any
+> = { resource?: T; other?: TOther };
+export type FetchSingleResourceFetchFnData<
+  T extends { resourceId: string },
+  TOther = any
+> = {
+  resource: T;
+  other?: TOther;
+};
+export type GetFetchSingleResourceFetchFnOther<TFn> = TFn extends AnyFn<
+  any,
+  Promise<FetchSingleResourceFetchFnData<any, infer TOther>>
+>
+  ? TOther
+  : any;
 
-export function makeFetchSingleResourceGetFn<T extends { resourceId: string }>(
-  useResourceListStore: ResourceZustandStore<T>
-) {
+export function makeFetchSingleResourceGetFn<
+  T extends { resourceId: string },
+  TOther = any
+>(useResourceListStore: ResourceZustandStore<T>) {
   const getFn = (
     data: FetchSingleResourceData | undefined
-  ): FetchSingleResourceReturnedData<T> => {
+  ): FetchSingleResourceReturnedData<T, TOther> => {
     let resource: T | undefined = undefined;
     if (data) resource = useResourceListStore.getState().get(data.id);
-    return { resource };
+    return { resource, other: data?.other };
   };
 
   return getFn;
@@ -187,12 +203,14 @@ export function makeFetchSingleResourceFetchFn<
 >(inputFetchFn: Fn, useResourceListStore: ResourceZustandStore<T>) {
   const fetchFn = async (
     ...params: Parameters<Fn>
-  ): Promise<FetchSingleResourceData> => {
+  ): Promise<
+    FetchSingleResourceData<GetFetchSingleResourceFetchFnOther<Fn>>
+  > => {
     const result = await inputFetchFn(...params);
     useResourceListStore
       .getState()
       .set(result.resource.resourceId, result.resource);
-    return { id: result.resource.resourceId };
+    return { id: result.resource.resourceId, other: result.other };
   };
 
   return fetchFn;
@@ -221,19 +239,22 @@ export function makeFetchSingleResourceOnMountFn<
 }
 
 /** Fetch hook defining behaviour for fetching paginated list. */
-export type FetchPaginatedResourceListData = {
+export type FetchPaginatedResourceListData<TOther = any> = {
   idList: string[];
   count: number;
+  other?: TOther;
 };
 export type FetchPaginatedResourceListGetFnParams02 = {
   page?: number;
   pageSize?: number;
 };
 export type FetchPaginatedResourceListReturnedData<
-  T extends { resourceId: string }
+  T extends { resourceId: string },
+  TOther = any
 > = {
   resourceList: T[];
   count: number;
+  other?: TOther;
 };
 export type FetchPaginatedResourceListGetFn<T extends { resourceId: string }> =
   AnyFn<
@@ -242,12 +263,13 @@ export type FetchPaginatedResourceListGetFn<T extends { resourceId: string }> =
   >;
 
 export function makeFetchPaginatedResourceListGetFn<
-  T extends { resourceId: string }
+  T extends { resourceId: string },
+  TOther = any
 >(useResourceListStore: ResourceZustandStore<T>) {
   const getFn = (
     data: FetchPaginatedResourceListData | undefined,
     params: FetchPaginatedResourceListGetFnParams02
-  ): FetchPaginatedResourceListReturnedData<T> => {
+  ): FetchPaginatedResourceListReturnedData<T, TOther> => {
     if (!data) return { resourceList: [], count: 0 };
 
     const page = params.page ?? 0;
@@ -257,7 +279,7 @@ export function makeFetchPaginatedResourceListGetFn<
       (page + 1) * pageSize
     );
     const items = useResourceListStore.getState().getList(pageIdList);
-    return { resourceList: items, count: data.count };
+    return { resourceList: items, count: data.count, other: data.other };
   };
 
   return getFn;
@@ -283,7 +305,11 @@ export function makeFetchPaginatedResourceListFetchFn<
         return [id, nextResource];
       })
     );
-    return { idList: pageFetchedIdList, count: result.count };
+    return {
+      idList: pageFetchedIdList,
+      count: result.count,
+      other: result.other,
+    };
   };
 
   return fetchFn;
@@ -364,24 +390,32 @@ export function makeFetchPaginatedResourceListOnMountFn<
 }
 
 /** Fetch hook defining behaviour for fetching resource non-paginated list. */
-export type FetchResourceListData = { idList: string[] };
-export type FetchResourceListReturnedData<T extends { resourceId: string }> = {
+export type FetchResourceListData<TOther = any> = {
+  idList: string[];
+  other?: TOther;
+};
+export type FetchResourceListReturnedData<
+  T extends { resourceId: string },
+  TOther = any
+> = {
   resourceList: T[];
+  other?: TOther;
 };
 export type FetchResourceListGetFn<T extends { resourceId: string }> = AnyFn<
   [FetchResourceListData],
   FetchResourceListReturnedData<T>
 >;
 
-export function makeFetchResourceListGetFn<T extends { resourceId: string }>(
-  useResourceListStore: ResourceZustandStore<T>
-) {
+export function makeFetchResourceListGetFn<
+  T extends { resourceId: string },
+  TOther = any
+>(useResourceListStore: ResourceZustandStore<T>) {
   const getFn = (
     data: FetchResourceListData | undefined
-  ): FetchResourceListReturnedData<T> => {
+  ): FetchResourceListReturnedData<T, TOther> => {
     if (!data) return { resourceList: [] };
     const items = useResourceListStore.getState().getList(data.idList);
-    return { resourceList: items };
+    return { resourceList: items, other: data.other };
   };
 
   return getFn;
@@ -404,7 +438,7 @@ export function makeFetchResourceListFetchFn<
         return [id, nextResource];
       })
     );
-    return { idList: pageFetchedIdList };
+    return { idList: pageFetchedIdList, other: result.other };
   };
 
   return fetchFn;
@@ -438,4 +472,16 @@ export function makeFetchResourceListOnMountFn<
   };
 
   return onMountFn;
+}
+
+export function useMergeFetchHooksLoadingAndError(
+  ...hooks: Array<FetchResourceStoreWithoutFns<any, any, any>>
+) {
+  let loading = false;
+  let error: AppError[] = [];
+  hooks.forEach((hook) => {
+    loading ||= hook.loading || !hook.initialized;
+    if (hook.error) error = error.concat(hook.error);
+  });
+  return { loading, error };
 }

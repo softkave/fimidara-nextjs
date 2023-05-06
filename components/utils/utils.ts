@@ -1,7 +1,7 @@
 import { isBoolean } from "lodash";
 
 export const appComponentConstants = {
-  messageDuration: 7, // secs
+  messageDuration: 12, // secs
 };
 
 export function includeFirstNode<T1>(

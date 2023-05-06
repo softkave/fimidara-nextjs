@@ -4,25 +4,26 @@ import {
   formContentWrapperClassName,
 } from "@/components/form/classNames";
 import { preSubmitCheck } from "@/components/form/formUtils";
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { userConstants } from "@/lib/definitions/user";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import useUser from "@/lib/hooks/useUser";
 import { messages } from "@/lib/messages/messages";
-import { getBaseError } from "@/lib/utils/errors";
 import { signupValidationParts } from "@/lib/validation/user";
 import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
 import { Button, Form, Input, message } from "antd";
-import assert from "assert";
-import { PublicUser, UpdateUserEndpointParams } from "fimidara";
-import React from "react";
+import { LoginResult, PublicUser } from "fimidara";
 import * as yup from "yup";
+import { useUserUpdateMutationHook } from "../../../lib/hooks/mutationHooks";
 import { FormAlert } from "../../utils/FormAlert";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
 
-export interface IUserProfileProps {}
+export interface IUserProfileProps {
+  session: LoginResult;
+}
+
+interface UserProfileFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
 const userSettingsValidation = yup.object().shape({
   firstName: signupValidationParts.name.required(messages.firstNameRequired),
@@ -30,7 +31,7 @@ const userSettingsValidation = yup.object().shape({
   email: signupValidationParts.email.required(messages.emailRequired),
 });
 
-function getInitialValues(user?: PublicUser): UpdateUserEndpointParams {
+function getInitialValues(user?: PublicUser): UserProfileFormValues {
   if (!user) {
     return {
       firstName: "",
@@ -47,44 +48,20 @@ function getInitialValues(user?: PublicUser): UpdateUserEndpointParams {
 }
 
 export default function UserProfile(props: IUserProfileProps) {
-  const { isLoading, error, data, mutate } = useUser();
-  const onSubmit = React.useCallback(
-    async (input: UpdateUserEndpointParams) => {
-      assert(data);
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.users.updateUser({ body: input });
-      mutate({ ...data, user: result.body.user }, false);
+  const { session } = props;
+  const updateUserHook = useUserUpdateMutationHook({
+    onSuccess(data, params) {
       message.success("Profile updated.");
     },
-    [mutate]
-  );
-
-  const submitResult = useRequest(onSubmit, { manual: true });
+  });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: updateUserHook.error,
     formikProps: {
       validationSchema: userSettingsValidation,
-
-      // Will be replaced in a useEffect when user loads
-      initialValues: getInitialValues(),
-      onSubmit: submitResult.run,
+      initialValues: getInitialValues(session.user),
+      onSubmit: (body) => updateUserHook.runAsync({ body }),
     },
   });
-
-  const setValues = formik.setValues;
-  React.useEffect(() => {
-    if (data?.user) {
-      setValues(getInitialValues(data.user));
-    }
-  }, [data?.user, setValues]);
-
-  if (error) {
-    return (
-      <PageError messageText={getBaseError(error) || "Error fetching user"} />
-    );
-  } else if (isLoading) {
-    return <PageLoading messageText="Loading user..." />;
-  }
 
   const firstNameNode = (
     <Form.Item
@@ -109,7 +86,7 @@ export default function UserProfile(props: IUserProfileProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter your first name"
-        disabled={submitResult.loading}
+        disabled={updateUserHook.loading}
         maxLength={userConstants.maxNameLength}
       />
     </Form.Item>
@@ -138,7 +115,7 @@ export default function UserProfile(props: IUserProfileProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter your last name"
-        disabled={submitResult.loading}
+        disabled={updateUserHook.loading}
         maxLength={userConstants.maxNameLength}
       />
     </Form.Item>
@@ -166,7 +143,7 @@ export default function UserProfile(props: IUserProfileProps) {
         value={formik.values.email}
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        disabled={submitResult.loading}
+        disabled={updateUserHook.loading}
         placeholder="Enter your email address"
       />
     </Form.Item>
@@ -176,7 +153,7 @@ export default function UserProfile(props: IUserProfileProps) {
     <div className={formBodyClassName}>
       <div className={formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={updateUserHook.error} />
           {firstNameNode}
           {lastNameNode}
           {emailNode}
@@ -185,10 +162,10 @@ export default function UserProfile(props: IUserProfileProps) {
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={updateUserHook.loading}
               onClick={() => preSubmitCheck(formik)}
             >
-              {submitResult.loading ? "Updating Profile" : "Update Profile"}
+              {updateUserHook.loading ? "Updating Profile" : "Update Profile"}
             </Button>
           </Form.Item>
         </form>

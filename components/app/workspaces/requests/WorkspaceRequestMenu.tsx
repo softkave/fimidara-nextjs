@@ -1,11 +1,10 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { useRequest } from "ahooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { useWorkspaceCollaborationRequestDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
@@ -34,24 +33,16 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
     appliesTo: "children",
   });
 
-  const deleteItem = React.useCallback(async () => {
-    try {
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.collaborationRequests.deleteRequest({
-        body: { requestId: request.resourceId },
-      });
+  const deleteHook = useWorkspaceCollaborationRequestDeleteMutationHook({
+    onSuccess(data, params) {
+      message.success("Collaboration request scheduled for deletion.");
+      onCompleteDeleteRequest();
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error deleting collaboration request.");
+    },
+  });
 
-      message.success("Collaboration request sent.");
-      await onCompleteDeleteRequest();
-    } catch (error: any) {
-      errorMessageNotificatition(
-        error,
-        "Error deleting collaboration request."
-      );
-    }
-  }, [request, onCompleteDeleteRequest]);
-
-  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
@@ -62,7 +53,9 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteItemHelper.runAsync();
+            await deleteHook.runAsync({
+              body: { requestId: request.resourceId },
+            });
           },
           onCancel() {
             // do nothing
@@ -72,7 +65,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
         toggleVisibility();
       }
     },
-    [deleteItemHelper, toggleVisibility]
+    [deleteHook, toggleVisibility]
   );
 
   const isPending = request.status === "pending";
@@ -110,7 +103,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   return (
     <React.Fragment>
       <Dropdown
-        disabled={deleteItemHelper.loading}
+        disabled={deleteHook.loading}
         trigger={["click"]}
         menu={{
           items,

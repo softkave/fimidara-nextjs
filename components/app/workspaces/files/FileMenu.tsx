@@ -1,16 +1,12 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
 import { AppResourceType, appWorkspacePaths } from "@/lib/definitions/system";
-import { getUseFileHookKey } from "@/lib/hooks/workspaces/useFile";
-import { getUseFileListHookKey } from "@/lib/hooks/workspaces/useFileList";
-import { useRequest } from "ahooks";
-import { Dropdown, MenuProps, message, Modal } from "antd";
+import { Dropdown, MenuProps, Modal, message } from "antd";
 import { File } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useSWRConfig } from "swr";
+import { useWorkspaceFileDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
@@ -40,30 +36,15 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
     appliesTo: PermissionItemAppliesTo.Children,
   });
 
-  const { mutate: cacheMutate } = useSWRConfig();
-
-  const deleteItem = React.useCallback(async () => {
-    try {
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      await endpoints.files.deleteFile({
-        body: {
-          filepath: addRootnameToPath(
-            file.namePath.join(folderConstants.nameSeparator),
-            workspaceRootname
-          ),
-        },
-      });
-
-      // TODO: have a jobs bar or notification on long running jobs completion
+  const deleteHook = useWorkspaceFileDeleteMutationHook({
+    onSuccess(data, params) {
       message.success("File scheduled for deletion.");
-      cacheMutate(getUseFileListHookKey({ folderId: file.parentId }));
-      cacheMutate(getUseFileHookKey({ fileId: file.resourceId }));
-    } catch (error: any) {
-      errorMessageNotificatition(error, "Error deleting file");
-    }
-  }, [file, cacheMutate, workspaceRootname]);
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error deleting file.");
+    },
+  });
 
-  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
@@ -74,7 +55,14 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteItemHelper.runAsync();
+            await deleteHook.runAsync({
+              body: {
+                filepath: addRootnameToPath(
+                  file.namePath.join(folderConstants.nameSeparator),
+                  workspaceRootname
+                ),
+              },
+            });
           },
           onCancel() {
             // do nothing
@@ -84,7 +72,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
         toggleVisibility();
       }
     },
-    [deleteItemHelper, toggleVisibility]
+    [deleteHook, toggleVisibility]
   );
 
   const items: MenuProps["items"] = [
@@ -111,7 +99,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
   return (
     <React.Fragment>
       <Dropdown
-        disabled={deleteItemHelper.loading}
+        disabled={deleteHook.loading}
         trigger={["click"]}
         menu={{
           items,

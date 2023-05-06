@@ -1,13 +1,11 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { getUseWorkspaceRequestListHookKey } from "@/lib/hooks/workspaces/useWorkspaceRequestList";
 import { getResourceId } from "@/lib/utils/resource";
-import { useRequest } from "ahooks";
 import { message, Modal } from "antd";
 import { CollaborationRequestForWorkspace } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { useSWRConfig } from "swr";
+import { useWorkspaceCollaborationRequestDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import ItemList from "../../../utils/list/ItemList";
 import ThumbnailContent from "../../../utils/page/ThumbnailContent";
@@ -26,28 +24,15 @@ enum MenuKeys {
 
 const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
   const { workspaceId, requests } = props;
-  const { mutate } = useSWRConfig();
-  const deleteItem = React.useCallback(
-    async (itemId: string) => {
-      try {
-        const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-        const result = await endpoints.collaborationRequests.deleteRequest({
-          body: { requestId: itemId },
-        });
-
-        mutate(getUseWorkspaceRequestListHookKey(workspaceId));
-        message.success("Collaboration request sent.");
-      } catch (error: any) {
-        errorMessageNotificatition(
-          error,
-          "Error deleting collaboration request."
-        );
-      }
+  const deleteHook = useWorkspaceCollaborationRequestDeleteMutationHook({
+    onSuccess(data, params) {
+      message.success("Collaboration request scheduled for deletion.");
     },
-    [workspaceId, mutate]
-  );
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error deleting collaboration request.");
+    },
+  });
 
-  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: SelectInfo, itemId: string) => {
       if (info.key === MenuKeys.DeleteItem) {
@@ -58,7 +43,9 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteItemHelper.runAsync(itemId);
+            await deleteHook.runAsync({
+              body: { requestId: itemId },
+            });
           },
           onCancel() {
             // do nothing
@@ -66,7 +53,7 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
         });
       }
     },
-    [deleteItemHelper]
+    [deleteHook]
   );
 
   return (
@@ -85,9 +72,12 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
               {item.status}
             </div>
           }
-          menu={<WorkspaceRequestMenu request={item} onCompleteDeleteRequest={() => {
-            TODO: change mutate
-          }} />}
+          menu={
+            <WorkspaceRequestMenu
+              request={item}
+              onCompleteDeleteRequest={noop}
+            />
+          }
         />
       )}
       getId={getResourceId}

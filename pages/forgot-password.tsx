@@ -1,13 +1,12 @@
 import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Alert, Button, Form, Input, Typography } from "antd";
-import React from "react";
+import { Button, Form, Input, Typography, notification } from "antd";
 import * as yup from "yup";
 import FormError from "../components/form/FormError";
 import { formClasses } from "../components/form/classNames";
 import { preSubmitCheck } from "../components/form/formUtils";
 import { FormAlert } from "../components/utils/FormAlert";
-import { getPrivateFimidaraEndpointsUsingUserToken } from "../lib/api/fimidaraEndpoints";
+import { appComponentConstants } from "../components/utils/utils";
+import { useUserForgotPasswordMutationHook } from "../lib/hooks/mutationHooks";
 import useFormHelpers from "../lib/hooks/useFormHelpers";
 
 export interface IForgotPasswordFormData {
@@ -30,24 +29,21 @@ const initialValues: IForgotPasswordFormInternalData = {
 };
 
 export default function ForgotPassword(props: IForgotPasswordProps) {
-  const [successMessage, setSuccessMessage] = React.useState("");
-  const onSubmit = React.useCallback(async (data: IForgotPasswordFormData) => {
-    setSuccessMessage("");
-    const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
-    await endpoints.users.forgotPassword({
-      body: { email: data.email },
-    });
-
-    setSuccessMessage("Change password email sent.");
-  }, []);
-
-  const submitResult = useRequest(onSubmit, { manual: true });
+  const forgotHook = useUserForgotPasswordMutationHook({
+    onSuccess(data, params) {
+      notification.success({
+        type: "success",
+        message: `Change password email sent to ${params[0].body.email}.`,
+        duration: appComponentConstants.messageDuration,
+      });
+    },
+  });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: forgotHook.error,
     formikProps: {
       validationSchema,
-      initialValues: initialValues,
-      onSubmit: submitResult.run,
+      initialValues,
+      onSubmit: (body) => forgotHook.runAsync({ body }),
     },
   });
 
@@ -71,7 +67,7 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         value={formik.values.email}
-        disabled={submitResult.loading}
+        disabled={forgotHook.loading}
         placeholder="Enter your email address"
       />
     </Form.Item>
@@ -84,22 +80,17 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
           <Form.Item>
             <Typography.Title level={4}>Forgot Password</Typography.Title>
           </Form.Item>
-          <FormAlert error={submitResult.error} />
-          {successMessage && (
-            <Form.Item>
-              <Alert type="success" message={successMessage} />
-            </Form.Item>
-          )}
+          <FormAlert error={forgotHook.error} />
           {emailNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={forgotHook.loading}
               onClick={() => preSubmitCheck(formik)}
             >
-              {submitResult.loading
+              {forgotHook.loading
                 ? "Sending Change Password Email"
                 : "Send Change Password Email"}
             </Button>

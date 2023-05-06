@@ -1,16 +1,10 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
-import { UploadFilePublicAccessActions } from "@/lib/definitions/file";
-import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import { getUseFileHookKey } from "@/lib/hooks/workspaces/useFile";
-import { getUseFileListHookKey } from "@/lib/hooks/workspaces/useFileList";
 import { messages } from "@/lib/messages/messages";
 import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { useRequest } from "ahooks";
 import {
   Button,
   Form,
@@ -24,12 +18,18 @@ import {
 import { File } from "fimidara";
 import { first } from "lodash";
 import { useRouter } from "next/router";
-import React from "react";
-import { useSWRConfig } from "swr";
 import * as yup from "yup";
+import {
+  addRootnameToPath,
+  folderConstants,
+} from "../../../../lib/definitions/folder";
+import {
+  useMergeMutationHooksLoadingAndError,
+  useWorkspaceFileUpdateMutationHook,
+  useWorkspaceFileUploadMutationHook,
+} from "../../../../lib/hooks/mutationHooks";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
-import { useUserNode } from "../../../hooks/useUserNode";
 import { FormAlert } from "../../../utils/FormAlert";
 import IconButton from "../../../utils/buttons/IconButton";
 
@@ -41,7 +41,6 @@ export interface FileFormValue {
   data?: Blob;
   file: Array<UploadFile>;
   name: string;
-  publicAccessAction?: UploadFilePublicAccessActions;
 }
 
 const initialValues: FileFormValue = {
@@ -60,98 +59,39 @@ function getFileFormInputFromFile(item: File): FileFormValue {
 export interface FileFormProps {
   file?: File;
   className?: string;
-  folderId?: string;
 
-  // file parent folder without rootname
+  /** file parent folder without rootname. */
   folderpath?: string;
   workspaceId: string;
   workspaceRootname: string;
 }
 
 export default function FileForm(props: FileFormProps) {
-  const {
-    file,
-    className,
-    workspaceId,
-    folderId,
-    folderpath,
-    workspaceRootname,
-  } = props;
+  const { file, className, workspaceId, folderpath, workspaceRootname } = props;
   const router = useRouter();
-  const { mutate } = useSWRConfig();
-  const { renderedNode: userLoadNode, assertGet: assertGetUserData } =
-    useUserNode();
-  const onSubmit = React.useCallback(
-    async (data: FileFormValue) => {
-      const inputFile = first(data.file);
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      let resultFile: File | undefined = undefined;
-
-      if (file) {
-        if (inputFile) {
-          const result = await endpoints.files.uploadFile({
-            body: {
-              fileId: file.resourceId,
-              description: data.description,
-              data: inputFile as any,
-              mimetype: inputFile.type,
-            },
-          });
-          resultFile = result.body.file;
-        } else {
-          const result = await endpoints.files.updateFileDetails({
-            body: {
-              fileId: file.resourceId,
-              file: { description: data.description },
-            },
-          });
-          resultFile = result.body.file;
-        }
-
-        message.success("File updated.");
-      } else {
-        if (!inputFile) {
-          // TODO: show error
-          return;
-        }
-
-        const result = await endpoints.files.uploadFile({
-          body: {
-            filepath: addRootnameToPath(
-              folderpath
-                ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
-                : data.name,
-              workspaceRootname
-            ),
-            description: data.description,
-            data: inputFile as any,
-            mimetype: inputFile.type,
-          },
-        });
-
-        resultFile = result.body.file;
-        message.success("File uploaded.");
-      }
-
-      mutate(getUseFileListHookKey({ folderId }));
-      mutate(getUseFileHookKey({ fileId: resultFile.resourceId }));
-      router.push(appWorkspacePaths.file(workspaceId, resultFile.resourceId));
+  const updateHook = useWorkspaceFileUpdateMutationHook({
+    onSuccess(data, params) {
+      message.success("File updated.");
+      router.push(
+        appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
+      );
     },
-    [
-      file,
-      workspaceId,
-      folderId,
-      folderpath,
-      router,
-      workspaceRootname,
-      mutate,
-      assertGetUserData,
-    ]
+  });
+  const createHook = useWorkspaceFileUploadMutationHook({
+    onSuccess(data, params) {
+      message.success("File uploaded.");
+      router.push(
+        appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
+      );
+    },
+  });
+  const mergedHook = useMergeMutationHooksLoadingAndError(
+    createHook,
+    updateHook
   );
 
-  const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: mergedHook.error,
     formikProps: {
       validationSchema: yup.object().shape({
         name: fileValidationParts.filename.required(messages.fieldIsRequired),
@@ -161,13 +101,51 @@ export default function FileForm(props: FileFormProps) {
           : yup.mixed(),
       }),
       initialValues: file ? getFileFormInputFromFile(file) : initialValues,
-      onSubmit: submitResult.run,
+      onSubmit: async (data) => {
+        const inputFile = first(data.file);
+
+        if (file) {
+          if (inputFile) {
+            return await createHook.runAsync({
+              body: {
+                fileId: file.resourceId,
+                description: data.description,
+                data: inputFile as any,
+                mimetype: inputFile.type,
+              },
+            });
+          } else {
+            return await updateHook.runAsync({
+              body: {
+                fileId: file.resourceId,
+                file: { description: data.description },
+              },
+            });
+          }
+        } else {
+          if (!inputFile) {
+            // TODO: show error?
+            return;
+          }
+
+          const filepath = addRootnameToPath(
+            folderpath
+              ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
+              : data.name,
+            workspaceRootname
+          );
+          return await createHook.runAsync({
+            body: {
+              filepath,
+              description: data.description,
+              data: inputFile as any,
+              mimetype: inputFile.type,
+            },
+          });
+        }
+      },
     },
   });
-
-  if (userLoadNode) {
-    return userLoadNode;
-  }
 
   const nameNode = (
     <Form.Item
@@ -190,7 +168,7 @@ export default function FileForm(props: FileFormProps) {
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
           placeholder="Enter file name"
-          disabled={submitResult.loading || !!file}
+          disabled={mergedHook.loading || !!file}
           maxLength={systemConstants.maxNameLength}
           autoComplete="off"
         />
@@ -230,7 +208,7 @@ export default function FileForm(props: FileFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter file description"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
         autoSize={{ minRows: 3 }}
       />
@@ -270,7 +248,7 @@ export default function FileForm(props: FileFormProps) {
           <Form.Item>
             <Typography.Title level={4}>File Form</Typography.Title>
           </Form.Item>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={mergedHook.error} />
           {nameNode}
           {descriptionNode}
           {selectFileNode}
@@ -279,7 +257,7 @@ export default function FileForm(props: FileFormProps) {
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={mergedHook.loading}
             >
               {file ? "Update File" : "Create File"}
             </Button>

@@ -1,11 +1,10 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { useRequest } from "ahooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { AgentToken } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { useWorkspaceAgentTokenDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
@@ -34,21 +33,16 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
     appliesTo: "children",
   });
 
-  const deleteToken = React.useCallback(async () => {
-    try {
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.agentTokens.deleteToken({
-        body: { tokenId: token.resourceId },
-      });
-
+  const deleteHook = useWorkspaceAgentTokenDeleteMutationHook({
+    onSuccess(data, params) {
       message.success("Token deleted.");
-      await onCompleteDelete();
-    } catch (error: any) {
-      errorMessageNotificatition(error, "Error deleting token.");
-    }
-  }, [token, onCompleteDelete]);
+      onCompleteDelete();
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error deleting token.");
+    },
+  });
 
-  const deleteTokenHelper = useRequest(deleteToken, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteToken) {
@@ -59,7 +53,9 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteTokenHelper.runAsync();
+            await deleteHook.runAsync({
+              body: { tokenId: token.resourceId },
+            });
           },
           onCancel() {
             // do nothing
@@ -69,7 +65,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
         toggleVisibility();
       }
     },
-    [deleteTokenHelper, toggleVisibility]
+    [deleteHook, toggleVisibility]
   );
 
   const items: MenuProps["items"] = [
@@ -101,7 +97,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
     <React.Fragment>
       {grantPermissionFormNode}
       <Dropdown
-        disabled={deleteTokenHelper.loading}
+        disabled={deleteHook.loading}
         trigger={["click"]}
         menu={{
           items,

@@ -1,11 +1,10 @@
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { useRequest } from "ahooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { PermissionGroup } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { useWorkspacePermissionGroupDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
@@ -34,24 +33,16 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     appliesTo: "children",
   });
 
-  const deleteItem = React.useCallback(async () => {
-    try {
-      // TODO: invalidate all the data that has assigned permissionGroups
-      // when request is successful
+  const deleteHook = useWorkspacePermissionGroupDeleteMutationHook({
+    onSuccess(data, params) {
+      message.success("Permission group scheduled for deletion.");
+      onCompleteDelete();
+    },
+    onError(e, params) {
+      errorMessageNotificatition(e, "Error deleting permission group.");
+    },
+  });
 
-      const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-      const result = await endpoints.permissionGroups.deletePermissionGroup({
-        body: { permissionGroupId: permissionGroup.resourceId },
-      });
-
-      message.success("Permission group deleted.");
-      await onCompleteDelete();
-    } catch (error: any) {
-      errorMessageNotificatition(error, "Error deleting permission group.");
-    }
-  }, [permissionGroup, onCompleteDelete]);
-
-  const deleteItemHelper = useRequest(deleteItem, { manual: true });
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
       if (info.key === MenuKeys.DeleteItem) {
@@ -62,7 +53,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
           okType: "primary",
           okButtonProps: { danger: true },
           onOk: async () => {
-            await deleteItemHelper.runAsync();
+            await deleteHook.runAsync();
           },
           onCancel() {
             // do nothing
@@ -72,7 +63,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
         toggleVisibility();
       }
     },
-    [deleteItemHelper, toggleVisibility]
+    [deleteHook, toggleVisibility]
   );
 
   const items: MenuProps["items"] = [
@@ -102,7 +93,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
   return (
     <React.Fragment>
       <Dropdown
-        disabled={deleteItemHelper.loading}
+        disabled={deleteHook.loading}
         trigger={["click"]}
         menu={{
           items,
