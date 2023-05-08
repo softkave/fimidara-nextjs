@@ -1,11 +1,12 @@
+import PageError from "@/components/utils/PageError";
+import PageLoading from "@/components/utils/PageLoading";
+import PageNothingFound from "@/components/utils/PageNothingFound";
+import { appClasses } from "@/components/utils/theme";
+import { useWorkspaceFileFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { File } from "fimidara";
 import React from "react";
-import { useWorkspaceFileFetchHook } from "../../../../lib/hooks/fetchHooks";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
-import { appClasses } from "../../../utils/theme";
+import { useFetchSingleResourceFetchState } from "../../../../lib/hooks/fetchHookUtils";
 
 export interface FileContainerProps {
   workspaceId: string;
@@ -15,12 +16,13 @@ export interface FileContainerProps {
 
 const FileContainer: React.FC<FileContainerProps> = (props) => {
   const { fileId, render } = props;
-  const data = useWorkspaceFileFetchHook({ fileId });
-  const error = data.store.error;
-  const { resource } = data.store.get(undefined);
-  const isLoading = data.store.loading || !data.store.initialized;
+  const { fetchState } = useWorkspaceFileFetchHook({ fileId });
+  const { isLoading, error, resource } =
+    useFetchSingleResourceFetchState(fetchState);
 
-  if (error) {
+  if (resource) {
+    return render(resource);
+  } else if (error) {
     return (
       <PageError
         className={appClasses.main}
@@ -29,11 +31,9 @@ const FileContainer: React.FC<FileContainerProps> = (props) => {
     );
   } else if (isLoading) {
     return <PageLoading messageText="Loading file..." />;
-  } else if (!resource) {
+  } else {
     return <PageNothingFound messageText="File not found." />;
   }
-
-  return render(resource);
 };
 
 export default FileContainer;

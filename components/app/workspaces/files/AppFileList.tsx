@@ -1,6 +1,7 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { FileOutlined } from "@ant-design/icons";
 import { File } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
 import ItemList from "../../../utils/list/ItemList";
@@ -34,7 +35,13 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
               {item.description}
             </div>
           }
-          menu={<FileMenu workspaceRootname={workspaceRootname} file={item} />}
+          menu={
+            <FileMenu
+              workspaceRootname={workspaceRootname}
+              file={item}
+              onScheduleDeleteSuccess={noop}
+            />
+          }
           prefixNode={<FileOutlined />}
         />
       );

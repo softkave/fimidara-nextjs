@@ -5,17 +5,10 @@ import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import { folderConstants } from "@/lib/definitions/folder";
 import { GetServerSideProps } from "next";
 import React from "react";
-import { SWRConfiguration } from "swr";
 
 export type ICreateFileInFolderParentFormPageProps = {
   workspaceId: string;
   folderId: string;
-};
-
-const swrConfig: SWRConfiguration = {
-  revalidateIfStale: false,
-  revalidateOnFocus: false,
-  revalidateOnReconnect: false,
 };
 
 const CreateFileInFolderParentFormPage: React.FC<
@@ -34,7 +27,6 @@ const CreateFileInFolderParentFormPage: React.FC<
               <FileForm
                 workspaceRootname={workspace.rootname}
                 workspaceId={workspaceId}
-                folderId={folderId}
                 folderpath={folder.namePath.join(folderConstants.nameSeparator)}
                 key="file-form"
               />
@@ -42,7 +34,6 @@ const CreateFileInFolderParentFormPage: React.FC<
           />
         );
       }}
-      fetchConfig={swrConfig}
     />
   );
 };

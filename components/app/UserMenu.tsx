@@ -1,12 +1,12 @@
 import { Badge, Button, Dropdown, MenuProps, Popover } from "antd";
-import { useUserActions } from "../../lib/hooks/actionHooks/useUserActions";
+import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { useUserNode } from "../hooks/useUserNode";
 import UserAvatar from "./user/UserAvatar";
 
 const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
-  const userActions = useUserActions();
+  const { logout } = useUserLoggedIn();
   const userNode = useUserNode({
     renderNode: { withoutMargin: true },
   });
@@ -45,7 +45,7 @@ export default function UserMenu() {
 
   const onClick: MenuProps["onClick"] = async (info) => {
     if (info.key === LOGOUT_MENU_KEY) {
-      userActions.logout();
+      logout();
     }
   };
 

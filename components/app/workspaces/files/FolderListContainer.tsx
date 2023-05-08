@@ -3,9 +3,10 @@ import { appWorkspacePaths } from "@/lib/definitions/system";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
 import { Button, Space } from "antd";
-import { Folder, Workspace } from "fimidara";
+import { Folder } from "fimidara";
 import Link from "next/link";
 import React from "react";
+import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
 import { useWorkspaceFoldersFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -17,7 +18,8 @@ import FileListContainerHeader from "./FileListContainerHeader";
 import FolderList from "./FolderList";
 
 export interface FolderListContainerProps {
-  workspace: Workspace;
+  workspaceId: string;
+  workspaceRootname: string;
   folder?: Folder;
   renderFolderItem?: (
     item: Folder,
@@ -35,23 +37,25 @@ export interface FolderListContainerProps {
 }
 
 const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
-  const { workspace, folder, renderFolderItem, renderFolderList, renderRoot } =
-    props;
+  const {
+    workspaceId,
+    workspaceRootname,
+    folder,
+    renderFolderItem,
+    renderFolderList,
+    renderRoot,
+  } = props;
   const pagination = usePagination();
-  const data = useWorkspaceFoldersFetchHook({
+  const { fetchState } = useWorkspaceFoldersFetchHook({
     page: pagination.page,
     pageSize: pagination?.pageSize,
     folderId: folder?.resourceId,
     folderpath: folder
-      ? addRootnameToPath(folder.namePath, workspace.rootname).join("/")
-      : workspace.rootname,
+      ? addRootnameToPath(folder.namePath, workspaceRootname).join("/")
+      : workspaceRootname,
   });
-  const error = data.store.error;
-  const isLoading = data.store.loading || !data.store.initialized;
-  const { count, resourceList } = data.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
+  const { count, error, isLoading, resourceList } =
+    useFetchPaginatedResourceListFetchState(fetchState);
 
   let contentNode: React.ReactNode = null;
   const getParentHref = () => {
@@ -60,8 +64,8 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
     }
 
     return folder.parentId
-      ? appWorkspacePaths.folder(workspace.resourceId, folder.parentId)
-      : appWorkspacePaths.rootFolderList(workspace.resourceId);
+      ? appWorkspacePaths.folder(workspaceId, folder.parentId)
+      : appWorkspacePaths.rootFolderList(workspaceId);
   };
 
   const renderGotoParentList = () => {
@@ -104,11 +108,11 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
     );
   } else {
     const folderNode = renderFolderList ? (
-      renderFolderList(resourceList, workspace.rootname)
+      renderFolderList(resourceList, workspaceRootname)
     ) : (
       <FolderList
         folders={resourceList}
-        workspaceRootname={workspace.rootname}
+        workspaceRootname={workspaceRootname}
         renderFolderItem={renderFolderItem}
       />
     );
@@ -123,7 +127,7 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
 
   if (renderRoot) {
     // TODO: handle pagination
-    return renderRoot(contentNode, workspace.rootname, {
+    return renderRoot(contentNode, workspaceRootname, {
       ...pagination,
       count,
     });
@@ -134,9 +138,9 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
     <div className={appClasses.main}>
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <FileListContainerHeader
-          workspaceId={workspace.resourceId}
+          workspaceId={workspaceId}
           folder={folder}
-          workspaceRootname={workspace.rootname}
+          workspaceRootname={workspaceRootname}
         />
         <PaginatedContent
           content={contentNode}

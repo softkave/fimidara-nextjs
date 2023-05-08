@@ -18,7 +18,7 @@ const withPageAuthRequiredHOC = <P extends object>(
   const WithPageAuthRequired: React.FC<P> = (props) => {
     const { returnTo, onRedirecting = defaultOnRedirecting } = options;
     const router = useRouter();
-    const isLoggedIn = useUserLoggedIn();
+    const { isLoggedIn } = useUserLoggedIn();
     React.useEffect(() => {
       if (isUndefined(isLoggedIn) || isLoggedIn) return;
 

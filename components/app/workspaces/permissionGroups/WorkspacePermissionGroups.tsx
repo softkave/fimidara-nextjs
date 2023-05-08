@@ -6,6 +6,7 @@ import { Space } from "antd";
 import { PermissionGroup } from "fimidara";
 import Link from "next/link";
 import React from "react";
+import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
 import { useWorkspacePermissionGroupsFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -29,19 +30,16 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
 ) => {
   const { workspaceId, menu, renderItem, renderList, renderRoot } = props;
   const pagination = usePagination();
-  const data = useWorkspacePermissionGroupsFetchHook({
+  const { fetchState } = useWorkspacePermissionGroupsFetchHook({
     workspaceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const error = data.store.error;
-  const isLoading = data.store.loading || !data.store.initialized;
-  const { count, resourceList } = data.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
+  const { count, error, isLoading, resourceList } =
+    useFetchPaginatedResourceListFetchState(fetchState);
 
   let content: React.ReactNode = null;
+
   if (error) {
     content = (
       <PageError

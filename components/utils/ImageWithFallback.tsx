@@ -2,9 +2,7 @@ import { DeleteFilled, LoadingOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { Button, Image, ImageProps } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
-import KeyValueSelectors from "../../lib/store/key-value/selectors";
-import { IAppState } from "../../lib/store/types";
+import { useKvStore } from "../../lib/hooks/storeHooks";
 import { errorMessageNotificatition } from "./errorHandling";
 import { appDataImages } from "./theme";
 
@@ -76,8 +74,8 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
 
   const [imageLoadFailed, setImageLoadFailed] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const imageKey = useSelector<IAppState, string | undefined>(
-    (state) => refreshKey && KeyValueSelectors.getKey(state, refreshKey)
+  const imageKey = useKvStore(
+    (state) => refreshKey && state.get<string>(refreshKey)
   );
 
   const onError = (evt: React.SyntheticEvent<HTMLImageElement, Event>) => {

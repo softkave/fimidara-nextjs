@@ -1,6 +1,5 @@
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
-import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
-import { AppResourceType, appWorkspacePaths } from "@/lib/definitions/system";
+import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Dropdown, MenuProps, Modal, message } from "antd";
 import { Folder } from "fimidara";
 import Link from "next/link";
@@ -16,6 +15,7 @@ import { MenuInfo } from "../../../utils/types";
 export interface FolderMenuProps {
   folder: Folder;
   workspaceRootname: string;
+  onScheduleDeleteSuccess: () => void;
 }
 
 enum MenuKeys {
@@ -28,37 +28,36 @@ enum MenuKeys {
 }
 
 const FolderMenu: React.FC<FolderMenuProps> = (props) => {
-  const { folder, workspaceRootname } = props;
+  const { folder, workspaceRootname, onScheduleDeleteSuccess } = props;
   const folderGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
-    targetType: AppResourceType.Folder,
+    targetType: "folder",
     containerId: folder.parentId || folder.workspaceId,
-    containerType: folder.parentId
-      ? AppResourceType.Folder
-      : AppResourceType.Workspace,
+    containerType: folder.parentId ? "folder" : "workspace",
     targetId: folder.resourceId,
     appliesTo: "self",
   });
 
   const childrenFoldersGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
-    targetType: AppResourceType.Folder,
+    targetType: "folder",
     containerId: folder.resourceId,
-    containerType: AppResourceType.Folder,
-    appliesTo: PermissionItemAppliesTo.Children,
+    containerType: "folder",
+    appliesTo: "children",
   });
 
   const childrenFilesGrantPermission = useGrantPermission({
     workspaceId: folder.workspaceId,
-    targetType: AppResourceType.File,
+    targetType: "file",
     containerId: folder.resourceId,
-    containerType: AppResourceType.Folder,
-    appliesTo: PermissionItemAppliesTo.Children,
+    containerType: "folder",
+    appliesTo: "children",
   });
 
   const deleteHook = useWorkspaceFolderDeleteMutationHook({
     onSuccess(data, params) {
-      message.success("Folder scheduled for deletion deleted.");
+      message.success("Folder scheduled for deletion.");
+      onScheduleDeleteSuccess();
     },
     onError(e, params) {
       errorMessageNotificatition(e, "Error deleting folder.");
@@ -105,19 +104,6 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   );
 
   const items: MenuProps["items"] = [
-    {
-      key: MenuKeys.ViewItem,
-      label: (
-        <Link
-          href={appWorkspacePaths.folderPage(
-            folder.workspaceId,
-            folder.resourceId
-          )}
-        >
-          Open Folder
-        </Link>
-      ),
-    },
     {
       key: MenuKeys.UpdateItem,
       label: (

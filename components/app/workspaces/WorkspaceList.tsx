@@ -16,6 +16,7 @@ import { Button } from "antd";
 import { PublicUser, Workspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
+import { useFetchPaginatedResourceListFetchState } from "../../../lib/hooks/fetchHookUtils";
 import WorkspaceAvatar from "./WorkspaceAvatar";
 
 export interface IWorkspaceListProps {
@@ -25,16 +26,12 @@ export interface IWorkspaceListProps {
 const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
   const { user } = props;
   const pagination = usePagination();
-  const data = useUserWorkspacesFetchHook({
+  const { fetchState } = useUserWorkspacesFetchHook({
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const error = data.store.error;
-  const isLoading = data.store.loading || !data.store.initialized;
-  const { count, resourceList } = data.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
+  const { count, error, isLoading, resourceList } =
+    useFetchPaginatedResourceListFetchState(fetchState);
 
   let content: React.ReactNode = null;
 

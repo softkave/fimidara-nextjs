@@ -1,10 +1,11 @@
+import ItemList from "@/components/utils/list/ItemList";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { FolderOutlined } from "@ant-design/icons";
 import { Folder } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import ItemList from "../../../utils/list/ItemList";
-import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import FolderMenu from "./FolderMenu";
 
 export interface FolderListProps {
@@ -45,6 +46,7 @@ const FolderList: React.FC<FolderListProps> = (props) => {
               key="menu"
               folder={item}
               workspaceRootname={workspaceRootname}
+              onScheduleDeleteSuccess={noop}
             />
           }
           prefixNode={<FolderOutlined />}

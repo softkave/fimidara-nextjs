@@ -1,3 +1,4 @@
+import { AppActionType, WorkspaceAppResourceType } from "fimidara";
 import { defaultTo } from "lodash";
 
 if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
@@ -52,96 +53,33 @@ export function getSelectedItemPath(path: string) {
   return `${path}/:selected`;
 }
 
-export enum SessionAgentType {
-  User = "user",
-  ProgramAccessToken = "program-access-token",
-  ClientAssignedToken = "client-assigned-token",
-}
-
-export interface IPublicAccessOpInput {
-  action: BasicCRUDActions;
-  resourceType: AppResourceType;
-}
-
-export interface IPublicAccessOp {
-  action: BasicCRUDActions;
-  resourceType: AppResourceType;
-  markedAt: Date | string;
-  markedBy: IAgent;
-}
-
-export interface IAgent {
-  agentId: string;
-  agentType: SessionAgentType;
-}
-
-export enum AppResourceType {
-  All = "*",
-  Workspace = "workspace",
-  CollaborationRequest = "collaboration-request",
-  ProgramAccessToken = "program-access-token",
-  ClientAssignedToken = "client-assigned-token",
-  UserToken = "user-token",
-  PermissionGroup = "permission-group",
-  PermissionItem = "permission-item",
-  Folder = "folder",
-  File = "file",
-  User = "user",
-}
-
-export const appResourceTypeLabel: Record<AppResourceType, string> = {
-  [AppResourceType.All]: "Every resource",
-  [AppResourceType.Workspace]: "Workspace",
-  [AppResourceType.CollaborationRequest]: "Collaboration request",
-  [AppResourceType.ProgramAccessToken]: "Program access token",
-  [AppResourceType.ClientAssignedToken]: "Client assigned token",
-  [AppResourceType.UserToken]: "User token",
-  [AppResourceType.PermissionGroup]: "Permission group",
-  [AppResourceType.PermissionItem]: "Permission item",
-  [AppResourceType.Folder]: "Folder",
-  [AppResourceType.File]: "File",
-  [AppResourceType.User]: "User",
-};
-
-export enum BasicCRUDActions {
-  All = "*",
-  Create = "create",
-  Read = "read",
-  Update = "update",
-  Delete = "delete",
-
-  GrantPermission = "grant-permission",
-}
-
-export function getActions(type: AppResourceType, includeWildcard = false) {
-  const actions = [
-    BasicCRUDActions.Create,
-    BasicCRUDActions.Read,
-    BasicCRUDActions.Update,
-    BasicCRUDActions.Delete,
-  ];
+export function getActions(
+  type: WorkspaceAppResourceType,
+  includeWildcard = false
+) {
+  const actions: AppActionType[] = ["create", "read", "update", "delete"];
 
   if (includeWildcard) {
     // unshift instead of push for ordered rendering
     // in grant permission form. it may just be better to
     // sort in there, but until then, we unshift.
-    actions.unshift(BasicCRUDActions.All);
+    actions.unshift("*");
   }
 
-  if (type === AppResourceType.Workspace || type === AppResourceType.All) {
-    actions.push(BasicCRUDActions.GrantPermission);
+  if (type === "workspace" || type === "*") {
+    actions.push("grantPermission");
   }
 
   return actions;
 }
 
-export const actionLabel: Record<BasicCRUDActions, string> = {
-  [BasicCRUDActions.All]: "Every action",
-  [BasicCRUDActions.Create]: "Create",
-  [BasicCRUDActions.Read]: "Read",
-  [BasicCRUDActions.Update]: "Update",
-  [BasicCRUDActions.Delete]: "Delete",
-  [BasicCRUDActions.GrantPermission]: "Grant permission",
+export const actionLabel: Record<AppActionType, string> = {
+  ["*"]: "Every action",
+  ["create"]: "Create",
+  ["read"]: "Read",
+  ["update"]: "Update",
+  ["delete"]: "Delete",
+  ["grantPermission"]: "Grant permission",
 };
 
 export const appRootPaths = {
@@ -164,13 +102,13 @@ export const appWorkspacePaths = {
     return `${this.fileList(workspaceId)}/${fileId}`;
   },
   fileForm(workspaceId: string, fileId: string) {
-    return `${this.file(workspaceId, fileId)}/update-file`;
+    return `${this.file(workspaceId, fileId)}/update`;
   },
   createFileForm(workspaceId: string, folderId?: string) {
     if (folderId) {
-      return `${this.fileList(workspaceId)}/create-file-in-folder/${folderId}`;
+      return `${this.fileList(workspaceId)}/new/${folderId}`;
     } else {
-      return `${this.fileList(workspaceId)}/create-file`;
+      return `${this.fileList(workspaceId)}/new`;
     }
   },
 
@@ -181,19 +119,14 @@ export const appWorkspacePaths = {
   folder(workspaceId: string, folderId: string) {
     return `${this.rootFolderList(workspaceId)}/${folderId}`;
   },
-  folderPage(workspaceId: string, folderId: string) {
-    return `${this.workspace(workspaceId)}/folder-page/${folderId}`;
-  },
   folderForm(workspaceId: string, folderId: string) {
-    return `${this.folder(workspaceId, folderId)}/update-folder`;
+    return `${this.folder(workspaceId, folderId)}/update`;
   },
   createFolderForm(workspaceId: string, folderId?: string) {
     if (folderId) {
-      return `${this.rootFolderList(
-        workspaceId
-      )}/create-folder-with-parent/${folderId}`;
+      return `${this.rootFolderList(workspaceId)}/new/${folderId}`;
     } else {
-      return `${this.rootFolderList(workspaceId)}/create-folder`;
+      return `${this.rootFolderList(workspaceId)}/new`;
     }
   },
 
@@ -205,7 +138,7 @@ export const appWorkspacePaths = {
     return `${this.collaboratorList(workspaceId)}/${collaboratorId}`;
   },
   collaboratorForm(workspaceId: string, collaboratorId: string) {
-    return `${this.collaborator(workspaceId, collaboratorId)}/form`;
+    return `${this.collaborator(workspaceId, collaboratorId)}/new`;
   },
 
   // Request
@@ -213,13 +146,13 @@ export const appWorkspacePaths = {
     return `${this.workspace(workspaceId)}/requests`;
   },
   createRequestForm(workspaceId: string) {
-    return `${this.requestList(workspaceId)}/form`;
+    return `${this.requestList(workspaceId)}/new`;
   },
   request(workspaceId: string, requestId: string) {
     return `${this.requestList(workspaceId)}/${requestId}`;
   },
   requestForm(workspaceId: string, requestId: string) {
-    return `${this.request(workspaceId, requestId)}/form`;
+    return `${this.request(workspaceId, requestId)}/update`;
   },
 
   // Agent token
@@ -227,27 +160,13 @@ export const appWorkspacePaths = {
     return `${this.workspace(workspaceId)}/agent-tokens`;
   },
   createAgentTokenForm(workspaceId: string) {
-    return `${this.agentTokenList(workspaceId)}/form`;
+    return `${this.agentTokenList(workspaceId)}/new`;
   },
   agentToken(workspaceId: string, tokenId: string) {
     return `${this.agentTokenList(workspaceId)}/${tokenId}`;
   },
   agentTokenForm(workspaceId: string, tokenId: string) {
-    return `${this.agentToken(workspaceId, tokenId)}/form`;
-  },
-
-  // Client token
-  clientTokenList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/client-tokens`;
-  },
-  createClientTokenForm(workspaceId: string) {
-    return `${this.clientTokenList(workspaceId)}/form`;
-  },
-  clientToken(workspaceId: string, tokenId: string) {
-    return `${this.clientTokenList(workspaceId)}/${tokenId}`;
-  },
-  clientTokenForm(workspaceId: string, tokenId: string) {
-    return `${this.clientToken(workspaceId, tokenId)}/form`;
+    return `${this.agentToken(workspaceId, tokenId)}/update`;
   },
 
   // permission group
@@ -255,13 +174,13 @@ export const appWorkspacePaths = {
     return `${this.workspace(workspaceId)}/permission-groups`;
   },
   createPermissionGroupForm(workspaceId: string) {
-    return `${this.permissionGroupList(workspaceId)}/form`;
+    return `${this.permissionGroupList(workspaceId)}/new`;
   },
   permissionGroup(workspaceId: string, permissiongroupId: string) {
     return `${this.permissionGroupList(workspaceId)}/${permissiongroupId}`;
   },
   permissionGroupForm(workspaceId: string, permissiongroupId: string) {
-    return `${this.permissionGroup(workspaceId, permissiongroupId)}/form`;
+    return `${this.permissionGroup(workspaceId, permissiongroupId)}/update`;
   },
 
   // usage records

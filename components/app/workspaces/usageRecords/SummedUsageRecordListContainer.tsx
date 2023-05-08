@@ -6,6 +6,10 @@ import { UsageRecord, Workspace } from "fimidara";
 import { first } from "lodash";
 import React from "react";
 import {
+  useFetchArbitraryFetchState,
+  useFetchPaginatedResourceListFetchState,
+} from "../../../../lib/hooks/fetchHookUtils";
+import {
   useUsageCostsFetchHook,
   useWorkspaceUsageRecordsFetchHook,
 } from "../../../../lib/hooks/fetchHooks";
@@ -32,24 +36,21 @@ const SummedUsageRecordListContainer: React.FC<
     month: new Date().getMonth(),
   });
   const pagination = usePagination();
-  const data = useWorkspaceUsageRecordsFetchHook({
-    workspaceId: workspace.resourceId,
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
-  const usageCosts = useUsageCostsFetchHook(undefined);
+  const { fetchState: usageRecordsFetchState } =
+    useWorkspaceUsageRecordsFetchHook({
+      workspaceId: workspace.resourceId,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+    });
+  const { fetchState: usageCostsFetchState } =
+    useUsageCostsFetchHook(undefined);
 
-  const { count, resourceList } = data.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
-  const { costs } = usageCosts.store.get(undefined);
-  const error = data.store.error || usageCosts.store.error;
-  const isLoading =
-    data.store.loading ||
-    !data.store.initialized ||
-    usageCosts.store.loading ||
-    !usageCosts.store.initialized;
+  const usageRecords = useFetchPaginatedResourceListFetchState(
+    usageRecordsFetchState
+  );
+  const usageCosts = useFetchArbitraryFetchState(usageCostsFetchState);
+  const error = usageRecords.error || usageCosts.error;
+  const isLoading = usageRecords.isLoading || usageCosts.isLoading;
 
   let content: React.ReactElement = <span />;
 
@@ -63,8 +64,8 @@ const SummedUsageRecordListContainer: React.FC<
       const dateOptionsMap: Record<number, Record<number, number>> = {};
       const dateOptions: Record<number, number[]> = {};
 
-      if (resourceList) {
-        resourceList.forEach((record) => {
+      if (usageRecords.resourceList) {
+        usageRecords.resourceList.forEach((record) => {
           if (record.fulfillmentStatus === "fulfilled") {
             const yearRecords = fulfilledRecords[record.year] || {};
             const monthRecords = yearRecords[record.month] || [];
@@ -90,7 +91,7 @@ const SummedUsageRecordListContainer: React.FC<
       }
 
       return { dateOptions, fulfilledRecords, droppedRecords };
-    }, [resourceList]);
+    }, [usageRecords.resourceList]);
 
   if (error) {
     content = (
@@ -99,9 +100,9 @@ const SummedUsageRecordListContainer: React.FC<
         messageText={getBaseError(error) || "Error loading usage records."}
       />
     );
-  } else if (isLoading) {
+  } else if (isLoading || !usageCosts.data) {
     content = <PageLoading messageText="Loading usage records..." />;
-  } else if (resourceList.length === 0) {
+  } else if (usageRecords.resourceList.length === 0) {
     content = (
       <PageNothingFound
         className={appClasses.maxWidth420}
@@ -138,12 +139,12 @@ const SummedUsageRecordListContainer: React.FC<
               <SummedUsageRecordList
                 fulfilledRecords={monthFulfilledRecords}
                 droppedRecords={monthDroppedRecords}
-                usageCosts={costs}
+                usageCosts={usageCosts.data.costs}
                 workspace={workspace}
                 renderItem={renderItem}
               />
             }
-            pagination={{ ...pagination, count }}
+            pagination={{ ...pagination, count: usageRecords.count }}
           />
         </Space>
       </div>

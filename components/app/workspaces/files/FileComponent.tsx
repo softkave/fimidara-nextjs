@@ -1,8 +1,10 @@
+import ComponentHeader from "@/components/utils/ComponentHeader";
+import LabeledNode from "@/components/utils/LabeledNode";
+import { appClasses } from "@/components/utils/theme";
 import { Space } from "antd";
 import { File } from "fimidara";
-import ComponentHeader from "../../../utils/ComponentHeader";
-import LabeledNode from "../../../utils/LabeledNode";
-import { appClasses } from "../../../utils/theme";
+import { useRouter } from "next/router";
+import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import FileMenu from "./FileMenu";
 
 export interface FileComponentProps {
@@ -12,11 +14,23 @@ export interface FileComponentProps {
 
 function FileComponent(props: FileComponentProps) {
   const { file, workspaceRootname } = props;
+  const router = useRouter();
+
   return (
     <div className={appClasses.main}>
       <Space direction="vertical" size={32} style={{ width: "100%" }}>
         <ComponentHeader title={file.name}>
-          <FileMenu file={file} workspaceRootname={workspaceRootname} />
+          <FileMenu
+            file={file}
+            workspaceRootname={workspaceRootname}
+            onScheduleDeleteSuccess={() => {
+              router.push(
+                file.parentId
+                  ? appWorkspacePaths.folder(file.workspaceId, file.parentId)
+                  : appWorkspacePaths.rootFolderList(file.workspaceId)
+              );
+            }}
+          />
         </ComponentHeader>
         <LabeledNode
           nodeIsText

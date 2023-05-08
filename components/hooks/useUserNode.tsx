@@ -2,7 +2,8 @@ import assert from "assert";
 import { LoginResult } from "fimidara";
 import React from "react";
 import { useUserActions } from "../../lib/hooks/actionHooks/useUserActions";
-import { useUserDataFetchHook } from "../../lib/hooks/fetchHooks";
+import { useFetchSingleResourceFetchState } from "../../lib/hooks/fetchHookUtils";
+import { useUserSessionFetchHook } from "../../lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "../../lib/utils/errors";
 import PageError from "../utils/PageError";
 import PageLoading from "../utils/PageLoading";
@@ -10,8 +11,7 @@ import PageNothingFound, {
   IPageNothingFoundPassedDownProps,
 } from "../utils/PageNothingFound";
 
-export interface IUseUserNodeResult
-  extends ReturnType<typeof useUserDataFetchHook> {
+export interface IUseUserNodeResult {
   renderedNode: React.ReactElement | null;
 
   /**
@@ -24,25 +24,24 @@ export interface IUseUserNodeResult
 export function useUserNode(
   props: { renderNode?: IPageNothingFoundPassedDownProps } = {}
 ): IUseUserNodeResult {
-  const user = useUserDataFetchHook(undefined);
-  const session = user.store.get(undefined);
-  const { resource } = session;
-  const isLoading = user.store.loading || !user.store.initialized;
+  const { fetchState } = useUserSessionFetchHook(undefined);
+  const { isLoading, error, resource, initialized, other } =
+    useFetchSingleResourceFetchState(fetchState);
   const userActions = useUserActions();
   let renderedNode: React.ReactElement | null = null;
   const renderNodeProps = props.renderNode || {};
 
-  if (user.store.error) {
+  if (error) {
     renderedNode = (
       <PageError
         {...renderNodeProps}
-        messageText={getBaseError(user.store.error) || "Error fetching user."}
+        messageText={getBaseError(error) || "Error fetching user."}
         actions={[
           { children: "Logout", onClick: userActions.logout, danger: true },
         ]}
       />
     );
-  } else if (isLoading) {
+  } else if (isLoading || !initialized) {
     renderedNode = (
       <PageLoading {...renderNodeProps} messageText="Loading user..." />
     );
@@ -50,14 +49,14 @@ export function useUserNode(
     renderedNode = <PageNothingFound messageText="User not found." />;
   }
 
-  const assertGet = React.useCallback((): LoginResult => {
-    assert(session.resource && session.other);
+  const assertGet = (): LoginResult => {
+    assert(resource && other);
     return {
-      user: session.resource,
-      token: session.other.userToken,
-      clientAssignedToken: session.other.clientToken,
+      user: resource,
+      token: other.userToken,
+      clientAssignedToken: other.clientToken,
     };
-  }, [session]);
+  };
 
-  return { renderedNode, assertGet, ...user };
+  return { renderedNode, assertGet };
 }

@@ -5,24 +5,16 @@ import {
   Collaborator,
   File,
   Folder,
-  GetAgentTokenEndpointParams,
-  GetCollaborationRequestEndpointParams,
-  GetCollaboratorEndpointParams,
-  GetFileDetailsEndpointParams,
-  GetFolderEndpointParams,
-  GetPermissionGroupEndpointParams,
   GetUsageCostsEndpointResult,
   GetUserCollaborationRequestsEndpointParams,
   GetUserWorkspacesEndpointParams,
   GetWorkspaceAgentTokensEndpointParams,
   GetWorkspaceCollaborationRequestsEndpointParams,
   GetWorkspaceCollaboratorsEndpointParams,
-  GetWorkspaceEndpointParams,
   GetWorkspacePermissionGroupsEndpointParams,
   GetWorkspaceSummedUsageEndpointParams,
   ListFolderContentEndpointParams,
   PermissionGroup,
-  PublicUser,
   UsageRecord,
   Workspace,
 } from "fimidara";
@@ -30,39 +22,27 @@ import { identity } from "lodash";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../api/fimidaraEndpoints";
 import { AnyFn } from "../utils/types";
 import {
-  FetchPaginatedResourceListGetFnParams02,
   FetchPaginatedResourceListReturnedData,
-  FetchSingleResourceFetchFnData,
-  GetFetchSingleResourceFetchFnOther,
   makeFetchPaginatedResourceListFetchFn,
   makeFetchPaginatedResourceListGetFn,
-  makeFetchPaginatedResourceListOnMountFn,
   makeFetchPaginatedResourceListSetFn,
   makeFetchResourceHook,
   makeFetchResourceStoreHook,
-  makeFetchSingleResourceFetchFn,
-  makeFetchSingleResourceGetFn,
-  makeFetchSingleResourceOnMountFn,
+  removeIdFromIdListOnDeleteResources,
 } from "./fetchHookUtils";
+import { ResourceZustandStore } from "./makeResourceListStore";
 import {
-  ResourceZustandStore,
-  makeResourceListStore,
-} from "./makeResourceListStore";
-
-export const useUsersStore = makeResourceListStore<PublicUser>();
-export const useCollaboratorsStore = makeResourceListStore<Collaborator>();
-export const useUserCollaborationRequestsStore =
-  makeResourceListStore<CollaborationRequestForUser>();
-export const useWorkspaceCollaborationRequestsStore =
-  makeResourceListStore<CollaborationRequestForWorkspace>();
-export const useWorkspaceAgentTokensStore = makeResourceListStore<AgentToken>();
-export const useWorkspaceFilesStore = makeResourceListStore<File>();
-export const useWorkspaceFoldersStore = makeResourceListStore<Folder>();
-export const useWorkspacePermissionGroupsStore =
-  makeResourceListStore<PermissionGroup>();
-export const useWorkspaceUsageRecordsStore =
-  makeResourceListStore<UsageRecord>();
-export const useWorkspacesStore = makeResourceListStore<Workspace>();
+  getCollaboratorStoreKey,
+  useUserCollaborationRequestsStore,
+  useWorkspaceAgentTokensStore,
+  useWorkspaceCollaborationRequestsStore,
+  useWorkspaceCollaboratorsStore,
+  useWorkspaceFilesStore,
+  useWorkspaceFoldersStore,
+  useWorkspacePermissionGroupsStore,
+  useWorkspaceUsageRecordsStore,
+  useWorkspacesStore,
+} from "./resourceListStores";
 
 async function userWorkspacesInputFetchFn(
   params: GetUserWorkspacesEndpointParams
@@ -161,90 +141,6 @@ async function workspaceUsageRecordsInputFetchFn(
   return { count: count.body.count, resourceList: data.body.records };
 }
 
-async function userWorkspaceInputFetchFn(
-  params: GetWorkspaceEndpointParams
-): Promise<FetchSingleResourceFetchFnData<Workspace>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.workspaces.getWorkspace({
-    body: params,
-  });
-  return { resource: data.body.workspace };
-}
-async function userCollaborationRequestInputFetchFn(
-  params: GetCollaborationRequestEndpointParams
-): Promise<FetchSingleResourceFetchFnData<CollaborationRequestForUser>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.collaborationRequests.getUserRequest({
-    body: params,
-  });
-  return { resource: data.body.request };
-}
-async function workspaceCollaborationRequestInputFetchFn(
-  params: GetCollaborationRequestEndpointParams
-): Promise<FetchSingleResourceFetchFnData<CollaborationRequestForWorkspace>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.collaborationRequests.getWorkspaceRequest({
-    body: params,
-  });
-  return { resource: data.body.request };
-}
-async function workspaceCollaboratorInputFetchFn(
-  params: GetCollaboratorEndpointParams
-): Promise<FetchSingleResourceFetchFnData<Collaborator>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.collaborators.getCollaborator({
-    body: params,
-  });
-  return { resource: data.body.collaborator };
-}
-async function workspaceAgentTokenInputFetchFn(
-  params: GetAgentTokenEndpointParams
-): Promise<FetchSingleResourceFetchFnData<AgentToken>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.agentTokens.getToken({
-    body: params,
-  });
-  return { resource: data.body.token };
-}
-async function workspaceFolderInputFetchFn(
-  params: GetFolderEndpointParams
-): Promise<FetchSingleResourceFetchFnData<Folder>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.folders.getFolder({
-    body: params,
-  });
-  return { resource: data.body.folder };
-}
-async function workspaceFileInputFetchFn(
-  params: GetFileDetailsEndpointParams
-): Promise<FetchSingleResourceFetchFnData<File>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.files.getFileDetails({
-    body: params,
-  });
-  return { resource: data.body.file };
-}
-async function workspacePermissionGroupInputFetchFn(
-  params: GetPermissionGroupEndpointParams
-): Promise<FetchSingleResourceFetchFnData<PermissionGroup>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.permissionGroups.getPermissionGroup({
-    body: params,
-  });
-  return { resource: data.body.permissionGroup };
-}
-async function getUserDataInputFetchFn() {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.users.getUserData();
-  return {
-    resource: data.body.user,
-    other: {
-      userToken: data.body.token,
-      clientToken: data.body.clientAssignedToken,
-    },
-  };
-}
-
 async function usageCostsInputFetchFn() {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.usageRecords.getUsageCosts();
@@ -254,57 +150,27 @@ async function usageCostsInputFetchFn() {
 function makePaginatedFetchHookAndStore<
   TResource extends { resourceId: string },
   Fn extends AnyFn<
-    Array<FetchPaginatedResourceListGetFnParams02>,
+    any,
     Promise<FetchPaginatedResourceListReturnedData<TResource>>
   >
->(useResourceListStore: ResourceZustandStore<TResource>, inputFetchFn: Fn) {
+>(
+  useResourceListStore: ResourceZustandStore<TResource>,
+  inputFetchFn: Fn,
+  getKey?: (item: TResource) => string
+) {
   const getFn =
     makeFetchPaginatedResourceListGetFn<TResource>(useResourceListStore);
   const useFetchStore = makeFetchResourceStoreHook(getFn);
   const fetchFn = makeFetchPaginatedResourceListFetchFn(
     inputFetchFn,
-    useResourceListStore
-  );
-  const setFn = makeFetchPaginatedResourceListSetFn<TResource>();
-  const onMountFn = makeFetchPaginatedResourceListOnMountFn(
     useResourceListStore,
-    useFetchStore
+    getKey
   );
-  const useFetchHook = makeFetchResourceHook(
-    fetchFn,
-    useFetchStore,
-    setFn,
-    onMountFn
-  );
+  removeIdFromIdListOnDeleteResources(useResourceListStore, useFetchStore);
+  const setFn = makeFetchPaginatedResourceListSetFn();
+  const useFetchHook = makeFetchResourceHook(fetchFn, useFetchStore, setFn);
 
   return { useFetchStore, useFetchHook };
-}
-
-function makeSingleFetchHookAndStore<
-  TResource extends { resourceId: string },
-  Fn extends AnyFn<any, Promise<FetchSingleResourceFetchFnData<TResource>>>
->(useResourceListStore: ResourceZustandStore<TResource>, inputFetchFn: Fn) {
-  const getFn = makeFetchSingleResourceGetFn<
-    TResource,
-    GetFetchSingleResourceFetchFnOther<Fn>
-  >(useResourceListStore);
-  const useFetchStore = makeFetchResourceStoreHook(getFn);
-  const fetchFn = makeFetchSingleResourceFetchFn(
-    inputFetchFn,
-    useResourceListStore
-  );
-  const onMountFn = makeFetchSingleResourceOnMountFn(
-    useResourceListStore,
-    useFetchStore
-  );
-  const useFetchHook = makeFetchResourceHook(
-    fetchFn,
-    useFetchStore,
-    identity,
-    onMountFn
-  );
-
-  return { useFetchStore, useFetchHook, fetchFn, getFn };
 }
 
 export const {
@@ -332,8 +198,9 @@ export const {
   useFetchStore: useWorkspaceCollaboratorsFetchStore,
   useFetchHook: useWorkspaceCollaboratorsFetchHook,
 } = makePaginatedFetchHookAndStore(
-  useCollaboratorsStore,
-  workspaceCollaboratorsInputFetchFn
+  useWorkspaceCollaboratorsStore,
+  workspaceCollaboratorsInputFetchFn,
+  getCollaboratorStoreKey
 );
 export const {
   useFetchStore: useWorkspaceAgentTokensFetchStore,
@@ -371,64 +238,6 @@ export const {
   workspaceUsageRecordsInputFetchFn
 );
 
-export const {
-  useFetchStore: useUserWorkspaceFetchStore,
-  useFetchHook: useUserWorkspaceFetchHook,
-} = makeSingleFetchHookAndStore(useWorkspacesStore, userWorkspaceInputFetchFn);
-export const {
-  useFetchStore: useUserCollaborationRequestFetchStore,
-  useFetchHook: useUserCollaborationRequestFetchHook,
-} = makeSingleFetchHookAndStore(
-  useUserCollaborationRequestsStore,
-  userCollaborationRequestInputFetchFn
-);
-export const {
-  useFetchStore: useWorkspaceCollaborationRequestFetchStore,
-  useFetchHook: useWorkspaceCollaborationRequestFetchHook,
-} = makeSingleFetchHookAndStore(
-  useWorkspaceCollaborationRequestsStore,
-  workspaceCollaborationRequestInputFetchFn
-);
-export const {
-  useFetchStore: useWorkspaceCollaboratorFetchStore,
-  useFetchHook: useWorkspaceCollaboratorFetchHook,
-} = makeSingleFetchHookAndStore(
-  useCollaboratorsStore,
-  workspaceCollaboratorInputFetchFn
-);
-export const {
-  useFetchStore: useWorkspaceAgentTokenFetchStore,
-  useFetchHook: useWorkspaceAgentTokenFetchHook,
-} = makeSingleFetchHookAndStore(
-  useWorkspaceAgentTokensStore,
-  workspaceAgentTokenInputFetchFn
-);
-export const {
-  useFetchStore: useWorkspaceFolderFetchStore,
-  useFetchHook: useWorkspaceFolderFetchHook,
-} = makeSingleFetchHookAndStore(
-  useWorkspaceFoldersStore,
-  workspaceFolderInputFetchFn
-);
-export const {
-  useFetchStore: useWorkspaceFileFetchStore,
-  useFetchHook: useWorkspaceFileFetchHook,
-} = makeSingleFetchHookAndStore(
-  useWorkspaceFilesStore,
-  workspaceFileInputFetchFn
-);
-export const {
-  useFetchStore: useWorkspacePermissionGroupFetchStore,
-  useFetchHook: useWorkspacePermissionGroupFetchHook,
-} = makeSingleFetchHookAndStore(
-  useWorkspacePermissionGroupsStore,
-  workspacePermissionGroupInputFetchFn
-);
-export const {
-  useFetchStore: useUserDataFetchStore,
-  useFetchHook: useUserDataFetchHook,
-} = makeSingleFetchHookAndStore(useUsersStore, getUserDataInputFetchFn);
-
 export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
   GetUsageCostsEndpointResult,
   GetUsageCostsEndpointResult,
@@ -439,3 +248,16 @@ export const useUsageCostsFetchHook = makeFetchResourceHook(
   useUsageCostsFetchStore,
   identity
 );
+
+export function clearFetchResourceListStores() {
+  useUserWorkspacesFetchStore.getState().clear();
+  useUserCollaborationRequestsFetchStore.getState().clear();
+  useWorkspaceCollaborationRequestsFetchStore.getState().clear();
+  useWorkspaceCollaboratorsStore.getState().clear();
+  useWorkspaceAgentTokensFetchStore.getState().clear();
+  useWorkspaceFoldersFetchStore.getState().clear();
+  useWorkspaceFilesFetchStore.getState().clear();
+  useWorkspacePermissionGroupsFetchStore.getState().clear();
+  useWorkspaceUsageRecordsFetchStore.getState().clear();
+  useUsageCostsFetchStore.getState().clear();
+}

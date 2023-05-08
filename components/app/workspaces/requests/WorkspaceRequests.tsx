@@ -5,6 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Space } from "antd";
 import Link from "next/link";
 import React from "react";
+import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
 import { useWorkspaceCollaborationRequestsFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -22,17 +23,14 @@ export interface IWorkspaceRequestsProps {
 const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
   const { workspaceId } = props;
   const pagination = usePagination();
-  const data = useWorkspaceCollaborationRequestsFetchHook({
+  const { fetchState } = useWorkspaceCollaborationRequestsFetchHook({
     workspaceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const error = data.store.error;
-  const isLoading = data.store.loading || !data.store.initialized;
-  const { count, resourceList } = data.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
+  const { count, error, isLoading, resourceList } =
+    useFetchPaginatedResourceListFetchState(fetchState);
+
   let content: React.ReactNode = null;
 
   if (error) {

@@ -3,20 +3,16 @@
 ## Now
 
 - [ ] entity assigned permission groups fetch hooks, resolve permissions fetch hooks
-- [ ] retaining/clearing data cause currently data on primary key change
-- [ ] use muation hooks
-- [ ] fetch user data, token, client token
-- [ ] implement remove and update in components
-- [ ] only fetch single item if it doesn't exist
 - [ ] a refresh system that doesn't show loading screen but notification
 - [ ] handle server recommended actions
-- [ ] update login result for endpoints that return login result
-- [ ] remove deleted resources on the frontend
-- [ ] route to list on delete if in rouse page
+- [ ] reload page if count doesn't match data, and render still the remaining list
+- [ ] component to render file and folder list and have header there
+- [ ] update resources on update success
 
 ## Later
 
 - [ ] increase SEO
+- [ ] Virtualized list for folders and files
 - [ ] use new FormAlert and errorMessageNotification functions
 - [ ] auto route to app when logged in
 - [ ] Multiselect and batch actions in lists like client assigned tokens

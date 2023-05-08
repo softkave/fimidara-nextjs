@@ -1,41 +1,33 @@
-import { isFunction, uniq } from "lodash";
+import { isEqual, isFunction, uniq } from "lodash";
 import React from "react";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware/devtools";
-import { immer } from "zustand/middleware/immer";
 import { systemConstants } from "../definitions/system";
 import { AppError, toAppErrorList } from "../utils/errors";
 import { AnyFn } from "../utils/types";
 import { ResourceZustandStore } from "./makeResourceListStore";
 
 /** Fetch resource store for storing fetch state. */
-export type FetchResourceStoreWithoutFns<TData, TReturnedData, TGetFnParams> =
-  Pick<
-    FetchResourceStore<TData, TReturnedData, TGetFnParams>,
-    "initialized" | "loading" | "error" | "data"
-  >;
-
-export type FetchResourceStore<TData, TReturnedData, TGetFnParams> = {
+export type FetchState<TData> = {
   loading: boolean;
-  initialized: boolean;
-  data?: TData;
-  error?: AppError[];
-  get(params: TGetFnParams): TReturnedData;
-  clear(): void;
-  set(
-    state:
-      | Partial<
-          FetchResourceStoreWithoutFns<TData, TReturnedData, TGetFnParams>
-        >
-      | ((
-          state: FetchResourceStoreWithoutFns<
-            TData,
-            TReturnedData,
-            TGetFnParams
-          >
-        ) => Partial<
-          FetchResourceStoreWithoutFns<TData, TReturnedData, TGetFnParams>
-        >)
+  data: TData | undefined;
+  error: AppError[] | undefined;
+};
+export type FetchReturnedState<TData> = {
+  loading: boolean;
+  data: TData;
+  error: AppError[] | undefined;
+};
+
+export type FetchResourceStore<TData, TReturnedData, TKeyParams> = {
+  states: Array<[TKeyParams, FetchState<TData>]>;
+  clear(params?: TKeyParams): void;
+  getFetchState(
+    params: TKeyParams
+  ): FetchReturnedState<TReturnedData> | undefined;
+  setFetchState(
+    params: TKeyParams,
+    state: (state: FetchState<TData> | undefined) => FetchState<TData>
   ): void;
 };
 
@@ -44,116 +36,132 @@ export type FetchHookOptions = {
   manual?: boolean;
 };
 
-export function makeFetchResourceStoreHook<TData, TReturnedData, TGetFnParams>(
-  getFn: AnyFn<[TData | undefined, TGetFnParams], TReturnedData>
+export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
+  getFn: AnyFn<[TKeyParams, FetchState<TData>], TReturnedData>,
+  comparisonFn: AnyFn<[TKeyParams, TKeyParams], boolean> = isEqual
 ) {
-  const useFetchResourceStoreHook = create<
-    FetchResourceStore<TData, TReturnedData, TGetFnParams>,
-    [["zustand/immer", {}], ["zustand/devtools", {}]]
+  return create<
+    FetchResourceStore<TData, TReturnedData, TKeyParams>,
+    [["zustand/devtools", {}]]
   >(
-    immer(
-      devtools((set, get) => ({
-        data: undefined,
-        loading: false,
-        initialized: false,
-        error: undefined,
-        get(params) {
-          const store = get();
-          return getFn(store.data, params);
-        },
-        clear() {
-          set((store) => {
-            store.error = undefined;
-            store.initialized = false;
-            store.loading = false;
-            store.data = undefined;
-          });
-        },
-        set(state) {
-          set((store) => {
-            const pState = isFunction(state) ? state(store as any) : state;
-            return { ...store, ...pState };
-          });
-        },
-      }))
-    )
-  );
+    devtools((set, get) => ({
+      states: [] as Array<[TKeyParams, FetchState<TData>]>,
+      getFetchState(params) {
+        const store = get();
+        const entry = store.states.find(([entryParams]) =>
+          comparisonFn(params, entryParams)
+        );
+        return entry
+          ? {
+              loading: entry[1].loading,
+              error: entry[1].error,
+              data: getFn(params, entry[1]),
+            }
+          : undefined;
+      },
 
-  return useFetchResourceStoreHook;
+      clear(params) {
+        set((store) => {
+          if (params) {
+            const states = store.states.filter(([entryParams]) =>
+              comparisonFn(params, entryParams)
+            );
+            return { states };
+          } else {
+            return { states: [] };
+          }
+        });
+      },
+
+      setFetchState(params, update) {
+        set((store) => {
+          const index = store.states.findIndex(([entryParams]) =>
+            comparisonFn(params, entryParams)
+          );
+          const states = [...store.states];
+          const entryData = isFunction(update)
+            ? update(index >= 0 ? states[index][1] : undefined)
+            : update;
+
+          if (index !== -1) {
+            states[index] = [params, entryData];
+          } else {
+            store.states = [...store.states, [params, entryData]];
+          }
+
+          return { states };
+        });
+      },
+    }))
+  );
 }
 
-export type FetchResourceZustandStore<TData, TReturnedData, TGetFnParams> =
+export type FetchResourceZustandStore<TData, TReturnedData, TKeyParams> =
   ReturnType<
-    typeof makeFetchResourceStoreHook<TData, TReturnedData, TGetFnParams>
+    typeof makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>
   >;
 
 /** Fetch hook defining general purpose fetch behaviour. */
 export function makeFetchResourceHook<
   TData,
   TReturnedData,
-  TGetFnParams,
   TFetchFn extends AnyFn<any, Promise<TData>>
 >(
   inputFetchFn: TFetchFn,
-  useStoreHook: FetchResourceZustandStore<TData, TReturnedData, TGetFnParams>,
-  setFn: AnyFn<
-    [
-      FetchResourceStoreWithoutFns<TData, TReturnedData, TGetFnParams>,
-      Partial<FetchResourceStoreWithoutFns<TData, TReturnedData, TGetFnParams>>,
-      Parameters<TFetchFn>[0]
-    ],
-    Partial<FetchResourceStoreWithoutFns<TData, TReturnedData, TGetFnParams>>
+  useStoreHook: FetchResourceZustandStore<
+    TData,
+    TReturnedData,
+    Parameters<TFetchFn>[0]
   >,
-  onMountFn?: AnyFn,
-  onEndFn?: AnyFn
+  setFn: AnyFn<
+    [Parameters<TFetchFn>[0], FetchState<TData> | undefined, TData],
+    TData
+  >,
+  shouldLoadFn?: AnyFn<
+    [boolean, FetchReturnedState<TReturnedData> | undefined],
+    boolean
+  >
 ) {
   const fetchHook = (
     params: Parameters<TFetchFn>[0],
     options?: FetchHookOptions
   ) => {
-    const store = useStoreHook();
+    const fetchState = useStoreHook((store) => store.getFetchState(params));
     const fetchFn = React.useCallback(async () => {
       try {
-        store.set({ loading: true, error: undefined });
+        useStoreHook.getState().setFetchState(params, (state) => ({
+          loading: true,
+          error: undefined,
+          data: state?.data,
+        }));
         const result = await inputFetchFn(params);
-        store.set((state) =>
-          setFn(
-            state,
-            { loading: false, initialized: true, data: result },
-            params
-          )
-        );
-      } catch (error: unknown) {
-        store.set({
+        useStoreHook.getState().setFetchState(params, (state) => ({
+          data: setFn(params, state, result),
           loading: false,
-          initialized: true,
+          error: undefined,
+        }));
+      } catch (error: unknown) {
+        useStoreHook.getState().setFetchState(params, (state) => ({
+          loading: false,
           error: toAppErrorList(error),
-        });
+          data: state?.data,
+        }));
       }
     }, [params]);
 
-    React.useEffect(() => {
-      if (
-        !options?.manual &&
-        !store.loading &&
-        !store.initialized &&
-        !store.error
-      )
-        fetchFn();
-    }, [
-      options?.manual,
-      store.loading,
-      store.initialized,
-      store.error,
-      fetchFn,
-    ]);
+    let willLoad =
+      !options?.manual &&
+      !fetchState?.loading &&
+      !fetchState?.error &&
+      !fetchState?.data;
+
+    if (shouldLoadFn) willLoad = shouldLoadFn(willLoad, fetchState);
 
     React.useEffect(() => {
-      if (onMountFn) onMountFn();
-      return onEndFn;
-    }, [onMountFn, onEndFn]);
+      if (willLoad) fetchFn();
+    }, [willLoad, fetchFn]);
 
-    return { store, fetchFn };
+    return { fetchState, fetchFn };
   };
 
   return fetchHook;
@@ -162,12 +170,13 @@ export function makeFetchResourceHook<
 /** fetch hook defining behaviour for fetching a single resource. */
 export type FetchSingleResourceData<TOther = any> = {
   id: string;
+  initialized: boolean;
   other?: TOther;
 };
 export type FetchSingleResourceReturnedData<
   T extends { resourceId: string },
   TOther = any
-> = { resource?: T; other?: TOther };
+> = { resource?: T; other?: TOther; initialized: boolean };
 export type FetchSingleResourceFetchFnData<
   T extends { resourceId: string },
   TOther = any
@@ -184,14 +193,27 @@ export type GetFetchSingleResourceFetchFnOther<TFn> = TFn extends AnyFn<
 
 export function makeFetchSingleResourceGetFn<
   T extends { resourceId: string },
-  TOther = any
+  TOther = any,
+  TKeyParams = any
 >(useResourceListStore: ResourceZustandStore<T>) {
   const getFn = (
-    data: FetchSingleResourceData | undefined
+    params: TKeyParams,
+    state: FetchState<FetchSingleResourceData> | undefined
   ): FetchSingleResourceReturnedData<T, TOther> => {
-    let resource: T | undefined = undefined;
-    if (data) resource = useResourceListStore.getState().get(data.id);
-    return { resource, other: data?.other };
+    if (!state?.data) {
+      return {
+        resource: undefined,
+        other: undefined,
+        initialized: false,
+      };
+    }
+
+    const resource = useResourceListStore.getState().get(state.data.id);
+    return {
+      resource,
+      other: state?.data?.other,
+      initialized: state?.data?.initialized ?? false,
+    };
   };
 
   return getFn;
@@ -210,41 +232,33 @@ export function makeFetchSingleResourceFetchFn<
     useResourceListStore
       .getState()
       .set(result.resource.resourceId, result.resource);
-    return { id: result.resource.resourceId, other: result.other };
+    return {
+      id: result.resource.resourceId,
+      other: result.other,
+      initialized: true,
+    };
   };
 
   return fetchFn;
 }
 
-export function makeFetchSingleResourceOnMountFn<
-  T extends { resourceId: string }
->(
-  useResourceListStore: ResourceZustandStore<T>,
-  useStoreHook: FetchResourceZustandStore<
-    FetchSingleResourceData,
-    FetchSingleResourceReturnedData<T>,
-    undefined
-  >
+export function singleResourceShouldFetchFn(
+  willLoad: boolean,
+  fetchState:
+    | FetchReturnedState<FetchSingleResourceReturnedData<any>>
+    | undefined
 ) {
-  const onMountFn = () => {
-    useResourceListStore.subscribe((state) => {
-      const data = useStoreHook.getState().data;
-      if (data && !state.items[data.id]) {
-        useStoreHook.getState().clear();
-      }
-    });
-  };
-
-  return onMountFn;
+  return willLoad || !fetchState?.data.resource;
 }
 
 /** Fetch hook defining behaviour for fetching paginated list. */
 export type FetchPaginatedResourceListData<TOther = any> = {
   idList: string[];
   count: number;
+  initialized: boolean;
   other?: TOther;
 };
-export type FetchPaginatedResourceListGetFnParams02 = {
+export type FetchPaginatedResourceListKeyParams = {
   page?: number;
   pageSize?: number;
 };
@@ -256,30 +270,29 @@ export type FetchPaginatedResourceListReturnedData<
   count: number;
   other?: TOther;
 };
-export type FetchPaginatedResourceListGetFn<T extends { resourceId: string }> =
-  AnyFn<
-    [FetchPaginatedResourceListData, FetchPaginatedResourceListGetFnParams02],
-    FetchPaginatedResourceListReturnedData<T>
-  >;
 
 export function makeFetchPaginatedResourceListGetFn<
   T extends { resourceId: string },
   TOther = any
 >(useResourceListStore: ResourceZustandStore<T>) {
   const getFn = (
-    data: FetchPaginatedResourceListData | undefined,
-    params: FetchPaginatedResourceListGetFnParams02
+    params: FetchPaginatedResourceListKeyParams,
+    state: FetchState<FetchPaginatedResourceListData> | undefined
   ): FetchPaginatedResourceListReturnedData<T, TOther> => {
-    if (!data) return { resourceList: [], count: 0 };
+    if (!state?.data) return { resourceList: [], count: 0 };
 
     const page = params.page ?? 0;
     const pageSize = params.pageSize ?? systemConstants.maxPageSize;
-    const pageIdList = data.idList.slice(
+    const pageIdList = state.data.idList.slice(
       page * pageSize,
       (page + 1) * pageSize
     );
     const items = useResourceListStore.getState().getList(pageIdList);
-    return { resourceList: items, count: data.count, other: data.other };
+    return {
+      resourceList: items,
+      count: state.data.count,
+      other: state.data.other,
+    };
   };
 
   return getFn;
@@ -288,10 +301,14 @@ export function makeFetchPaginatedResourceListGetFn<
 export function makeFetchPaginatedResourceListFetchFn<
   T extends { resourceId: string },
   Fn extends AnyFn<
-    Array<FetchPaginatedResourceListGetFnParams02>,
+    Array<FetchPaginatedResourceListKeyParams>,
     Promise<FetchPaginatedResourceListReturnedData<T>>
   >
->(inputFetchFn: Fn, useResourceListStore: ResourceZustandStore<T>) {
+>(
+  inputFetchFn: Fn,
+  useResourceListStore: ResourceZustandStore<T>,
+  getKey: (item: T) => string = (item) => item.resourceId
+) {
   const fetchFn = async (
     ...params: Parameters<Fn>
   ): Promise<FetchPaginatedResourceListData> => {
@@ -300,7 +317,7 @@ export function makeFetchPaginatedResourceListFetchFn<
     const pageFetchedIdList: string[] = [];
     useResourceListStore.getState().setList(
       resourceList.map((nextResource) => {
-        const id = nextResource.resourceId;
+        const id = getKey(nextResource);
         pageFetchedIdList.push(id);
         return [id, nextResource];
       })
@@ -309,89 +326,43 @@ export function makeFetchPaginatedResourceListFetchFn<
       idList: pageFetchedIdList,
       count: result.count,
       other: result.other,
+      initialized: true,
     };
   };
 
   return fetchFn;
 }
 
-export function makeFetchPaginatedResourceListSetFn<
-  T extends { resourceId: string }
->() {
+export function makeFetchPaginatedResourceListSetFn() {
   const setFn = (
-    state: FetchResourceStoreWithoutFns<
-      FetchPaginatedResourceListData,
-      FetchPaginatedResourceListReturnedData<T>,
-      FetchPaginatedResourceListGetFnParams02
-    >,
-    update: Partial<
-      FetchResourceStoreWithoutFns<
-        FetchPaginatedResourceListData,
-        FetchPaginatedResourceListReturnedData<T>,
-        FetchPaginatedResourceListGetFnParams02
-      >
-    >,
-    params0: FetchPaginatedResourceListGetFnParams02
-  ): Partial<
-    FetchResourceStoreWithoutFns<
-      FetchPaginatedResourceListData,
-      FetchPaginatedResourceListReturnedData<T>,
-      FetchPaginatedResourceListGetFnParams02
-    >
-  > => {
-    if (!state.data || !update.data) return state;
+    params0: FetchPaginatedResourceListKeyParams,
+    state: FetchState<FetchPaginatedResourceListData> | undefined,
+    update: FetchPaginatedResourceListData
+  ): FetchPaginatedResourceListData => {
+    if (!state || !state.data) return update;
 
     const presentIdList = state.data.idList;
     const page = params0.page ?? 0;
     const pageSize = params0.pageSize ?? systemConstants.maxPageSize;
     let newIdList = presentIdList
       .slice(0, page * pageSize)
-      .concat(update.data.idList, presentIdList.slice(page * pageSize));
+      .concat(update.idList, presentIdList.slice(page * pageSize));
     newIdList = uniq(newIdList);
 
     return {
-      ...state,
-      ...update,
-      data: { idList: newIdList, count: update.data.count },
+      idList: newIdList,
+      count: update.count,
+      initialized: update.initialized,
     };
   };
 
   return setFn;
 }
 
-export function makeFetchPaginatedResourceListOnMountFn<
-  T extends { resourceId: string }
->(
-  useResourceListStore: ResourceZustandStore<T>,
-  useStoreHook: FetchResourceZustandStore<
-    FetchPaginatedResourceListData,
-    FetchPaginatedResourceListReturnedData<T>,
-    FetchPaginatedResourceListGetFnParams02
-  >
-) {
-  const onMountFn = () => {
-    useResourceListStore.subscribe((state) => {
-      const data = useStoreHook.getState().data;
-      if (data) {
-        // TODO: use map instead because change can be additioon or update and
-        // we don't want to run filter on every change. Another option is to
-        // count the Object.values of currentState and prevState but that is not
-        // conclusive cause an object could have been added and another removed
-        const remainingIdList = data.idList.filter((id) => {
-          return !!state.get(id);
-        });
-        const store = useStoreHook.getState();
-        store.set({ data: { idList: remainingIdList, count: data.count - 1 } });
-      }
-    });
-  };
-
-  return onMountFn;
-}
-
 /** Fetch hook defining behaviour for fetching resource non-paginated list. */
 export type FetchResourceListData<TOther = any> = {
   idList: string[];
+  initialized: boolean;
   other?: TOther;
 };
 export type FetchResourceListReturnedData<
@@ -399,6 +370,7 @@ export type FetchResourceListReturnedData<
   TOther = any
 > = {
   resourceList: T[];
+  initialized: boolean;
   other?: TOther;
 };
 export type FetchResourceListGetFn<T extends { resourceId: string }> = AnyFn<
@@ -411,11 +383,13 @@ export function makeFetchResourceListGetFn<
   TOther = any
 >(useResourceListStore: ResourceZustandStore<T>) {
   const getFn = (
-    data: FetchResourceListData | undefined
+    params: any,
+    state: FetchState<FetchResourceListData> | undefined
   ): FetchResourceListReturnedData<T, TOther> => {
-    if (!data) return { resourceList: [] };
-    const items = useResourceListStore.getState().getList(data.idList);
-    return { resourceList: items, other: data.other };
+    if (!state?.data) return { resourceList: [], initialized: false };
+    const items = useResourceListStore.getState().getList(state.data.idList);
+    const initialized = !!items.length || state.loading || !!state.error;
+    return { initialized, resourceList: items, other: state.data.other };
   };
 
   return getFn;
@@ -438,50 +412,85 @@ export function makeFetchResourceListFetchFn<
         return [id, nextResource];
       })
     );
-    return { idList: pageFetchedIdList, other: result.other };
+    return {
+      idList: pageFetchedIdList,
+      other: result.other,
+      initialized: true,
+    };
   };
 
   return fetchFn;
 }
 
-export function makeFetchResourceListOnMountFn<
+export function removeIdFromIdListOnDeleteResources<
   T extends { resourceId: string }
 >(
   useResourceListStore: ResourceZustandStore<T>,
   useStoreHook: FetchResourceZustandStore<
-    FetchResourceListData,
-    FetchResourceListReturnedData<T>,
-    undefined
+    { idList: string[]; count: number },
+    any,
+    any
   >
 ) {
-  const onMountFn = () => {
-    useResourceListStore.subscribe((state) => {
-      const data = useStoreHook.getState().data;
-      if (data) {
-        // TODO: use map instead because change can be additioon or update and
-        // we don't want to run filter on every change. Another option is to
-        // count the Object.values of currentState and prevState but that is not
-        // conclusive cause an object could have been added and another removed
-        const remainingIdList = data.idList.filter((id) => {
+  useResourceListStore.subscribe((state) => {
+    // TODO: use map instead because change can be additioon or update and
+    // we don't want to run filter on every change. Another option is to
+    // count the Object.values of currentState and prevState but that is not
+    // conclusive cause an object could have been added and another removed
+    const states = useStoreHook
+      .getState()
+      .states.map(([params, fetchState]) => {
+        if (!fetchState.data) return [params, fetchState];
+        const remainingIdList = fetchState.data.idList.filter((id) => {
           return !!state.get(id);
         });
-        const store = useStoreHook.getState();
-        store.set({ data: { idList: remainingIdList } });
-      }
-    });
-  };
+        return [
+          params,
+          {
+            ...fetchState.data,
+            idList: remainingIdList,
+            count: remainingIdList.length,
+          },
+        ];
+      });
 
-  return onMountFn;
+    useStoreHook.setState({ states: states as any });
+  });
 }
 
-export function useMergeFetchHooksLoadingAndError(
-  ...hooks: Array<FetchResourceStoreWithoutFns<any, any, any>>
+export function useFetchSingleResourceFetchState<
+  T extends FetchSingleResourceReturnedData<any>
+>(fetchState?: FetchReturnedState<T>) {
+  const error = fetchState?.error;
+  const isLoading = fetchState?.loading || !fetchState;
+  const { resource, other, initialized } = (fetchState?.data ??
+    {}) as Partial<T>;
+  return { isLoading, error, resource, other, initialized };
+}
+
+export function useFetchPaginatedResourceListFetchState<
+  T extends FetchPaginatedResourceListReturnedData<any>
+>(fetchState?: FetchReturnedState<T>) {
+  const error = fetchState?.error;
+  const isLoading = fetchState?.loading || !fetchState;
+  const { resourceList, other, count } = (fetchState?.data ?? {}) as Partial<T>;
+  return {
+    isLoading,
+    error,
+    other,
+    count: count ?? 0,
+    resourceList: resourceList ?? [],
+  };
+}
+
+export function useFetchArbitraryFetchState<T>(
+  fetchState?: FetchReturnedState<T>
 ) {
-  let loading = false;
-  let error: AppError[] = [];
-  hooks.forEach((hook) => {
-    loading ||= hook.loading || !hook.initialized;
-    if (hook.error) error = error.concat(hook.error);
-  });
-  return { loading, error };
+  const error = fetchState?.error;
+  const isLoading = fetchState?.loading || !fetchState;
+  return {
+    isLoading,
+    error,
+    data: fetchState?.data,
+  };
 }

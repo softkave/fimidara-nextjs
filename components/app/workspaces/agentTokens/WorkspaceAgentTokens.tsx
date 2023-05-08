@@ -14,6 +14,7 @@ import { Space } from "antd";
 import { AgentToken } from "fimidara";
 import Link from "next/link";
 import React from "react";
+import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
 import AgentTokenList from "./AgentTokenList";
 
 export interface IWorkspaceAgentTokensProps {
@@ -27,26 +28,21 @@ export interface IWorkspaceAgentTokensProps {
 const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
   const { workspaceId, menu, renderList, renderRoot, renderItem } = props;
   const pagination = usePagination();
-  const agentTokens = useWorkspaceAgentTokensFetchHook({
+  const { fetchState } = useWorkspaceAgentTokensFetchHook({
     workspaceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const { count, resourceList } = agentTokens.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
-  const isLoading = agentTokens.store.loading || !agentTokens.store.initialized;
+  const { count, error, isLoading, resourceList } =
+    useFetchPaginatedResourceListFetchState(fetchState);
+
   let content: React.ReactNode = null;
 
-  if (agentTokens.store.error) {
+  if (error) {
     content = (
       <PageError
         className={appClasses.main}
-        messageText={
-          getBaseError(agentTokens.store.error) ||
-          "Error fetching agent tokens."
-        }
+        messageText={getBaseError(error) || "Error fetching agent tokens."}
       />
     );
   } else if (isLoading) {

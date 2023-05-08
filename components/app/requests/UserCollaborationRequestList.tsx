@@ -6,6 +6,7 @@ import { getBaseError } from "@/lib/utils/errors";
 import { Typography } from "antd";
 import { CollaborationRequestForUser } from "fimidara";
 import Link from "next/link";
+import { useFetchPaginatedResourceListFetchState } from "../../../lib/hooks/fetchHookUtils";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import ItemList from "../../utils/list/ItemList";
@@ -13,24 +14,20 @@ import PaginatedContent from "../../utils/page/PaginatedContent";
 
 export default function UserCollaborationRequestList() {
   const pagination = usePagination();
-  const requests = useUserCollaborationRequestsFetchHook({
+  const { fetchState } = useUserCollaborationRequestsFetchHook({
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const { count, resourceList } = requests.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
-  const isLoading = requests.store.loading || !requests.store.initialized;
+  const { count, error, isLoading, resourceList } =
+    useFetchPaginatedResourceListFetchState(fetchState);
 
   let node: React.ReactNode = null;
 
-  if (requests.store.error) {
+  if (error) {
     node = (
       <PageError
         messageText={
-          getBaseError(requests.store.error) ||
-          "Error fetching collaboration requests."
+          getBaseError(error) || "Error fetching collaboration requests."
         }
       />
     );

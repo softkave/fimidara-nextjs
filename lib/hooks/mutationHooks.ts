@@ -1,5 +1,6 @@
 import { useRequest } from "ahooks";
 import type { Options as UseRequestOptions } from "ahooks/lib/useRequest/src/types";
+import { FimidaraEndpointResult, LoginResult } from "fimidara";
 import { compact, over } from "lodash";
 import React from "react";
 import {
@@ -7,6 +8,22 @@ import {
   getPublicFimidaraEndpointsUsingUserToken,
 } from "../api/fimidaraEndpoints";
 import { AnyFn } from "../utils/types";
+import { ResourceZustandStore } from "./makeResourceListStore";
+import {
+  getCollaboratorStoreKey,
+  getFileByPath,
+  getFolderByPath,
+  useUsersStore,
+  useWorkspaceAgentTokensStore,
+  useWorkspaceCollaborationRequestsStore,
+  useWorkspaceCollaboratorsStore,
+  useWorkspaceFilesStore,
+  useWorkspaceFoldersStore,
+  useWorkspacePermissionGroupsStore,
+  useWorkspaceUsageRecordsStore,
+  useWorkspacesStore,
+} from "./resourceListStores";
+import { useUserSessionFetchStore } from "./singleResourceFetchStores";
 
 type GetEndpointFn<TEndpoints, TFn> = TFn extends AnyFn<
   [TEndpoints],
@@ -23,7 +40,7 @@ function makeEndpointMutationHook<
 >(
   getEndpoints: AnyFn<[], TEndpoints>,
   getFn: TFn,
-  baseOnSuccess?: AnyFn<[TData]>,
+  baseOnSuccess?: AnyFn<[TData, TParams]>,
   baseOnError?: AnyFn<[Error, TParams]>
 ) {
   return function (requestOptions?: UseRequestOptions<TData, TParams>) {
@@ -62,13 +79,61 @@ function makeEndpointMutationHook<
   };
 }
 
+function updateUserSessionWhenResultIsLoginResult(
+  result: FimidaraEndpointResult<LoginResult>
+) {
+  const states = [...useUserSessionFetchStore.getState().states];
+  useUsersStore.getState().set(result.body.user.resourceId, result.body.user);
+
+  if (states[0]) {
+    const [params, fetchState] = states[0];
+    states[0] = [
+      params,
+      {
+        ...fetchState,
+        data: {
+          id: result.body.user.resourceId,
+          initialized: true,
+          other: {
+            clientToken: result.body.clientAssignedToken,
+            userToken: result.body.token,
+          },
+        },
+      },
+    ];
+  } else {
+    states.push([
+      // anything is allowed really because `useUserSessionFetchStore`'s
+      // `comparisonFn` returns true always making there be only one session in
+      // store.
+      {},
+      {
+        loading: false,
+        error: undefined,
+        data: {
+          id: result.body.user.resourceId,
+          initialized: true,
+          other: {
+            clientToken: result.body.clientAssignedToken,
+            userToken: result.body.token,
+          },
+        },
+      },
+    ]);
+  }
+
+  useUserSessionFetchStore.setState({ states });
+}
+
 export const useUserSignupMutationHook = makeEndpointMutationHook(
   getPrivateFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.users.signup
+  (endpoints) => endpoints.users.signup,
+  updateUserSessionWhenResultIsLoginResult
 );
 export const useUserLoginMutationHook = makeEndpointMutationHook(
   getPrivateFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.users.login
+  (endpoints) => endpoints.users.login,
+  updateUserSessionWhenResultIsLoginResult
 );
 export const useUserForgotPasswordMutationHook = makeEndpointMutationHook(
   getPrivateFimidaraEndpointsUsingUserToken,
@@ -77,12 +142,14 @@ export const useUserForgotPasswordMutationHook = makeEndpointMutationHook(
 export const useUserChangePasswordWithTokenMutationHook =
   makeEndpointMutationHook(
     getPrivateFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.users.changePasswordWithToken
+    (endpoints) => endpoints.users.changePasswordWithToken,
+    updateUserSessionWhenResultIsLoginResult
   );
 export const useUserChangePasswordWithCurrentPasswordMutationHook =
   makeEndpointMutationHook(
     getPrivateFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.users.changePasswordWithCurrentPassword
+    (endpoints) => endpoints.users.changePasswordWithCurrentPassword,
+    updateUserSessionWhenResultIsLoginResult
   );
 export const useUserSendEmailVerificationCodeMutationHook =
   makeEndpointMutationHook(
@@ -91,7 +158,8 @@ export const useUserSendEmailVerificationCodeMutationHook =
   );
 export const useUserConfirmEmailMutationHook = makeEndpointMutationHook(
   getPrivateFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.users.confirmEmailAddress
+  (endpoints) => endpoints.users.confirmEmailAddress,
+  updateUserSessionWhenResultIsLoginResult
 );
 export const useUserUpdateMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
@@ -115,12 +183,43 @@ export const useWorkspaceAgentTokenUpdateMutationHook =
 export const useWorkspaceAgentTokenDeleteMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.agentTokens.deleteToken
+    (endpoints) => endpoints.agentTokens.deleteToken,
+    (data, params) => {
+      const body = params[0]?.body;
+      let tokenId = body?.tokenId;
+
+      if (!tokenId && body && body.workspaceId && body.providedResourceId) {
+        const token = Object.values(
+          useWorkspaceAgentTokensStore.getState().items
+        ).find(
+          (nextToken) =>
+            nextToken.workspaceId === body.workspaceId &&
+            nextToken.providedResourceId === body.workspaceId
+        );
+
+        tokenId = token?.resourceId;
+      }
+
+      if (tokenId) {
+        useWorkspaceAgentTokensStore.getState().remove(tokenId);
+      }
+    }
   );
 export const useWorkspaceCollaboratorDeleteMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.collaborators.removeCollaborator
+    (endpoints) => endpoints.collaborators.removeCollaborator,
+    (data, params) => {
+      const body = params[0]?.body;
+
+      if (body?.collaboratorId && body.workspaceId) {
+        const key = getCollaboratorStoreKey({
+          workspaceId: body.workspaceId,
+          resourceId: body.collaboratorId,
+        });
+        useWorkspaceCollaboratorsStore.getState().remove(key);
+      }
+    }
   );
 export const useWorkspaceFileUploadMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
@@ -132,7 +231,19 @@ export const useWorkspaceFileUpdateMutationHook = makeEndpointMutationHook(
 );
 export const useWorkspaceFileDeleteMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.files.deleteFile
+  (endpoints) => endpoints.files.deleteFile,
+  (data, params) => {
+    const body = params[0]?.body;
+    let fileId = body?.fileId;
+
+    if (!fileId && body?.filepath) {
+      fileId = getFileByPath(body.filepath, true)?.resourceId;
+    }
+
+    if (fileId) {
+      useWorkspaceFilesStore.getState().remove(fileId);
+    }
+  }
 );
 export const useWorkspaceFolderAddMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
@@ -144,7 +255,20 @@ export const useWorkspaceFolderUpdateMutationHook = makeEndpointMutationHook(
 );
 export const useWorkspaceFolderDeleteMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.folders.deleteFolder
+  (endpoints) => endpoints.folders.deleteFolder,
+  (data, params) => {
+    const body = params[0]?.body;
+    let folderId = body?.folderId;
+
+    if (!folderId && body?.folderpath) {
+      folderId = getFolderByPath(body.folderpath, true)?.resourceId;
+    }
+
+    if (folderId) {
+      deleteFolderChildren(folderId);
+      useWorkspaceFoldersStore.getState().remove(folderId);
+    }
+  }
 );
 export const useWorkspacePermissionGroupAddMutationHook =
   makeEndpointMutationHook(
@@ -159,7 +283,15 @@ export const useWorkspacePermissionGroupUpdateMutationHook =
 export const useWorkspacePermissionGroupDeleteMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.permissionGroups.deletePermissionGroup
+    (endpoints) => endpoints.permissionGroups.deletePermissionGroup,
+    (data, params) => {
+      const body = params[0]?.body;
+      let resourceId = body?.permissionGroupId;
+
+      if (resourceId) {
+        useWorkspacePermissionGroupsStore.getState().remove(resourceId);
+      }
+    }
   );
 export const useWorkspacePermissionGroupAssignMutationHook =
   makeEndpointMutationHook(
@@ -179,7 +311,15 @@ export const useWorkspaceCollaborationRequestRevokeMutationHook =
 export const useWorkspaceCollaborationRequestDeleteMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.collaborationRequests.deleteRequest
+    (endpoints) => endpoints.collaborationRequests.deleteRequest,
+    (data, params) => {
+      const body = params[0]?.body;
+      let resourceId = body?.requestId;
+
+      if (resourceId) {
+        useWorkspaceCollaborationRequestsStore.getState().remove(resourceId);
+      }
+    }
   );
 export const useWorkspaceCollaborationRequestAddMutationHook =
   makeEndpointMutationHook(
@@ -196,8 +336,49 @@ export const useWorkspaceUpdateMutationHook = makeEndpointMutationHook(
 );
 export const useWorkspaceDeleteMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.workspaces.deleteWorkspace
+  (endpoints) => endpoints.workspaces.deleteWorkspace,
+  (data, params) => {
+    const body = params[0]?.body;
+    let resourceId = body?.workspaceId;
+
+    if (resourceId) {
+      deleteWorkspaceChildren(resourceId);
+      useWorkspacesStore.getState().remove(resourceId);
+    }
+  }
 );
+
+function deleteFolderChildren(folderId: string) {
+  const folderList = Object.values(useWorkspaceFoldersStore.getState().items);
+  const fileList = Object.values(useWorkspaceFilesStore.getState().items);
+  const childrenFolderIdList = folderList
+    .filter((nextFolder) => nextFolder.idPath.includes(folderId))
+    .map((nextFolder) => nextFolder.resourceId);
+  const childrenFileIdList = fileList
+    .filter((nextFile) => nextFile.idPath.includes(folderId))
+    .map((nextFile) => nextFile.resourceId);
+  useWorkspaceFoldersStore.getState().remove(childrenFolderIdList);
+  useWorkspaceFilesStore.getState().remove(childrenFileIdList);
+}
+
+function deleteWorkspaceChildren(workspaceId: string) {
+  const isWorkspaceChild = (item: { workspaceId: string }) =>
+    item.workspaceId === workspaceId;
+  const deleteChildrenFromStore = (store: ResourceZustandStore<any>) => {
+    const childrenIdList = Object.values(store.getState().items)
+      .filter(isWorkspaceChild)
+      .map((child) => child.resourceId);
+    store.getState().remove(childrenIdList);
+  };
+
+  deleteChildrenFromStore(useWorkspaceAgentTokensStore);
+  deleteChildrenFromStore(useWorkspaceCollaborationRequestsStore);
+  deleteChildrenFromStore(useWorkspaceCollaboratorsStore);
+  deleteChildrenFromStore(useWorkspaceFoldersStore);
+  deleteChildrenFromStore(useWorkspaceFilesStore);
+  deleteChildrenFromStore(useWorkspacePermissionGroupsStore);
+  deleteChildrenFromStore(useWorkspaceUsageRecordsStore);
+}
 
 export function useMergeMutationHooksLoadingAndError(
   ...hooks: Array<ReturnType<typeof useRequest>>

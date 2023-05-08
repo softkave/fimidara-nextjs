@@ -10,6 +10,7 @@ export type ResourceListStore<T> = {
   get: (key: string) => T | undefined;
   getList: (keys: string[]) => T[];
   remove: (key: string | string[]) => void;
+  clear(): void;
 };
 
 export function makeResourceListStore<T extends object>() {
@@ -44,6 +45,11 @@ export function makeResourceListStore<T extends object>() {
         setList(values) {
           set((store) => {
             values.forEach(([key, value]) => (store.items[key] = value as any));
+          });
+        },
+        clear() {
+          set((store) => {
+            store.items = {};
           });
         },
       }))

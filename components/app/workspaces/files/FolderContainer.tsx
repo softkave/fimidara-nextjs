@@ -1,11 +1,12 @@
+import PageError from "@/components/utils/PageError";
+import PageLoading from "@/components/utils/PageLoading";
+import PageNothingFound from "@/components/utils/PageNothingFound";
+import { appClasses } from "@/components/utils/theme";
+import { useWorkspaceFolderFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Folder } from "fimidara";
 import React from "react";
-import { useWorkspaceFolderFetchHook } from "../../../../lib/hooks/fetchHooks";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
-import { appClasses } from "../../../utils/theme";
+import { useFetchSingleResourceFetchState } from "../../../../lib/hooks/fetchHookUtils";
 
 export interface FolderContainerProps {
   folderId: string;
@@ -14,12 +15,13 @@ export interface FolderContainerProps {
 
 const FolderContainer: React.FC<FolderContainerProps> = (props) => {
   const { folderId, render } = props;
-  const data = useWorkspaceFolderFetchHook({ folderId });
-  const error = data.store.error;
-  const { resource } = data.store.get(undefined);
-  const isLoading = data.store.loading || !data.store.initialized;
+  const { fetchState } = useWorkspaceFolderFetchHook({ folderId });
+  const { isLoading, error, resource } =
+    useFetchSingleResourceFetchState(fetchState);
 
-  if (error) {
+  if (resource) {
+    return render(resource);
+  } else if (error) {
     return (
       <PageError
         className={appClasses.main}
@@ -28,11 +30,9 @@ const FolderContainer: React.FC<FolderContainerProps> = (props) => {
     );
   } else if (isLoading) {
     return <PageLoading messageText="Loading folder..." />;
-  } else if (!resource) {
+  } else {
     return <PageNothingFound messageText="Folder not found." />;
   }
-
-  return render(resource);
 };
 
 export default FolderContainer;

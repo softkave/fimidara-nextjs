@@ -4,17 +4,10 @@ import FileForm from "@/components/app/workspaces/files/FileForm";
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import { GetServerSideProps } from "next";
 import React from "react";
-import { SWRConfiguration } from "swr";
 
 export type IUpdateFileFormPageProps = {
   workspaceId: string;
   fileId: string;
-};
-
-const swrConfig: SWRConfiguration = {
-  revalidateIfStale: false,
-  revalidateOnFocus: false,
-  revalidateOnReconnect: false,
 };
 
 const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
@@ -38,7 +31,6 @@ const UpdateFileFormPage: React.FC<IUpdateFileFormPageProps> = (props) => {
           />
         );
       }}
-      swrConfig={swrConfig}
     />
   );
 };

@@ -7,7 +7,7 @@ export interface IFimidaraHeaderProps {
 }
 
 export default function FimidaraHeader(props: IFimidaraHeaderProps) {
-  const isLoggedIn = useUserLoggedIn();
+  const { isLoggedIn } = useUserLoggedIn();
   const headerProps = props.headerProps ?? {};
   if (isLoggedIn) {
     return <AppHeader {...headerProps} />;

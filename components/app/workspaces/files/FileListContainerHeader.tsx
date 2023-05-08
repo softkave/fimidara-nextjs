@@ -1,11 +1,12 @@
+import IconButton from "@/components/utils/buttons/IconButton";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { PlusOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Dropdown, MenuProps, Space, Typography } from "antd";
 import { Folder } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import IconButton from "../../../utils/buttons/IconButton";
 import FolderMenu from "./FolderMenu";
 import RootFilesMenu from "./RootFilesMenu";
 
@@ -79,7 +80,11 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
           <IconButton icon={<PlusOutlined />} />
         </Dropdown>
         {folder ? (
-          <FolderMenu folder={folder} workspaceRootname={workspaceRootname} />
+          <FolderMenu
+            folder={folder}
+            workspaceRootname={workspaceRootname}
+            onScheduleDeleteSuccess={noop}
+          />
         ) : (
           <RootFilesMenu workspaceId={workspaceId} />
         )}

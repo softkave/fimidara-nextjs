@@ -6,6 +6,7 @@ import { Space } from "antd";
 import { Collaborator } from "fimidara";
 import Link from "next/link";
 import React from "react";
+import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
 import { useWorkspaceCollaboratorsFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
@@ -29,18 +30,14 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
 ) => {
   const { workspaceId, menu, renderList, renderRoot, renderItem } = props;
   const pagination = usePagination();
-  const collaborators = useWorkspaceCollaboratorsFetchHook({
+  const { fetchState } = useWorkspaceCollaboratorsFetchHook({
     workspaceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const error = collaborators.store.error;
-  const isLoading =
-    collaborators.store.loading || !collaborators.store.initialized;
-  const { count, resourceList } = collaborators.store.get({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-  });
+  const { count, error, isLoading, resourceList } =
+    useFetchPaginatedResourceListFetchState(fetchState);
+
   let content: React.ReactNode = null;
 
   if (error) {

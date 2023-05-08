@@ -4,7 +4,8 @@ import { Space } from "antd";
 import { Collaborator } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
-import { useWorkspaceCollaboratorFetchHook } from "../../../../lib/hooks/fetchHooks";
+import { useFetchSingleResourceFetchState } from "../../../../lib/hooks/fetchHookUtils";
+import { useWorkspaceCollaboratorFetchHook } from "../../../../lib/hooks/singleResourceFetchHooks";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
 import PageError from "../../../utils/PageError";
@@ -21,19 +22,39 @@ export interface ICollaboratorProps {
 function Collaborator(props: ICollaboratorProps) {
   const { collaboratorId, workspaceId } = props;
   const router = useRouter();
-  const data = useWorkspaceCollaboratorFetchHook({
+  const { fetchState } = useWorkspaceCollaboratorFetchHook({
     workspaceId,
     collaboratorId,
   });
-  const error = data.store.error;
-  const { resource } = data.store.get(undefined);
-  const isLoading = data.store.loading || !data.store.initialized;
+  const { isLoading, error, resource } =
+    useFetchSingleResourceFetchState(fetchState);
 
   const onCompeleteRemoveCollaborator = React.useCallback(async () => {
     router.push(appWorkspacePaths.collaboratorList(workspaceId));
   }, [workspaceId, router]);
 
-  if (error) {
+  if (resource) {
+    return (
+      <div className={appClasses.main}>
+        <Space direction="vertical" size={32} style={{ width: "100%" }}>
+          <ComponentHeader title={resource.firstName + " " + resource.lastName}>
+            <CollaboratorMenu
+              workspaceId={workspaceId}
+              collaborator={resource as Collaborator}
+              onCompleteRemove={onCompeleteRemoveCollaborator}
+            />
+          </ComponentHeader>
+          <LabeledNode
+            nodeIsText
+            copyable
+            direction="vertical"
+            label="Resource ID"
+            node={resource.resourceId}
+          />
+        </Space>
+      </div>
+    );
+  } else if (error) {
     return (
       <PageError
         messageText={getBaseError(error) || "Error fetching collaborator"}
@@ -41,30 +62,9 @@ function Collaborator(props: ICollaboratorProps) {
     );
   } else if (isLoading) {
     return <PageLoading messageText="Loading resource..." />;
-  } else if (!resource) {
+  } else {
     return <PageNothingFound messageText="Collaborator not found." />;
   }
-
-  return (
-    <div className={appClasses.main}>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
-        <ComponentHeader title={resource.firstName + " " + resource.lastName}>
-          <CollaboratorMenu
-            workspaceId={workspaceId}
-            collaborator={resource as Collaborator}
-            onCompleteRemove={onCompeleteRemoveCollaborator}
-          />
-        </ComponentHeader>
-        <LabeledNode
-          nodeIsText
-          copyable
-          direction="vertical"
-          label="Resource ID"
-          node={resource.resourceId}
-        />
-      </Space>
-    </div>
-  );
 }
 
 export default Collaborator;

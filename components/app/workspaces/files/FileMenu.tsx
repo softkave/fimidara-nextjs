@@ -15,6 +15,7 @@ import { MenuInfo } from "../../../utils/types";
 export interface FileMenuProps {
   file: File;
   workspaceRootname: string;
+  onScheduleDeleteSuccess: () => void;
 }
 
 enum MenuKeys {
@@ -24,7 +25,7 @@ enum MenuKeys {
 }
 
 const FileMenu: React.FC<FileMenuProps> = (props) => {
-  const { file, workspaceRootname } = props;
+  const { file, workspaceRootname, onScheduleDeleteSuccess } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: file.workspaceId,
     targetType: AppResourceType.File,
@@ -39,6 +40,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
   const deleteHook = useWorkspaceFileDeleteMutationHook({
     onSuccess(data, params) {
       message.success("File scheduled for deletion.");
+      onScheduleDeleteSuccess();
     },
     onError(e, params) {
       errorMessageNotificatition(e, "Error deleting file.");
