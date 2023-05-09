@@ -1,32 +1,43 @@
-import FileListContainer from "@/components/app/workspaces/files/FileListContainer old";
+import WorkspaceContainer from "@/components/app/workspaces/WorkspaceContainer";
+import FolderComponent from "@/components/app/workspaces/files/FolderComponent";
 import FolderContainer from "@/components/app/workspaces/files/FolderContainer";
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import { GetServerSideProps } from "next";
 import React from "react";
 
-export type IFolderFilesPageProps = {
+export type IFolderPageProps = {
   workspaceId: string;
   folderId: string;
 };
 
-const FolderFilesPage: React.FC<IFolderFilesPageProps> = (props) => {
+const FolderPage: React.FC<IFolderPageProps> = (props) => {
   const { workspaceId, folderId } = props;
 
   return (
-    <FolderContainer
-      folderId={folderId}
-      render={(folder) => {
-        return <FileListContainer workspaceId={workspaceId} folder={folder} />;
-      }}
+    <WorkspaceContainer
+      workspaceId={workspaceId}
+      render={(workspace) => (
+        <FolderContainer
+          folderId={folderId}
+          render={(folder) => {
+            return (
+              <FolderComponent
+                folder={folder}
+                workspaceRootname={workspace.rootname}
+              />
+            );
+          }}
+        />
+      )}
     />
   );
 };
 
-export default withPageAuthRequiredHOC(FolderFilesPage);
+export default withPageAuthRequiredHOC(FolderPage);
 
 export const getServerSideProps: GetServerSideProps<
-  IFolderFilesPageProps,
-  IFolderFilesPageProps
+  IFolderPageProps,
+  IFolderPageProps
 > = async (context) => {
   return {
     props: {

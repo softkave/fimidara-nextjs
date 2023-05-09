@@ -1,5 +1,6 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { IWorkspace } from "@/lib/definitions/workspace";
+import { useWorkspaceDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { LeftOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Dropdown, MenuProps, Modal, Space, Typography, message } from "antd";
@@ -7,7 +8,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useWorkspaceDeleteMutationHook } from "../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../hooks/useGrantPermission";
 import IconButton from "../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../utils/errorHandling";

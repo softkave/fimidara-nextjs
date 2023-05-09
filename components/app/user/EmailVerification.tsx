@@ -1,7 +1,7 @@
+import { useUserSendEmailVerificationCodeMutationHook } from "@/lib/hooks/mutationHooks";
 import { Button, message, Space, Typography } from "antd";
 import { LoginResult } from "fimidara";
 import React from "react";
-import { useUserSendEmailVerificationCodeMutationHook } from "../../../lib/hooks/mutationHooks";
 import {
   formBodyClassName,
   formContentWrapperClassName,

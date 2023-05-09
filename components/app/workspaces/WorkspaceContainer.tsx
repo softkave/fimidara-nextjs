@@ -1,7 +1,7 @@
+import { useUserWorkspaceFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Workspace } from "fimidara";
 import React from "react";
-import { useUserWorkspaceFetchHook } from "../../../lib/hooks/fetchHooks";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import PageNothingFound from "../../utils/PageNothingFound";

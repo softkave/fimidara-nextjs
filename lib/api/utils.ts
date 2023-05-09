@@ -1,10 +1,14 @@
-import { fetch, Headers } from "cross-fetch";
-import FormData from "isomorphic-form-data";
+import {fetch, Headers} from 'cross-fetch';
+import FormData from 'isomorphic-form-data';
 
 type FimidaraEndpointErrorItem = {
   name: string;
   message: string;
   field?: string;
+
+  // TODO: find a way to include in generated doc for when we add new
+  // recommended actions
+  action?: 'logout' | 'loginAgain' | 'requestChangePassword';
 };
 
 export class FimidaraEndpointError extends Error {
@@ -14,7 +18,7 @@ export class FimidaraEndpointError extends Error {
     public statusText: string,
     public headers: typeof Headers
   ) {
-    super("Fimidara endpoint error.");
+    super('Fimidara endpoint error.');
   }
 }
 
@@ -33,11 +37,11 @@ export class FimidaraJsConfig {
   }
 
   setAuthToken(token: string) {
-    this.setConfig({ authToken: token });
+    this.setConfig({authToken: token});
   }
 
   setConfig(update: Partial<FimidaraJsConfigOptions>) {
-    this.config = { ...this.config, ...update };
+    this.config = {...this.config, ...update};
     this.fanoutConfigUpdate(update);
   }
 
@@ -50,17 +54,17 @@ export class FimidaraJsConfig {
   }
 
   protected fanoutConfigUpdate(update: Partial<FimidaraJsConfigOptions>) {
-    this.inheritors.forEach((inheritor) => inheritor.setConfig(update));
+    this.inheritors.forEach(inheritor => inheritor.setConfig(update));
   }
 }
 
 const serverAddr =
   (process ? process.env.FIMIDARA_SERVER_ADDR : undefined) ??
-  "https://api.fimidara.com";
+  'https://api.fimidara.com';
 
-const HTTP_HEADER_CONTENT_TYPE = "Content-Type";
-const HTTP_HEADER_AUTHORIZATION = "Authorization";
-const CONTENT_TYPE_APPLICATION_JSON = "application/json";
+const HTTP_HEADER_CONTENT_TYPE = 'Content-Type';
+const HTTP_HEADER_AUTHORIZATION = 'Authorization';
+const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
 
 export interface IInvokeEndpointParams {
   token?: string;
@@ -68,12 +72,12 @@ export interface IInvokeEndpointParams {
   formdata?: any;
   path: string;
   headers?: Record<string, string>;
-  method: "GET" | "POST" | "PUT" | "DELETE";
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
 }
 
 export async function invokeEndpoint(props: IInvokeEndpointParams) {
-  const { data, path, headers, method, token, formdata } = props;
-  const incomingHeaders = { ...headers };
+  const {data, path, headers, method, token, formdata} = props;
+  const incomingHeaders = {...headers};
   let contentBody = undefined;
 
   if (formdata) {
@@ -96,7 +100,7 @@ export async function invokeEndpoint(props: IInvokeEndpointParams) {
     method,
     headers: incomingHeaders,
     body: contentBody as any,
-    mode: "cors",
+    mode: 'cors',
   });
 
   if (result.ok) {
@@ -110,7 +114,7 @@ export async function invokeEndpoint(props: IInvokeEndpointParams) {
   let errors: FimidaraEndpointErrorItem[] = [];
   if (isResultJSON) {
     const body = (await result.json()) as
-      | { errors: FimidaraEndpointErrorItem[] }
+      | {errors: FimidaraEndpointErrorItem[]}
       | undefined;
 
     if (body?.errors) {
@@ -127,7 +131,7 @@ export async function invokeEndpoint(props: IInvokeEndpointParams) {
 }
 
 export class FimidaraEndpointsBase extends FimidaraJsConfig {
-  protected getAuthToken(params?: { authToken?: string }) {
+  protected getAuthToken(params?: {authToken?: string}) {
     return params?.authToken || this.config.authToken;
   }
 }
@@ -151,21 +155,21 @@ export function getReadFileURL(props: {
   width?: number;
   height?: number;
 }) {
-  let query = "";
+  let query = '';
   if (props.width) query += `w=${props.width.toFixed()}`;
   if (props.height) query += `h=${props.height.toFixed()}`;
-  if (query) query = "?" + query;
+  if (query) query = '?' + query;
 
   return (
     serverAddr +
-    "v1/files/readFile" +
+    'v1/files/readFile' +
     encodeURIComponent(props.filepath) +
     query
   );
 }
 
-export function getUploadFileURL(props: { filepath: string }) {
+export function getUploadFileURL(props: {filepath: string}) {
   return (
-    serverAddr + "v1/files/uploadFile" + encodeURIComponent(props.filepath)
+    serverAddr + 'v1/files/uploadFile' + encodeURIComponent(props.filepath)
   );
 }

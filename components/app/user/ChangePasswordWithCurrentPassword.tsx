@@ -1,9 +1,9 @@
 import { userConstants } from "@/lib/definitions/user";
+import { useUserChangePasswordWithCurrentPasswordMutationHook } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { css } from "@emotion/css";
 import { Button, Form, Input, message } from "antd";
 import * as yup from "yup";
-import { useUserChangePasswordWithCurrentPasswordMutationHook } from "../../../lib/hooks/mutationHooks";
 import FormError from "../../form/FormError";
 import { formClasses } from "../../form/classNames";
 import { FormAlert } from "../../utils/FormAlert";

@@ -1,11 +1,11 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { getResourceId } from "@/lib/utils/resource";
 import { message, Modal } from "antd";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { useWorkspaceCollaborationRequestDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import ItemList from "../../../utils/list/ItemList";
 import ThumbnailContent from "../../../utils/page/ThumbnailContent";

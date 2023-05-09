@@ -1,11 +1,11 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
+import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space } from "antd";
 import { Collaborator } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
-import { useFetchSingleResourceFetchState } from "../../../../lib/hooks/fetchHookUtils";
-import { useWorkspaceCollaboratorFetchHook } from "../../../../lib/hooks/singleResourceFetchHooks";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
 import PageError from "../../../utils/PageError";

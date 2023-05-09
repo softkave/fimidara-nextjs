@@ -1,10 +1,10 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Space } from "antd";
 import { File } from "fimidara";
 import { useRouter } from "next/router";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
 import FileMenu from "./FileMenu";
 
 export interface FileComponentProps {

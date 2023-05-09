@@ -8,19 +8,19 @@ import ListHeader from "@/components/utils/list/ListHeader";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import { PublicUser, Workspace } from "fimidara";
+import { User, Workspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { useFetchPaginatedResourceListFetchState } from "../../../lib/hooks/fetchHookUtils";
 import WorkspaceAvatar from "./WorkspaceAvatar";
 
 export interface IWorkspaceListProps {
-  user: PublicUser;
+  user: User;
 }
 
 const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {

@@ -1,4 +1,10 @@
+import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import {
+  useMergeMutationHooksLoadingAndError,
+  useWorkspaceFileUpdateMutationHook,
+  useWorkspaceFileUploadMutationHook,
+} from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { fileValidationParts } from "@/lib/validation/file";
@@ -19,15 +25,6 @@ import { File } from "fimidara";
 import { first } from "lodash";
 import { useRouter } from "next/router";
 import * as yup from "yup";
-import {
-  addRootnameToPath,
-  folderConstants,
-} from "../../../../lib/definitions/folder";
-import {
-  useMergeMutationHooksLoadingAndError,
-  useWorkspaceFileUpdateMutationHook,
-  useWorkspaceFileUploadMutationHook,
-} from "../../../../lib/hooks/mutationHooks";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 import { FormAlert } from "../../../utils/FormAlert";

@@ -1,10 +1,10 @@
+import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestResponseMutationHook } from "@/lib/hooks/mutationHooks";
 import { useUserCollaborationRequestFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
 import { Button, Space, Typography, message } from "antd";
 import { formatRelative } from "date-fns";
-import { useFetchSingleResourceFetchState } from "../../../lib/hooks/fetchHookUtils";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import PageNothingFound from "../../utils/PageNothingFound";

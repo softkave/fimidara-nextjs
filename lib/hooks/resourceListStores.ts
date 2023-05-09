@@ -6,14 +6,14 @@ import {
   File,
   Folder,
   PermissionGroup,
-  PublicUser,
   UsageRecord,
+  User,
   Workspace,
 } from "fimidara";
 import { makeKey } from "../utils/fns";
 import { makeResourceListStore } from "./makeResourceListStore";
 
-export const useUsersStore = makeResourceListStore<PublicUser>();
+export const useUsersStore = makeResourceListStore<User>();
 export const useUserCollaborationRequestsStore =
   makeResourceListStore<CollaborationRequestForUser>();
 export const useWorkspaceCollaboratorsStore =

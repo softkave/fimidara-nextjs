@@ -1,16 +1,27 @@
-import FileListContainer from "@/components/app/workspaces/files/FileListContainer old";
+import WorkspaceContainer from "@/components/app/workspaces/WorkspaceContainer";
+import FolderChildren from "@/components/app/workspaces/files/FolderChildren";
 import { getWorkspaceServerSideProps } from "@/components/app/workspaces/utils";
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import React from "react";
 
-export interface IRootLevelFilesPageProps {
+export interface IWorkspaceFoldersPageProps {
   workspaceId: string;
 }
 
-const RootLevelFilesPage: React.FC<IRootLevelFilesPageProps> = (props) => {
+const WorkspaceFoldersPage: React.FC<IWorkspaceFoldersPageProps> = (props) => {
   const { workspaceId } = props;
-  return <FileListContainer workspaceId={workspaceId} />;
+  return (
+    <WorkspaceContainer
+      workspaceId={workspaceId}
+      render={(workspace) => (
+        <FolderChildren
+          workspaceId={workspace.resourceId}
+          workspaceRootname={workspace.rootname}
+        />
+      )}
+    />
+  );
 };
 
-export default withPageAuthRequiredHOC(RootLevelFilesPage);
+export default withPageAuthRequiredHOC(WorkspaceFoldersPage);
 export const getServerSideProps = getWorkspaceServerSideProps;

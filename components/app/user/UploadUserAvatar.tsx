@@ -1,7 +1,7 @@
 import { getReadFileURL, getUploadFileURL } from "@/lib/api/utils";
 import { systemConstants } from "@/lib/definitions/system";
+import { KeyValueKeys, useKvStore } from "@/lib/hooks/storeHooks";
 import React from "react";
-import { KeyValueKeys, useKvStore } from "../../../lib/hooks/storeHooks";
 import { formClasses } from "../../form/classNames";
 import { useUserNode } from "../../hooks/useUserNode";
 import ImageAndUploadAvatar from "../../utils/ImageAndUploadAvatar";

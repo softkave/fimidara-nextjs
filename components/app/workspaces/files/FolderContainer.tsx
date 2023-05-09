@@ -2,11 +2,11 @@ import PageError from "@/components/utils/PageError";
 import PageLoading from "@/components/utils/PageLoading";
 import PageNothingFound from "@/components/utils/PageNothingFound";
 import { appClasses } from "@/components/utils/theme";
+import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceFolderFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Folder } from "fimidara";
 import React from "react";
-import { useFetchSingleResourceFetchState } from "../../../../lib/hooks/fetchHookUtils";
 
 export interface FolderContainerProps {
   folderId: string;

@@ -1,4 +1,6 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
+import { useWorkspaceCollaboratorsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
 import { PlusOutlined } from "@ant-design/icons";
@@ -6,8 +8,6 @@ import { Space } from "antd";
 import { Collaborator } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
-import { useWorkspaceCollaboratorsFetchHook } from "../../../../lib/hooks/fetchHooks";
 import PageError from "../../../utils/PageError";
 import PageLoading from "../../../utils/PageLoading";
 import PageNothingFound from "../../../utils/PageNothingFound";

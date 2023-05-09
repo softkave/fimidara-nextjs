@@ -1,11 +1,11 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
+import { useWorkspaceAgentTokenFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
-import { useFetchSingleResourceFetchState } from "../../../../lib/hooks/fetchHookUtils";
-import { useWorkspaceAgentTokenFetchHook } from "../../../../lib/hooks/singleResourceFetchHooks";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
 import PageError from "../../../utils/PageError";

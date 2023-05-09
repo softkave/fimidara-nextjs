@@ -1,12 +1,11 @@
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
-import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
-import { AppResourceType, appWorkspacePaths } from "@/lib/definitions/system";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, Modal, message } from "antd";
 import { File } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useWorkspaceFileDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
@@ -28,13 +27,11 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
   const { file, workspaceRootname, onScheduleDeleteSuccess } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: file.workspaceId,
-    targetType: AppResourceType.File,
+    targetType: "file",
     containerId: file.parentId || file.workspaceId,
-    containerType: file.parentId
-      ? AppResourceType.Folder
-      : AppResourceType.Workspace,
+    containerType: file.parentId ? "folder" : "workspace",
     targetId: file.resourceId,
-    appliesTo: PermissionItemAppliesTo.Children,
+    appliesTo: "children",
   });
 
   const deleteHook = useWorkspaceFileDeleteMutationHook({

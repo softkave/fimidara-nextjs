@@ -1,11 +1,11 @@
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useWorkspaceFolderDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, Modal, message } from "antd";
 import { Folder } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useWorkspaceFolderDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";

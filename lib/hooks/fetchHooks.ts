@@ -18,16 +18,20 @@ import {
   UsageRecord,
   Workspace,
 } from "fimidara";
-import { identity } from "lodash";
+import { identity, isEqual, omit } from "lodash";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../api/fimidaraEndpoints";
+import { IPaginationQuery } from "../api/types";
 import { AnyFn } from "../utils/types";
 import {
+  FetchPaginatedResourceListData,
   FetchPaginatedResourceListReturnedData,
+  GetFetchPaginatedResourceListFetchFnOther,
   makeFetchPaginatedResourceListFetchFn,
   makeFetchPaginatedResourceListGetFn,
   makeFetchPaginatedResourceListSetFn,
   makeFetchResourceHook,
   makeFetchResourceStoreHook,
+  paginatedResourceListShouldFetchFn,
   removeIdFromIdListOnDeleteResources,
 } from "./fetchHookUtils";
 import { ResourceZustandStore } from "./makeResourceListStore";
@@ -156,19 +160,32 @@ function makePaginatedFetchHookAndStore<
 >(
   useResourceListStore: ResourceZustandStore<TResource>,
   inputFetchFn: Fn,
-  getKey?: (item: TResource) => string
+  comparisonFn: AnyFn<[Parameters<Fn>[0], Parameters<Fn>[0]], boolean>,
+  getIdFromResource?: (item: TResource) => string
 ) {
   const getFn =
     makeFetchPaginatedResourceListGetFn<TResource>(useResourceListStore);
-  const useFetchStore = makeFetchResourceStoreHook(getFn);
+  const useFetchStore = makeFetchResourceStoreHook<
+    FetchPaginatedResourceListData,
+    FetchPaginatedResourceListReturnedData<
+      TResource,
+      GetFetchPaginatedResourceListFetchFnOther<Fn>
+    >,
+    Parameters<Fn>[0]
+  >(getFn, comparisonFn);
   const fetchFn = makeFetchPaginatedResourceListFetchFn(
     inputFetchFn,
     useResourceListStore,
-    getKey
+    getIdFromResource
   );
   removeIdFromIdListOnDeleteResources(useResourceListStore, useFetchStore);
   const setFn = makeFetchPaginatedResourceListSetFn();
-  const useFetchHook = makeFetchResourceHook(fetchFn, useFetchStore, setFn);
+  const useFetchHook = makeFetchResourceHook(
+    fetchFn,
+    useFetchStore,
+    setFn,
+    paginatedResourceListShouldFetchFn
+  );
 
   return { useFetchStore, useFetchHook };
 }
@@ -178,21 +195,24 @@ export const {
   useFetchHook: useUserWorkspacesFetchHook,
 } = makePaginatedFetchHookAndStore(
   useWorkspacesStore,
-  userWorkspacesInputFetchFn
+  userWorkspacesInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
 export const {
   useFetchStore: useUserCollaborationRequestsFetchStore,
   useFetchHook: useUserCollaborationRequestsFetchHook,
 } = makePaginatedFetchHookAndStore(
   useUserCollaborationRequestsStore,
-  userCollaborationRequestsInputFetchFn
+  userCollaborationRequestsInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
 export const {
   useFetchStore: useWorkspaceCollaborationRequestsFetchStore,
   useFetchHook: useWorkspaceCollaborationRequestsFetchHook,
 } = makePaginatedFetchHookAndStore(
   useWorkspaceCollaborationRequestsStore,
-  workspaceCollaborationRequestsInputFetchFn
+  workspaceCollaborationRequestsInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
 export const {
   useFetchStore: useWorkspaceCollaboratorsFetchStore,
@@ -200,6 +220,7 @@ export const {
 } = makePaginatedFetchHookAndStore(
   useWorkspaceCollaboratorsStore,
   workspaceCollaboratorsInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize,
   getCollaboratorStoreKey
 );
 export const {
@@ -207,36 +228,49 @@ export const {
   useFetchHook: useWorkspaceAgentTokensFetchHook,
 } = makePaginatedFetchHookAndStore(
   useWorkspaceAgentTokensStore,
-  workspaceAgentTokensInputFetchFn
+  workspaceAgentTokensInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
 export const {
   useFetchStore: useWorkspaceFoldersFetchStore,
   useFetchHook: useWorkspaceFoldersFetchHook,
 } = makePaginatedFetchHookAndStore(
   useWorkspaceFoldersStore,
-  workspaceFoldersInputFetchFn
+  workspaceFoldersInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
 export const {
   useFetchStore: useWorkspaceFilesFetchStore,
   useFetchHook: useWorkspaceFilesFetchHook,
 } = makePaginatedFetchHookAndStore(
   useWorkspaceFilesStore,
-  workspaceFilesInputFetchFn
+  workspaceFilesInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
 export const {
   useFetchStore: useWorkspacePermissionGroupsFetchStore,
   useFetchHook: useWorkspacePermissionGroupsFetchHook,
 } = makePaginatedFetchHookAndStore(
   useWorkspacePermissionGroupsStore,
-  workspacePermissionGroupsInputFetchFn
+  workspacePermissionGroupsInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
 export const {
   useFetchStore: useWorkspaceUsageRecordsFetchStore,
   useFetchHook: useWorkspaceUsageRecordsFetchHook,
 } = makePaginatedFetchHookAndStore(
   useWorkspaceUsageRecordsStore,
-  workspaceUsageRecordsInputFetchFn
+  workspaceUsageRecordsInputFetchFn,
+  checkIsEqualOmittingPageAndPageSize
 );
+
+function checkIsEqualOmittingPageAndPageSize(
+  p0: IPaginationQuery,
+  p1: IPaginationQuery
+) {
+  const omitKeys: Array<keyof IPaginationQuery> = ["page", "pageSize"];
+  return isEqual(omit(p0, omitKeys), omit(p1, omitKeys));
+}
 
 export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
   GetUsageCostsEndpointResult,

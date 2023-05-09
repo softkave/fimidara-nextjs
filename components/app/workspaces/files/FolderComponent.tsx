@@ -1,12 +1,11 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Space } from "antd";
 import { Folder } from "fimidara";
 import { useRouter } from "next/router";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import FileListContainer from "./FileListContainer";
-import FolderListContainer from "./FolderListContainer";
+import FolderChildren from "./FolderChildren";
 import FolderMenu from "./FolderMenu";
 
 export interface FolderProps {
@@ -14,7 +13,7 @@ export interface FolderProps {
   workspaceRootname: string;
 }
 
-function Folder(props: FolderProps) {
+function FolderComponent(props: FolderProps) {
   const { folder, workspaceRootname } = props;
   const router = useRouter();
 
@@ -52,19 +51,14 @@ function Folder(props: FolderProps) {
             direction="vertical"
           />
         )}
-        <FolderListContainer
+        <FolderChildren
+          folder={folder}
           workspaceId={folder.workspaceId}
           workspaceRootname={workspaceRootname}
-          folder={folder}
-        />
-        <FileListContainer
-          workspaceId={folder.workspaceId}
-          workspaceRootname={workspaceRootname}
-          folder={folder}
         />
       </Space>
     </div>
   );
 }
 
-export default Folder;
+export default FolderComponent;

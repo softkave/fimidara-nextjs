@@ -21,7 +21,7 @@ export type UserLoggedInResult = {
 };
 
 export function useUserLoggedIn(): UserLoggedInResult {
-  const router = useRouter();
+  const { logout } = useUserLogout();
   const session = useUserSessionFetchStore((store) => store.getFetchState({}));
   const [tokenFromLocalStorage, setTokenFromLocalStorage] = React.useState<
     string | null | undefined
@@ -41,6 +41,12 @@ export function useUserLoggedIn(): UserLoggedInResult {
     setTokenFromLocalStorage(tokenFromLocalStorage);
   }, [isLoggedIn]);
 
+  return { isLoggedIn, logout };
+}
+
+export function useUserLogout() {
+  const router = useRouter();
+
   const logout = () => {
     router.push(appRootPaths.home);
 
@@ -53,5 +59,5 @@ export function useUserLoggedIn(): UserLoggedInResult {
     clearResourceListStores();
   };
 
-  return { isLoggedIn, logout };
+  return { logout };
 }

@@ -1,20 +1,16 @@
+import PageError from "@/components/utils/PageError";
+import PageLoading from "@/components/utils/PageLoading";
+import PageNothingFound from "@/components/utils/PageNothingFound";
+import PaginatedContent from "@/components/utils/page/PaginatedContent";
+import { IPaginationData } from "@/components/utils/page/utils";
+import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
+import { useWorkspaceFoldersFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
-import { Button, Space } from "antd";
 import { Folder } from "fimidara";
-import Link from "next/link";
 import React from "react";
-import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
-import { useWorkspaceFoldersFetchHook } from "../../../../lib/hooks/fetchHooks";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
-import PaginatedContent from "../../../utils/page/PaginatedContent";
-import { IPaginationData } from "../../../utils/page/utils";
-import { appClasses } from "../../../utils/theme";
-import FileListContainerHeader from "./FileListContainerHeader";
 import FolderList from "./FolderList";
 
 export interface FolderListContainerProps {
@@ -58,25 +54,6 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
     useFetchPaginatedResourceListFetchState(fetchState);
 
   let contentNode: React.ReactNode = null;
-  const getParentHref = () => {
-    if (!folder) {
-      return "";
-    }
-
-    return folder.parentId
-      ? appWorkspacePaths.folder(workspaceId, folder.parentId)
-      : appWorkspacePaths.rootFolderList(workspaceId);
-  };
-
-  const renderGotoParentList = () => {
-    return (
-      folder && (
-        <Link href={getParentHref()}>
-          <span style={{ fontSize: "20px" }}>..</span> {folder.name}
-        </Link>
-      )
-    );
-  };
 
   if (error) {
     contentNode = (
@@ -89,22 +66,10 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
     contentNode = <PageLoading messageText="Loading folders..." />;
   } else if (resourceList.length === 0) {
     contentNode = (
-      <Space direction="vertical" style={{ width: "100%" }}>
-        {renderGotoParentList()}
-        <PageNothingFound
-          className={appClasses.maxWidth420}
-          messageText="No folders yet. Create one using the plus button above."
-          actions={
-            folder
-              ? [
-                  <Link key="go-to-parent-list-btn" href={getParentHref()}>
-                    <Button type="link">Go to parent list</Button>
-                  </Link>,
-                ]
-              : undefined
-          }
-        />
-      </Space>
+      <PageNothingFound
+        className={appClasses.maxWidth420}
+        messageText="No folders yet. Create one using the plus button above."
+      />
     );
   } else {
     const folderNode = renderFolderList ? (
@@ -117,12 +82,7 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
       />
     );
 
-    contentNode = (
-      <Space direction="vertical" style={{ width: "100%" }}>
-        {renderGotoParentList()}
-        {folderNode}
-      </Space>
-    );
+    contentNode = folderNode;
   }
 
   if (renderRoot) {
@@ -136,17 +96,10 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
   // TODO: file list count
   return (
     <div className={appClasses.main}>
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
-        <FileListContainerHeader
-          workspaceId={workspaceId}
-          folder={folder}
-          workspaceRootname={workspaceRootname}
-        />
-        <PaginatedContent
-          content={contentNode}
-          pagination={{ ...pagination, count }}
-        />
-      </Space>
+      <PaginatedContent
+        content={contentNode}
+        pagination={{ ...pagination, count }}
+      />
     </div>
   );
 };

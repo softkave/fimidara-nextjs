@@ -1,4 +1,4 @@
-import { PublicUser } from "fimidara";
+import { User } from "fimidara";
 import { AnyFn } from "../utils/types";
 import {
   FetchSingleResourceData,
@@ -60,7 +60,7 @@ export const { useFetchStore: useWorkspaceFileFetchStore } =
 export const { useFetchStore: useWorkspacePermissionGroupFetchStore } =
   makeSingleFetchStore(useWorkspacePermissionGroupsStore);
 export const { useFetchStore: useUserSessionFetchStore } = makeSingleFetchStore<
-  PublicUser,
+  User,
   UserSessionFetchStoreOther
 >(
   useUsersStore,

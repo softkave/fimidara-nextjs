@@ -6,6 +6,7 @@ import ListHeader from "@/components/utils/list/ListHeader";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceAgentTokensFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
@@ -14,7 +15,6 @@ import { Space } from "antd";
 import { AgentToken } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import { useFetchPaginatedResourceListFetchState } from "../../../../lib/hooks/fetchHookUtils";
 import AgentTokenList from "./AgentTokenList";
 
 export interface IWorkspaceAgentTokensProps {

@@ -5,14 +5,14 @@ import {
 } from "@/components/form/classNames";
 import { preSubmitCheck } from "@/components/form/formUtils";
 import { userConstants } from "@/lib/definitions/user";
+import { useUserUpdateMutationHook } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { signupValidationParts } from "@/lib/validation/user";
 import { css } from "@emotion/css";
 import { Button, Form, Input, message } from "antd";
-import { LoginResult, PublicUser } from "fimidara";
+import { LoginResult, User } from "fimidara";
 import * as yup from "yup";
-import { useUserUpdateMutationHook } from "../../../lib/hooks/mutationHooks";
 import { FormAlert } from "../../utils/FormAlert";
 
 export interface IUserProfileProps {
@@ -31,7 +31,7 @@ const userSettingsValidation = yup.object().shape({
   email: signupValidationParts.email.required(messages.emailRequired),
 });
 
-function getInitialValues(user?: PublicUser): UserProfileFormValues {
+function getInitialValues(user?: User): UserProfileFormValues {
   if (!user) {
     return {
       firstName: "",

@@ -1,4 +1,5 @@
 import { appUserPaths } from "@/lib/definitions/system";
+import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { formatDateTime } from "@/lib/utils/dateFns";
@@ -6,7 +7,6 @@ import { getBaseError } from "@/lib/utils/errors";
 import { Typography } from "antd";
 import { CollaborationRequestForUser } from "fimidara";
 import Link from "next/link";
-import { useFetchPaginatedResourceListFetchState } from "../../../lib/hooks/fetchHookUtils";
 import PageError from "../../utils/PageError";
 import PageLoading from "../../utils/PageLoading";
 import ItemList from "../../utils/list/ItemList";

@@ -1,10 +1,10 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useWorkspaceAgentTokenDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { AgentToken } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useWorkspaceAgentTokenDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";

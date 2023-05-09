@@ -6,14 +6,15 @@ import {
   File,
   Folder,
   GetAgentTokenEndpointParams,
-  GetCollaborationRequestEndpointParams,
   GetCollaboratorEndpointParams,
   GetFileDetailsEndpointParams,
   GetFolderEndpointParams,
   GetPermissionGroupEndpointParams,
+  GetUserCollaborationRequestEndpointParams,
+  GetWorkspaceCollaborationRequestEndpointParams,
   GetWorkspaceEndpointParams,
   PermissionGroup,
-  PublicUser,
+  User,
   Workspace,
 } from "fimidara";
 import { identity } from "lodash";
@@ -64,7 +65,7 @@ async function userWorkspaceInputFetchFn(
   return { resource: data.body.workspace };
 }
 async function userCollaborationRequestInputFetchFn(
-  params: GetCollaborationRequestEndpointParams
+  params: GetUserCollaborationRequestEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<CollaborationRequestForUser>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.collaborationRequests.getUserRequest({
@@ -73,7 +74,7 @@ async function userCollaborationRequestInputFetchFn(
   return { resource: data.body.request };
 }
 async function workspaceCollaborationRequestInputFetchFn(
-  params: GetCollaborationRequestEndpointParams
+  params: GetWorkspaceCollaborationRequestEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<CollaborationRequestForWorkspace>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.collaborationRequests.getWorkspaceRequest({
@@ -127,7 +128,7 @@ async function workspacePermissionGroupInputFetchFn(
   return { resource: data.body.permissionGroup };
 }
 async function getUserDataInputFetchFn(): Promise<
-  FetchSingleResourceFetchFnData<PublicUser, UserSessionFetchStoreOther>
+  FetchSingleResourceFetchFnData<User, UserSessionFetchStoreOther>
 > {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.users.getUserData();

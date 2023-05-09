@@ -5,13 +5,13 @@ import PageLoading from "@/components/utils/PageLoading";
 import PageNothingFound from "@/components/utils/PageNothingFound";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space } from "antd";
 import assert from "assert";
 import { useRouter } from "next/router";
 import React from "react";
-import { useFetchSingleResourceFetchState } from "../../../../lib/hooks/fetchHookUtils";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
 export interface IPermissionGroupProps {

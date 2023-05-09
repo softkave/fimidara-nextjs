@@ -4,8 +4,10 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware/devtools";
 import { systemConstants } from "../definitions/system";
 import { AppError, toAppErrorList } from "../utils/errors";
+import { calculatePageSize } from "../utils/fns";
 import { AnyFn } from "../utils/types";
 import { ResourceZustandStore } from "./makeResourceListStore";
+import { useHandleServerRecommendedActions } from "./useHandleServerRecommendedActions";
 
 /** Fetch resource store for storing fetch state. */
 export type FetchState<TData> = {
@@ -27,8 +29,12 @@ export type FetchResourceStore<TData, TReturnedData, TKeyParams> = {
   ): FetchReturnedState<TReturnedData> | undefined;
   setFetchState(
     params: TKeyParams,
-    state: (state: FetchState<TData> | undefined) => FetchState<TData>
+    state: (state: FetchState<TData> | undefined) => FetchState<TData>,
+    initialize?: boolean
   ): void;
+  findFetchState(
+    fn: AnyFn<[TKeyParams, FetchState<TData>], boolean>
+  ): [TKeyParams, FetchState<TData>] | undefined;
 };
 
 export type FetchHookOptions = {
@@ -73,7 +79,7 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
         });
       },
 
-      setFetchState(params, update) {
+      setFetchState(params, update, initialize = true) {
         set((store) => {
           const index = store.states.findIndex(([entryParams]) =>
             comparisonFn(params, entryParams)
@@ -85,12 +91,16 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
 
           if (index !== -1) {
             states[index] = [params, entryData];
-          } else {
+          } else if (initialize) {
             store.states = [...store.states, [params, entryData]];
           }
 
           return { states };
         });
+      },
+
+      findFetchState(fn) {
+        return this.states.find(([params, state]) => fn(params, state));
       },
     }))
   );
@@ -118,7 +128,11 @@ export function makeFetchResourceHook<
     TData
   >,
   shouldLoadFn?: AnyFn<
-    [boolean, FetchReturnedState<TReturnedData> | undefined],
+    [
+      boolean,
+      Parameters<TFetchFn>[0],
+      FetchReturnedState<TReturnedData> | undefined
+    ],
     boolean
   >
 ) {
@@ -126,6 +140,8 @@ export function makeFetchResourceHook<
     params: Parameters<TFetchFn>[0],
     options?: FetchHookOptions
   ) => {
+    const { handleServerRecommendedActions } =
+      useHandleServerRecommendedActions();
     const fetchState = useStoreHook((store) => store.getFetchState(params));
     const fetchFn = React.useCallback(async () => {
       try {
@@ -146,6 +162,8 @@ export function makeFetchResourceHook<
           error: toAppErrorList(error),
           data: state?.data,
         }));
+
+        handleServerRecommendedActions(error);
       }
     }, [params]);
 
@@ -155,7 +173,8 @@ export function makeFetchResourceHook<
       !fetchState?.error &&
       !fetchState?.data;
 
-    if (shouldLoadFn) willLoad = shouldLoadFn(willLoad, fetchState);
+    // TODO: should this be in a memo?
+    if (shouldLoadFn) willLoad = shouldLoadFn(willLoad, params, fetchState);
 
     React.useEffect(() => {
       if (willLoad) fetchFn();
@@ -244,6 +263,7 @@ export function makeFetchSingleResourceFetchFn<
 
 export function singleResourceShouldFetchFn(
   willLoad: boolean,
+  params: any,
   fetchState:
     | FetchReturnedState<FetchSingleResourceReturnedData<any>>
     | undefined
@@ -270,6 +290,12 @@ export type FetchPaginatedResourceListReturnedData<
   count: number;
   other?: TOther;
 };
+export type GetFetchPaginatedResourceListFetchFnOther<TFn> = TFn extends AnyFn<
+  any,
+  Promise<FetchPaginatedResourceListReturnedData<any, infer TOther>>
+>
+  ? TOther
+  : any;
 
 export function makeFetchPaginatedResourceListGetFn<
   T extends { resourceId: string },
@@ -307,7 +333,7 @@ export function makeFetchPaginatedResourceListFetchFn<
 >(
   inputFetchFn: Fn,
   useResourceListStore: ResourceZustandStore<T>,
-  getKey: (item: T) => string = (item) => item.resourceId
+  getIdFromResource: (item: T) => string = (item) => item.resourceId
 ) {
   const fetchFn = async (
     ...params: Parameters<Fn>
@@ -317,7 +343,7 @@ export function makeFetchPaginatedResourceListFetchFn<
     const pageFetchedIdList: string[] = [];
     useResourceListStore.getState().setList(
       resourceList.map((nextResource) => {
-        const id = getKey(nextResource);
+        const id = getIdFromResource(nextResource);
         pageFetchedIdList.push(id);
         return [id, nextResource];
       })
@@ -359,6 +385,27 @@ export function makeFetchPaginatedResourceListSetFn() {
   return setFn;
 }
 
+export function paginatedResourceListShouldFetchFn(
+  willLoad: boolean,
+  params: FetchPaginatedResourceListKeyParams,
+  fetchState:
+    | FetchReturnedState<FetchPaginatedResourceListReturnedData<any>>
+    | undefined
+) {
+  if (willLoad) return true;
+  if (fetchState?.data && params.pageSize && params.page) {
+    const expectedPageSize = calculatePageSize(
+      fetchState.data.count,
+      params.pageSize,
+      params.page
+    );
+
+    if (fetchState.data.resourceList.length < expectedPageSize) return true;
+  }
+
+  return false;
+}
+
 /** Fetch hook defining behaviour for fetching resource non-paginated list. */
 export type FetchResourceListData<TOther = any> = {
   idList: string[];
@@ -377,6 +424,12 @@ export type FetchResourceListGetFn<T extends { resourceId: string }> = AnyFn<
   [FetchResourceListData],
   FetchResourceListReturnedData<T>
 >;
+export type GetFetchResourceListFetchFnOther<TFn> = TFn extends AnyFn<
+  any,
+  Promise<FetchResourceListReturnedData<any, infer TOther>>
+>
+  ? TOther
+  : any;
 
 export function makeFetchResourceListGetFn<
   T extends { resourceId: string },

@@ -3,11 +3,8 @@
 ## Now
 
 - [ ] entity assigned permission groups fetch hooks, resolve permissions fetch hooks
-- [ ] a refresh system that doesn't show loading screen but notification
-- [ ] handle server recommended actions
-- [ ] reload page if count doesn't match data, and render still the remaining list
-- [ ] component to render file and folder list and have header there
-- [ ] update resources on update success
+- [ ] a refresh system that doesn't show loading screen but notification or inline loading for resource and list
+- [ ] write tests for fetch hooks and stores
 
 ## Later
 

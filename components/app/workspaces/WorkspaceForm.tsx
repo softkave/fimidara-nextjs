@@ -1,5 +1,10 @@
 import { folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import {
+  useMergeMutationHooksLoadingAndError,
+  useWorkspaceAddMutationHook,
+  useWorkspaceUpdateMutationHook,
+} from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { fileValidationParts } from "@/lib/validation/file";
@@ -9,11 +14,6 @@ import { Button, Form, Input, Space, Typography, message } from "antd";
 import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
 import { useRouter } from "next/router";
 import * as yup from "yup";
-import {
-  useMergeMutationHooksLoadingAndError,
-  useWorkspaceAddMutationHook,
-  useWorkspaceUpdateMutationHook,
-} from "../../../lib/hooks/mutationHooks";
 import FormError from "../../form/FormError";
 import { formClasses } from "../../form/classNames";
 import { FormAlert } from "../../utils/FormAlert";

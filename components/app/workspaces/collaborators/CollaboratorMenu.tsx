@@ -1,10 +1,10 @@
 import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
 import { AppResourceType } from "@/lib/definitions/system";
+import { useWorkspaceCollaboratorDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { Collaborator } from "fimidara";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useWorkspaceCollaboratorDeleteMutationHook } from "../../../../lib/hooks/mutationHooks";
 import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
