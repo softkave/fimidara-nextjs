@@ -7,13 +7,12 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Space } from "antd";
 import Link from "next/link";
 import React from "react";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
 import IconButton from "../../../utils/buttons/IconButton";
 import ListHeader from "../../../utils/list/ListHeader";
+import PageError from "../../../utils/page/PageError";
+import PageLoading from "../../../utils/page/PageLoading";
+import PageNothingFound from "../../../utils/page/PageNothingFound";
 import PaginatedContent from "../../../utils/page/PaginatedContent";
-import { appClasses } from "../../../utils/theme";
 import WorkspaceRequestList from "./WorkspaceRequestList";
 
 export interface IWorkspaceRequestsProps {
@@ -36,20 +35,16 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
   if (error) {
     content = (
       <PageError
-        className={appClasses.main}
-        messageText={
+        message={
           getBaseError(error) || "Error fetching collaboration requests."
         }
       />
     );
   } else if (isLoading) {
-    content = <PageLoading messageText="Loading collaboration requests..." />;
+    content = <PageLoading message="Loading collaboration requests..." />;
   } else if (resourceList.length === 0) {
     content = (
-      <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText="No collaborations requests yet. Create one using the plus button above."
-      />
+      <PageNothingFound message="No collaborations requests yet. Create one using the plus button above." />
     );
   } else {
     content = (
@@ -58,24 +53,22 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
   }
 
   return (
-    <div className={appClasses.main}>
-      <PaginatedContent
-        header={
-          <ListHeader
-            label="Collaboration Requests"
-            buttons={
-              <Space>
-                <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
-                  <IconButton icon={<PlusOutlined />} />
-                </Link>
-              </Space>
-            }
-          />
+    <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <ListHeader
+        label="Collaboration Requests"
+        buttons={
+          <Space>
+            <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
+              <IconButton icon={<PlusOutlined />} />
+            </Link>
+          </Space>
         }
+      />
+      <PaginatedContent
         pagination={count ? { ...pagination, count } : undefined}
         content={content}
       />
-    </div>
+    </Space>
   );
 };
 

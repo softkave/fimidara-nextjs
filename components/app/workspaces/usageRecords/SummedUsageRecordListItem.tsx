@@ -32,7 +32,7 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
   const threshold = thresholds[category];
   let usageText = "";
   let labelText = "";
-  const usedText = fulfillmentStatus === "fulfilled" ? "used" : "not fulfilled";
+  const usedText = fulfillmentStatus === "fulfilled" ? "used" : "dropped";
   const isFulfilled = fulfillmentStatus === "fulfilled";
 
   if (category === "storage" || category === "bin" || category === "bout") {

@@ -1,7 +1,6 @@
 import { css } from "@emotion/css";
 import { Button, Checkbox, Form, Input, Typography } from "antd";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import FormError from "../components/form/FormError";
 import { formClasses } from "../components/form/classNames";
@@ -10,6 +9,7 @@ import { appWorkspacePaths } from "../lib/definitions/system";
 import { userConstants } from "../lib/definitions/user";
 import { useUserLoginMutationHook } from "../lib/hooks/mutationHooks";
 import useFormHelpers from "../lib/hooks/useFormHelpers";
+import UserSessionStorageFns from "../lib/storage/userSession";
 
 export interface ILoginFormValues {
   email: string;
@@ -31,7 +31,6 @@ const initialValues: ILoginFormValues = {
 };
 
 export default function Login(props: ILoginProps) {
-  const dispatch = useDispatch();
   const router = useRouter();
   const loginHook = useUserLoginMutationHook({
     onSuccess(data, params) {
@@ -43,7 +42,21 @@ export default function Login(props: ILoginProps) {
     formikProps: {
       validationSchema,
       initialValues,
-      onSubmit: (body) => loginHook.runAsync({ body }),
+      onSubmit: async (body) => {
+        const result = await loginHook.runAsync({
+          body: {
+            email: body.email,
+            password: body.password,
+          },
+        });
+
+        if (body.remember) {
+          UserSessionStorageFns.saveUserToken(result.body.token);
+          UserSessionStorageFns.saveClientAssignedToken(
+            result.body.clientAssignedToken
+          );
+        }
+      },
     },
   });
 
@@ -105,7 +118,9 @@ export default function Login(props: ILoginProps) {
     <Form.Item>
       <Checkbox
         name="remember"
-        onChange={formik.handleChange}
+        onChange={(evt) => {
+          formik.setFieldValue("remember", evt.target.checked);
+        }}
         checked={formik.values.remember}
         disabled={loginHook.loading}
       >

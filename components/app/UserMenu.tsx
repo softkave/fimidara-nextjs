@@ -1,6 +1,7 @@
 import { Badge, Button, Dropdown, MenuProps, Popover } from "antd";
 import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { useUserNode } from "../hooks/useUserNode";
+import { insertAntdMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
 
 const LOGOUT_MENU_KEY = "logout";
@@ -36,12 +37,12 @@ export default function UserMenu() {
     );
   }
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       label: "Logout",
       key: LOGOUT_MENU_KEY,
     },
-  ];
+  ]);
 
   const onClick: MenuProps["onClick"] = async (info) => {
     if (info.key === LOGOUT_MENU_KEY) {
@@ -53,6 +54,7 @@ export default function UserMenu() {
     <Dropdown
       trigger={["click"]}
       menu={{ items, onClick, style: { minWidth: "150px" } }}
+      placement="bottomRight"
     >
       {renderBtnNode(userNode.assertGet().user.resourceId)}
     </Dropdown>

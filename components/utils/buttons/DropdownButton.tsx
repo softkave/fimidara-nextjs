@@ -19,7 +19,12 @@ const DropdownButton: React.FC<IDropdownButtonProps> = (props) => {
   return (
     <ButtonGroup className={className} style={style}>
       {children}
-      <Dropdown menu={menu} trigger={trigger || ["click"]} disabled={disabled}>
+      <Dropdown
+        menu={menu}
+        trigger={trigger || ["click"]}
+        disabled={disabled}
+        placement="bottomRight"
+      >
         {triggerNode || (
           <IconButton icon={<CaretDownOutlined />} disabled={disabled} />
         )}

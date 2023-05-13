@@ -37,36 +37,37 @@ export const appClasses = {
     maxWidth: appDimensions.app.maxWidth,
     marginLeft: "auto",
     marginRight: "auto",
-    padding: "16px",
-  }),
-  mainNoPadding: css({
-    maxWidth: appDimensions.app.maxWidth,
-    marginLeft: "auto",
-    marginRight: "auto",
+    paddingTop: "16px",
+    paddingBottom: "16px",
+
+    "& h1, h2, h3, h4, h5": {
+      margin: "0px !important",
+    },
+
+    "@media (max-width: 500px)": {
+      paddingLeft: "16px",
+      paddingRight: "16px",
+    },
   }),
   iconBtn: css({
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
   }),
-  maxWidth420: css({
-    maxWidth: "420px",
-    marginLeft: "auto",
-    marginRight: "auto",
+  thumbnailMain: css({
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
   }),
-  selectSecondaryText: css({
-    overflow: "auto",
-    flex: 1,
-    whiteSpace: "normal",
-  }),
-
-  // layout
   grid: css({ display: "grid" }),
   alignCenter: css({
+    display: "flex !important",
     alignItems: "center",
   }),
+  alignStart: css({
+    alignItems: "start",
+  }),
   flex: css({ display: "flex" }),
-
   tabsWrapper: css({
     width: "100%",
     height: "100%",
@@ -78,20 +79,11 @@ export const appClasses = {
       height: "100%",
     },
   }),
-  item: css({
-    padding: "8px 16px",
-  }),
   pageListRoot: css({
     display: "flex",
     flex: 1,
     width: "100%",
     flexDirection: "column",
-  }),
-  clickable: css({
-    cursor: "pointer",
-    "& .ant-tag": {
-      cursor: "pointer",
-    },
   }),
   disabled: css({
     cursor: "not-allowed",
@@ -115,46 +107,11 @@ export const appClasses = {
   }),
 
   // width
-  w100Forced: css({
-    width: "100% !important",
-  }),
   w100: css({
     width: "100%",
   }),
   p16: css({
     padding: "16px",
-  }),
-  pt8: css({
-    paddingTop: "8px",
-  }),
-  pl8Forced: css({
-    paddingLeft: "8px !important",
-  }),
-  pr8Forced: css({
-    paddingRight: "8px !important",
-  }),
-  pt16: css({
-    paddingTop: "16px",
-  }),
-  pt32: css({
-    paddingTop: "32px",
-  }),
-  pb8: css({
-    paddingBottom: "8px",
-  }),
-  pb16: css({
-    paddingBottom: "16px",
-  }),
-  pb32: css({
-    paddingBottom: "32px",
-  }),
-  pw16: css({
-    paddingLeft: "16px",
-    paddingRight: "16px",
-  }),
-  ph8: css({
-    paddingTop: "8px",
-    paddingBottom: "8px",
   }),
 
   // margins
@@ -167,17 +124,12 @@ export const appClasses = {
   muteMargin: css({
     margin: "0px !important",
   }),
-  mb8: css({
-    marginBottom: "8px",
+  mb16: css({
+    marginBottom: "16px",
   }),
-  mw16: css({
-    marginLeft: "16px",
-    marginRight: "16px",
-  }),
-
-  // text
-  capitalize: css({
-    textTransform: "capitalize",
+  mh32: css({
+    marginTop: "32px",
+    marginBottom: "32px",
   }),
 };
 

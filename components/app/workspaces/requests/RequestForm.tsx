@@ -1,7 +1,6 @@
 import { ICollaborationRequestInput } from "@/lib/definitions/collaborationRequest";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
-  useMergeMutationHooksLoadingAndError,
   useWorkspaceCollaborationRequestAddMutationHook,
   useWorkspaceCollaborationRequestUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
@@ -52,7 +51,7 @@ export default function RequestForm(props: IRequestFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceCollaborationRequestUpdateMutationHook({
     onSuccess(data, params) {
-      message.success("Collaboration request created.");
+      message.success("Collaboration request updated.");
       router.push(
         appWorkspacePaths.request(
           data.body.request.workspaceId,
@@ -72,10 +71,7 @@ export default function RequestForm(props: IRequestFormProps) {
       );
     },
   });
-  const mergedHook = useMergeMutationHooksLoadingAndError(
-    createHook,
-    updateHook
-  );
+  const mergedHook = request ? updateHook : createHook;
 
   const { formik } = useFormHelpers({
     errors: mergedHook.error,
@@ -89,7 +85,10 @@ export default function RequestForm(props: IRequestFormProps) {
           ? updateHook.runAsync({
               body: {
                 requestId: request.resourceId,
-                request: body,
+                request: {
+                  message: body.message,
+                  expires: body.expires,
+                },
               },
             })
           : createHook.runAsync({
@@ -123,7 +122,7 @@ export default function RequestForm(props: IRequestFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter recipient email"
-        disabled={mergedHook.loading}
+        disabled={mergedHook.loading || !!request}
         maxLength={systemConstants.maxNameLength}
         autoComplete="off"
       />
@@ -178,9 +177,7 @@ export default function RequestForm(props: IRequestFormProps) {
         use12Hours
         // format="h:mm A"
         value={formik.values.expires ? dayjs(formik.values.expires) : undefined}
-        onChange={(date) =>
-          formik.setFieldValue("expires", date?.toISOString())
-        }
+        onChange={(date) => formik.setFieldValue("expires", date?.valueOf())}
         placeholder="Request expiration date"
       />
     </Form.Item>

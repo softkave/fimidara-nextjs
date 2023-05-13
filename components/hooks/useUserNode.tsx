@@ -4,13 +4,13 @@ import React from "react";
 import { useFetchSingleResourceFetchState } from "../../lib/hooks/fetchHookUtils";
 import { useUserSessionFetchHook } from "../../lib/hooks/singleResourceFetchHooks";
 import { useHandleRequiresPasswordChange } from "../../lib/hooks/useHandleServerRecommendedActions";
-import { useUserLogout } from "../../lib/hooks/useUserLoggedIn";
+import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { getBaseError } from "../../lib/utils/errors";
-import PageError from "../utils/PageError";
-import PageLoading from "../utils/PageLoading";
+import PageError from "../utils/page/PageError";
+import PageLoading from "../utils/page/PageLoading";
 import PageNothingFound, {
   IPageNothingFoundPassedDownProps,
-} from "../utils/PageNothingFound";
+} from "../utils/page/PageNothingFound";
 
 export interface IUseUserNodeResult {
   renderedNode: React.ReactElement | null;
@@ -29,30 +29,32 @@ export function useUserNode(
   const { fetchState } = useUserSessionFetchHook(undefined);
   const { isLoading, error, resource, initialized, other } =
     useFetchSingleResourceFetchState(fetchState);
-  const { logout } = useUserLogout();
+  const { logout } = useUserLoggedIn();
   let renderedNode: React.ReactElement | null = null;
   const renderNodeProps = props.renderNode || {};
 
-  React.useEffect(() => {
-    if (resource?.requiresPasswordChange) {
-      handleRequiresPasswordChange();
-    }
-  }, [resource?.requiresPasswordChange]);
+  // React.useEffect(() => {
+  //   if (resource?.requiresPasswordChange) {
+  //     handleRequiresPasswordChange();
+  //   }
+  // }, [resource?.requiresPasswordChange]);
 
   if (error) {
     renderedNode = (
       <PageError
         {...renderNodeProps}
-        messageText={getBaseError(error) || "Error fetching user."}
-        actions={[{ children: "Logout", onClick: logout, danger: true }]}
+        message={getBaseError(error) || "Error fetching user."}
+        actions={[
+          { children: "Logout", onClick: () => logout(), danger: true },
+        ]}
       />
     );
   } else if (isLoading || !initialized) {
     renderedNode = (
-      <PageLoading {...renderNodeProps} messageText="Loading user..." />
+      <PageLoading {...renderNodeProps} message="Loading user..." />
     );
   } else if (!resource) {
-    renderedNode = <PageNothingFound messageText="User not found." />;
+    renderedNode = <PageNothingFound message="User not found." />;
   }
 
   const assertGet = (): LoginResult => {

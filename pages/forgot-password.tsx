@@ -78,7 +78,9 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>Forgot Password</Typography.Title>
+            <Typography.Title level={4}>
+              Request Change Password
+            </Typography.Title>
           </Form.Item>
           <FormAlert error={forgotHook.error} />
           {emailNode}

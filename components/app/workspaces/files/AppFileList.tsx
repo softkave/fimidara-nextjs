@@ -1,11 +1,14 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { FileOutlined } from "@ant-design/icons";
+import { Typography } from "antd";
 import { File } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
+import { FiFile } from "react-icons/fi";
 import ItemList from "../../../utils/list/ItemList";
+import AppIcon from "../../../utils/page/AppIcon";
 import ThumbnailContent from "../../../utils/page/ThumbnailContent";
+import { appClasses } from "../../../utils/theme";
 import FileMenu from "./FileMenu";
 
 export interface IAppFileListProps {
@@ -22,17 +25,22 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
         return renderFileItem(item, workspaceRootname);
       }
 
+      const extension = item.extension ? `.${item.extension}` : "";
       return (
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div>
+            <div className={appClasses.thumbnailMain}>
               <Link
                 href={appWorkspacePaths.file(item.workspaceId, item.resourceId)}
               >
-                {item.name}
+                {item.name + extension}
               </Link>
-              {item.description}
+              {item.description && (
+                <Typography.Text type="secondary">
+                  {item.description}
+                </Typography.Text>
+              )}
             </div>
           }
           menu={
@@ -42,7 +50,13 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
               onScheduleDeleteSuccess={noop}
             />
           }
-          prefixNode={<FileOutlined />}
+          prefixNode={
+            <AppIcon
+              icon={<FiFile />}
+              className={appClasses.alignStart}
+              style={{ marginTop: "1px" }}
+            />
+          }
         />
       );
     },
@@ -51,9 +65,11 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
 
   return (
     <ItemList
+      bordered
       items={files}
       renderItem={internalRenderItem}
       getId={(item: File) => item.resourceId}
+      emptyMessage="No files yet."
     />
   );
 };

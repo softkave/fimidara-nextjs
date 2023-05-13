@@ -1,10 +1,9 @@
-import PageError from "@/components/utils/PageError";
-import PageLoading from "@/components/utils/PageLoading";
-import PageNothingFound from "@/components/utils/PageNothingFound";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceAgentTokensFetchHook } from "@/lib/hooks/fetchHooks";
@@ -41,17 +40,15 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
   if (error) {
     content = (
       <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching agent tokens."}
+        message={getBaseError(error) || "Error fetching agent tokens."}
       />
     );
   } else if (isLoading) {
-    content = <PageLoading messageText="Loading agent tokens..." />;
+    content = <PageLoading message="Loading agent tokens..." />;
   } else if (resourceList.length === 0) {
     content = (
       <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText={
+        message={
           "No agent tokens yet. " +
           "You can create one using the plus button above."
         }
@@ -77,22 +74,20 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
   }
 
   return (
-    <div className={appClasses.main}>
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
-        <ListHeader
-          label="Agent Tokens"
-          buttons={
-            <Space>
-              <Link href={appWorkspacePaths.createAgentTokenForm(workspaceId)}>
-                <IconButton icon={<PlusOutlined />} />
-              </Link>
-              {menu}
-            </Space>
-          }
-        />
-        {content}
-      </Space>
-    </div>
+    <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <ListHeader
+        label="Agent Tokens"
+        buttons={
+          <Space>
+            <Link href={appWorkspacePaths.createAgentTokenForm(workspaceId)}>
+              <IconButton icon={<PlusOutlined />} />
+            </Link>
+            {menu}
+          </Space>
+        }
+      />
+      {content}
+    </Space>
   );
 };
 

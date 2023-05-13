@@ -24,8 +24,7 @@ const features: IFeature[] = [
     icon: <LockOutlined />,
   },
   {
-    title:
-      "Access files from anywhere, using program access tokens for servers, and client-assigned tokens for browsers",
+    title: "Access files from anywhere, using Agent tokens",
     icon: <KeyOutlined />,
   },
   // {

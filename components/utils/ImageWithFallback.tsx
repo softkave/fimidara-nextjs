@@ -53,6 +53,9 @@ const classes = {
       display: "inline-block !important",
     },
   }),
+  image: css({
+    border: "1px solid #f0f0f0",
+  }),
 };
 
 const skipEventForTag = "skip-click-event-on-delete-btn";
@@ -99,6 +102,8 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
     }
   };
 
+  console.log({ imageKey });
+
   const imageNode = (
     <Image
       key={imageKey}
@@ -111,6 +116,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
       fallback={fallbackSrc || appDataImages.brokenImage}
       onClick={onClick}
       style={{ width }}
+      className={classes.image}
     />
   );
 

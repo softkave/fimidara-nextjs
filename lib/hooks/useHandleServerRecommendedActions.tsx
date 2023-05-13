@@ -1,25 +1,77 @@
-import { notification } from "antd";
-import { FimidaraEndpointError } from "fimidara";
-import { useUserLogout } from "./useUserLoggedIn";
+import { message, notification } from "antd";
+import { useRouter } from "next/router";
+import { isFimidaraEndpointError } from "../api/localUtils";
+import { appAccountPaths } from "../definitions/system";
+import { AnyFn } from "../utils/types";
+import { useUserLoggedIn } from "./useUserLoggedIn";
+
+const kTimeout = 3000; // 3 seconds
+const kMessageDuration = 10; // seconds
 
 export function useHandleRequiresPasswordChange() {
-  const { logout } = useUserLogout();
+  const { logout } = useUserLoggedIn();
+  const router = useRouter();
 
   const handleRequiresPasswordChange = () => {
-    logout();
-    notification.error({
-      message:
-        "An error occurred involving your session, because your account requires a password change. " +
-        "Please change your password to continue, thank you.",
+    let closeMessageFn: AnyFn = message.loading({
+      type: "loading",
+      content: "An error occurred, logging you out...",
+      duration: 0,
     });
+
+    setTimeout(() => {
+      closeMessageFn();
+      notification.error({
+        message: "Logged Out",
+        description:
+          "An error occurred involving your session. " +
+          "Because your account requires a password change, " +
+          "we're going to log you out and route you to the change password page. " +
+          "Please change your password to continue, thank you.",
+        duration: kMessageDuration,
+      });
+      logout(appAccountPaths.forgotPassword);
+    }, kTimeout);
   };
 
   return { handleRequiresPasswordChange };
 }
 
+export function useHandleLoginAgain() {
+  const { logout } = useUserLoggedIn();
+  const router = useRouter();
+
+  const handleLoginAgain = () => {
+    let closeMessageFn: AnyFn = message.loading({
+      type: "loading",
+      content: "An error occurred, logging you out...",
+      duration: 0,
+    });
+
+    setTimeout(() => {
+      closeMessageFn();
+
+      /**
+       * TODO:
+       * Warning: [antd: message] Static function can not consume context like
+       * dynamic theme. Please use 'App' component instead.
+       */
+      notification.error({
+        message: "Logged Out",
+        description:
+          "An error occurred involving your session, please login again, thank you.",
+        duration: kMessageDuration,
+      });
+      logout(appAccountPaths.loginWithReturnPath(router.asPath));
+    }, kTimeout);
+  };
+
+  return { handleLoginAgain };
+}
+
 export function useHandleServerRecommendedActions() {
-  const { logout } = useUserLogout();
   const { handleRequiresPasswordChange } = useHandleRequiresPasswordChange();
+  const { handleLoginAgain } = useHandleLoginAgain();
 
   const handleServerRecommendedActions = (error: unknown) => {
     if (!isFimidaraEndpointError(error)) return;
@@ -30,27 +82,11 @@ export function useHandleServerRecommendedActions() {
     const hasRequestPasswordChange = actions.includes("requestChangePassword");
 
     if (hasLogout || hasLoginAgain) {
-      logout();
-      notification.error({
-        message:
-          "An error occurred involving your session, please login again, thank you.",
-      });
+      handleLoginAgain();
     } else if (hasRequestPasswordChange) {
       handleRequiresPasswordChange();
     }
   };
 
   return { handleServerRecommendedActions };
-}
-
-function isFimidaraEndpointError(
-  error: unknown
-): error is FimidaraEndpointError {
-  //  The second check is for private endpoints where though the error name is
-  //  the same, instanceof will not return true since they are technically two
-  //  different classes.
-  return (
-    error instanceof FimidaraEndpointError ||
-    (error as any)?.name === FimidaraEndpointError.name
-  );
 }

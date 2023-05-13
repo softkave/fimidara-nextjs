@@ -1,5 +1,3 @@
-import { isNull, isUndefined } from "lodash";
-import { useRouter } from "next/router";
 import React from "react";
 import { appRootPaths } from "../definitions/system";
 import UserSessionStorageFns from "../storage/userSession";
@@ -17,38 +15,50 @@ export type UserLoggedInResult = {
    * means user is not logged in.
    */
   isLoggedIn: boolean | undefined;
-  logout(): void;
+  routeToOnLogout?: string;
+  logout(p?: string): void;
+};
+
+// Put outside the hook because several components should access it as a
+// singleton. Used by `withPageAuthRequiredHOC` which handles routing away from
+// app routes when user is not logged in. By default, `withPageAuthRequiredHOC`
+// routes to /login, but for special cases like when the server recommends the
+// client routes to the /forgot-password page when the user requires a password
+// change, this workaround is most helpful.
+let routeToOnLogout: string | undefined = undefined;
+const setLogoutRoute = (p: string) => {
+  routeToOnLogout = p;
 };
 
 export function useUserLoggedIn(): UserLoggedInResult {
-  const { logout } = useUserLogout();
   const session = useUserSessionFetchStore((store) => store.getFetchState({}));
-  const [tokenFromLocalStorage, setTokenFromLocalStorage] = React.useState<
-    string | null | undefined
-  >(null);
-
-  const token = session?.data.other?.userToken || tokenFromLocalStorage;
-  const isLoggedIn = React.useMemo(
-    () => (isUndefined(token) || isNull(token) ? false : true),
-    [token]
+  const userToken = session?.data.other?.userToken;
+  const [isLoggedIn, setLoggedIn] = React.useState<boolean | undefined>(
+    undefined
   );
 
   // Run retrieving token from storage in `useEffect` to force Next.js to run
   // this hook on the client-side. Otherwise, it'll run it server-side for ssr
   // where there's no local storage causing error.
   React.useEffect(() => {
-    const tokenFromLocalStorage = UserSessionStorageFns.getUserToken();
-    setTokenFromLocalStorage(tokenFromLocalStorage);
-  }, [isLoggedIn]);
+    const savedToken = UserSessionStorageFns.getUserToken();
 
-  return { isLoggedIn, logout };
-}
+    if (userToken) {
+      setLoggedIn(!!userToken);
+    } else if (savedToken) {
+      setLoggedIn(!!savedToken);
+    } else {
+      setLoggedIn(false);
+    }
+  }, [userToken]);
 
-export function useUserLogout() {
-  const router = useRouter();
+  const logout = (p = appRootPaths.home) => {
+    setLogoutRoute(p);
+    UserSessionStorageFns.clearSessionData();
+    useUserSessionFetchStore.getState().clear();
 
-  const logout = () => {
-    router.push(appRootPaths.home);
+    // router.push(p);
+    // setLoggedIn(false);
 
     // Clear fetch stores before resource list stores because fetch stores
     // subscribe to changes in resource list stores to remove IDs of deleted
@@ -59,5 +69,5 @@ export function useUserLogout() {
     clearResourceListStores();
   };
 
-  return { logout };
+  return { routeToOnLogout, isLoggedIn, logout };
 }

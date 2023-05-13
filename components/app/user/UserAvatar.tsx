@@ -16,6 +16,7 @@ export default function UserAvatar(props: IUserAvatarProps) {
       src={
         props.userId
           ? getReadFileURL({
+              serverURL: systemConstants.serverAddr,
               filepath: systemConstants.userImagesFolder + "/" + props.userId,
               width: appDimensions.avatar.width,
               height: appDimensions.avatar.height,

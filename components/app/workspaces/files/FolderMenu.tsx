@@ -11,6 +11,7 @@ import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
+import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface FolderMenuProps {
   folder: Folder;
@@ -103,7 +104,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
     ]
   );
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       key: MenuKeys.UpdateItem,
       label: (
@@ -129,7 +130,11 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
       key: MenuKeys.ChildrenFoldersGrantPermission,
       label: "Children Folder Permissions",
     },
-  ];
+    {
+      key: MenuKeys.DeleteItem,
+      label: "Delete Folder",
+    },
+  ]);
 
   return (
     <React.Fragment>
@@ -141,6 +146,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
           style: { minWidth: "150px" },
           onClick: onSelectMenuItem,
         }}
+        placement="bottomRight"
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>

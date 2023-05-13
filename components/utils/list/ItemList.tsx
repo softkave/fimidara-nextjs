@@ -1,7 +1,7 @@
 import { css, cx } from "@emotion/css";
 import { isString } from "lodash";
 import React from "react";
-import PageMessage from "../page/PageMessage";
+import PageEmpty from "../page/PageEmpty";
 import { StyleableComponentProps } from "../styling/types";
 import { appClasses } from "../theme";
 import ListHeader from "./ListHeader";
@@ -9,8 +9,6 @@ import ListHeader from "./ListHeader";
 export interface IItemListExportedProps extends StyleableComponentProps {
   emptyMessage?: string | React.ReactNode;
   bordered?: boolean;
-  label?: React.ReactNode;
-  buttons?: React.ReactNode;
 }
 
 export interface IItemListProps<T = any> extends IItemListExportedProps {
@@ -22,35 +20,36 @@ export interface IItemListProps<T = any> extends IItemListExportedProps {
 const classes = {
   root: css({}),
   bordered: css({
-    marginBottom: "1px solid black",
+    borderBottom: "1px solid #f0f0f0",
+  }),
+  item: css({
+    padding: "16px 0px",
+
+    "&:first-of-type": {
+      paddingTop: "0px",
+    },
+    "&:last-of-type": {
+      paddingBottom: "0px",
+    },
   }),
 };
 
 function ItemList<T>(props: IItemListProps<T>) {
-  const {
-    items,
-    emptyMessage,
-    bordered,
-    className,
-    style,
-    label,
-    buttons,
-    renderItem,
-    getId,
-  } = props;
+  const { items, emptyMessage, bordered, className, style, renderItem, getId } =
+    props;
 
   const handleRenderItem = (item: T, index: number) => {
     let node = renderItem(item, index);
-    node =
-      bordered && index !== items.length - 1 ? (
-        <div className={classes.bordered}>{node}</div>
-      ) : (
-        node
-      );
     return (
-      <React.Fragment key={getId ? getId(item, index) : index}>
+      <div
+        key={getId ? getId(item, index) : index}
+        className={cx(
+          classes.item,
+          bordered && index !== items.length - 1 && classes.bordered
+        )}
+      >
         {node}
-      </React.Fragment>
+      </div>
     );
   };
 
@@ -59,7 +58,7 @@ function ItemList<T>(props: IItemListProps<T>) {
 
   if (items.length === 0) {
     contentNode = isString(emptyMessage) ? (
-      <PageMessage message={emptyMessage} />
+      <PageEmpty message={emptyMessage} />
     ) : (
       emptyMessage
     );
@@ -78,4 +77,4 @@ function ItemList<T>(props: IItemListProps<T>) {
   );
 }
 
-export default ItemList as React.FC<IItemListProps>;
+export default ItemList;

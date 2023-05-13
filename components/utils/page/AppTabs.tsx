@@ -1,50 +1,92 @@
-/*eslint no-useless-computed-key: "off"*/
-
-import { css } from "@emotion/css";
-import { Tabs, TabsProps } from "antd";
+import { css, cx } from "@emotion/css";
 import React from "react";
-import { FiMoreHorizontal } from "react-icons/fi";
-import CustomIcon from "../buttons/CustomIcon";
-import IconButton from "../buttons/IconButton";
-import AppTabText from "./AppTabText";
+import { AnyFn } from "../../../lib/utils/types";
+import { StyleableComponentProps } from "../styling/types";
 
-type Tab = Required<TabsProps>["items"][number];
-export interface IAppTabItem extends Tab {
-  badgeCount?: number;
-}
+export type AppTabItem = {
+  key: string;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+};
 
-export interface IAppTabsProps
-  extends Pick<TabsProps, "activeKey" | "onChange"> {
-  items: Array<IAppTabItem>;
+export interface AppTabsProps extends StyleableComponentProps {
+  activeKey: string;
+  activeKeyClassName?: string;
+  itemClassName?: string;
+  items: Array<AppTabItem>;
+  onChange: AnyFn<[string, AppTabItem], void>;
 }
 
 const classes = {
   root: css({
-    height: "100%",
-    "& .ant-tabs-tabpane, & .ant-tabs-content": {
-      height: "100%",
+    display: "flex",
+    flexDirection: "row",
+  }),
+  item: css({
+    display: "inline-flex",
+    alignItems: "center",
+    margin: "0px 16px",
+    lineHeight: "32px",
+    padding: "4px 0px",
+    cursor: "pointer",
+
+    "&:first-of-type": {
+      marginLeft: "0px",
+    },
+    "&:last-of-type": {
+      marginRight: "0px",
+    },
+  }),
+  active: css({
+    color: "#1677ff",
+    fontWeight: "bold",
+  }),
+  icon: css({
+    display: "inline-flex",
+    alignItems: "center",
+    marginRight: "8px",
+    lineHeight: "32px",
+
+    "& svg": {
+      fontSize: "14px",
     },
   }),
 };
 
-const AppTabs: React.FC<IAppTabsProps> = (props) => {
-  const { items } = props;
+const AppTabs: React.FC<AppTabsProps> = (props) => {
+  const {
+    activeKey,
+    activeKeyClassName,
+    itemClassName,
+    items,
+    style,
+    className,
+    onChange,
+  } = props;
+
+  const itemsNode = items.map((item) => {
+    const active = item.key === activeKey;
+    return (
+      <div
+        key={item.key}
+        onClick={() => onChange(item.key, item)}
+        className={cx(
+          classes.item,
+          active && classes.active,
+          itemClassName,
+          active && activeKeyClassName
+        )}
+      >
+        {item.icon && <span className={classes.icon}>{item.icon}</span>}
+        {item.label}
+      </div>
+    );
+  });
   return (
-    <Tabs
-      {...props}
-      moreIcon={
-        <IconButton icon={<CustomIcon icon={<FiMoreHorizontal />} />} />
-      }
-      tabBarExtraContent={{
-        left: <div style={{ marginLeft: "16px" }} />,
-      }}
-      items={items.map((item) => ({
-        ...item,
-        label: <AppTabText node={item.label} badgeCount={item.badgeCount} />,
-      }))}
-      className={classes.root}
-    />
+    <div style={style} className={cx(classes.root, className)}>
+      {itemsNode}
+    </div>
   );
 };
 
-export default React.memo(AppTabs);
+export default AppTabs;

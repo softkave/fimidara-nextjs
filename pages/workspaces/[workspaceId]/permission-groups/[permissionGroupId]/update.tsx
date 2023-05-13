@@ -1,7 +1,7 @@
 import PermissionGroupForm from "@/components/app/workspaces/permissionGroups/PermissionGroupForm";
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
-import PageError from "@/components/utils/PageError";
-import PageLoading from "@/components/utils/PageLoading";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
 import usePermissionGroup from "@/lib/hooks/workspaces/usePermissionGroup";
 import { getBaseError } from "@/lib/utils/errors";
 import { GetServerSideProps } from "next";
@@ -21,11 +21,11 @@ const WorkspacePermissionGroupFormPage: React.FC<
   if (error) {
     return (
       <PageError
-        messageText={getBaseError(error) || "Error fetching permission group."}
+        message={getBaseError(error) || "Error fetching permission group."}
       />
     );
   } else if (isLoading || !data) {
-    return <PageLoading messageText="Loading permission group..." />;
+    return <PageLoading message="Loading permission group..." />;
   } else {
     return (
       <PermissionGroupForm

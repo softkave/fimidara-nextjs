@@ -2,10 +2,12 @@ import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
+import { Typography } from "antd";
 import { PermissionGroup } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
+import { appClasses } from "../../../utils/theme";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
 export interface PermissionGroupListProps {
@@ -22,7 +24,7 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div>
+          <div className={appClasses.thumbnailMain}>
             <Link
               href={appWorkspacePaths.permissionGroup(
                 workspaceId,
@@ -31,7 +33,11 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
             >
               {item.name}
             </Link>
-            {item.description}
+            {item.description && (
+              <Typography.Text type="secondary">
+                {item.description}
+              </Typography.Text>
+            )}
           </div>
         }
         menu={
@@ -48,9 +54,11 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
 
   return (
     <ItemList
+      bordered
       items={permissionGroups}
       renderItem={renderItem || internalRenderItem}
       getId={getResourceId}
+      emptyMessage="No permission groups yet. Click the plus button to add one."
     />
   );
 };

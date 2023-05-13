@@ -17,12 +17,14 @@ export interface ILabeledNodeProps {
   colon?: boolean;
   textAlign?: "left" | "center" | "right";
   copyable?: boolean;
+  code?: boolean;
 }
 
 const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
   const {
     label,
     node,
+    code,
     direction,
     nodeIsText,
     labelFontSize,
@@ -41,6 +43,7 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
   if (node) {
     internalNodeContent = nodeIsText ? (
       <Typography.Text
+        code={code}
         copyable={copyable}
         style={{ fontSize: contentFontSize }}
       >

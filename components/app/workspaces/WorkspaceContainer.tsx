@@ -1,11 +1,11 @@
-import { useUserWorkspaceFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Workspace } from "fimidara";
 import React from "react";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
-import PageNothingFound from "../../utils/PageNothingFound";
-import { appClasses } from "../../utils/theme";
+import { useFetchSingleResourceFetchState } from "../../../lib/hooks/fetchHookUtils";
+import { useUserWorkspaceFetchHook } from "../../../lib/hooks/singleResourceFetchHooks";
+import PageError from "../../utils/page/PageError";
+import PageLoading from "../../utils/page/PageLoading";
+import PageNothingFound from "../../utils/page/PageNothingFound";
 
 export interface WorkspaceContainerProps {
   workspaceId: string;
@@ -14,22 +14,18 @@ export interface WorkspaceContainerProps {
 
 const WorkspaceContainer: React.FC<WorkspaceContainerProps> = (props) => {
   const { workspaceId, render, children } = props;
-  const data = useUserWorkspaceFetchHook({ workspaceId });
-  const error = data.store.error;
-  const { resource } = data.store.get(undefined);
-  const isLoading = data.store.loading || !data.store.initialized;
+  const { fetchState } = useUserWorkspaceFetchHook({ workspaceId });
+  const { isLoading, error, resource } =
+    useFetchSingleResourceFetchState(fetchState);
 
   if (error) {
     return (
-      <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching workspace."}
-      />
+      <PageError message={getBaseError(error) || "Error fetching workspace."} />
     );
   } else if (isLoading) {
-    return <PageLoading messageText="Loading workspace..." />;
+    return <PageLoading message="Loading workspace..." />;
   } else if (!resource) {
-    return <PageNothingFound messageText="Workspace not found." />;
+    return <PageNothingFound message="Workspace not found." />;
   }
 
   const contentNode = render ? render(resource) : children;

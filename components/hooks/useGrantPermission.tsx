@@ -1,6 +1,5 @@
 import { PermissionItemAppliesTo, WorkspaceAppResourceType } from "fimidara";
 import React from "react";
-import GrantPermissionFormContainer from "../app/workspaces/permissionItems/GrantPermissionFormContainer";
 
 export interface IUseGrantPermissionProps {
   workspaceId: string;
@@ -29,32 +28,7 @@ export default function useGrantPermission(props: IUseGrantPermissionProps) {
     setVisibility(!visible);
   }, [visible]);
 
-  const grantPermissionFormNode = React.useMemo(() => {
-    if (visible) {
-      return (
-        <GrantPermissionFormContainer
-          workspaceId={workspaceId}
-          targetType={targetType}
-          targetId={targetId}
-          containerId={containerId}
-          containerType={containerType}
-          appliesTo={appliesTo}
-          onCancel={toggleVisibility}
-        />
-      );
-    } else {
-      return null;
-    }
-  }, [
-    visible,
-    toggleVisibility,
-    workspaceId,
-    targetType,
-    targetId,
-    containerId,
-    containerType,
-    appliesTo,
-  ]);
+  const grantPermissionFormNode = null;
 
   return {
     grantPermissionFormNode,

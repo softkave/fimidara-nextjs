@@ -13,7 +13,7 @@ const WorkspacePage: React.FC<IWorkspacePageProps> = (props) => {
   const router = useRouter();
 
   React.useEffect(() => {
-    router.push(appWorkspacePaths.rootFolderList(workspaceId));
+    router.push(appWorkspacePaths.folderList(workspaceId));
   }, [workspaceId, router]);
 
   return null;

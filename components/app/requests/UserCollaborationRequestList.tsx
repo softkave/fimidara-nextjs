@@ -4,12 +4,12 @@ import { useUserCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import { Typography } from "antd";
-import { CollaborationRequestForUser } from "fimidara";
+import { Space, Typography } from "antd";
 import Link from "next/link";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
 import ItemList from "../../utils/list/ItemList";
+import ListHeader from "../../utils/list/ListHeader";
+import PageError from "../../utils/page/PageError";
+import PageLoading from "../../utils/page/PageLoading";
 import PaginatedContent from "../../utils/page/PaginatedContent";
 
 export default function UserCollaborationRequestList() {
@@ -26,18 +26,19 @@ export default function UserCollaborationRequestList() {
   if (error) {
     node = (
       <PageError
-        messageText={
+        message={
           getBaseError(error) || "Error fetching collaboration requests."
         }
       />
     );
   } else if (isLoading) {
-    node = <PageLoading messageText="Loading requests..." />;
+    node = <PageLoading message="Loading requests..." />;
   } else {
     node = (
       <ItemList
+        bordered
         items={resourceList}
-        renderItem={(item: CollaborationRequestForUser) => (
+        renderItem={(item) => (
           <div>
             <Link href={`${appUserPaths.request(item.resourceId)}`}>
               <Typography.Text>
@@ -55,11 +56,15 @@ export default function UserCollaborationRequestList() {
             )}
           </div>
         )}
+        emptyMessage="You do not have any collaboration requests."
       />
     );
   }
 
   return (
-    <PaginatedContent content={node} pagination={{ ...pagination, count }} />
+    <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <ListHeader label="Your Collaboration Requests" />
+      <PaginatedContent content={node} pagination={{ ...pagination, count }} />
+    </Space>
   );
 }

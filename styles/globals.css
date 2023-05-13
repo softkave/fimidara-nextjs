@@ -11,6 +11,12 @@ body {
   margin: 0;
 }
 
+html,
+body,
+#__next {
+  height: 100%;
+}
+
 code {
   display: inline-block;
   background: rgba(150, 150, 150, 0.1);
@@ -62,6 +68,19 @@ code {
 
 .ant-btn {
   border-radius: 4px !important;
+}
+
+.ant-tabs-nav {
+  margin: 0 !important;
+}
+
+.ant-typography > code {
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  /* padding-left: 8px;
+  padding-right: 8px; */
+  padding: 0px 8px;
 }
 
 :root {

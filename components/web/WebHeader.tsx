@@ -6,6 +6,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
 import IconButton from "../utils/buttons/IconButton";
 import { appClasses } from "../utils/theme";
+import { insertAntdMenuDivider } from "../utils/utils";
 
 export interface IWebHeaderProps {
   className?: string;
@@ -32,7 +33,7 @@ const classes = {
 const WebHeader: React.FC<IWebHeaderProps> = (props) => {
   const { className, style } = props;
   let sideLinksNode: React.ReactNode = null;
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       key: appAccountPaths.signup,
       label: <Link href={appAccountPaths.signup}>Signup</Link>,
@@ -45,12 +46,12 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
       key: appAccountPaths.forgotPassword,
       label: <Link href={appAccountPaths.forgotPassword}>Forgot Password</Link>,
     },
-  ];
+  ]);
 
   sideLinksNode = (
     <Space size={"middle"}>
       <Link href={appAccountPaths.login}>Login</Link>
-      <Dropdown trigger={["click"]} menu={{ items }}>
+      <Dropdown trigger={["click"]} menu={{ items }} placement="bottomRight">
         <IconButton icon={<BsThreeDots />} className={appClasses.iconBtn} />
       </Dropdown>
     </Space>

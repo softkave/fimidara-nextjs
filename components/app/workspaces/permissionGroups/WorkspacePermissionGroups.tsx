@@ -8,13 +8,12 @@ import { Space } from "antd";
 import { PermissionGroup } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
 import IconButton from "../../../utils/buttons/IconButton";
 import ListHeader from "../../../utils/list/ListHeader";
+import PageError from "../../../utils/page/PageError";
+import PageLoading from "../../../utils/page/PageLoading";
+import PageNothingFound from "../../../utils/page/PageNothingFound";
 import PaginatedContent from "../../../utils/page/PaginatedContent";
-import { appClasses } from "../../../utils/theme";
 import PermissionGroupList from "./PermissionGroupList";
 
 export interface IWorkspacePermissionGroupsProps {
@@ -43,18 +42,14 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
   if (error) {
     content = (
       <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching permission groups."}
+        message={getBaseError(error) || "Error fetching permission groups."}
       />
     );
   } else if (isLoading) {
-    content = <PageLoading messageText="Loading permission groups..." />;
+    content = <PageLoading message="Loading permission groups..." />;
   } else if (resourceList.length === 0) {
     content = (
-      <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText="No permission groups yet. Create one using the plus button above."
-      />
+      <PageNothingFound message="No permission groups yet. Create one using the plus button above." />
     );
   } else {
     content = renderList ? (
@@ -80,7 +75,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
   }
 
   return (
-    <div className={appClasses.main}>
+    <div>
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <ListHeader
           label="Permission Groups"

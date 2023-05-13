@@ -10,6 +10,7 @@ import useGrantPermission from "../../../hooks/useGrantPermission";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { MenuInfo } from "../../../utils/types";
+import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface FileMenuProps {
   file: File;
@@ -74,7 +75,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
     [deleteHook, toggleVisibility]
   );
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       key: MenuKeys.UpdateItem,
       label: (
@@ -93,7 +94,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
       key: MenuKeys.DeleteItem,
       label: "Delete File",
     },
-  ];
+  ]);
 
   return (
     <React.Fragment>
@@ -105,6 +106,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
           style: { minWidth: "150px" },
           onClick: onSelectMenuItem,
         }}
+        placement="bottomRight"
       >
         <IconButton icon={<BsThreeDots />} />
       </Dropdown>

@@ -1,7 +1,6 @@
 import { css } from "@emotion/css";
 import { Button, Form, Input, Typography } from "antd";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import FormError from "../components/form/FormError";
 import {
@@ -9,14 +8,15 @@ import {
   formContentWrapperClassName,
 } from "../components/form/classNames";
 import { FormAlert } from "../components/utils/FormAlert";
+import { SignupEndpointParams } from "../lib/api/private-types";
 import { appWorkspacePaths } from "../lib/definitions/system";
-import { IUserInput, userConstants } from "../lib/definitions/user";
+import { userConstants } from "../lib/definitions/user";
 import { useUserSignupMutationHook } from "../lib/hooks/mutationHooks";
 import useFormHelpers from "../lib/hooks/useFormHelpers";
 import { messages } from "../lib/messages/messages";
 import { signupValidationParts } from "../lib/validation/user";
 
-interface ISignupFormValues extends Required<IUserInput> {
+interface ISignupFormValues extends Required<SignupEndpointParams> {
   // confirmEmail: string;
   // confirmPassword: string;
 }
@@ -42,7 +42,6 @@ const initialValues: ISignupFormValues = {
 };
 
 export default function Signup(props: ISignupProps) {
-  const dispatch = useDispatch();
   const router = useRouter();
   const signupHook = useUserSignupMutationHook({
     onSuccess(data, params) {

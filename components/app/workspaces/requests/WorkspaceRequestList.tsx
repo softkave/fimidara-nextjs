@@ -1,7 +1,7 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { getResourceId } from "@/lib/utils/resource";
-import { message, Modal } from "antd";
+import { message, Modal, Typography } from "antd";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import React from "react";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import ItemList from "../../../utils/list/ItemList";
 import ThumbnailContent from "../../../utils/page/ThumbnailContent";
+import { appClasses } from "../../../utils/theme";
 import { SelectInfo } from "../../../utils/types";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 
@@ -58,18 +59,27 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
 
   return (
     <ItemList
+      bordered
       items={requests}
       renderItem={(item: CollaborationRequestForWorkspace) => (
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div>
+            <div className={appClasses.thumbnailMain}>
               <Link
                 href={appWorkspacePaths.request(workspaceId, item.resourceId)}
               >
                 {item.recipientEmail}
               </Link>
-              {item.status}
+              {item.status && (
+                <Typography.Text
+                  code
+                  type="secondary"
+                  style={{ marginTop: "6px" }}
+                >
+                  {item.status}
+                </Typography.Text>
+              )}
             </div>
           }
           menu={
@@ -81,6 +91,7 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
         />
       )}
       getId={getResourceId}
+      emptyMessage="No collaboration requests sent yet. Click the plus button to add collaborators."
     />
   );
 };

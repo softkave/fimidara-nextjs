@@ -10,6 +10,7 @@ import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
+import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface IWorkspaceRequestMenuProps {
   request: CollaborationRequestForWorkspace;
@@ -69,14 +70,14 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   );
 
   const isPending = request.status === "pending";
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       // TODO: only show if user has permission
       key: MenuKeys.UpdateItem,
       label: (
         <Link
           href={
-            isPending
+            !isPending
               ? "#"
               : appWorkspacePaths.requestForm(
                   request.workspaceId,
@@ -87,7 +88,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
           Update Request
         </Link>
       ),
-      disabled: isPending,
+      disabled: !isPending,
     },
     {
       key: MenuKeys.GrantPermission,
@@ -96,9 +97,9 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
     {
       key: MenuKeys.DeleteItem,
       label: "Delete Request",
-      disabled: isPending,
+      disabled: !isPending,
     },
-  ];
+  ]);
 
   return (
     <React.Fragment>
@@ -110,6 +111,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
           style: { minWidth: "150px" },
           onClick: onSelectMenuItem,
         }}
+        placement="bottomRight"
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>

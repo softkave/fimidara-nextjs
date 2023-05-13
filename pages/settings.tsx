@@ -11,7 +11,6 @@ function UserSettings() {
     <UserContainer
       render={(session) => (
         <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-          <Divider orientation="left">Profile picture</Divider>
           <UploadUserAvatar />
           <Divider orientation="left">Email Verification</Divider>
           <EmailVerification session={session} />

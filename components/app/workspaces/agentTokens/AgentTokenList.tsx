@@ -2,10 +2,12 @@ import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
+import { Typography } from "antd";
 import { AgentToken } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
+import { appClasses } from "../../../utils/theme";
 import AgentTokenMenu from "./AgentTokenMenu";
 
 export interface AgentTokenListProps {
@@ -25,12 +27,17 @@ const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div>
+          <div className={appClasses.thumbnailMain}>
             <Link
               href={appWorkspacePaths.agentToken(workspaceId, item.resourceId)}
             >
-              {item.resourceId}
+              {item.name || item.resourceId}
             </Link>
+            {item.description && (
+              <Typography.Text type="secondary">
+                {item.description}
+              </Typography.Text>
+            )}
           </div>
         }
         menu={
@@ -43,9 +50,11 @@ const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
 
   return (
     <ItemList
+      bordered
       items={tokens}
       renderItem={renderItem || internalRenderItem}
       getId={getResourceId}
+      emptyMessage="No agent tokens yet."
     />
   );
 };

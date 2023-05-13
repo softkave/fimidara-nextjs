@@ -1,11 +1,9 @@
 import {
   INewPermissionGroupInput,
-  IPermissionGroup,
   permissionGroupPermissionsGroupConstants,
 } from "@/lib/definitions/permissionGroups";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
-  useMergeMutationHooksLoadingAndError,
   useWorkspacePermissionGroupAddMutationHook,
   useWorkspacePermissionGroupUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
@@ -14,6 +12,7 @@ import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
 import { css, cx } from "@emotion/css";
 import { Button, Form, Input, Typography, message } from "antd";
+import { PermissionGroup } from "fimidara";
 import { useRouter } from "next/router";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
@@ -31,24 +30,19 @@ const permissionGroupValidation = yup.object().shape({
 const initialValues: INewPermissionGroupInput = {
   name: "",
   description: "",
-  permissionGroups: [],
 };
 
 function getPermissionGroupFormInputFromPermissionGroup(
-  item: IPermissionGroup
+  item: PermissionGroup
 ): INewPermissionGroupInput {
   return {
     name: item.name,
     description: item.description,
-    permissionGroups: item.permissionGroups.map((item) => ({
-      permissionGroupId: item.permissionGroupId,
-      order: item.order,
-    })),
   };
 }
 
 export interface IPermissionGroupFormProps {
-  permissionGroup?: IPermissionGroup;
+  permissionGroup?: PermissionGroup;
   className?: string;
   workspaceId: string;
 }
@@ -78,10 +72,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
       );
     },
   });
-  const mergedHook = useMergeMutationHooksLoadingAndError(
-    createHook,
-    updateHook
-  );
+  const mergedHook = permissionGroup ? updateHook : createHook;
 
   const { formik } = useFormHelpers({
     errors: mergedHook.error,

@@ -1,13 +1,12 @@
 import usePagination from "@/lib/hooks/usePagination";
-import useWorkspacePermissionGroupList from "@/lib/hooks/workspaces/useWorkspacePermissionGroupList";
 import { getBaseError } from "@/lib/utils/errors";
 import { indexArray } from "@/lib/utils/indexArray";
-import { Typography } from "antd";
+import { Space, Typography } from "antd";
 import { PermissionGroup } from "fimidara";
 import React from "react";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
 import ItemList from "../../../utils/list/ItemList";
+import PageError from "../../../utils/page/PageError";
+import PageLoading from "../../../utils/page/PageLoading";
 import PaginatedContent from "../../../utils/page/PaginatedContent";
 
 export interface IAssignedPermissionGroupListProps {
@@ -37,11 +36,11 @@ const AssignedPermissionGroupList: React.FC<
   if (error) {
     content = (
       <PageError
-        messageText={getBaseError(error) || "Error fetching permission groups."}
+        message={getBaseError(error) || "Error fetching permission groups."}
       />
     );
   } else if (isLoading || !data) {
-    content = <PageLoading messageText="Loading permission groups..." />;
+    content = <PageLoading message="Loading permission groups..." />;
   } else {
     content = (
       <ItemList
@@ -56,15 +55,13 @@ const AssignedPermissionGroupList: React.FC<
   }
 
   return (
-    <PaginatedContent
-      className={className}
-      header={
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          {title || "Assigned Permission Groups"}
-        </Typography.Title>
-      }
-      content={content}
-    />
+    <Space direction="vertical" style={{ width: "100%" }} size="large">
+      {" "}
+      <Typography.Title level={5} style={{ margin: 0 }}>
+        {title || "Assigned Permission Groups"}
+      </Typography.Title>
+      <PaginatedContent className={className} content={content} />
+    </Space>
   );
 };
 

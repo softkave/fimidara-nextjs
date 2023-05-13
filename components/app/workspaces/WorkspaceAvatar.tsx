@@ -14,6 +14,7 @@ export default function WorkspaceAvatar(props: IWorkspaceAvatarProps) {
     <Avatar
       icon={<AppstoreOutlined />}
       src={getReadFileURL({
+        serverURL: systemConstants.serverAddr,
         filepath:
           systemConstants.workspaceImagesFolder + "/" + props.workspaceId,
         width: appDimensions.avatar.width,

@@ -15,9 +15,11 @@ const useFormHelpers = <T extends object>(
   props: IUseFormHelpersFormikProps<T>
 ): IUseFormHelpersResult<T> => {
   const formik = useFormik(props.formikProps);
+  const lastErrorRef = React.useRef<any>();
 
   React.useEffect(() => {
-    if (props.errors) {
+    if (props.errors && props.errors !== lastErrorRef.current) {
+      lastErrorRef.current = props.errors;
       const errorArr = toAppErrorList(props.errors);
       const fErrors = flattenErrorList(errorArr);
       formik.setErrors(fErrors);

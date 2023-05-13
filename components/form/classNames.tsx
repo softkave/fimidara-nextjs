@@ -10,8 +10,8 @@ export const formBodyClassName = css({
 
 export const formContentWrapperClassName = css({
   width: "100%",
-  maxWidth: "560px",
-  padding: "16px",
+  maxWidth: "520px",
+  padding: "16px 0px",
   boxSizing: "content-box",
   overflowY: "auto",
   flexDirection: "column",

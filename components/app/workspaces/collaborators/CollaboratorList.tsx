@@ -1,10 +1,12 @@
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { Typography } from "antd";
 import { Collaborator } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
+import { appClasses } from "../../../utils/theme";
 import CollaboratorMenu from "./CollaboratorMenu";
 
 export interface CollaboratorListProps {
@@ -21,7 +23,7 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div>
+          <div className={appClasses.thumbnailMain}>
             <Link
               href={appWorkspacePaths.collaborator(
                 workspaceId,
@@ -30,7 +32,9 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
             >
               {item.firstName + " " + item.lastName}
             </Link>
-            {item.email}
+            {item.email && (
+              <Typography.Text type="secondary">{item.email}</Typography.Text>
+            )}
           </div>
         }
         menu={
@@ -48,9 +52,11 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
 
   return (
     <ItemList
+      bordered
       items={collaborators}
       renderItem={renderItem || internalRenderItem}
       getId={(item: Collaborator) => item.resourceId}
+      emptyMessage="No collaborators yet."
     />
   );
 };

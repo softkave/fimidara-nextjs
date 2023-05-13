@@ -10,6 +10,7 @@ import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
+import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface AgentTokenMenuProps {
   token: AgentToken;
@@ -68,7 +69,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
     [deleteHook, toggleVisibility]
   );
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       // TODO: only show if user has permission
       key: MenuKeys.UpdatePermissionGroups,
@@ -79,7 +80,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
             token.resourceId
           )}
         >
-          Update Permission Groups
+          Update Agent Token
         </Link>
       ),
     },
@@ -91,7 +92,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
       key: MenuKeys.DeleteToken,
       label: "Delete Token",
     },
-  ];
+  ]);
 
   return (
     <React.Fragment>
@@ -104,6 +105,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
           style: { minWidth: "150px" },
           onClick: onSelectMenuItem,
         }}
+        placement="bottomRight"
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>

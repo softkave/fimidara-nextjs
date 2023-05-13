@@ -1,7 +1,7 @@
 import { isEqual, isFunction, uniq } from "lodash";
 import React from "react";
 import { create } from "zustand";
-import { devtools } from "zustand/middleware/devtools";
+import { devtools } from "zustand/middleware";
 import { systemConstants } from "../definitions/system";
 import { AppError, toAppErrorList } from "../utils/errors";
 import { calculatePageSize } from "../utils/fns";
@@ -43,6 +43,7 @@ export type FetchHookOptions = {
 };
 
 export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
+  storeName: string,
   getFn: AnyFn<[TKeyParams, FetchState<TData>], TReturnedData>,
   comparisonFn: AnyFn<[TKeyParams, TKeyParams], boolean> = isEqual
 ) {
@@ -50,59 +51,66 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
     FetchResourceStore<TData, TReturnedData, TKeyParams>,
     [["zustand/devtools", {}]]
   >(
-    devtools((set, get) => ({
-      states: [] as Array<[TKeyParams, FetchState<TData>]>,
-      getFetchState(params) {
-        const store = get();
-        const entry = store.states.find(([entryParams]) =>
-          comparisonFn(params, entryParams)
-        );
-        return entry
-          ? {
-              loading: entry[1].loading,
-              error: entry[1].error,
-              data: getFn(params, entry[1]),
-            }
-          : undefined;
-      },
-
-      clear(params) {
-        set((store) => {
-          if (params) {
-            const states = store.states.filter(([entryParams]) =>
-              comparisonFn(params, entryParams)
-            );
-            return { states };
-          } else {
-            return { states: [] };
-          }
-        });
-      },
-
-      setFetchState(params, update, initialize = true) {
-        set((store) => {
-          const index = store.states.findIndex(([entryParams]) =>
+    devtools(
+      (set, get) => ({
+        states: [] as Array<[TKeyParams, FetchState<TData>]>,
+        getFetchState(params) {
+          const store = get();
+          const entry = store.states.find(([entryParams]) =>
             comparisonFn(params, entryParams)
           );
-          const states = [...store.states];
-          const entryData = isFunction(update)
-            ? update(index >= 0 ? states[index][1] : undefined)
-            : update;
 
-          if (index !== -1) {
-            states[index] = [params, entryData];
-          } else if (initialize) {
-            store.states = [...store.states, [params, entryData]];
+          if (entry) {
+            const data = getFn(params, entry[1]);
+            return {
+              data,
+              loading: entry[1].loading,
+              error: entry[1].error,
+            };
           }
 
-          return { states };
-        });
-      },
+          return undefined;
+        },
 
-      findFetchState(fn) {
-        return this.states.find(([params, state]) => fn(params, state));
-      },
-    }))
+        clear(params) {
+          set((store) => {
+            if (params) {
+              const states = store.states.filter(([entryParams]) =>
+                comparisonFn(params, entryParams)
+              );
+              return { states };
+            } else {
+              return { states: [] };
+            }
+          });
+        },
+
+        setFetchState(params, update, initialize = true) {
+          set((store) => {
+            const index = store.states.findIndex(([entryParams]) =>
+              comparisonFn(params, entryParams)
+            );
+            let states = [...store.states];
+            const entryData = isFunction(update)
+              ? update(index >= 0 ? states[index][1] : undefined)
+              : update;
+
+            if (index !== -1) {
+              states[index] = [params, entryData];
+            } else if (initialize) {
+              states.push([params, entryData]);
+            }
+
+            return { states };
+          });
+        },
+
+        findFetchState(fn) {
+          return this.states.find(([params, state]) => fn(params, state));
+        },
+      }),
+      { name: storeName }
+    )
   );
 }
 
@@ -142,7 +150,7 @@ export function makeFetchResourceHook<
   ) => {
     const { handleServerRecommendedActions } =
       useHandleServerRecommendedActions();
-    const fetchState = useStoreHook((store) => store.getFetchState(params));
+    let fetchState = useStoreHook((store) => store.getFetchState(params));
     const fetchFn = React.useCallback(async () => {
       try {
         useStoreHook.getState().setFetchState(params, (state) => ({
@@ -150,12 +158,17 @@ export function makeFetchResourceHook<
           error: undefined,
           data: state?.data,
         }));
+
         const result = await inputFetchFn(params);
-        useStoreHook.getState().setFetchState(params, (state) => ({
-          data: setFn(params, state, result),
-          loading: false,
-          error: undefined,
-        }));
+
+        useStoreHook.getState().setFetchState(params, (state) => {
+          const setResult = setFn(params, state, result);
+          return {
+            data: setResult,
+            loading: false,
+            error: undefined,
+          };
+        });
       } catch (error: unknown) {
         useStoreHook.getState().setFetchState(params, (state) => ({
           loading: false,
@@ -167,23 +180,39 @@ export function makeFetchResourceHook<
       }
     }, [params]);
 
-    let willLoad =
-      !options?.manual &&
-      !fetchState?.loading &&
-      !fetchState?.error &&
-      !fetchState?.data;
-
-    // TODO: should this be in a memo?
-    if (shouldLoadFn) willLoad = shouldLoadFn(willLoad, params, fetchState);
-
     React.useEffect(() => {
+      // Get latest fetch state seeing more than one component can call the fetch
+      // hook with the same params at a time leading to 2 different load states
+      // which is not too bad. The issue is error handling with message or
+      // notifications are showed twice which is not good UX.
+      const currentFetchState = useStoreHook.getState().getFetchState(params);
+
+      let willLoad =
+        !options?.manual &&
+        (!currentFetchState ||
+          (!currentFetchState?.loading &&
+            !currentFetchState?.error &&
+            !currentFetchState?.data));
+
+      // TODO: should this be in a memo?
+      if (shouldLoadFn)
+        willLoad = shouldLoadFn(willLoad, params, currentFetchState);
+
       if (willLoad) fetchFn();
-    }, [willLoad, fetchFn]);
+    }, [options?.manual, params, fetchFn]);
 
     return { fetchState, fetchFn };
   };
 
   return fetchHook;
+}
+
+export function fetchHookDefaultSetFn(
+  params: any,
+  fetchState: FetchState<any> | undefined,
+  data: any
+) {
+  return data;
 }
 
 /** fetch hook defining behaviour for fetching a single resource. */
@@ -268,7 +297,10 @@ export function singleResourceShouldFetchFn(
     | FetchReturnedState<FetchSingleResourceReturnedData<any>>
     | undefined
 ) {
-  return willLoad || !fetchState?.data.resource;
+  return (
+    willLoad ||
+    (!fetchState?.loading && !fetchState?.data.resource && !fetchState?.error)
+  );
 }
 
 /** Fetch hook defining behaviour for fetching paginated list. */
@@ -393,7 +425,13 @@ export function paginatedResourceListShouldFetchFn(
     | undefined
 ) {
   if (willLoad) return true;
-  if (fetchState?.data && params.pageSize && params.page) {
+  if (
+    fetchState?.data &&
+    params.pageSize &&
+    params.page &&
+    !fetchState.error &&
+    !fetchState.loading
+  ) {
     const expectedPageSize = calculatePageSize(
       fetchState.data.count,
       params.pageSize,
@@ -475,7 +513,7 @@ export function makeFetchResourceListFetchFn<
   return fetchFn;
 }
 
-export function removeIdFromIdListOnDeleteResources<
+export function subscribeAndRemoveIdFromIdOnDeleteResources<
   T extends { resourceId: string }
 >(
   useResourceListStore: ResourceZustandStore<T>,
@@ -494,15 +532,24 @@ export function removeIdFromIdListOnDeleteResources<
       .getState()
       .states.map(([params, fetchState]) => {
         if (!fetchState.data) return [params, fetchState];
+
         const remainingIdList = fetchState.data.idList.filter((id) => {
           return !!state.get(id);
         });
+
+        if (remainingIdList.length === fetchState.data.idList.length) {
+          return [params, fetchState];
+        }
+
         return [
           params,
           {
-            ...fetchState.data,
-            idList: remainingIdList,
-            count: remainingIdList.length,
+            ...fetchState,
+            data: {
+              ...fetchState.data,
+              idList: remainingIdList,
+              count: remainingIdList.length,
+            },
           },
         ];
       });

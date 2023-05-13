@@ -4,6 +4,7 @@ import { getWorkspaceServerSideProps } from "@/components/app/workspaces/utils";
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import { Divider, Space } from "antd";
 import { NextPage } from "next";
+import WorkspaceComponent from "../../../components/app/workspaces/WorkspaceComponent";
 import WorkspaceContainer from "../../../components/app/workspaces/WorkspaceContainer";
 
 interface IEditWorkspacePageProps {
@@ -17,9 +18,11 @@ const EditWorkspacePage: NextPage<IEditWorkspacePageProps> = (props) => {
     <WorkspaceContainer
       workspaceId={workspaceId}
       render={(workspace) => (
-        <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+        <Space direction="vertical" style={{ width: "100%" }} size={"large"}>
           <UploadWorkspaceAvatar workspaceId={workspace.resourceId} />
           <Divider orientation="left">Workspace Details</Divider>
+          <WorkspaceComponent workspace={workspace} />
+          <Divider orientation="left">Workspace Form</Divider>
           <WorkspaceForm workspace={workspace} />
         </Space>
       )}

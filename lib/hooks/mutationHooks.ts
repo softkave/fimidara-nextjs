@@ -7,12 +7,13 @@ import {
   getPrivateFimidaraEndpointsUsingUserToken,
   getPublicFimidaraEndpointsUsingUserToken,
 } from "../api/fimidaraEndpoints";
+import UserSessionStorageFns from "../storage/userSession";
 import { AnyFn } from "../utils/types";
 import { FetchResourceZustandStore } from "./fetchHookUtils";
 import {
   useUserWorkspacesFetchStore,
   useWorkspaceAgentTokensFetchStore,
-  useWorkspaceCollaboratorsFetchStore,
+  useWorkspaceCollaborationRequestsFetchStore,
   useWorkspaceFilesFetchStore,
   useWorkspaceFoldersFetchStore,
   useWorkspacePermissionGroupsFetchStore,
@@ -40,7 +41,7 @@ type GetEndpointFn<TEndpoints, TFn> = TFn extends AnyFn<
   infer TEndpointFn
 >
   ? TEndpointFn
-  : any;
+  : never;
 
 function makeEndpointMutationHook<
   TEndpoints,
@@ -149,11 +150,13 @@ export const useUserCollaborationRequestResponseMutationHook =
 export const useWorkspaceAgentTokenAddMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
   (endpoints) => endpoints.agentTokens.addToken,
-  makeInsertInFetchStoreAddMutationFn(
-    useWorkspaceAgentTokensStore,
-    useWorkspaceAgentTokensFetchStore,
-    workspaceIdMatch
-  )
+  (result) =>
+    insertInFetchStoreAddMutationFn(
+      result.body.token,
+      useWorkspaceAgentTokensStore,
+      useWorkspaceAgentTokensFetchStore,
+      workspaceIdMatch
+    )
 );
 export const useWorkspaceAgentTokenUpdateMutationHook =
   makeEndpointMutationHook(
@@ -209,14 +212,24 @@ export const useWorkspaceCollaboratorDeleteMutationHook =
 export const useWorkspaceFileUploadMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
   (endpoints) => endpoints.files.uploadFile,
-  makeInsertInFetchStoreAddMutationFn(
-    useWorkspaceFilesStore,
-    useWorkspaceFilesFetchStore,
-    (resource, params) => {
-      // TODO: handle folderpath
-      return resource.parentId === params.folderId;
+  (result, params) => {
+    if (params[0].body.fileId) {
+      useWorkspaceFilesStore
+        .getState()
+        .set(result.body.file.resourceId, result.body.file);
+    } else {
+      insertInFetchStoreAddMutationFn(
+        result.body.file,
+        useWorkspaceFilesStore,
+        useWorkspaceFilesFetchStore,
+        (resource, params) => {
+          // TODO: handle folderpath
+          const folderId = params.folderId ?? null;
+          return resource.parentId === folderId;
+        }
+      );
     }
-  )
+  }
 );
 export const useWorkspaceFileUpdateMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
@@ -246,14 +259,18 @@ export const useWorkspaceFileDeleteMutationHook = makeEndpointMutationHook(
 export const useWorkspaceFolderAddMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
   (endpoints) => endpoints.folders.addFolder,
-  makeInsertInFetchStoreAddMutationFn(
-    useWorkspaceFoldersStore,
-    useWorkspaceFoldersFetchStore,
-    (resource, params) => {
-      // TODO: handle folderpath
-      return resource.parentId === params.folderId;
-    }
-  )
+  (result) =>
+    insertInFetchStoreAddMutationFn(
+      result.body.folder,
+      useWorkspaceFoldersStore,
+      useWorkspaceFoldersFetchStore,
+      (resource, params) => {
+        // TODO: handle folderpath
+        // Parent ID is set to null for files and folders without parent folder
+        const folderId = params.folderId ?? null;
+        return resource.parentId === folderId;
+      }
+    )
 );
 export const useWorkspaceFolderUpdateMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
@@ -285,11 +302,13 @@ export const useWorkspacePermissionGroupAddMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,
     (endpoints) => endpoints.permissionGroups.addPermissionGroup,
-    makeInsertInFetchStoreAddMutationFn(
-      useWorkspacePermissionGroupsStore,
-      useWorkspacePermissionGroupsFetchStore,
-      workspaceIdMatch
-    )
+    (result) =>
+      insertInFetchStoreAddMutationFn(
+        result.body.permissionGroup,
+        useWorkspacePermissionGroupsStore,
+        useWorkspacePermissionGroupsFetchStore,
+        workspaceIdMatch
+      )
   );
 export const useWorkspacePermissionGroupUpdateMutationHook =
   makeEndpointMutationHook(
@@ -351,23 +370,27 @@ export const useWorkspaceCollaborationRequestAddMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,
     (endpoints) => endpoints.collaborationRequests.sendRequest,
-    makeInsertInFetchStoreAddMutationFn(
-      useWorkspaceCollaboratorsStore,
-      useWorkspaceCollaboratorsFetchStore,
-      workspaceIdMatch
-    )
+    (result) =>
+      insertInFetchStoreAddMutationFn(
+        result.body.request,
+        useWorkspaceCollaborationRequestsStore,
+        useWorkspaceCollaborationRequestsFetchStore,
+        workspaceIdMatch
+      )
   );
 export const useWorkspaceAddMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
   (endpoints) => endpoints.workspaces.addWorkspace,
-  makeInsertInFetchStoreAddMutationFn(
-    useWorkspacesStore,
-    useUserWorkspacesFetchStore,
-    (resource, params) => {
-      // There's only one workspace fetch store per user session
-      return true;
-    }
-  )
+  (result) =>
+    insertInFetchStoreAddMutationFn(
+      result.body.workspace,
+      useWorkspacesStore,
+      useUserWorkspacesFetchStore,
+      (resource, params) => {
+        // There's only one workspace fetch store per user session
+        return true;
+      }
+    )
 );
 export const useWorkspaceUpdateMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
@@ -399,44 +422,53 @@ function workspaceIdMatch<
   return p0.workspaceId === p1.workspaceId;
 }
 
-function makeInsertInFetchStoreAddMutationFn<
+function insertInFetchStoreAddMutationFn<
   TResource extends { resourceId: string },
   TData extends { idList: string[] },
   TKeyParams
 >(
+  resource: TResource,
   useResourceListStore: ResourceZustandStore<TResource>,
   useFetchStore: FetchResourceZustandStore<TData, any, TKeyParams>,
   comparisonFn: AnyFn<[TResource, TKeyParams], boolean>
 ) {
-  return function (resource: TResource) {
-    useResourceListStore.getState().set(resource.resourceId, resource);
-    const fetchState = useFetchStore
-      .getState()
-      .findFetchState((params, state) => comparisonFn(resource, params));
+  useResourceListStore.getState().set(resource.resourceId, resource);
+  const fetchState = useFetchStore
+    .getState()
+    .findFetchState((params, state) => comparisonFn(resource, params));
 
-    if (fetchState) {
-      useFetchStore.getState().setFetchState(
-        fetchState[0],
-        (state) => {
-          if (!state?.data) return state as any;
-          return {
-            ...state,
-            data: {
-              ...state?.data,
-              idList: [resource.resourceId].concat(state?.data?.idList ?? []),
-            },
-          };
-        },
-        /** initialize */ false
-      );
-    }
-  };
+  if (fetchState) {
+    useFetchStore.getState().setFetchState(
+      fetchState[0],
+      (state) => {
+        if (!state?.data) return state as any;
+        const idList = [resource.resourceId].concat(state?.data?.idList ?? []);
+        return {
+          ...state,
+          data: {
+            ...state?.data,
+            idList,
+            count: idList.length,
+          },
+        };
+      },
+      /** initialize */ false
+    );
+  }
 }
 
 function updateUserSessionWhenResultIsLoginResult(
   result: FimidaraEndpointResult<LoginResult>
 ) {
   const { user, clientAssignedToken, token } = result.body;
+
+  // Persist user token to local storage if it's already there. If it's there,
+  // it means during the user's last login, the user opted-in to "remember me".
+  if (UserSessionStorageFns.getUserToken()) {
+    UserSessionStorageFns.saveUserToken(token);
+    UserSessionStorageFns.saveClientAssignedToken(clientAssignedToken);
+  }
+
   const states = [...useUserSessionFetchStore.getState().states];
   useUsersStore.getState().set(user.resourceId, user);
 
@@ -504,16 +536,4 @@ function deleteWorkspaceChildren(workspaceId: string) {
   deleteChildrenFromStore(useWorkspaceFilesStore);
   deleteChildrenFromStore(useWorkspacePermissionGroupsStore);
   deleteChildrenFromStore(useWorkspaceUsageRecordsStore);
-}
-
-export function useMergeMutationHooksLoadingAndError(
-  ...hooks: Array<ReturnType<typeof useRequest>>
-) {
-  let loading = false;
-  let error: Error[] = [];
-  hooks.forEach((hook) => {
-    loading ||= hook.loading;
-    if (hook.error) error.push(hook.error);
-  });
-  return { loading, error };
 }

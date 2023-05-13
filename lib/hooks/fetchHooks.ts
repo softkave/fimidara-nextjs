@@ -18,21 +18,22 @@ import {
   UsageRecord,
   Workspace,
 } from "fimidara";
-import { identity, isEqual, omit } from "lodash";
+import { isEqual, omit } from "lodash";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../api/fimidaraEndpoints";
 import { IPaginationQuery } from "../api/types";
-import { AnyFn } from "../utils/types";
+import { AnyFn, Omit1 } from "../utils/types";
 import {
   FetchPaginatedResourceListData,
   FetchPaginatedResourceListReturnedData,
   GetFetchPaginatedResourceListFetchFnOther,
+  fetchHookDefaultSetFn,
   makeFetchPaginatedResourceListFetchFn,
   makeFetchPaginatedResourceListGetFn,
   makeFetchPaginatedResourceListSetFn,
   makeFetchResourceHook,
   makeFetchResourceStoreHook,
   paginatedResourceListShouldFetchFn,
-  removeIdFromIdListOnDeleteResources,
+  subscribeAndRemoveIdFromIdOnDeleteResources,
 } from "./fetchHookUtils";
 import { ResourceZustandStore } from "./makeResourceListStore";
 import {
@@ -79,7 +80,9 @@ async function workspaceCollaborationRequestsInputFetchFn(
   const data = await endpoints.collaborationRequests.getWorkspaceRequests({
     body: params,
   });
-  const count = await endpoints.collaborationRequests.countWorkspaceRequests();
+  const count = await endpoints.collaborationRequests.countWorkspaceRequests({
+    body: omitPagination(params),
+  });
   return { count: count.body.count, resourceList: data.body.requests };
 }
 async function workspaceCollaboratorsInputFetchFn(
@@ -89,7 +92,9 @@ async function workspaceCollaboratorsInputFetchFn(
   const data = await endpoints.collaborators.getWorkspaceCollaborators({
     body: params,
   });
-  const count = await endpoints.collaborators.countWorkspaceCollaborators();
+  const count = await endpoints.collaborators.countWorkspaceCollaborators({
+    body: omitPagination(params),
+  });
   return { count: count.body.count, resourceList: data.body.collaborators };
 }
 async function workspaceAgentTokensInputFetchFn(
@@ -99,7 +104,9 @@ async function workspaceAgentTokensInputFetchFn(
   const data = await endpoints.agentTokens.getWorkspaceTokens({
     body: params,
   });
-  const count = await endpoints.agentTokens.countWorkspaceTokens();
+  const count = await endpoints.agentTokens.countWorkspaceTokens({
+    body: omitPagination(params),
+  });
   return { count: count.body.count, resourceList: data.body.tokens };
 }
 async function workspaceFoldersInputFetchFn(
@@ -107,9 +114,15 @@ async function workspaceFoldersInputFetchFn(
 ): Promise<FetchPaginatedResourceListReturnedData<Folder>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.folders.listFolderContent({
-    body: { ...params, contentType: "folder" },
+    body: { ...params, contentType: ["folder"] },
   });
-  const count = await endpoints.folders.countFolderContent();
+  const count = await endpoints.folders.countFolderContent({
+    body: {
+      contentType: ["folder"],
+      folderpath: params.folderpath,
+      folderId: params.folderId,
+    },
+  });
   return { count: count.body.foldersCount, resourceList: data.body.folders };
 }
 async function workspaceFilesInputFetchFn(
@@ -117,9 +130,15 @@ async function workspaceFilesInputFetchFn(
 ): Promise<FetchPaginatedResourceListReturnedData<File>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.folders.listFolderContent({
-    body: { ...params, contentType: "file" },
+    body: { ...params, contentType: ["file"] },
   });
-  const count = await endpoints.folders.countFolderContent();
+  const count = await endpoints.folders.countFolderContent({
+    body: {
+      contentType: ["file"],
+      folderpath: params.folderpath,
+      folderId: params.folderId,
+    },
+  });
   return { count: count.body.filesCount, resourceList: data.body.files };
 }
 async function workspacePermissionGroupsInputFetchFn(
@@ -130,7 +149,7 @@ async function workspacePermissionGroupsInputFetchFn(
     body: params,
   });
   const count = await endpoints.permissionGroups.countWorkspacePermissionGroups(
-    { body: { workspaceId: params.workspaceId } }
+    { body: omitPagination(params) }
   );
   return { count: count.body.count, resourceList: data.body.permissionGroups };
 }
@@ -141,7 +160,9 @@ async function workspaceUsageRecordsInputFetchFn(
   const data = await endpoints.usageRecords.getWorkspaceSummedUsage({
     body: params,
   });
-  const count = await endpoints.usageRecords.countWorkspaceSummedUsage();
+  const count = await endpoints.usageRecords.countWorkspaceSummedUsage({
+    body: omitPagination(params),
+  });
   return { count: count.body.count, resourceList: data.body.records };
 }
 
@@ -158,6 +179,7 @@ function makePaginatedFetchHookAndStore<
     Promise<FetchPaginatedResourceListReturnedData<TResource>>
   >
 >(
+  storeName: string,
   useResourceListStore: ResourceZustandStore<TResource>,
   inputFetchFn: Fn,
   comparisonFn: AnyFn<[Parameters<Fn>[0], Parameters<Fn>[0]], boolean>,
@@ -172,13 +194,16 @@ function makePaginatedFetchHookAndStore<
       GetFetchPaginatedResourceListFetchFnOther<Fn>
     >,
     Parameters<Fn>[0]
-  >(getFn, comparisonFn);
+  >(storeName, getFn, comparisonFn);
   const fetchFn = makeFetchPaginatedResourceListFetchFn(
     inputFetchFn,
     useResourceListStore,
     getIdFromResource
   );
-  removeIdFromIdListOnDeleteResources(useResourceListStore, useFetchStore);
+  subscribeAndRemoveIdFromIdOnDeleteResources(
+    useResourceListStore,
+    useFetchStore
+  );
   const setFn = makeFetchPaginatedResourceListSetFn();
   const useFetchHook = makeFetchResourceHook(
     fetchFn,
@@ -194,6 +219,7 @@ export const {
   useFetchStore: useUserWorkspacesFetchStore,
   useFetchHook: useUserWorkspacesFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "workspacesFetch",
   useWorkspacesStore,
   userWorkspacesInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -202,6 +228,7 @@ export const {
   useFetchStore: useUserCollaborationRequestsFetchStore,
   useFetchHook: useUserCollaborationRequestsFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "userRequestsFetch",
   useUserCollaborationRequestsStore,
   userCollaborationRequestsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -210,6 +237,7 @@ export const {
   useFetchStore: useWorkspaceCollaborationRequestsFetchStore,
   useFetchHook: useWorkspaceCollaborationRequestsFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "workspaceRequestsFetch",
   useWorkspaceCollaborationRequestsStore,
   workspaceCollaborationRequestsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -218,6 +246,7 @@ export const {
   useFetchStore: useWorkspaceCollaboratorsFetchStore,
   useFetchHook: useWorkspaceCollaboratorsFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "collaboratorsFetch",
   useWorkspaceCollaboratorsStore,
   workspaceCollaboratorsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize,
@@ -227,6 +256,7 @@ export const {
   useFetchStore: useWorkspaceAgentTokensFetchStore,
   useFetchHook: useWorkspaceAgentTokensFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "agentTokensFetch",
   useWorkspaceAgentTokensStore,
   workspaceAgentTokensInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -235,6 +265,7 @@ export const {
   useFetchStore: useWorkspaceFoldersFetchStore,
   useFetchHook: useWorkspaceFoldersFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "foldersFetch",
   useWorkspaceFoldersStore,
   workspaceFoldersInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -243,6 +274,7 @@ export const {
   useFetchStore: useWorkspaceFilesFetchStore,
   useFetchHook: useWorkspaceFilesFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "filesFetch",
   useWorkspaceFilesStore,
   workspaceFilesInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -251,6 +283,7 @@ export const {
   useFetchStore: useWorkspacePermissionGroupsFetchStore,
   useFetchHook: useWorkspacePermissionGroupsFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "permissionGroupsFetch",
   useWorkspacePermissionGroupsStore,
   workspacePermissionGroupsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -259,6 +292,7 @@ export const {
   useFetchStore: useWorkspaceUsageRecordsFetchStore,
   useFetchHook: useWorkspaceUsageRecordsFetchHook,
 } = makePaginatedFetchHookAndStore(
+  "usageRecordsFetch",
   useWorkspaceUsageRecordsStore,
   workspaceUsageRecordsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
@@ -272,15 +306,22 @@ function checkIsEqualOmittingPageAndPageSize(
   return isEqual(omit(p0, omitKeys), omit(p1, omitKeys));
 }
 
+function omitPagination<T extends IPaginationQuery>(
+  p0: T
+): Omit1<T, "page" | "pageSize"> {
+  const omitKeys: Array<keyof IPaginationQuery> = ["page", "pageSize"];
+  return omit(p0, omitKeys);
+}
+
 export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
   GetUsageCostsEndpointResult,
-  GetUsageCostsEndpointResult,
+  GetUsageCostsEndpointResult | undefined,
   undefined
->(identity);
+>("usageCostsFetch", (params, state) => state.data);
 export const useUsageCostsFetchHook = makeFetchResourceHook(
   usageCostsInputFetchFn,
   useUsageCostsFetchStore,
-  identity
+  fetchHookDefaultSetFn
 );
 
 export function clearFetchResourceListStores() {

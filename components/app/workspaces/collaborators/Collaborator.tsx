@@ -8,10 +8,9 @@ import { useRouter } from "next/router";
 import React from "react";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
-import { appClasses } from "../../../utils/theme";
+import PageError from "../../../utils/page/PageError";
+import PageLoading from "../../../utils/page/PageLoading";
+import PageNothingFound from "../../../utils/page/PageNothingFound";
 import CollaboratorMenu from "./CollaboratorMenu";
 
 export interface ICollaboratorProps {
@@ -35,7 +34,7 @@ function Collaborator(props: ICollaboratorProps) {
 
   if (resource) {
     return (
-      <div className={appClasses.main}>
+      <div>
         <Space direction="vertical" size={32} style={{ width: "100%" }}>
           <ComponentHeader title={resource.firstName + " " + resource.lastName}>
             <CollaboratorMenu
@@ -57,13 +56,13 @@ function Collaborator(props: ICollaboratorProps) {
   } else if (error) {
     return (
       <PageError
-        messageText={getBaseError(error) || "Error fetching collaborator"}
+        message={getBaseError(error) || "Error fetching collaborator"}
       />
     );
   } else if (isLoading) {
-    return <PageLoading messageText="Loading resource..." />;
+    return <PageLoading message="Loading resource..." />;
   } else {
-    return <PageNothingFound messageText="Collaborator not found." />;
+    return <PageNothingFound message="Collaborator not found." />;
   }
 }
 

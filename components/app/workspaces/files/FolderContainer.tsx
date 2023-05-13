@@ -1,7 +1,6 @@
-import PageError from "@/components/utils/PageError";
-import PageLoading from "@/components/utils/PageLoading";
-import PageNothingFound from "@/components/utils/PageNothingFound";
-import { appClasses } from "@/components/utils/theme";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceFolderFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
@@ -23,15 +22,12 @@ const FolderContainer: React.FC<FolderContainerProps> = (props) => {
     return render(resource);
   } else if (error) {
     return (
-      <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching folder"}
-      />
+      <PageError message={getBaseError(error) || "Error fetching folder"} />
     );
   } else if (isLoading) {
-    return <PageLoading messageText="Loading folder..." />;
+    return <PageLoading message="Loading folder..." />;
   } else {
-    return <PageNothingFound messageText="Folder not found." />;
+    return <PageNothingFound message="Folder not found." />;
   }
 };
 

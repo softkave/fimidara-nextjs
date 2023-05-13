@@ -1,5 +1,10 @@
 import { Space, Typography } from "antd";
-import { UsageCosts, UsageRecord, Workspace } from "fimidara";
+import {
+  UsageCosts,
+  UsageRecord,
+  UsageRecordCategory,
+  Workspace,
+} from "fimidara";
 import React from "react";
 import ItemList from "../../../utils/list/ItemList";
 import SummedUsageRecordListItem from "./SummedUsageRecordListItem";
@@ -43,18 +48,44 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
     [workspace, renderItem, usageCosts]
   );
 
+  sortRecords(fulfilledRecords);
+  sortRecords(droppedRecords);
+
   return (
     <Space direction="vertical" style={{ width: "100%" }} size="large">
-      <Space direction="vertical" style={{ width: "100%" }} size="small">
-        <Typography.Title level={4}>Fulfilled Requests</Typography.Title>
-        <ItemList items={fulfilledRecords} renderItem={internalRenderItem} />
+      <Space direction="vertical" style={{ width: "100%" }} size="middle">
+        <Typography.Title level={5}>Fulfilled Requests</Typography.Title>
+        <ItemList
+          bordered
+          items={fulfilledRecords}
+          renderItem={internalRenderItem}
+          emptyMessage="No fulfilled usage records yet."
+        />
       </Space>
-      <Space direction="vertical" style={{ width: "100%" }} size="small">
-        <Typography.Title level={4}>Dropped Requests</Typography.Title>
-        <ItemList items={droppedRecords} renderItem={internalRenderItem} />
+      <Space direction="vertical" style={{ width: "100%" }} size="middle">
+        <Typography.Title level={5}>Dropped Requests</Typography.Title>
+        <ItemList
+          bordered
+          items={droppedRecords}
+          renderItem={internalRenderItem}
+          emptyMessage="No dropped usage records."
+        />
       </Space>
     </Space>
   );
 };
+
+const categoryWeight: Record<UsageRecordCategory, number> = {
+  ["storage"]: 1,
+  ["bin"]: 2,
+  ["bout"]: 3,
+  ["total"]: 4,
+};
+
+function sortRecords(records: UsageRecord[]) {
+  return records.sort(
+    (r1, r2) => categoryWeight[r1.category] - categoryWeight[r2.category]
+  );
+}
 
 export default SummedUsageRecordList;

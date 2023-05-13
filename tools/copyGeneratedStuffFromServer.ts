@@ -1,8 +1,8 @@
+const fse = require("fs-extra");
+import { promises as fspromises } from "fs";
+
 /** Copies generated REST API table of content, public endpoints info, and other
  * generated stuff. */
-
-const fse = require("fs-extra");
-
 async function copyGeneratedStuffFromServer() {
   const serverRootpath = "../fimidara-server-node";
   const serverRestApiEndpointsPath = `${serverRootpath}/mdoc/rest-api/endpoints`;
@@ -35,6 +35,20 @@ async function copyGeneratedStuffFromServer() {
     ),
     fse.copy(serverSdkUtilsPrivateTypesPath, frontendSdkUtilsPrivateTypesPath),
   ]);
+
+  const sdkUtilsRawContent = await fspromises.readFile(
+    frontendSdkUtilsFilepath,
+    "utf-8"
+  );
+  const sdkUtilsContentWithWarning =
+    "// This file is copied over from server-generated js sdk.\n" +
+    "// Do not modify directly. For util code, use localUtils.ts file instead.\n\n" +
+    sdkUtilsRawContent;
+  await fspromises.writeFile(
+    frontendSdkUtilsFilepath,
+    sdkUtilsContentWithWarning,
+    { encoding: "utf-8" }
+  );
 }
 
 //  C:\Users\yword\Desktop\projects\fimidara\fimidara-server-node\mdoc\rest-api

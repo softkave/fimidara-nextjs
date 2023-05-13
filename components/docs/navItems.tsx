@@ -103,12 +103,6 @@ export const fimidaraJsSdkNavItems: IRawNavItem[] = [
   },
 ];
 
-console.log({
-  fimidaraNavItems,
-  fimidaraJsSdkNavItems,
-  fimidaraRestApiNavItems,
-});
-
 export const fimidaraAntdNavItems = renderToAntDMenuItemList(
   fimidaraNavItems,
   first(fimidaraNavItems)!

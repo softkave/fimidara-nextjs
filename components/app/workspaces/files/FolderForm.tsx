@@ -1,7 +1,6 @@
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
-  useMergeMutationHooksLoadingAndError,
   useWorkspaceFolderAddMutationHook,
   useWorkspaceFolderUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
@@ -76,10 +75,7 @@ export default function FolderForm(props: FolderFormProps) {
       );
     },
   });
-  const mergedHook = useMergeMutationHooksLoadingAndError(
-    createHook,
-    updateHook
-  );
+  const mergedHook = folder ? updateHook : createHook;
 
   const { formik } = useFormHelpers({
     errors: mergedHook.error,

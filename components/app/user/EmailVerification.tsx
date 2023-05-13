@@ -33,7 +33,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
   if (session.user.isEmailVerified) {
     rootNode = (
       <Typography.Text type="success">
-        Your email address is verified
+        Your email address is verified.
       </Typography.Text>
     );
   } else {

@@ -1,16 +1,19 @@
 import IconButton from "@/components/utils/buttons/IconButton";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { PlusOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Dropdown, MenuProps, Space, Typography } from "antd";
 import { Folder } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
+import { StyleableComponentProps } from "../../../utils/styling/types";
+import { appClasses } from "../../../utils/theme";
+import { insertAntdMenuDivider } from "../../../utils/utils";
 import FolderMenu from "./FolderMenu";
 import RootFilesMenu from "./RootFilesMenu";
 
-export interface IFileListContainerHeaderProps {
+export interface IFileListContainerHeaderProps extends StyleableComponentProps {
   workspaceId: string;
   workspaceRootname: string;
   folder?: Folder;
@@ -37,8 +40,8 @@ const classes = {
 const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
   props
 ) => {
-  const { workspaceId, folder, workspaceRootname } = props;
-  const items: MenuProps["items"] = [
+  const { workspaceId, folder, workspaceRootname, style, className } = props;
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       key: CreateMenuKeys.CreateFolder,
       label: (
@@ -65,17 +68,21 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
         </Link>
       ),
     },
-  ];
+  ]);
 
   return (
-    <div className={classes.root}>
-      <Typography.Title level={5} className={classes.title}>
-        Files
+    <div className={cx(classes.root, className)} style={style}>
+      <Typography.Title
+        level={5}
+        className={cx(classes.title, appClasses.muteMargin)}
+      >
+        {folder?.name || "Files"}
       </Typography.Title>
       <Space className={classes.sideLinks}>
         <Dropdown
           trigger={["click"]}
           menu={{ items, style: { minWidth: "150px" } }}
+          placement="bottomRight"
         >
           <IconButton icon={<PlusOutlined />} />
         </Dropdown>

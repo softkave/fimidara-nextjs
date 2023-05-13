@@ -1,6 +1,6 @@
 import { isArray } from "lodash";
 import { create } from "zustand";
-import { devtools } from "zustand/middleware/devtools";
+import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 type KVStore = {

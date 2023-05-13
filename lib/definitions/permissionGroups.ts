@@ -6,7 +6,6 @@ export interface IPermissionGroupInput {
 export interface INewPermissionGroupInput {
   name: string;
   description?: string;
-  permissionGroups?: IPermissionGroupInput[];
 }
 
 export type IUpdatePermissionGroupInput = Partial<INewPermissionGroupInput>;

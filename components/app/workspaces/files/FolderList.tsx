@@ -1,11 +1,14 @@
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { FolderOutlined } from "@ant-design/icons";
+import { Typography } from "antd";
 import { Folder } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
+import { FiFolder } from "react-icons/fi";
+import AppIcon from "../../../utils/page/AppIcon";
+import { appClasses } from "../../../utils/theme";
 import FolderMenu from "./FolderMenu";
 
 export interface FolderListProps {
@@ -29,7 +32,7 @@ const FolderList: React.FC<FolderListProps> = (props) => {
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div>
+            <div className={appClasses.thumbnailMain}>
               <Link
                 href={appWorkspacePaths.folder(
                   item.workspaceId,
@@ -38,7 +41,11 @@ const FolderList: React.FC<FolderListProps> = (props) => {
               >
                 {item.name}
               </Link>
-              {item.description}
+              {item.description && (
+                <Typography.Text type="secondary">
+                  {item.description}
+                </Typography.Text>
+              )}
             </div>
           }
           menu={
@@ -49,7 +56,13 @@ const FolderList: React.FC<FolderListProps> = (props) => {
               onScheduleDeleteSuccess={noop}
             />
           }
-          prefixNode={<FolderOutlined />}
+          prefixNode={
+            <AppIcon
+              icon={<FiFolder />}
+              className={appClasses.alignStart}
+              style={{ marginTop: "1px" }}
+            />
+          }
         />
       );
     },
@@ -58,9 +71,11 @@ const FolderList: React.FC<FolderListProps> = (props) => {
 
   return (
     <ItemList
+      bordered
       items={folders}
       renderItem={internalRenderItem}
       getId={(item: Folder) => item.resourceId}
+      emptyMessage="No folders yet."
     />
   );
 };

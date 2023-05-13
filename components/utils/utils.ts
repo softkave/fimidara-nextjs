@@ -1,3 +1,4 @@
+import { MenuProps } from "antd";
 import { isBoolean } from "lodash";
 
 export const appComponentConstants = {
@@ -20,6 +21,15 @@ export function includeFirstNode<T1>(
     if (showNode) return renderNode(renderNodeArgs);
   }
   return null;
+}
+
+export function insertAntdMenuDivider(items: MenuProps["items"]) {
+  const newItems: MenuProps["items"] = [];
+  items?.forEach((item, i) => {
+    newItems.push(item);
+    if (i < items.length - 1) newItems.push({ type: "divider" });
+  });
+  return newItems;
 }
 
 export const htmlCharacterCodes = {

@@ -23,14 +23,14 @@ export interface IUploadAvatarProps {
 }
 
 const DEFAULT_MESSAGES: IImageUploadMessages = {
-  uploading: "Uploading image",
-  successful: "Uploaded image successfully",
-  failed: "Error uploading image",
+  uploading: "Uploading image.",
+  successful: "Uploaded image successfully.",
+  failed: "Error uploading image.",
 };
 
 function beforeUpload(file: RcFile) {
   if (first(file.type.split("/")) !== "image") {
-    errorMessageNotificatition("Invalid image type");
+    errorMessageNotificatition("Invalid image type.");
   }
 
   return true;
@@ -103,7 +103,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
     <Upload
       name="data"
       action={uploadPath}
-      headers={{ authorization: `Bearer ${clientAssignedToken}` }}
+      headers={{ Authorization: `Bearer ${clientAssignedToken}` }}
       beforeUpload={beforeUpload}
       onChange={onChange}
       disabled={loading}

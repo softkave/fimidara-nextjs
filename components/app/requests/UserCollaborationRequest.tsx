@@ -5,11 +5,11 @@ import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
 import { Button, Space, Typography, message } from "antd";
 import { formatRelative } from "date-fns";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
-import PageNothingFound from "../../utils/PageNothingFound";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
 import InlineLoading from "../../utils/page/InlineLoading";
+import PageError from "../../utils/page/PageError";
+import PageLoading from "../../utils/page/PageLoading";
+import PageNothingFound from "../../utils/page/PageNothingFound";
 import { appDimensions } from "../../utils/theme";
 
 export interface IUserCollaborationRequestProps {
@@ -129,15 +129,13 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
   } else if (error) {
     return (
       <PageError
-        messageText={
-          getBaseError(error) || "Error fetching collaboration request."
-        }
+        message={getBaseError(error) || "Error fetching collaboration request."}
       />
     );
   } else if (isLoading) {
-    return <PageLoading messageText="Loading request..." />;
+    return <PageLoading message="Loading request..." />;
   } else {
-    return <PageNothingFound messageText="Collaboration request not found." />;
+    return <PageNothingFound message="Collaboration request not found." />;
   }
 }
 

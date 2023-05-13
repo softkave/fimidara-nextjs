@@ -1,7 +1,6 @@
 import { folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
-  useMergeMutationHooksLoadingAndError,
   useWorkspaceAddMutationHook,
   useWorkspaceUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
@@ -53,7 +52,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
     onSuccess(data, params) {
       message.success("Workspace updated.");
       router.push(
-        appWorkspacePaths.rootFolderList(data.body.workspace.resourceId)
+        appWorkspacePaths.updateWorkspaceForm(data.body.workspace.resourceId)
       );
     },
   });
@@ -61,17 +60,14 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
     onSuccess(data, params) {
       message.success("Workspace created.");
       router.push(
-        appWorkspacePaths.rootFolderList(data.body.workspace.resourceId)
+        appWorkspacePaths.updateWorkspaceForm(data.body.workspace.resourceId)
       );
     },
   });
-  const mergedHook = useMergeMutationHooksLoadingAndError(
-    createHook,
-    updateHook
-  );
+  const stateHook = workspace ? updateHook : createHook;
 
   const { formik } = useFormHelpers({
-    errors: mergedHook.error,
+    errors: stateHook.error,
     formikProps: {
       validationSchema: workspaceValidation,
       initialValues: workspace
@@ -105,7 +101,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter workspace name"
-        disabled={mergedHook.loading}
+        disabled={stateHook.loading}
         maxLength={systemConstants.maxNameLength}
         autoComplete="off"
       />
@@ -137,7 +133,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
           onBlur={formik.handleBlur}
           onChange={formik.handleChange}
           placeholder="Enter workspace root name"
-          disabled={mergedHook.loading || !!workspace}
+          disabled={stateHook.loading || !!workspace}
           maxLength={folderConstants.maxFolderNameLength}
           autoComplete="off"
         />
@@ -180,7 +176,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter workspace description"
-        disabled={mergedHook.loading}
+        disabled={stateHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
         autoSize={{ minRows: 3 }}
       />
@@ -194,7 +190,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
           <Form.Item>
             <Typography.Title level={4}>Workspace Form</Typography.Title>
           </Form.Item>
-          <FormAlert error={mergedHook.error} />
+          <FormAlert error={stateHook.error} />
           {nameNode}
           {rootnameNode}
           {descriptionNode}
@@ -203,7 +199,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
               block
               type="primary"
               htmlType="submit"
-              loading={mergedHook.loading}
+              loading={stateHook.loading}
             >
               {workspace ? "Update Workspace" : "Create Workspace"}
             </Button>

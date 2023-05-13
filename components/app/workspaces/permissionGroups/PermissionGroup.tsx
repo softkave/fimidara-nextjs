@@ -1,17 +1,18 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
-import PageError from "@/components/utils/PageError";
-import PageLoading from "@/components/utils/PageLoading";
-import PageNothingFound from "@/components/utils/PageNothingFound";
-import { appClasses } from "@/components/utils/theme";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space } from "antd";
+import { Space, Typography } from "antd";
 import assert from "assert";
 import { useRouter } from "next/router";
 import React from "react";
+import { formatDateTime } from "../../../../lib/utils/dateFns";
+import { appClasses } from "../../../utils/theme";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
 export interface IPermissionGroupProps {
@@ -35,15 +36,8 @@ function PermissionGroup(props: IPermissionGroupProps) {
   if (resource) {
     return (
       <div>
-        <Space
-          direction="vertical"
-          size={32}
-          style={{ width: "100%", padding: "16px" }}
-        >
-          <ComponentHeader
-            title={resource.name}
-            className={appClasses.mainNoPadding}
-          >
+        <Space direction="vertical" size={32} style={{ width: "100%" }}>
+          <ComponentHeader title={resource.name}>
             <PermissionGroupMenu
               permissionGroup={resource}
               onCompleteDelete={onCompleteDeletePermissionGroup}
@@ -52,18 +46,29 @@ function PermissionGroup(props: IPermissionGroupProps) {
           <LabeledNode
             nodeIsText
             copyable
+            code
             direction="vertical"
             label="Resource ID"
             node={resource.resourceId}
-            className={appClasses.mainNoPadding}
+          />
+          <LabeledNode
+            nodeIsText
+            direction="vertical"
+            label="Last Updated"
+            node={formatDateTime(resource.lastUpdatedAt)}
           />
           {resource.description && (
             <LabeledNode
-              nodeIsText
-              label="Description"
-              node={resource.description}
               direction="vertical"
-              className={appClasses.mainNoPadding}
+              label="Description"
+              node={
+                <Typography.Paragraph
+                  ellipsis={{ rows: 2 }}
+                  className={appClasses.muteMargin}
+                >
+                  {resource.description}
+                </Typography.Paragraph>
+              }
             />
           )}
         </Space>
@@ -72,13 +77,13 @@ function PermissionGroup(props: IPermissionGroupProps) {
   } else if (error) {
     return (
       <PageError
-        messageText={getBaseError(error) || "Error fetching permission group."}
+        message={getBaseError(error) || "Error fetching permission group."}
       />
     );
   } else if (isLoading) {
-    return <PageLoading messageText="Loading permission group..." />;
+    return <PageLoading message="Loading permission group..." />;
   } else {
-    return <PageNothingFound messageText="Permission group not found." />;
+    return <PageNothingFound message="Permission group not found." />;
   }
 }
 

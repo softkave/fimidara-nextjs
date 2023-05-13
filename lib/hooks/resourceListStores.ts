@@ -13,21 +13,24 @@ import {
 import { makeKey } from "../utils/fns";
 import { makeResourceListStore } from "./makeResourceListStore";
 
-export const useUsersStore = makeResourceListStore<User>();
+export const useUsersStore = makeResourceListStore<User>("users");
 export const useUserCollaborationRequestsStore =
-  makeResourceListStore<CollaborationRequestForUser>();
+  makeResourceListStore<CollaborationRequestForUser>("userRequests");
 export const useWorkspaceCollaboratorsStore =
-  makeResourceListStore<Collaborator>();
+  makeResourceListStore<Collaborator>("collaborators");
 export const useWorkspaceCollaborationRequestsStore =
-  makeResourceListStore<CollaborationRequestForWorkspace>();
-export const useWorkspaceAgentTokensStore = makeResourceListStore<AgentToken>();
-export const useWorkspaceFilesStore = makeResourceListStore<File>();
-export const useWorkspaceFoldersStore = makeResourceListStore<Folder>();
+  makeResourceListStore<CollaborationRequestForWorkspace>("workspaceRequests");
+export const useWorkspaceAgentTokensStore =
+  makeResourceListStore<AgentToken>("agentTokens");
+export const useWorkspaceFilesStore = makeResourceListStore<File>("files");
+export const useWorkspaceFoldersStore =
+  makeResourceListStore<Folder>("folders");
 export const useWorkspacePermissionGroupsStore =
-  makeResourceListStore<PermissionGroup>();
+  makeResourceListStore<PermissionGroup>("permissionGroups");
 export const useWorkspaceUsageRecordsStore =
-  makeResourceListStore<UsageRecord>();
-export const useWorkspacesStore = makeResourceListStore<Workspace>();
+  makeResourceListStore<UsageRecord>("usageRecords");
+export const useWorkspacesStore =
+  makeResourceListStore<Workspace>("workspaces");
 
 export function getFolderByPath(
   folderpath: string,

@@ -1,7 +1,6 @@
 import { useMount } from "ahooks";
 import { message, notification, Typography } from "antd";
 import { useRouter } from "next/router";
-import { formBodyClassName } from "../components/form/classNames";
 import { errorMessageNotificatition } from "../components/utils/errorHandling";
 import { appComponentConstants } from "../components/utils/utils";
 import {
@@ -53,7 +52,7 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
   });
 
   return (
-    <div className={formBodyClassName}>
+    <div>
       <Typography.Text>Verifying email address...</Typography.Text>
     </div>
   );

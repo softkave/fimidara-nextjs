@@ -8,13 +8,12 @@ import { Space } from "antd";
 import { Collaborator } from "fimidara";
 import Link from "next/link";
 import React from "react";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
 import IconButton from "../../../utils/buttons/IconButton";
 import ListHeader from "../../../utils/list/ListHeader";
+import PageError from "../../../utils/page/PageError";
+import PageLoading from "../../../utils/page/PageLoading";
+import PageNothingFound from "../../../utils/page/PageNothingFound";
 import PaginatedContent from "../../../utils/page/PaginatedContent";
-import { appClasses } from "../../../utils/theme";
 import CollaboratorList from "./CollaboratorList";
 
 export interface IWorkspaceCollaboratorsProps {
@@ -43,18 +42,14 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
   if (error) {
     content = (
       <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching collaborators."}
+        message={getBaseError(error) || "Error fetching collaborators."}
       />
     );
   } else if (isLoading) {
-    content = <PageLoading messageText="Loading collaborators..." />;
+    content = <PageLoading message="Loading collaborators..." />;
   } else if (resourceList.length === 0) {
     content = (
-      <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText="No collaborators yet. Create one using the plus button above."
-      />
+      <PageNothingFound message="No collaborators yet. Create one using the plus button above." />
     );
   } else {
     content = renderList ? (
@@ -80,22 +75,20 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
   }
 
   return (
-    <div className={appClasses.main}>
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
-        <ListHeader
-          label="Collaborators"
-          buttons={
-            <Space>
-              <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
-                <IconButton icon={<PlusOutlined />} />
-              </Link>
-              {menu}
-            </Space>
-          }
-        />
-        {content}
-      </Space>
-    </div>
+    <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <ListHeader
+        label="Collaborators"
+        buttons={
+          <Space>
+            <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
+              <IconButton icon={<PlusOutlined />} />
+            </Link>
+            {menu}
+          </Space>
+        }
+      />
+      {content}
+    </Space>
   );
 };
 

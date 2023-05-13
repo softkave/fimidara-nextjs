@@ -1,12 +1,11 @@
-import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
-import { Space } from "antd";
+import { Space, Typography } from "antd";
 import { Folder } from "fimidara";
-import { useRouter } from "next/router";
+import path from "path";
+import { addRootnameToPath } from "../../../../lib/definitions/folder";
+import { formatDateTime } from "../../../../lib/utils/dateFns";
 import FolderChildren from "./FolderChildren";
-import FolderMenu from "./FolderMenu";
 
 export interface FolderProps {
   folder: Folder;
@@ -15,40 +14,46 @@ export interface FolderProps {
 
 function FolderComponent(props: FolderProps) {
   const { folder, workspaceRootname } = props;
-  const router = useRouter();
 
   return (
-    <div className={appClasses.main}>
+    <div>
       <Space direction="vertical" size={32} style={{ width: "100%" }}>
-        <ComponentHeader title={folder.name}>
-          <FolderMenu
-            folder={folder}
-            workspaceRootname={workspaceRootname}
-            onScheduleDeleteSuccess={() => {
-              router.push(
-                folder.parentId
-                  ? appWorkspacePaths.folder(
-                      folder.workspaceId,
-                      folder.parentId
-                    )
-                  : appWorkspacePaths.rootFolderList(folder.workspaceId)
-              );
-            }}
-          />
-        </ComponentHeader>
         <LabeledNode
           nodeIsText
           copyable
+          code
           direction="vertical"
           label="Resource ID"
           node={folder.resourceId}
         />
+        <LabeledNode
+          nodeIsText
+          copyable
+          code
+          direction="vertical"
+          label="Folder Path"
+          node={path.normalize(
+            addRootnameToPath(folder.namePath.join("/"), workspaceRootname)
+          )}
+        />
+        <LabeledNode
+          nodeIsText
+          direction="vertical"
+          label="Last Updated"
+          node={formatDateTime(folder.lastUpdatedAt)}
+        />
         {folder.description && (
           <LabeledNode
-            nodeIsText
-            label="Description"
-            node={folder.description}
             direction="vertical"
+            label="Description"
+            node={
+              <Typography.Paragraph
+                ellipsis={{ rows: 2 }}
+                className={appClasses.muteMargin}
+              >
+                {folder.description}
+              </Typography.Paragraph>
+            }
           />
         )}
         <FolderChildren

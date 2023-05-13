@@ -2,6 +2,7 @@ import WorkspaceRequest from "@/components/app/workspaces/requests/WorkspaceRequ
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import { GetServerSideProps } from "next";
 import React from "react";
+import WorkspaceRequestContainer from "../../../../../components/app/workspaces/requests/WorkspaceRequestContainer";
 
 export type IWorkspaceRequestPageProps = {
   workspaceId: string;
@@ -10,7 +11,12 @@ export type IWorkspaceRequestPageProps = {
 
 const WorkspaceRequestPage: React.FC<IWorkspaceRequestPageProps> = (props) => {
   const { workspaceId, requestId } = props;
-  return <WorkspaceRequest requestId={requestId} />;
+  return (
+    <WorkspaceRequestContainer
+      requestId={requestId}
+      render={(request) => <WorkspaceRequest request={request} />}
+    />
+  );
 };
 
 export default withPageAuthRequiredHOC(WorkspaceRequestPage);

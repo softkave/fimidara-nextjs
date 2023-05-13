@@ -1,12 +1,33 @@
-import { Tabs, TabsProps } from "antd";
+import { css } from "@emotion/css";
 import { useRouter } from "next/router";
+import {
+  FiFile,
+  FiKey,
+  FiSettings,
+  FiUserPlus,
+  FiUsers,
+  FiVoicemail,
+} from "react-icons/fi";
+import { TbLockAccess } from "react-icons/tb";
 import { appWorkspacePaths } from "../../lib/definitions/system";
+import AppTabs, { AppTabItem } from "../utils/page/AppTabs";
 
 export interface IAppWorkspaceHeaderProps {
   workspaceId: string;
   className?: string;
   style?: React.CSSProperties;
 }
+
+const classes = {
+  item: css({
+    position: "relative",
+    top: "2px",
+    borderBottom: "2px solid #f0f0f0",
+  }),
+  active: css({
+    borderBottom: "2px solid #1677ff",
+  }),
+};
 
 export default function AppWorkspaceHeader(props: IAppWorkspaceHeaderProps) {
   const { className, style, workspaceId } = props;
@@ -15,45 +36,62 @@ export default function AppWorkspaceHeader(props: IAppWorkspaceHeaderProps) {
     router.push(key);
   };
 
-  const items: TabsProps["items"] = [
+  const items: AppTabItem[] = [
     {
-      key: appWorkspacePaths.rootFolderList(workspaceId),
+      key: appWorkspacePaths.folderList(workspaceId),
       label: `Files`,
-      children: `Content of Tab Pane 1`,
+      icon: <FiFile />,
     },
     {
       key: appWorkspacePaths.agentTokenList(workspaceId),
       label: `Agent Tokens`,
-      children: `Content of Tab Pane 2`,
+      // icon: <TbLockAccess />
+      icon: <FiKey />,
     },
     {
       key: appWorkspacePaths.permissionGroupList(workspaceId),
       label: `Permission Groups`,
-      children: `Content of Tab Pane 2`,
+      icon: <TbLockAccess />,
     },
     {
       key: appWorkspacePaths.collaboratorList(workspaceId),
       label: `Collaborators`,
-      children: `Content of Tab Pane 2`,
+      icon: <FiUsers />,
+    },
+    {
+      key: appWorkspacePaths.requestList(workspaceId),
+      label: `Requests`,
+      icon: <FiUserPlus />,
     },
     {
       key: appWorkspacePaths.usage(workspaceId),
       label: `Usage`,
-      children: `Content of Tab Pane 2`,
+      icon: <FiVoicemail />,
     },
     {
-      key: appWorkspacePaths.workspace(workspaceId),
+      key: appWorkspacePaths.updateWorkspaceForm(workspaceId),
       label: `Settings`,
-      children: `Content of Tab Pane 2`,
+      icon: <FiSettings />,
     },
   ];
+  const activeKey = getTabActiveKeyUsingBasePath(router.asPath, items);
+
   return (
-    <Tabs
-      defaultActiveKey={appWorkspacePaths.workspaces}
+    <AppTabs
+      activeKey={activeKey ?? ""}
       items={items}
       onChange={onChange}
       style={style}
       className={className}
+      activeKeyClassName={classes.active}
+      itemClassName={classes.item}
     />
   );
+}
+
+function getTabActiveKeyUsingBasePath(pathname: string, items: AppTabItem[]) {
+  const item = items.find((item) => {
+    return pathname.startsWith(item.key);
+  });
+  return item?.key;
 }

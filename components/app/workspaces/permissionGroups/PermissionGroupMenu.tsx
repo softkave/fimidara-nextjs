@@ -10,6 +10,7 @@ import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
+import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface PermissionGroupMenuProps {
   permissionGroup: PermissionGroup;
@@ -66,7 +67,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     [deleteHook, toggleVisibility]
   );
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       key: MenuKeys.UpdateItem,
       label: (
@@ -88,7 +89,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
       key: MenuKeys.DeleteItem,
       label: "Delete Permission Group",
     },
-  ];
+  ]);
 
   return (
     <React.Fragment>
@@ -100,6 +101,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
           style: { minWidth: "150px" },
           onClick: onSelectMenuItem,
         }}
+        placement="bottomRight"
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>

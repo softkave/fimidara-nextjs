@@ -85,11 +85,11 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
   }, [value, permissionGroupsMap]);
 
   if (isLoading || !data) {
-    return <InlineLoading messageText="Loading permission groups..." />;
+    return <InlineLoading message="Loading permission groups..." />;
   } else if (error) {
     return (
       <InlineError
-        messageText={error?.message || "Error fetching permission groups."}
+        message={error?.message || "Error fetching permission groups."}
         reload={() => mutate(undefined, true)}
       />
     );
@@ -176,10 +176,7 @@ const SelectPermissionGroupInput: React.FC<ISelectPermissionGroupInputProps> = (
         >
           <Space direction="vertical">
             <Typography.Text>{item.name}</Typography.Text>
-            <Typography.Text
-              type="secondary"
-              className={appClasses.selectSecondaryText}
-            >
+            <Typography.Text type="secondary">
               {item.description}
             </Typography.Text>
           </Space>

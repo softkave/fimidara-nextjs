@@ -84,7 +84,7 @@ export function DocsSideNav(props: IDocsSideNavProps) {
   const { onClose } = props;
   const router = useRouter();
   const responsive = useAppResponsive();
-  const pathname = router.pathname;
+  const pathname = router.asPath;
   const { openKeys, selectedKeys } = useMemo(() => {
     const currentDocsPath = last(pathname.split(DOCS_BASE_PATH));
     const openKeys = compact(currentDocsPath?.split("/"));

@@ -1,44 +1,33 @@
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Space } from "antd";
-import { Folder as FolderChildren } from "fimidara";
-import Link from "next/link";
+import { Folder } from "fimidara";
+import { StyleableComponentProps } from "../../../utils/styling/types";
+import { appClasses } from "../../../utils/theme";
 import FileListContainer from "./FileListContainer";
 import FileListContainerHeader from "./FileListContainerHeader";
 import FolderListContainer from "./FolderListContainer";
+import FolderParentLink from "./FolderParentLink";
 
-export interface FolderChildrenProps {
-  folder?: FolderChildren;
+export interface FolderChildrenProps extends StyleableComponentProps {
+  folder?: Folder;
   workspaceId: string;
   workspaceRootname: string;
 }
 
 function FolderChildren(props: FolderChildrenProps) {
-  const { folder, workspaceRootname, workspaceId } = props;
-
-  const getParentHref = () => {
-    if (!folder) {
-      return "#";
-    }
-
-    return folder.parentId
-      ? appWorkspacePaths.folder(workspaceId, folder.parentId)
-      : appWorkspacePaths.rootFolderList(workspaceId);
-  };
+  const { folder, workspaceRootname, workspaceId, style, className } = props;
 
   return (
-    <div className={appClasses.main}>
+    <div style={style} className={className}>
       <FileListContainerHeader
         workspaceId={workspaceId}
         folder={folder}
         workspaceRootname={workspaceRootname}
+        className={appClasses.mb16}
       />
       <Space direction="vertical" size={32} style={{ width: "100%" }}>
-        {folder && (
-          <Link href={getParentHref()}>
-            <span style={{ fontSize: "20px" }}>..</span> {folder.name}
-          </Link>
-        )}
+        <FolderParentLink workspaceId={workspaceId} folder={folder}>
+          <span style={{ fontSize: "24px" }}>..</span>
+        </FolderParentLink>
         <FolderListContainer
           workspaceId={workspaceId}
           workspaceRootname={workspaceRootname}

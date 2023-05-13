@@ -17,7 +17,6 @@ import {
   User,
   Workspace,
 } from "fimidara";
-import { identity } from "lodash";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../api/fimidaraEndpoints";
 import { AnyFn } from "../utils/types";
 import {
@@ -26,6 +25,7 @@ import {
   FetchSingleResourceFetchFnData,
   FetchSingleResourceReturnedData,
   GetFetchSingleResourceFetchFnOther,
+  fetchHookDefaultSetFn,
   makeFetchResourceHook,
   makeFetchSingleResourceFetchFn,
   singleResourceShouldFetchFn,
@@ -163,7 +163,7 @@ function makeSingleFetchHook<
   const useFetchHook = makeFetchResourceHook(
     fetchFn,
     useFetchStore,
-    identity,
+    fetchHookDefaultSetFn,
     singleResourceShouldFetchFn
   );
 

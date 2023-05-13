@@ -1,5 +1,3 @@
-import { PermissionItemAppliesTo } from "@/lib/definitions/permissionItem";
-import { AppResourceType } from "@/lib/definitions/system";
 import { useWorkspaceCollaboratorDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { Collaborator } from "fimidara";
@@ -10,6 +8,7 @@ import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
 import { MenuInfo } from "../../../utils/types";
+import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface CollaboratorMenuProps {
   workspaceId: string;
@@ -27,11 +26,11 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
   const { workspaceId, collaborator, onCompleteRemove } = props;
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId,
-    targetType: AppResourceType.User,
+    targetType: "user",
     containerId: workspaceId,
-    containerType: AppResourceType.Workspace,
+    containerType: "workspace",
     targetId: collaborator.resourceId,
-    appliesTo: PermissionItemAppliesTo.Children,
+    appliesTo: "children",
   });
 
   const deleteHook = useWorkspaceCollaboratorDeleteMutationHook({
@@ -69,7 +68,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
     [deleteHook, toggleVisibility]
   );
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps["items"] = insertAntdMenuDivider([
     {
       key: MenuKeys.GrantPermission,
       label: "Permissions",
@@ -78,7 +77,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
       key: MenuKeys.DeleteItem,
       label: "Remove Collaborator",
     },
-  ];
+  ]);
 
   return (
     <React.Fragment>
@@ -90,6 +89,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
           style: { minWidth: "150px" },
           onClick: onSelectMenuItem,
         }}
+        placement="bottomRight"
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>

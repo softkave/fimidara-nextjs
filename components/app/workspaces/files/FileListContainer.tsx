@@ -1,16 +1,14 @@
-import PageError from "@/components/utils/PageError";
-import PageLoading from "@/components/utils/PageLoading";
-import PageNothingFound from "@/components/utils/PageNothingFound";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { IPaginationData } from "@/components/utils/page/utils";
-import { appClasses } from "@/components/utils/theme";
-import { addRootnameToPath } from "@/lib/definitions/folder";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceFilesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
 import { File, Folder } from "fimidara";
 import React from "react";
+import { addRootnameToPath } from "../../../../lib/definitions/folder";
 import AppFileList from "./AppFileList";
 
 export interface FileListContainerProps {
@@ -54,20 +52,10 @@ const FileListContainer: React.FC<FileListContainerProps> = (props) => {
 
   if (error) {
     contentNode = (
-      <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching files."}
-      />
+      <PageError message={getBaseError(error) || "Error fetching files."} />
     );
   } else if (isLoading) {
-    contentNode = <PageLoading messageText="Loading files..." />;
-  } else if (resourceList.length === 0) {
-    contentNode = (
-      <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText="No files yet. Create one using the plus button above."
-      />
-    );
+    contentNode = <PageLoading message="Loading files..." />;
   } else {
     const fileNode = renderFileList ? (
       renderFileList(resourceList, workspaceRootname)
@@ -92,12 +80,10 @@ const FileListContainer: React.FC<FileListContainerProps> = (props) => {
 
   // TODO: file list count
   return (
-    <div className={appClasses.main}>
-      <PaginatedContent
-        content={contentNode}
-        pagination={{ ...pagination, count }}
-      />
-    </div>
+    <PaginatedContent
+      content={contentNode}
+      pagination={{ ...pagination, count }}
+    />
   );
 };
 

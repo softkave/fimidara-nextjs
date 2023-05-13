@@ -1,4 +1,3 @@
-import { FimidaraEndpointError } from "fimidara";
 import {
   defaultTo,
   first,
@@ -9,6 +8,7 @@ import {
   isString,
   set,
 } from "lodash";
+import { isFimidaraEndpointError } from "../api/localUtils";
 import OperationError from "./OperationError";
 import { AnyObject } from "./types";
 
@@ -65,7 +65,7 @@ export function hasErrorTypes(error: any, types: string[]) {
 }
 
 export const toAppError = (err: Error | AppError | string): AppError[] => {
-  if (err instanceof FimidaraEndpointError) {
+  if (isFimidaraEndpointError(err)) {
     return flatten(err.errors.map(toAppError));
   }
 

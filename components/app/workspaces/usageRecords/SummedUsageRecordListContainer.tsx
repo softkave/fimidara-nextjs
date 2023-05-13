@@ -13,12 +13,11 @@ import { Space } from "antd";
 import { UsageRecord, Workspace } from "fimidara";
 import { first } from "lodash";
 import React from "react";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
 import ListHeader from "../../../utils/list/ListHeader";
+import PageError from "../../../utils/page/PageError";
+import PageLoading from "../../../utils/page/PageLoading";
+import PageNothingFound from "../../../utils/page/PageNothingFound";
 import PaginatedContent from "../../../utils/page/PaginatedContent";
-import { appClasses } from "../../../utils/theme";
 import SummedUsageRecordList from "./SummedUsageRecordList";
 import SummedUsageRecordListControls from "./SummedUsageRecordListControls";
 
@@ -52,7 +51,7 @@ const SummedUsageRecordListContainer: React.FC<
   const error = usageRecords.error || usageCosts.error;
   const isLoading = usageRecords.isLoading || usageCosts.isLoading;
 
-  let content: React.ReactElement = <span />;
+  let content: React.ReactNode = null;
 
   const { fulfilledRecords, droppedRecords, dateOptions } =
     React.useMemo(() => {
@@ -96,17 +95,15 @@ const SummedUsageRecordListContainer: React.FC<
   if (error) {
     content = (
       <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error loading usage records."}
+        message={getBaseError(error) || "Error loading usage records."}
       />
     );
   } else if (isLoading || !usageCosts.data) {
-    content = <PageLoading messageText="Loading usage records..." />;
+    content = <PageLoading message="Loading usage records..." />;
   } else if (usageRecords.resourceList.length === 0) {
     content = (
       <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText={
+        message={
           "No usage records found for this workspace. Please check back later."
         }
       />
@@ -116,42 +113,42 @@ const SummedUsageRecordListContainer: React.FC<
       fulfilledRecords[dateOption.year]?.[dateOption.month] || [];
     const monthDroppedRecords =
       droppedRecords[dateOption.year]?.[dateOption.month] || [];
-    const controls = (
-      <SummedUsageRecordListControls
-        month={dateOption.month}
-        year={dateOption.year}
-        options={dateOptions}
-        onChange={(year, month) =>
-          setDateOption({
-            year,
-            month: month || first(dateOptions[year])!,
-          })
-        }
-      />
-    );
 
     content = (
-      <div className={appClasses.main}>
-        <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          <PaginatedContent
-            header={<ListHeader label="Usage Records" buttons={controls} />}
-            content={
-              <SummedUsageRecordList
-                fulfilledRecords={monthFulfilledRecords}
-                droppedRecords={monthDroppedRecords}
-                usageCosts={usageCosts.data.costs}
-                workspace={workspace}
-                renderItem={renderItem}
-              />
-            }
-            pagination={{ ...pagination, count: usageRecords.count }}
-          />
-        </Space>
-      </div>
+      <SummedUsageRecordList
+        fulfilledRecords={monthFulfilledRecords}
+        droppedRecords={monthDroppedRecords}
+        usageCosts={usageCosts.data.costs}
+        workspace={workspace}
+        renderItem={renderItem}
+      />
     );
   }
 
-  return content;
+  const controls = (
+    <SummedUsageRecordListControls
+      month={dateOption.month}
+      year={dateOption.year}
+      options={dateOptions}
+      onChange={(year, month) =>
+        setDateOption({
+          year,
+          month: month || first(dateOptions[year])!,
+        })
+      }
+      disabled={!usageRecords.resourceList}
+    />
+  );
+
+  return (
+    <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      <ListHeader label="Usage Records" buttons={controls} />
+      <PaginatedContent
+        content={content}
+        pagination={{ ...pagination, count: usageRecords.count }}
+      />
+    </Space>
+  );
 };
 
 export default SummedUsageRecordListContainer;

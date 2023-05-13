@@ -23,6 +23,7 @@ function makeSingleFetchStore<
   TResource extends { resourceId: string },
   TOther = any
 >(
+  storeName: string,
   useResourceListStore: ResourceZustandStore<TResource>,
   comparisonFn?: AnyFn<[any, any], boolean>
 ) {
@@ -33,7 +34,7 @@ function makeSingleFetchStore<
     FetchSingleResourceData<TOther>,
     FetchSingleResourceReturnedData<TResource, TOther>,
     any
-  >(getFn);
+  >(storeName, getFn, comparisonFn);
 
   return { useFetchStore, getFn };
 }
@@ -44,25 +45,32 @@ export type UserSessionFetchStoreOther = {
 };
 
 export const { useFetchStore: useUserWorkspaceFetchStore } =
-  makeSingleFetchStore(useWorkspacesStore);
+  makeSingleFetchStore("workspaceFetch", useWorkspacesStore);
 export const { useFetchStore: useUserCollaborationRequestFetchStore } =
-  makeSingleFetchStore(useUserCollaborationRequestsStore);
+  makeSingleFetchStore("userRequestFetch", useUserCollaborationRequestsStore);
 export const { useFetchStore: useWorkspaceCollaborationRequestFetchStore } =
-  makeSingleFetchStore(useWorkspaceCollaborationRequestsStore);
+  makeSingleFetchStore(
+    "workspaceRequestFetch",
+    useWorkspaceCollaborationRequestsStore
+  );
 export const { useFetchStore: useWorkspaceCollaboratorFetchStore } =
-  makeSingleFetchStore(useWorkspaceCollaboratorsStore);
+  makeSingleFetchStore("collaboratorFetch", useWorkspaceCollaboratorsStore);
 export const { useFetchStore: useWorkspaceAgentTokenFetchStore } =
-  makeSingleFetchStore(useWorkspaceAgentTokensStore);
+  makeSingleFetchStore("agentTokenFetch", useWorkspaceAgentTokensStore);
 export const { useFetchStore: useWorkspaceFolderFetchStore } =
-  makeSingleFetchStore(useWorkspaceFoldersStore);
+  makeSingleFetchStore("folderFetch", useWorkspaceFoldersStore);
 export const { useFetchStore: useWorkspaceFileFetchStore } =
-  makeSingleFetchStore(useWorkspaceFilesStore);
+  makeSingleFetchStore("fileFetch", useWorkspaceFilesStore);
 export const { useFetchStore: useWorkspacePermissionGroupFetchStore } =
-  makeSingleFetchStore(useWorkspacePermissionGroupsStore);
+  makeSingleFetchStore(
+    "permissionGroupFetch",
+    useWorkspacePermissionGroupsStore
+  );
 export const { useFetchStore: useUserSessionFetchStore } = makeSingleFetchStore<
   User,
   UserSessionFetchStoreOther
 >(
+  "sessionFetch",
   useUsersStore,
   // There should be only one user session at a time, so return `true` for all
   // comparisons enforcing the single session. `set` calls to update a session

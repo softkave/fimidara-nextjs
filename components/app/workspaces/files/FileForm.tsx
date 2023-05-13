@@ -1,7 +1,6 @@
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
-  useMergeMutationHooksLoadingAndError,
   useWorkspaceFileUpdateMutationHook,
   useWorkspaceFileUploadMutationHook,
 } from "@/lib/hooks/mutationHooks";
@@ -82,10 +81,7 @@ export default function FileForm(props: FileFormProps) {
       );
     },
   });
-  const mergedHook = useMergeMutationHooksLoadingAndError(
-    createHook,
-    updateHook
-  );
+  const mergedHook = file ? updateHook : createHook;
 
   const { formik } = useFormHelpers({
     errors: mergedHook.error,
@@ -256,7 +252,7 @@ export default function FileForm(props: FileFormProps) {
               htmlType="submit"
               loading={mergedHook.loading}
             >
-              {file ? "Update File" : "Create File"}
+              {file ? "Update File" : "Upload File"}
             </Button>
           </Form.Item>
         </form>

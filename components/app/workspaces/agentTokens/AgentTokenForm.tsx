@@ -1,13 +1,9 @@
 import { formClasses } from "@/components/form/classNames";
 import FormError from "@/components/form/FormError";
 import { FormAlert } from "@/components/utils/FormAlert";
+import { agentTokenConstants } from "@/lib/definitions/agentToken";
+import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
-  agentTokenConstants,
-  INewAgentTokenInput,
-} from "@/lib/definitions/agentToken";
-import { appWorkspacePaths } from "@/lib/definitions/system";
-import {
-  useMergeMutationHooksLoadingAndError,
   useWorkspaceAgentTokenAddMutationHook,
   useWorkspaceAgentTokenUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
@@ -15,25 +11,24 @@ import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { css, cx } from "@emotion/css";
 import { Button, DatePicker, Form, Input, message, Typography } from "antd";
 import dayjs from "dayjs";
-import { AgentToken } from "fimidara";
+import { AgentToken, NewAgentTokenInput } from "fimidara";
 import { useRouter } from "next/router";
 import * as yup from "yup";
 
 const agentTokenValidation = yup.object().shape({
-  expires: yup.string(),
+  expires: yup.number(),
   providedResourceId: yup
     .string()
-    .max(agentTokenConstants.providedResourceMaxLength),
+    .max(agentTokenConstants.providedResourceMaxLength)
+    .nullable(),
 });
 
-const initialValues: INewAgentTokenInput = {
+const initialValues: NewAgentTokenInput = {
   expires: undefined,
   providedResourceId: undefined,
 };
 
-function getAgentTokenFormInputFromToken(
-  item: AgentToken
-): INewAgentTokenInput {
+function getAgentTokenFormInputFromToken(item: AgentToken): NewAgentTokenInput {
   return {
     expires: item.expires,
     providedResourceId: item.providedResourceId,
@@ -71,10 +66,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
       );
     },
   });
-  const mergedHook = useMergeMutationHooksLoadingAndError(
-    createHook,
-    updateHook
-  );
+  const mergedHook = agentToken ? updateHook : createHook;
 
   const { formik } = useFormHelpers({
     errors: mergedHook.error,
@@ -91,6 +83,59 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
           : createHook.runAsync({ body: { workspaceId, token: body } }),
     },
   });
+
+  const nameNode = (
+    <Form.Item
+      label="Token Name [optional]"
+      help={
+        formik.touched?.name &&
+        formik.errors?.name && (
+          <FormError visible={formik.touched.name} error={formik.errors.name} />
+        )
+      }
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
+    >
+      <Input
+        name="name"
+        value={formik.values.name}
+        onBlur={formik.handleBlur}
+        onChange={formik.handleChange}
+        placeholder="Enter token name"
+        disabled={mergedHook.loading}
+        maxLength={systemConstants.maxNameLength}
+        autoComplete="off"
+      />
+    </Form.Item>
+  );
+
+  const descriptionNode = (
+    <Form.Item
+      label="Description"
+      help={
+        formik.touched?.description &&
+        formik.errors?.description && (
+          <FormError
+            visible={formik.touched.description}
+            error={formik.errors.description}
+          />
+        )
+      }
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
+    >
+      <Input.TextArea
+        name="description"
+        value={formik.values.description}
+        onBlur={formik.handleBlur}
+        onChange={formik.handleChange}
+        placeholder="Enter token description"
+        disabled={mergedHook.loading}
+        maxLength={systemConstants.maxDescriptionLength}
+        autoSize={{ minRows: 3 }}
+      />
+    </Form.Item>
+  );
 
   const expiresNode = (
     <Form.Item
@@ -113,7 +158,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         // format="h:mm A"
         value={formik.values.expires ? dayjs(formik.values.expires) : undefined}
         onChange={(date) => {
-          formik.setFieldValue("expires", date?.toISOString());
+          formik.setFieldValue("expires", date?.valueOf());
         }}
         placeholder="Token expiration date"
       />
@@ -158,6 +203,8 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
             </Typography.Title>
           </Form.Item>
           <FormAlert error={mergedHook.error} />
+          {nameNode}
+          {descriptionNode}
           {expiresNode}
           {providedResourceIdNode}
           <Form.Item className={css({ marginTop: "16px" })}>

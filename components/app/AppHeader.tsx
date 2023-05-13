@@ -1,6 +1,7 @@
 import { css, cx } from "@emotion/css";
 import { useRouter } from "next/router";
-import { appWorkspacePaths } from "../../lib/definitions/system";
+import { FiArrowLeft } from "react-icons/fi";
+import IconButton from "../utils/buttons/IconButton";
 import AppUserHeader from "./AppUserHeader";
 import AppWorkspaceHeader from "./AppWorkspaceHeader";
 import UserMenu from "./UserMenu";
@@ -13,35 +14,46 @@ export interface IAppHeaderProps {
 const classes = {
   root: css({
     display: "flex",
-    padding: "16px",
-    borderBottom: "1px solid rgba(0, 0, 0)",
+    padding: "0px 16px",
+    borderBottom: "2px solid #f0f0f0",
+    alignItems: "center",
   }),
   sideLinks: css({
     display: "flex",
-    flex: 1,
     marginLeft: "16px",
     justifyContent: "flex-end",
   }),
   headers: css({
     flex: 1,
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+  }),
+  back: css({
+    paddingRight: "16px",
+    marginRight: "16px",
+    borderRight: "2px solid #f0f0f0",
   }),
 };
 
 export default function AppHeader(props: IAppHeaderProps) {
   const { className, style } = props;
   const router = useRouter();
-  const workspaceId = getWorkspaceId(router.pathname);
+  const workspaceId = getWorkspaceId(router.asPath);
 
   return (
     <div className={cx(classes.root, className)} style={style}>
-      {workspaceId ? (
-        <AppWorkspaceHeader
-          workspaceId={workspaceId}
-          className={classes.headers}
-        />
-      ) : (
-        <AppUserHeader className={classes.headers} />
+      {workspaceId && (
+        <div className={classes.back}>
+          <IconButton icon={<FiArrowLeft />} />
+        </div>
       )}
+      <div className={classes.headers}>
+        {workspaceId ? (
+          <AppWorkspaceHeader workspaceId={workspaceId} />
+        ) : (
+          <AppUserHeader />
+        )}
+      </div>
       <div className={classes.sideLinks}>
         <UserMenu />
       </div>
@@ -50,6 +62,6 @@ export default function AppHeader(props: IAppHeaderProps) {
 }
 
 function getWorkspaceId(path: string) {
-  const paths = path.split("/");
-  return paths[1] === appWorkspacePaths.workspaces ? paths[3] : undefined;
+  const [empty01, p01, workspaceId] = path.split("/");
+  return workspaceId;
 }

@@ -16,7 +16,7 @@ export const systemConstants = {
   maxDescriptionLength: 500,
   appShortName: "fimidara",
   tokenQueryKey: "t",
-  confirmEmailTokenQueryParam: "cet",
+  confirmEmailTokenQueryParam: "ct",
   defaultPage: 0,
   defaultPageSize: 10,
   workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID,
@@ -88,7 +88,7 @@ export const appRootPaths = {
 
 export const appWorkspacePaths = {
   workspaces: "/workspaces",
-  createWorkspaceForm: "/workspaces/form",
+  createWorkspaceForm: "/workspaces/new",
   workspace: (workspaceId: string) => `/workspaces/${workspaceId}`,
   updateWorkspaceForm(workspaceId: string) {
     return `${this.workspace(workspaceId)}/update`;
@@ -113,20 +113,20 @@ export const appWorkspacePaths = {
   },
 
   // Folder
-  rootFolderList(workspaceId: string) {
+  folderList(workspaceId: string) {
     return `${this.workspace(workspaceId)}/folders`;
   },
   folder(workspaceId: string, folderId: string) {
-    return `${this.rootFolderList(workspaceId)}/${folderId}`;
+    return `${this.folderList(workspaceId)}/${folderId}`;
   },
   folderForm(workspaceId: string, folderId: string) {
     return `${this.folder(workspaceId, folderId)}/update`;
   },
   createFolderForm(workspaceId: string, folderId?: string) {
     if (folderId) {
-      return `${this.rootFolderList(workspaceId)}/new/${folderId}`;
+      return `${this.folderList(workspaceId)}/new/${folderId}`;
     } else {
-      return `${this.rootFolderList(workspaceId)}/new`;
+      return `${this.folderList(workspaceId)}/new`;
     }
   },
 
@@ -143,7 +143,7 @@ export const appWorkspacePaths = {
 
   // Request
   requestList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/requests`;
+    return `${this.workspace(workspaceId)}/collaboration-requests`;
   },
   createRequestForm(workspaceId: string) {
     return `${this.requestList(workspaceId)}/new`;
