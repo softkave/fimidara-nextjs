@@ -1,10 +1,11 @@
 {
-    "basePathname": "/v1/clientLogs/ingestLogs",
+    "basePathname": "/v1/permissionGroups/assignPermissionGroups",
     "method": "post",
     "requestBody": {
         "required": true,
+        "description": "Assign permission groups endpoint params.",
         "__id": "FieldObject",
-        "name": "GetJobStatusEndpointParams",
+        "name": "AssignPermissionGroupsEndpointParams",
         "fields": {
             "workspaceId": {
                 "data": {
@@ -14,11 +15,31 @@
                 },
                 "optional": true
             },
-            "jobId": {
+            "entityId": {
                 "data": {
-                    "description": "Long running job ID.",
+                    "description": "Permission entity resource ID. Permission entity is a resource granted access. This can be a user, a permission group, a permission item, or a agent token.",
                     "__id": "FieldString",
-                    "example": "job0000_000000000000000000000"
+                    "example": "pmgroup_000000000000000000000"
+                },
+                "required": true
+            },
+            "permissionGroups": {
+                "data": {
+                    "__id": "FieldArray",
+                    "type": {
+                        "__id": "FieldObject",
+                        "name": "AssignPermissionGroupInput",
+                        "fields": {
+                            "permissionGroupId": {
+                                "data": {
+                                    "description": "Permission group ID.",
+                                    "__id": "FieldString",
+                                    "example": "pmgroup_000000000000000000000"
+                                },
+                                "required": true
+                            }
+                        }
+                    }
                 },
                 "required": true
             }
@@ -49,52 +70,8 @@
             }
         }
     },
-    "responseHeaders": {
-        "__id": "FieldObject",
-        "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",
-        "fields": {
-            "Content-Type": {
-                "data": {
-                    "description": "HTTP JSON response content type.",
-                    "__id": "FieldString",
-                    "valid": {
-                        "0": "application/json"
-                    }
-                },
-                "required": true
-            },
-            "Content-Length": {
-                "data": {
-                    "description": "HTTP response content length in bytes.",
-                    "__id": "FieldString"
-                },
-                "required": true
-            }
-        }
-    },
-    "responseBody": {
-        "required": true,
-        "description": "Get job status endpoint success result.",
-        "__id": "FieldObject",
-        "name": "GetJobStatusEndpointResult",
-        "fields": {
-            "status": {
-                "data": {
-                    "description": "Job status.",
-                    "__id": "FieldString",
-                    "valid": {
-                        "0": "pending",
-                        "1": "inProgress",
-                        "2": "completed",
-                        "3": "failed"
-                    },
-                    "enumName": "JobStatus"
-                },
-                "required": true
-            }
-        }
-    },
-    "name": "GetJobStatusEndpoint",
+    "name": "AssignPermissionGroupsEndpoint",
+    "description": "Assign permission groups endpoint.",
     "errorResponseHeaders": {
         "__id": "FieldObject",
         "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",

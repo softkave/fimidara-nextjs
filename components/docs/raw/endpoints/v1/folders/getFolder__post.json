@@ -1,25 +1,25 @@
 {
-    "basePathname": "/v1/files/getFileDetails",
+    "basePathname": "/v1/folders/getFolder",
     "method": "post",
     "requestBody": {
         "required": true,
-        "description": "Get file details endpoint params.",
+        "description": "Get folder endpoint params.",
         "__id": "FieldObject",
-        "name": "GetFileDetailsEndpointParams",
+        "name": "GetFolderEndpointParams",
         "fields": {
-            "filepath": {
+            "folderpath": {
                 "data": {
-                    "description": "File path with workspace rootname.",
+                    "description": "Folder path with workspace rootname.",
                     "__id": "FieldString",
-                    "example": "/workspace-rootname/my-outer-folder/my-image-file.png"
+                    "example": "/workspace-rootname/my-outer-folder/my-inner-folder"
                 },
                 "optional": true
             },
-            "fileId": {
+            "folderId": {
                 "data": {
-                    "description": "File ID.",
+                    "description": "Folder ID.",
                     "__id": "FieldString",
-                    "example": "file000_000000000000000000000"
+                    "example": "folder0_000000000000000000000"
                 },
                 "optional": true
             }
@@ -75,90 +75,20 @@
     },
     "responseBody": {
         "required": true,
-        "description": "Get file details endpoint success result.",
+        "description": "Get folder endpoint success result.",
         "__id": "FieldObject",
-        "name": "GetFileDetailsEndpointResult",
+        "name": "GetFolderEndpointResult",
         "fields": {
-            "file": {
+            "folder": {
                 "data": {
                     "__id": "FieldObject",
-                    "name": "File",
+                    "name": "Folder",
                     "fields": {
-                        "size": {
-                            "data": {
-                                "description": "File size in bytes",
-                                "__id": "FieldNumber"
-                            },
-                            "required": true
-                        },
-                        "extension": {
-                            "data": {
-                                "description": "File extension",
-                                "__id": "FieldString"
-                            },
-                            "required": true
-                        },
                         "resourceId": {
                             "data": {
-                                "description": "Resource ID.",
-                                "__id": "FieldString",
-                                "example": "wrkspce_000000000000000000000"
-                            },
-                            "required": true
-                        },
-                        "workspaceId": {
-                            "data": {
-                                "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
-                                "__id": "FieldString",
-                                "example": "wrkspce_000000000000000000000"
-                            },
-                            "required": true
-                        },
-                        "parentId": {
-                            "data": {
-                                "description": "Folder ID.",
-                                "__id": "FieldString",
-                                "example": "folder0_000000000000000000000"
-                            },
-                            "required": true
-                        },
-                        "idPath": {
-                            "data": {
-                                "description": "List of parent folder IDs.",
-                                "__id": "FieldArray",
-                                "type": {
-                                    "description": "Folder ID.",
-                                    "__id": "FieldString",
-                                    "example": "folder0_000000000000000000000"
-                                }
-                            },
-                            "required": true
-                        },
-                        "namePath": {
-                            "data": {
-                                "description": "List of parent folder names.",
-                                "__id": "FieldArray",
-                                "type": {
-                                    "description": "Folder name.",
-                                    "__id": "FieldString",
-                                    "example": "my-folder"
-                                }
-                            },
-                            "required": true
-                        },
-                        "mimetype": {
-                            "data": {
-                                "description": "File MIME type",
                                 "__id": "FieldString"
                             },
-                            "optional": true
-                        },
-                        "encoding": {
-                            "data": {
-                                "description": "File encoding",
-                                "__id": "FieldString"
-                            },
-                            "optional": true
+                            "required": true
                         },
                         "createdBy": {
                             "data": {
@@ -234,9 +164,8 @@
                         },
                         "name": {
                             "data": {
-                                "description": "File name.",
-                                "__id": "FieldString",
-                                "example": "my-file"
+                                "description": "Name",
+                                "__id": "FieldString"
                             },
                             "required": true
                         },
@@ -246,6 +175,54 @@
                                 "__id": "FieldString"
                             },
                             "optional": true
+                        },
+                        "workspaceId": {
+                            "data": {
+                                "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
+                                "__id": "FieldString",
+                                "example": "wrkspce_000000000000000000000"
+                            },
+                            "required": true
+                        },
+                        "idPath": {
+                            "data": {
+                                "description": "List of parent folder IDs.",
+                                "__id": "FieldArray",
+                                "type": {
+                                    "description": "Folder ID.",
+                                    "__id": "FieldString",
+                                    "example": "folder0_000000000000000000000"
+                                }
+                            },
+                            "required": true
+                        },
+                        "namePath": {
+                            "data": {
+                                "description": "List of parent folder names.",
+                                "__id": "FieldArray",
+                                "type": {
+                                    "description": "Folder name.",
+                                    "__id": "FieldString",
+                                    "example": "my-folder"
+                                }
+                            },
+                            "required": true
+                        },
+                        "parentId": {
+                            "data": {
+                                "__id": "FieldOrCombination",
+                                "types": {
+                                    "0": {
+                                        "description": "Folder ID.",
+                                        "__id": "FieldString",
+                                        "example": "folder0_000000000000000000000"
+                                    },
+                                    "1": {
+                                        "__id": "FieldNull"
+                                    }
+                                }
+                            },
+                            "required": true
                         },
                         "providedResourceId": {
                             "data": {
@@ -261,8 +238,8 @@
             }
         }
     },
-    "name": "GetFileDetailsEndpoint",
-    "description": "Get file details endpoint.",
+    "name": "GetFolderEndpoint",
+    "description": "Get folder endpoint.",
     "errorResponseHeaders": {
         "__id": "FieldObject",
         "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",

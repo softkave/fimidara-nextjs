@@ -1,57 +1,32 @@
 {
-    "basePathname": "/v1/folders/listFolderContent",
+    "basePathname": "/v1/permissionGroups/getEntityAssignedPermissionGroups",
     "method": "post",
     "requestBody": {
         "required": true,
-        "description": "List folder content endpoint params.",
+        "description": "Get entity assigned permission groups endpoint params.",
         "__id": "FieldObject",
-        "name": "ListFolderContentEndpointParams",
+        "name": "GetEntityAssignedPermissionGroupsParams",
         "fields": {
-            "folderpath": {
+            "workspaceId": {
                 "data": {
-                    "description": "Folder path with workspace rootname.",
+                    "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
                     "__id": "FieldString",
-                    "example": "/workspace-rootname/my-outer-folder/my-inner-folder"
+                    "example": "wrkspce_000000000000000000000"
                 },
                 "optional": true
             },
-            "folderId": {
+            "entityId": {
                 "data": {
-                    "description": "Folder ID.",
+                    "description": "Permission entity resource ID. Permission entity is a resource granted access. This can be a user, a permission group, a permission item, or a agent token.",
                     "__id": "FieldString",
-                    "example": "folder0_000000000000000000000"
+                    "example": "pmgroup_000000000000000000000"
                 },
-                "optional": true
+                "required": true
             },
-            "contentType": {
+            "includeInheritedPermissionGroups": {
                 "data": {
-                    "required": false,
-                    "description": "Fetch children files or folders or both.",
-                    "__id": "FieldString",
-                    "example": "file",
-                    "valid": {
-                        "0": "file",
-                        "1": "folder"
-                    }
-                },
-                "optional": true
-            },
-            "page": {
-                "data": {
-                    "description": "Paginated list page number. Page is zero-based, meaning page numbering starts from 0, 1, 2, 3, ...",
-                    "__id": "FieldNumber",
-                    "example": 0,
-                    "min": 0
-                },
-                "optional": true
-            },
-            "pageSize": {
-                "data": {
-                    "description": "Paginated list page size.",
-                    "__id": "FieldNumber",
-                    "example": 10,
-                    "min": 1,
-                    "max": 1000
+                    "description": "Whether to include permission groups not directly assigned but inherited through permission groups assigned to entity.",
+                    "__id": "FieldBoolean"
                 },
                 "optional": true
             }
@@ -107,20 +82,22 @@
     },
     "responseBody": {
         "required": true,
-        "description": "List folder content endpoint success result.",
+        "description": "Get entity assigned permission groups endpoint success result.",
         "__id": "FieldObject",
-        "name": "ListFolderContentEndpointResult",
+        "name": "GetEntityAssignedPermissionGroupsEndpointResult",
         "fields": {
-            "folders": {
+            "permissionGroups": {
                 "data": {
                     "__id": "FieldArray",
                     "type": {
                         "__id": "FieldObject",
-                        "name": "Folder",
+                        "name": "PermissionGroup",
                         "fields": {
                             "resourceId": {
                                 "data": {
-                                    "__id": "FieldString"
+                                    "description": "Resource ID.",
+                                    "__id": "FieldString",
+                                    "example": "wrkspce_000000000000000000000"
                                 },
                                 "required": true
                             },
@@ -193,6 +170,14 @@
                                 "data": {
                                     "description": "UTC timestamp in milliseconds.",
                                     "__id": "FieldNumber"
+                                },
+                                "required": true
+                            },
+                            "workspaceId": {
+                                "data": {
+                                    "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
+                                    "__id": "FieldString",
+                                    "example": "wrkspce_000000000000000000000"
                                 },
                                 "required": true
                             },
@@ -210,46 +195,6 @@
                                 },
                                 "optional": true
                             },
-                            "workspaceId": {
-                                "data": {
-                                    "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
-                                    "__id": "FieldString",
-                                    "example": "wrkspce_000000000000000000000"
-                                },
-                                "required": true
-                            },
-                            "idPath": {
-                                "data": {
-                                    "description": "List of parent folder IDs.",
-                                    "__id": "FieldArray",
-                                    "type": {
-                                        "description": "Folder ID.",
-                                        "__id": "FieldString",
-                                        "example": "folder0_000000000000000000000"
-                                    }
-                                },
-                                "required": true
-                            },
-                            "namePath": {
-                                "data": {
-                                    "description": "List of parent folder names.",
-                                    "__id": "FieldArray",
-                                    "type": {
-                                        "description": "Folder name.",
-                                        "__id": "FieldString",
-                                        "example": "my-folder"
-                                    }
-                                },
-                                "required": true
-                            },
-                            "parentId": {
-                                "data": {
-                                    "description": "Folder ID.",
-                                    "__id": "FieldString",
-                                    "example": "folder0_000000000000000000000"
-                                },
-                                "required": true
-                            },
                             "providedResourceId": {
                                 "data": {
                                     "description": "Resource ID provided by you.",
@@ -263,90 +208,22 @@
                 },
                 "required": true
             },
-            "files": {
+            "immediateAssignedPermissionGroupsMeta": {
                 "data": {
                     "__id": "FieldArray",
                     "type": {
                         "__id": "FieldObject",
-                        "name": "File",
+                        "name": "PermissionGroup",
                         "fields": {
-                            "size": {
+                            "permissionGroupId": {
                                 "data": {
-                                    "description": "File size in bytes",
-                                    "__id": "FieldNumber"
-                                },
-                                "required": true
-                            },
-                            "extension": {
-                                "data": {
-                                    "description": "File extension",
-                                    "__id": "FieldString"
-                                },
-                                "required": true
-                            },
-                            "resourceId": {
-                                "data": {
-                                    "description": "Resource ID.",
+                                    "description": "Permission group ID.",
                                     "__id": "FieldString",
-                                    "example": "wrkspce_000000000000000000000"
+                                    "example": "pmgroup_000000000000000000000"
                                 },
                                 "required": true
                             },
-                            "workspaceId": {
-                                "data": {
-                                    "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
-                                    "__id": "FieldString",
-                                    "example": "wrkspce_000000000000000000000"
-                                },
-                                "required": true
-                            },
-                            "parentId": {
-                                "data": {
-                                    "description": "Folder ID.",
-                                    "__id": "FieldString",
-                                    "example": "folder0_000000000000000000000"
-                                },
-                                "required": true
-                            },
-                            "idPath": {
-                                "data": {
-                                    "description": "List of parent folder IDs.",
-                                    "__id": "FieldArray",
-                                    "type": {
-                                        "description": "Folder ID.",
-                                        "__id": "FieldString",
-                                        "example": "folder0_000000000000000000000"
-                                    }
-                                },
-                                "required": true
-                            },
-                            "namePath": {
-                                "data": {
-                                    "description": "List of parent folder names.",
-                                    "__id": "FieldArray",
-                                    "type": {
-                                        "description": "Folder name.",
-                                        "__id": "FieldString",
-                                        "example": "my-folder"
-                                    }
-                                },
-                                "required": true
-                            },
-                            "mimetype": {
-                                "data": {
-                                    "description": "File MIME type",
-                                    "__id": "FieldString"
-                                },
-                                "optional": true
-                            },
-                            "encoding": {
-                                "data": {
-                                    "description": "File encoding",
-                                    "__id": "FieldString"
-                                },
-                                "optional": true
-                            },
-                            "createdBy": {
+                            "assignedBy": {
                                 "data": {
                                     "__id": "FieldObject",
                                     "name": "Agent",
@@ -375,90 +252,30 @@
                                 },
                                 "required": true
                             },
-                            "createdAt": {
+                            "assignedAt": {
                                 "data": {
                                     "description": "UTC timestamp in milliseconds.",
                                     "__id": "FieldNumber"
                                 },
                                 "required": true
                             },
-                            "lastUpdatedBy": {
+                            "assigneeEntityId": {
                                 "data": {
-                                    "__id": "FieldObject",
-                                    "name": "Agent",
-                                    "fields": {
-                                        "agentId": {
-                                            "data": {
-                                                "description": "Agent ID. Possible agents are users and agent tokens.",
-                                                "__id": "FieldString"
-                                            },
-                                            "required": true
-                                        },
-                                        "agentType": {
-                                            "data": {
-                                                "description": "Agent type.",
-                                                "__id": "FieldString",
-                                                "example": "agentToken",
-                                                "valid": {
-                                                    "0": "user",
-                                                    "1": "agentToken"
-                                                },
-                                                "enumName": "AgentType"
-                                            },
-                                            "required": true
-                                        }
-                                    }
-                                },
-                                "required": true
-                            },
-                            "lastUpdatedAt": {
-                                "data": {
-                                    "description": "UTC timestamp in milliseconds.",
-                                    "__id": "FieldNumber"
-                                },
-                                "required": true
-                            },
-                            "name": {
-                                "data": {
-                                    "description": "File name.",
+                                    "description": "Permission entity resource ID. Permission entity is a resource granted access. This can be a user, a permission group, a permission item, or a agent token.",
                                     "__id": "FieldString",
-                                    "example": "my-file"
+                                    "example": "pmgroup_000000000000000000000"
                                 },
                                 "required": true
-                            },
-                            "description": {
-                                "data": {
-                                    "description": "Description",
-                                    "__id": "FieldString"
-                                },
-                                "optional": true
-                            },
-                            "providedResourceId": {
-                                "data": {
-                                    "description": "Resource ID provided by you.",
-                                    "__id": "FieldString",
-                                    "max": 50
-                                },
-                                "optional": true
                             }
                         }
                     }
-                },
-                "required": true
-            },
-            "page": {
-                "data": {
-                    "description": "Paginated list page number. Page is zero-based, meaning page numbering starts from 0, 1, 2, 3, ...",
-                    "__id": "FieldNumber",
-                    "example": 0,
-                    "min": 0
                 },
                 "required": true
             }
         }
     },
-    "name": "ListFolderContentEndpoint",
-    "description": "List folder content endpoint.",
+    "name": "GetEntityAssignedPermissionGroupsEndpoint",
+    "description": "Get entity assigned permission groups endpoint.",
     "errorResponseHeaders": {
         "__id": "FieldObject",
         "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",

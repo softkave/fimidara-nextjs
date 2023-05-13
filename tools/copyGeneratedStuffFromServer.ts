@@ -9,14 +9,14 @@ async function copyGeneratedStuffFromServer() {
   const serverRestApiTableOfContentPath = `${serverRootpath}/mdoc/rest-api/toc`;
   const serverSdkRootpath = `${serverRootpath}/sdk/js-sdk/v1/src`;
   const serverSdkUtilsFilepath = `${serverSdkRootpath}/utils.ts`;
-  const serverSdkUtilsPrivateEndpointsPath = `${serverSdkRootpath}/private-endpoints.ts`;
-  const serverSdkUtilsPrivateTypesPath = `${serverSdkRootpath}/private-types.ts`;
+  const serverSdkUtilsPrivateEndpointsPath = `${serverSdkRootpath}/privateEndpoints.ts`;
+  const serverSdkUtilsPrivateTypesPath = `${serverSdkRootpath}/privateTypes.ts`;
 
   const frontendRestApiEndpointsPath = `./components/docs/raw/endpoints`;
   const frontendRestApiTableOfContentPath = `./components/docs/raw/toc`;
   const frontendSdkUtilsFilepath = `./lib/api/utils.ts`;
-  const frontendSdkUtilsPrivateEndpointsPath = `./lib/api/private-endpoints.ts`;
-  const frontendSdkUtilsPrivateTypesPath = `./lib/api/private-types.ts`;
+  const frontendSdkUtilsPrivateEndpointsPath = `./lib/api/privateEndpoints.ts`;
+  const frontendSdkUtilsPrivateTypesPath = `./lib/api/privateTypes.ts`;
 
   await Promise.all([
     fse.remove(frontendRestApiEndpointsPath),

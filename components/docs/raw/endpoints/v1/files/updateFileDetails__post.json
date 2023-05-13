@@ -1,32 +1,16 @@
 {
-    "basePathname": "/v1/folders/updateFolder",
+    "basePathname": "/v1/files/updateFileDetails",
     "method": "post",
     "requestBody": {
         "required": true,
-        "description": "Update folder endpoint params.",
+        "description": "Update file details endpoint params.",
         "__id": "FieldObject",
-        "name": "UpdateFolderEndpointParams",
+        "name": "UpdateFileDetailsEndpointParams",
         "fields": {
-            "folderpath": {
-                "data": {
-                    "description": "Folder path with workspace rootname.",
-                    "__id": "FieldString",
-                    "example": "/workspace-rootname/my-outer-folder/my-inner-folder"
-                },
-                "optional": true
-            },
-            "folderId": {
-                "data": {
-                    "description": "Folder ID.",
-                    "__id": "FieldString",
-                    "example": "folder0_000000000000000000000"
-                },
-                "optional": true
-            },
-            "folder": {
+            "file": {
                 "data": {
                     "__id": "FieldObject",
-                    "name": "UpdateFolderInput",
+                    "name": "UpdateFileDetailsInput",
                     "fields": {
                         "description": {
                             "data": {
@@ -34,10 +18,33 @@
                                 "__id": "FieldString"
                             },
                             "optional": true
+                        },
+                        "mimetype": {
+                            "data": {
+                                "description": "File MIME type",
+                                "__id": "FieldString"
+                            },
+                            "optional": true
                         }
                     }
                 },
                 "required": true
+            },
+            "filepath": {
+                "data": {
+                    "description": "File path with workspace rootname.",
+                    "__id": "FieldString",
+                    "example": "/workspace-rootname/my-outer-folder/my-image-file.png"
+                },
+                "optional": true
+            },
+            "fileId": {
+                "data": {
+                    "description": "File ID.",
+                    "__id": "FieldString",
+                    "example": "file000_000000000000000000000"
+                },
+                "optional": true
             }
         }
     },
@@ -91,20 +98,98 @@
     },
     "responseBody": {
         "required": true,
-        "description": "Update folder endpoint success result.",
+        "description": "Update file details endpoint success result.",
         "__id": "FieldObject",
-        "name": "UpdateFolderEndpointResult",
+        "name": "UpdateFileDetailsEndpointResult",
         "fields": {
-            "folder": {
+            "file": {
                 "data": {
                     "__id": "FieldObject",
-                    "name": "Folder",
+                    "name": "File",
                     "fields": {
-                        "resourceId": {
+                        "size": {
                             "data": {
+                                "description": "File size in bytes",
+                                "__id": "FieldNumber"
+                            },
+                            "required": true
+                        },
+                        "extension": {
+                            "data": {
+                                "description": "File extension",
                                 "__id": "FieldString"
                             },
                             "required": true
+                        },
+                        "resourceId": {
+                            "data": {
+                                "description": "Resource ID.",
+                                "__id": "FieldString",
+                                "example": "wrkspce_000000000000000000000"
+                            },
+                            "required": true
+                        },
+                        "workspaceId": {
+                            "data": {
+                                "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
+                                "__id": "FieldString",
+                                "example": "wrkspce_000000000000000000000"
+                            },
+                            "required": true
+                        },
+                        "parentId": {
+                            "data": {
+                                "__id": "FieldOrCombination",
+                                "types": {
+                                    "0": {
+                                        "description": "Folder ID.",
+                                        "__id": "FieldString",
+                                        "example": "folder0_000000000000000000000"
+                                    },
+                                    "1": {
+                                        "__id": "FieldNull"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "idPath": {
+                            "data": {
+                                "description": "List of parent folder IDs.",
+                                "__id": "FieldArray",
+                                "type": {
+                                    "description": "Folder ID.",
+                                    "__id": "FieldString",
+                                    "example": "folder0_000000000000000000000"
+                                }
+                            },
+                            "required": true
+                        },
+                        "namePath": {
+                            "data": {
+                                "description": "List of parent folder names.",
+                                "__id": "FieldArray",
+                                "type": {
+                                    "description": "Folder name.",
+                                    "__id": "FieldString",
+                                    "example": "my-folder"
+                                }
+                            },
+                            "required": true
+                        },
+                        "mimetype": {
+                            "data": {
+                                "description": "File MIME type",
+                                "__id": "FieldString"
+                            },
+                            "optional": true
+                        },
+                        "encoding": {
+                            "data": {
+                                "description": "File encoding",
+                                "__id": "FieldString"
+                            },
+                            "optional": true
                         },
                         "createdBy": {
                             "data": {
@@ -180,8 +265,9 @@
                         },
                         "name": {
                             "data": {
-                                "description": "Name",
-                                "__id": "FieldString"
+                                "description": "File name.",
+                                "__id": "FieldString",
+                                "example": "my-file"
                             },
                             "required": true
                         },
@@ -191,46 +277,6 @@
                                 "__id": "FieldString"
                             },
                             "optional": true
-                        },
-                        "workspaceId": {
-                            "data": {
-                                "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
-                                "__id": "FieldString",
-                                "example": "wrkspce_000000000000000000000"
-                            },
-                            "required": true
-                        },
-                        "idPath": {
-                            "data": {
-                                "description": "List of parent folder IDs.",
-                                "__id": "FieldArray",
-                                "type": {
-                                    "description": "Folder ID.",
-                                    "__id": "FieldString",
-                                    "example": "folder0_000000000000000000000"
-                                }
-                            },
-                            "required": true
-                        },
-                        "namePath": {
-                            "data": {
-                                "description": "List of parent folder names.",
-                                "__id": "FieldArray",
-                                "type": {
-                                    "description": "Folder name.",
-                                    "__id": "FieldString",
-                                    "example": "my-folder"
-                                }
-                            },
-                            "required": true
-                        },
-                        "parentId": {
-                            "data": {
-                                "description": "Folder ID.",
-                                "__id": "FieldString",
-                                "example": "folder0_000000000000000000000"
-                            },
-                            "required": true
                         },
                         "providedResourceId": {
                             "data": {
@@ -246,8 +292,8 @@
             }
         }
     },
-    "name": "UpdateFolderEndpoint",
-    "description": "Update folder endpoint.",
+    "name": "UpdateFileDetailsEndpoint",
+    "description": "Update file details endpoint.",
     "errorResponseHeaders": {
         "__id": "FieldObject",
         "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",

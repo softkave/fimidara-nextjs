@@ -8,7 +8,7 @@ import {
   formContentWrapperClassName,
 } from "../components/form/classNames";
 import { FormAlert } from "../components/utils/FormAlert";
-import { SignupEndpointParams } from "../lib/api/private-types";
+import { SignupEndpointParams } from "../lib/api/privateTypes";
 import { appWorkspacePaths } from "../lib/definitions/system";
 import { userConstants } from "../lib/definitions/user";
 import { useUserSignupMutationHook } from "../lib/hooks/mutationHooks";

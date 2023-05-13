@@ -3,7 +3,7 @@ import { first } from "lodash";
 import { systemConstants } from "../definitions/system";
 import { useUserSessionFetchStore } from "../hooks/singleResourceFetchStores";
 import UserSessionStorageFns from "../storage/userSession";
-import { FimidaraEndpoints as PrivateFimidaraEndpoints } from "./private-endpoints";
+import { FimidaraEndpoints as PrivateFimidaraEndpoints } from "./privateEndpoints";
 
 function getUserTokenFromStore() {
   const state = first(useUserSessionFetchStore.getState().states);

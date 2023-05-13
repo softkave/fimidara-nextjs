@@ -23,6 +23,8 @@
 - [ ] hide agent token jwt and reveal it
 - [ ] error field replacement for update form
 - [ ] show actions only if user has permissions
+- [ ] new docs toc format
+- [ ] new endpoints rest doc format
 
 ## Later
 

@@ -90,7 +90,8 @@ export async function invokeEndpoint(props: IInvokeEndpointParams) {
   if (formdata) {
     const contentFormdata = new FormData();
     for (const key in formdata) {
-      contentFormdata.append(key, formdata[key]);
+      if (formdata[key] !== undefined)
+        contentFormdata.append(key, formdata[key]);
     }
     contentBody = contentFormdata;
   } else if (data) {
@@ -145,6 +146,34 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
   protected getServerURL(params?: {serverURL?: string}) {
     return params?.serverURL || this.config.serverURL;
   }
+
+  protected async executeRaw(
+    p01: Pick<IInvokeEndpointParams, 'data' | 'formdata' | 'path' | 'method'>,
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>
+  ) {
+    const response = await invokeEndpoint({
+      serverURL: this.getServerURL(p02),
+      token: this.getAuthToken(p02),
+      ...p01,
+    });
+    const result = {
+      headers: response.headers as any,
+      body: response,
+    };
+    return result;
+  }
+
+  protected async executeJson(
+    p01: Pick<IInvokeEndpointParams, 'data' | 'formdata' | 'path' | 'method'>,
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>
+  ) {
+    const response = await this.executeRaw(p01, p02);
+    const result = {
+      headers: response.headers,
+      body: (await response.body.json()) as any,
+    };
+    return result;
+  }
 }
 
 export type FimidaraEndpointResult<T> = {
@@ -167,24 +196,29 @@ export function getReadFileURL(props: {
   filepath: string;
   width?: number;
   height?: number;
+  serverURL?: string;
 }) {
   let query = '';
   if (props.width) query += `w=${props.width.toFixed()}`;
-  if (props.height) query += `h=${props.height.toFixed()}`;
+  if (props.height)
+    query += (query.length ? '&' : '') + `h=${props.height.toFixed()}`;
   if (query) query = '?' + query;
 
   return (
-    defaultServerURL +
-    'v1/files/readFile' +
+    (props.serverURL || defaultServerURL) +
+    '/v1/files/readFile' +
     encodeURIComponent(props.filepath) +
     query
   );
 }
 
-export function getUploadFileURL(props: {filepath: string}) {
+export function getUploadFileURL(props: {
+  filepath: string;
+  serverURL?: string;
+}) {
   return (
-    defaultServerURL +
-    'v1/files/uploadFile' +
+    (props.serverURL || defaultServerURL) +
+    '/v1/files/uploadFile' +
     encodeURIComponent(props.filepath)
   );
 }

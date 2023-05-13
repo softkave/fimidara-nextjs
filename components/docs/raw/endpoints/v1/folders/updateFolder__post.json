@@ -1,16 +1,32 @@
 {
-    "basePathname": "/v1/folders/addFolder",
+    "basePathname": "/v1/folders/updateFolder",
     "method": "post",
     "requestBody": {
         "required": true,
-        "description": "Add folder endpoint params.",
+        "description": "Update folder endpoint params.",
         "__id": "FieldObject",
-        "name": "AddFolderEndpointParams",
+        "name": "UpdateFolderEndpointParams",
         "fields": {
+            "folderpath": {
+                "data": {
+                    "description": "Folder path with workspace rootname.",
+                    "__id": "FieldString",
+                    "example": "/workspace-rootname/my-outer-folder/my-inner-folder"
+                },
+                "optional": true
+            },
+            "folderId": {
+                "data": {
+                    "description": "Folder ID.",
+                    "__id": "FieldString",
+                    "example": "folder0_000000000000000000000"
+                },
+                "optional": true
+            },
             "folder": {
                 "data": {
                     "__id": "FieldObject",
-                    "name": "NewFolderInput",
+                    "name": "UpdateFolderInput",
                     "fields": {
                         "description": {
                             "data": {
@@ -18,14 +34,6 @@
                                 "__id": "FieldString"
                             },
                             "optional": true
-                        },
-                        "folderpath": {
-                            "data": {
-                                "description": "Folder path with workspace rootname.",
-                                "__id": "FieldString",
-                                "example": "/workspace-rootname/my-outer-folder/my-inner-folder"
-                            },
-                            "required": true
                         }
                     }
                 },
@@ -83,9 +91,9 @@
     },
     "responseBody": {
         "required": true,
-        "description": "Add folder endpoint success result.",
+        "description": "Update folder endpoint success result.",
         "__id": "FieldObject",
-        "name": "AddFolderEndpointResult",
+        "name": "UpdateFolderEndpointResult",
         "fields": {
             "folder": {
                 "data": {
@@ -218,9 +226,17 @@
                         },
                         "parentId": {
                             "data": {
-                                "description": "Folder ID.",
-                                "__id": "FieldString",
-                                "example": "folder0_000000000000000000000"
+                                "__id": "FieldOrCombination",
+                                "types": {
+                                    "0": {
+                                        "description": "Folder ID.",
+                                        "__id": "FieldString",
+                                        "example": "folder0_000000000000000000000"
+                                    },
+                                    "1": {
+                                        "__id": "FieldNull"
+                                    }
+                                }
                             },
                             "required": true
                         },
@@ -238,8 +254,8 @@
             }
         }
     },
-    "name": "AddFolderEndpoint",
-    "description": "Add folder endpoint.",
+    "name": "UpdateFolderEndpoint",
+    "description": "Update folder endpoint.",
     "errorResponseHeaders": {
         "__id": "FieldObject",
         "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",
