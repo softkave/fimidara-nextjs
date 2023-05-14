@@ -28,10 +28,10 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
         <meta name="title" content={pageTitle} />
         <meta name="description" content={pageDescription} />
       </Head>
-      <div className={cx("page", className)}>
-        <div className="page-without-header">
+      <div className={cx("docsMain", className)}>
+        <div className="docsMainInner">
           {showMenu ? (
-            <div className="side-nav">
+            <div className="docsSideNav">
               <DocsSideNav onClose={() => setShowMenu(false)} />
             </div>
           ) : (
@@ -44,23 +44,24 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
       </div>
       <style jsx>
         {`
-          .page {
-            overflow: hidden;
+          .docsMain {
+            // overflow: hidden;
             height: 100vh;
+            max-width: 1020px;
+            margin: 0px auto;
           }
-          .page-without-header {
+          .docsMainInner {
             display: grid;
             grid-template-columns: auto 1fr;
-            padding-top: var(--top-nav-height);
-            width: 100%;
+            width: 100%
             height: 100vh;
             overflow: hidden;
           }
-          .side-nav {
+          .docsSideNav {
             max-height: calc(100vh - var(--top-nav-height));
             overflow: hidden;
           }
-          .side-nav ul {
+          .docsSideNav ul {
             height: 100%;
           }
           main {

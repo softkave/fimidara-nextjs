@@ -28,6 +28,7 @@ function renderNavItemList(
 ) {
   const nodes = items.map((item) => {
     const itemPath = getNavItemPath(item, first(fimidaraRestApiNavItems)!);
+
     if (item.withLink) {
       return (
         <li key={item.key}>
@@ -40,8 +41,10 @@ function renderNavItemList(
   });
 
   return (
-    <div>
-      <Typography.Title level={5}>{parentLabel}</Typography.Title>
+    <div key={parentPath}>
+      <Typography.Title level={5} style={{ margin: "8px 0px" }}>
+        {parentLabel}
+      </Typography.Title>
       <ul key={parentPath}>{nodes}</ul>
     </div>
   );

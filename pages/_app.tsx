@@ -47,6 +47,8 @@ function FilesApp({ Component, pageProps }: AppProps) {
     }
   }
 
+  const isPathDocs = router.asPath.startsWith("/docs");
+
   return (
     <ErrorBoundary>
       <Head>
@@ -60,11 +62,12 @@ function FilesApp({ Component, pageProps }: AppProps) {
             Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
             "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
             fontFamilyCode: `'Source Code Pro', monospace`,
+            colorTextBase: "#262626",
           },
         }}
       >
         {headerNode}
-        <div className={appClasses.main}>{node}</div>
+        <div className={isPathDocs ? undefined : appClasses.main}>{node}</div>
       </ConfigProvider>
     </ErrorBoundary>
   );

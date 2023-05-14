@@ -83,3 +83,7 @@ export function calculatePageSize(
     page < maxFullPages ? pageSize : count - maxFullPages * pageSize;
   return pageCount;
 }
+
+export function isObjectEmpty(data: Record<string | number, any>) {
+  return Object.keys(data).length === 0;
+}

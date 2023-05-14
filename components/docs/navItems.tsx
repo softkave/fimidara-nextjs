@@ -1,8 +1,10 @@
 import { ItemType } from "antd/lib/menu/hooks/useItems";
-import { compact, first, flatten, isString } from "lodash";
+import { compact, first, flatten, forEach, get, last, set } from "lodash";
 import Link from "next/link";
+import { isObjectEmpty } from "../../lib/utils/fns";
+import { htmlCharacterCodes } from "../utils/utils";
 import restApiTableOfContent from "./raw/toc/v1/table-of-content.json";
-import { IRawNavItem, RestApiDocsTableOfContentType } from "./types";
+import { IRawNavItem } from "./types";
 
 export const DOCS_BASE_PATH = "/docs";
 
@@ -46,7 +48,7 @@ function renderToAntDMenuItemList(
 }
 
 export const restApiRawNavItems = extractRestApiFromRawTableOfContent(
-  restApiTableOfContent as RestApiDocsTableOfContentType
+  restApiTableOfContent as any
 );
 
 export const fimidaraNavItems: IRawNavItem[] = [
@@ -80,7 +82,7 @@ export const fimidaraRestApiNavItems: IRawNavItem[] = [
       [
         {
           withLink: true,
-          label: "index page",
+          label: "overview",
           key: "",
         },
       ] as IRawNavItem[]
@@ -95,7 +97,7 @@ export const fimidaraJsSdkNavItems: IRawNavItem[] = [
       [
         {
           withLink: true,
-          label: "index page",
+          label: "overview",
           key: "",
         },
       ] as IRawNavItem[]
@@ -116,35 +118,67 @@ export const fimidaraJsSdkAntdNavItems = renderToAntDMenuItemList(
   first(fimidaraJsSdkNavItems)!
 );
 
-function extractRestApiFromRawTableOfContent(
-  records: RestApiDocsTableOfContentType
-) {
-  const links: IRawNavItem[] = [];
-
-  function getLinkFromPath(entry: string): IRawNavItem {
-    const entrySplit = compact(entry.split("/"));
-    const [version, groupName, fnName] = entrySplit;
-    const key = version + "/" + groupName + "__" + fnName;
-    return {
-      key,
-      withLink: true,
-      label: fnName,
-    };
+function extractRestApiFromRawTableOfContent(records: Array<[string, string]>) {
+  interface RawNavItemWithRecord {
+    key: string;
+    label: React.ReactNode;
+    withLink?: boolean;
+    children?: Record<string, RawNavItemWithRecord>;
   }
 
-  records.forEach((entry) => {
-    if (isString(entry)) {
-      // is leaf link
-      links.push(getLinkFromPath(entry));
-    } else {
-      const [groupName, fnNameList] = entry;
-      links.push({
-        label: groupName,
-        key: groupName,
-        children: fnNameList.map(getLinkFromPath),
-      });
-    }
+  const links: IRawNavItem[] = [];
+  const linksMap: Record<string, RawNavItemWithRecord> = {};
+
+  function setEntry(endpointPath: string, endpointMethod: string) {
+    const [e01, version, ...rest] = endpointPath.split("/");
+    const fnName = last(rest);
+
+    rest.forEach((k0, index) => {
+      const k1 = rest.slice(0, index + 1);
+      const k2 = k1.join("__");
+      const isFn = k0 === fnName;
+      const k3 = isFn
+        ? `${version}/${k2}__${endpointMethod}`
+        : `${version}/${k2}`;
+      let k4 = k1.join(".children.");
+      k4 = isFn ? `${k4}__${endpointMethod}` : k4;
+      const label = isFn
+        ? `${k0}${htmlCharacterCodes.doubleDash}${endpointMethod}`
+        : k0;
+      const item: IRawNavItem = {
+        label,
+        key: k3,
+        withLink: isFn,
+      };
+
+      if (!get(linksMap, k4)) {
+        set(linksMap, k4, item);
+      }
+    });
+  }
+
+  function navItemsWithRecordToList(
+    parentLinks: IRawNavItem[],
+    items: Record<string, RawNavItemWithRecord>
+  ) {
+    forEach(items, (i1) => {
+      const item: IRawNavItem = {
+        ...i1,
+        children: undefined,
+      };
+      parentLinks.push(item);
+
+      if (i1.children && !isObjectEmpty(i1.children)) {
+        item.children = [];
+        navItemsWithRecordToList(item.children, i1.children);
+      }
+    });
+  }
+
+  records.forEach(([endpointPath, endpointMethod]) => {
+    setEntry(endpointPath, endpointMethod);
   });
+  navItemsWithRecordToList(links, linksMap);
 
   return links;
 }

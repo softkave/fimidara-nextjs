@@ -25,6 +25,12 @@
 - [ ] show actions only if user has permissions
 - [ ] new docs toc format
 - [ ] new endpoints rest doc format
+- [ ] logout not working
+- [ ] mobile
+- [ ] use next layout for header and docs nav, and main class instead of in \_app
+- [ ] prevent header and docs side nav from scrolling across all pages
+- [ ] copy for doc json, in json, ts? should we include comma, and should we use "string" for string, etc, and spread out arrays and objects?
+- [ ] result should be required for success result in docs, also, some params that are reuired like a one of, e.g file matcher, are coming up as not required
 
 ## Later
 

@@ -67,6 +67,7 @@ export function useUserLoggedIn(): UserLoggedInResult {
     clearFetchSingleResourceStores();
     clearFetchResourceListStores();
     clearResourceListStores();
+    setLoggedIn(false);
   };
 
   return { routeToOnLogout, isLoggedIn, logout };

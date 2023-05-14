@@ -3,22 +3,24 @@ import JsSdkEndpointDoc from "@/components/docs/JsSdkEndpointDoc";
 import { HttpEndpointDefinition } from "@/components/docs/types";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { systemConstants } from "@/lib/definitions/system";
+import { Typography } from "antd";
 import { promises } from "fs";
+import { last } from "lodash";
 import { GetServerSideProps, NextPage } from "next";
 
 interface FimidaraJsSdkEndpointDocPageProps {
   endpoint?: HttpEndpointDefinition;
-  endpointMethod?: string;
+  endpointPath?: string;
 }
 
 type PagePathParams = {
-  endpointMethod: string;
+  endpointPath: string;
 };
 
 const FimidaraJsSdkEndpointDocPage: NextPage<
   FimidaraJsSdkEndpointDocPageProps
 > = (props) => {
-  const { endpoint, endpointMethod } = props;
+  const { endpoint, endpointPath } = props;
 
   if (!endpoint) {
     return (
@@ -26,7 +28,8 @@ const FimidaraJsSdkEndpointDocPage: NextPage<
         <PageNothingFound
           message={
             <p>
-              Method <code>{endpointMethod}</code> not found!
+              Method <Typography.Text code>{endpointPath}</Typography.Text> not
+              found!
             </p>
           }
         />
@@ -50,30 +53,27 @@ export const getServerSideProps: GetServerSideProps<
   FimidaraJsSdkEndpointDocPageProps,
   PagePathParams
 > = async (context) => {
-  const endpointMethod = context.params?.endpointMethod;
+  const endpointPath = context.params?.endpointPath;
 
-  if (endpointMethod) {
-    const [groupName, endpointName] = endpointMethod.split("__");
-    const endpointInfoPath =
+  if (endpointPath) {
+    const s1 = endpointPath.split("__");
+    const s2 = s1.slice(0, -1); // path minus method
+    const p1 =
       process.cwd() +
       systemConstants.endpointInfoPath +
-      "/" +
-      groupName +
-      "/" +
-      endpointName +
-      ".json";
+      `/${s2.join("/")}__${last(s1)}.json`;
 
-    if ((await promises.stat(endpointInfoPath)).isFile()) {
-      const endpointInfoRaw = await promises.readFile(endpointInfoPath);
-      const endpointInfoJson = JSON.parse(endpointInfoRaw.toString("utf-8"));
+    if ((await promises.stat(p1)).isFile()) {
+      const dataRaw = await promises.readFile(p1);
+      const dataJson = JSON.parse(dataRaw.toString("utf-8"));
       return {
         props: {
-          endpointMethod,
-          endpoint: endpointInfoJson as HttpEndpointDefinition,
+          endpointPath,
+          endpoint: dataJson as HttpEndpointDefinition,
         },
       };
     }
   }
 
-  return { props: { endpointMethod } };
+  return { props: { endpointPath } };
 };

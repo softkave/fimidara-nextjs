@@ -140,7 +140,6 @@ export type HttpEndpointDefinition = {
   errorResponseBody?: FieldObject;
 };
 
-export type RestApiDocsTableOfContentType = Array<string | [string, string[]]>;
 export interface IRawNavItem {
   key: string;
   label: React.ReactNode;

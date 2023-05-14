@@ -17,56 +17,71 @@ export interface JsSdkFunctionProps {
 
 const classes = {
   fnDeclaration: css({ display: "inline-block" }),
+  root: css({
+    "& h1, h2, h3, h4, h5": {
+      fontWeight: "500 !important",
+      fontSize: "15px !important",
+    },
+  }),
+  header: css({
+    marginTop: "0px !important",
+    marginBottom: "8px !important",
+    textDecoration: "underline",
+  }),
 };
 
 const JsSdkFunction: React.FC<JsSdkFunctionProps> = (props) => {
   const { functionName, params, result, throws } = props;
-  const paramsDeclarationNode: React.ReactNode[] = [];
+
   const paramsNode: React.ReactNode[] = [];
   params?.map((nextParam, index) => {
     if (index) {
-      paramsDeclarationNode.push(", ");
       paramsNode.push(<Divider />);
     }
 
-    paramsDeclarationNode.push(
-      <span>
-        {nextParam.name}: {renderJsonFieldType(nextParam.type, true)}
-      </span>
-    );
     paramsNode.push(renderFieldType(nextParam.type, nextParam.name));
   });
 
   return (
-    <div>
+    <Space
+      direction="vertical"
+      style={{ width: "100%" }}
+      size={"large"}
+      className={classes.root}
+    >
       <div>
         <Typography.Title
           level={5}
           className={classes.fnDeclaration}
           id={functionName}
+          style={{ margin: 0 }}
         >
-          <code>
-            {functionName}({paramsDeclarationNode})
-          </code>
+          <code>{functionName}</code>
         </Typography.Title>
       </div>
       <div>
-        <Typography.Title level={5}>Parameters</Typography.Title>
+        <Typography.Title level={5} className={classes.header}>
+          Parameters
+        </Typography.Title>
         {paramsNode}
       </div>
       {result && (
         <div>
-          <Typography.Title level={5}>Result</Typography.Title>
+          <Typography.Title level={5} className={classes.header}>
+            Result
+          </Typography.Title>
           {renderFieldType(result)}
         </div>
       )}
       {throws && (
         <div>
-          <Typography.Title level={5}>Throws</Typography.Title>
+          <Typography.Title level={5} className={classes.header}>
+            Throws
+          </Typography.Title>
           {renderFieldType(throws)}
         </div>
       )}
-    </div>
+    </Space>
   );
 };
 
@@ -90,9 +105,13 @@ function renderFieldType(nextParam: any, name?: string) {
     return (
       <div>
         <Space split={htmlCharacterCodes.doubleDash}>
-          {name && <code>{name}</code>}
-          <code>{node}</code>
-          {nextParam.required ? <code>Required</code> : <code>Optional</code>}
+          {name && <Typography.Text code>{name}</Typography.Text>}
+          <Typography.Text code>{node}</Typography.Text>
+          {nextParam.required ? (
+            <Typography.Text code>Required</Typography.Text>
+          ) : (
+            <Typography.Text code>Optional</Typography.Text>
+          )}
         </Space>
         <FieldDescription fieldbase={nextParam} />
       </div>

@@ -114,3 +114,7 @@ export function fieldObjectHasRequiredFields(item: FieldObject) {
     ? Object.values(item.fields).findIndex((next) => next.required) !== -1
     : false;
 }
+
+export function getTypeNameID(name: string) {
+  return `fimidara__docs__${name}`;
+}

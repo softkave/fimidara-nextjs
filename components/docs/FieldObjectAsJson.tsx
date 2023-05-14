@@ -1,12 +1,14 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Space, Typography } from "antd";
 import { forEach, map } from "lodash";
 import React from "react";
+import { appClasses } from "../utils/theme";
 import { htmlCharacterCodes } from "../utils/utils";
 import FieldDescription from "./FieldDescription";
 import { useContainedFieldObjects } from "./hooks";
 import { FieldObject } from "./types";
 import {
+  getTypeNameID,
   isFieldArray,
   isFieldBinary,
   isFieldBoolean,
@@ -27,16 +29,23 @@ export interface FieldObjectAsJsonProps {
 }
 
 const classes = {
-  jsonRoot: css({ margin: "24px 0px" }),
+  jsonRoot: css({
+    margin: "24px 0px",
+  }),
   jsonEntry: css({
-    margin: "4px 24px",
+    margin: "0px 24px",
   }),
   jsonContent: css({
+    padding: "16px",
+    backgroundColor: "#f0f0f0",
+    borderRadius: "4px",
+
     "& *": {
+      fontSize: "13px !important",
       fontFamily: `'Source Code Pro', monospace !important`,
     },
   }),
-  title: css({ margin: "0px 0px 4px 0px !important" }),
+  title: css({ fontSize: "14px !important" }),
 };
 
 const FieldObjectAsJson: React.FC<FieldObjectAsJsonProps> = (props) => {
@@ -89,7 +98,9 @@ export function renderJsonFieldType(
       </span>
     );
   } else if (isFieldObject(data)) {
-    return <a href={`#${data.name}`}>{data.name}</a>;
+    return data.name ? (
+      <a href={`#${getTypeNameID(data.name)}`}>{data.name}</a>
+    ) : null;
   } else if (isFieldOrCombination(data)) {
     if (!data.types) return "";
     const nodes: React.ReactNode[] = [];
@@ -102,13 +113,17 @@ export function renderJsonFieldType(
     if (isForJsSdk)
       return (
         <span>
-          <code>string</code> |{" "}
+          <Typography.Text code={!isForJsSdk}>string</Typography.Text> |{" "}
           <a href="https://nodejs.org/api/stream.html#class-streamreadable">
-            <code>Readable</code>
+            <Typography.Text code={!isForJsSdk} style={{ color: "inherit" }}>
+              Readable
+            </Typography.Text>
           </a>{" "}
           |{" "}
           <a href="https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream">
-            <code>ReadableStream</code>
+            <Typography.Text code={!isForJsSdk} style={{ color: "inherit" }}>
+              ReadableStream
+            </Typography.Text>
           </a>
         </span>
       );
@@ -132,9 +147,11 @@ function renderFieldObjectAsJson(
   const rows = map(nextObject.fields, (fieldbase, key) => {
     const keyNode = <span>{key}</span>;
     const typeNode = renderJsonFieldType(fieldbase.data, isForJsSdk);
+    const separator = fieldbase.required ? ":" : "?:";
     return (
       <div className={classes.jsonEntry}>
-        {keyNode}: {typeNode}
+        {keyNode}
+        {separator} {typeNode}
       </div>
     );
   });
@@ -142,18 +159,22 @@ function renderFieldObjectAsJson(
   return (
     <div className={classes.jsonRoot}>
       <Space split={htmlCharacterCodes.doubleDash}>
-        {propName && <code>{propName}</code>}
+        {propName && <Typography.Text code>{propName}</Typography.Text>}
         {nextObject.name && (
           <Typography.Title
-            id={nextObject.name}
+            id={getTypeNameID(nextObject.name)}
             level={5}
-            className={classes.title}
+            className={cx(classes.title, appClasses.muteMargin)}
             type="secondary"
           >
             {nextObject.name}
           </Typography.Title>
         )}
-        {nextObject.required ? <code>Required</code> : <code>Optional</code>}
+        {nextObject.required ? (
+          <Typography.Text code>Required</Typography.Text>
+        ) : (
+          <Typography.Text code>Optional</Typography.Text>
+        )}
       </Space>
       <FieldDescription fieldbase={nextObject} />
       <div className={classes.jsonContent}>

@@ -30,8 +30,10 @@ const classes = {
     borderRadius: "4px",
     padding: "32px",
   }),
-  actions: css({
-    marginTop: "32px",
+  rootMessageOnly: css({
+    backgroundColor: "#f0f0f0",
+    borderRadius: "4px",
+    padding: "16px",
   }),
 };
 
@@ -97,19 +99,25 @@ const PageMessage: React.FC<IPageMessageProps> = (props) => {
 
   if (showMessageOnly) {
     return (
-      <div style={style} className={cx(classes.root, className)}>
+      <Space
+        direction="vertical"
+        style={{ width: "100%", ...style }}
+        className={cx(classes.rootMessageOnly, className)}
+      >
         {messageNode}
-        <PageMessageActions actions={actions} className={classes.actions} />
+        <PageMessageActions actions={actions} />
         {children}
-      </div>
+      </Space>
     );
   }
 
   return (
     <EmptyMessage {...props} className={cx(classes.root, className)}>
-      {messageNode}
-      <PageMessageActions actions={actions} className={classes.actions} />
-      {children}
+      <Space direction="vertical" style={{ width: "100%" }}>
+        {messageNode}
+        <PageMessageActions actions={actions} />
+        {children}
+      </Space>
     </EmptyMessage>
   );
 };

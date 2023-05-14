@@ -22,7 +22,7 @@ code {
   background: rgba(150, 150, 150, 0.1);
   border: 1px solid rgba(100, 100, 100, 0.2);
   padding: 0px 6px;
-  border-radius: 6px;
+  border-radius: 12px;
   font-family: "Source Code Pro", monospace !important;
 }
 

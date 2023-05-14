@@ -3,7 +3,9 @@ import HttpEndpointDoc from "@/components/docs/HttpEndpointDoc";
 import { HttpEndpointDefinition } from "@/components/docs/types";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { systemConstants } from "@/lib/definitions/system";
+import { Typography } from "antd";
 import { promises } from "fs";
+import { last } from "lodash";
 import { GetServerSideProps, NextPage } from "next";
 
 interface FimidaraRestApiEndpointDocPageProps {
@@ -26,7 +28,8 @@ const FimidaraRestApiEndpointDocPage: NextPage<
         <PageNothingFound
           message={
             <p>
-              Endpoint <code>{endpointPath}</code> not found!
+              Endpoint <Typography.Text code>{endpointPath}</Typography.Text>{" "}
+              not found!
             </p>
           }
         />
@@ -53,18 +56,15 @@ export const getServerSideProps: GetServerSideProps<
   const endpointPath = context.params?.endpointPath;
 
   if (endpointPath) {
-    const [groupName, endpointName] = endpointPath.split("__");
-    const endpointInfoPath =
+    const s1 = endpointPath.split("__");
+    const s2 = s1.slice(0, -1); // path minus method
+    const p1 =
       process.cwd() +
       systemConstants.endpointInfoPath +
-      "/" +
-      groupName +
-      "/" +
-      endpointName +
-      ".json";
+      `/${s2.join("/")}__${last(s1)}.json`;
 
-    if ((await promises.stat(endpointInfoPath)).isFile()) {
-      const endpointInfoRaw = await promises.readFile(endpointInfoPath);
+    if ((await promises.stat(p1)).isFile()) {
+      const endpointInfoRaw = await promises.readFile(p1);
       const endpointInfoJson = JSON.parse(endpointInfoRaw.toString("utf-8"));
       return {
         props: {

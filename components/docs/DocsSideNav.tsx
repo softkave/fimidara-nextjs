@@ -92,12 +92,15 @@ export function DocsSideNav(props: IDocsSideNavProps) {
     return { openKeys, selectedKeys };
   }, [pathname]);
 
+  // TODO: Antd warning of duplicate keys
+  const completeNavItems = fimidaraAntdNavItems.concat(
+    fimidaraRestApiAntdNavItems,
+    fimidaraJsSdkAntdNavItems
+  );
+
   const menuNode = (
     <Menu
-      items={fimidaraAntdNavItems.concat(
-        fimidaraRestApiAntdNavItems,
-        fimidaraJsSdkAntdNavItems
-      )}
+      items={completeNavItems}
       mode="inline"
       style={{ minWidth: "300px" }}
       className={classes.sideNavMenu}
@@ -113,8 +116,8 @@ export function DocsSideNav(props: IDocsSideNavProps) {
   } else {
     return (
       <Drawer
+        open
         placement="left"
-        visible
         closable={false}
         onClose={onClose}
         className={classes.sideNavMobileRoot}
