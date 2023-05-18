@@ -1,7 +1,11 @@
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { useWorkspacePermissionGroupDeleteMutationHook } from "@/lib/hooks/mutationHooks";
-import { Dropdown, MenuProps, message, Modal } from "antd";
+import {
+  useWorkspacePermissionGroupDeleteMutationHook,
+  useWorkspacePermissionGroupUnassignMutationHook,
+} from "@/lib/hooks/mutationHooks";
+import { Dropdown, MenuProps, Modal, message } from "antd";
 import { PermissionGroup } from "fimidara";
+import { compact } from "lodash";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
@@ -14,17 +18,26 @@ import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface PermissionGroupMenuProps {
   permissionGroup: PermissionGroup;
+  unassignParams?: { entityId: string };
   onCompleteDelete: () => any;
+  onCompleteUnassignPermissionGroup: () => any;
 }
 
 enum MenuKeys {
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
+  UnassignPermissionGroup = "unassign-permission-group",
   GrantPermission = "grant-permission",
 }
 
 const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
-  const { permissionGroup, onCompleteDelete } = props;
+  const {
+    permissionGroup,
+    unassignParams,
+    onCompleteDelete,
+    onCompleteUnassignPermissionGroup,
+  } = props;
+
   const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
     workspaceId: permissionGroup.workspaceId,
     targetType: "permissionGroup",
@@ -43,6 +56,16 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
       errorMessageNotificatition(e, "Error deleting permission group.");
     },
   });
+  const unassignPermissionGroupHook =
+    useWorkspacePermissionGroupUnassignMutationHook({
+      onSuccess(data, params) {
+        message.success("Permission group unassigned.");
+        onCompleteDelete();
+      },
+      onError(e, params) {
+        errorMessageNotificatition(e, "Error unassigning permission group.");
+      },
+    });
 
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
@@ -62,34 +85,68 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
         });
       } else if (info.key === MenuKeys.GrantPermission) {
         toggleVisibility();
+      } else if (
+        info.key === MenuKeys.UnassignPermissionGroup &&
+        unassignParams?.entityId
+      ) {
+        Modal.confirm({
+          title: "Are you sure you want to unassign this permission group?",
+          okText: "Yes",
+          cancelText: "No",
+          okType: "primary",
+          okButtonProps: { danger: true },
+          onOk: async () => {
+            await unassignPermissionGroupHook.runAsync({
+              body: {
+                entityId: [unassignParams.entityId],
+                permissionGroups: [permissionGroup.resourceId],
+              },
+            });
+          },
+          onCancel() {
+            // do nothing
+          },
+        });
       }
     },
-    [deleteHook, toggleVisibility]
+    [
+      deleteHook,
+      unassignPermissionGroupHook,
+      unassignParams?.entityId,
+      permissionGroup,
+      toggleVisibility,
+    ]
   );
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
-    {
-      key: MenuKeys.UpdateItem,
-      label: (
-        <Link
-          href={appWorkspacePaths.permissionGroupForm(
-            permissionGroup.workspaceId,
-            permissionGroup.resourceId
-          )}
-        >
-          Update Permission Group
-        </Link>
-      ),
-    },
-    {
-      key: MenuKeys.GrantPermission,
-      label: "Permissions",
-    },
-    {
-      key: MenuKeys.DeleteItem,
-      label: "Delete Permission Group",
-    },
-  ]);
+  const items: MenuProps["items"] = insertAntdMenuDivider(
+    compact([
+      {
+        key: MenuKeys.UpdateItem,
+        label: (
+          <Link
+            href={appWorkspacePaths.permissionGroupForm(
+              permissionGroup.workspaceId,
+              permissionGroup.resourceId
+            )}
+          >
+            Update Permission Group
+          </Link>
+        ),
+      },
+      unassignParams && {
+        key: MenuKeys.UnassignPermissionGroup,
+        label: "Unassign Permission Group",
+      },
+      {
+        key: MenuKeys.GrantPermission,
+        label: "Permissions",
+      },
+      {
+        key: MenuKeys.DeleteItem,
+        label: "Delete Permission Group",
+      },
+    ])
+  );
 
   return (
     <React.Fragment>

@@ -1,6 +1,7 @@
 import { css, cx } from "@emotion/css";
 import { useRouter } from "next/router";
 import { FiArrowLeft } from "react-icons/fi";
+import { appWorkspacePaths } from "../../lib/definitions/system";
 import IconButton from "../utils/buttons/IconButton";
 import AppUserHeader from "./AppUserHeader";
 import AppWorkspaceHeader from "./AppWorkspaceHeader";
@@ -26,6 +27,7 @@ const classes = {
   headers: css({
     flex: 1,
     overflowX: "auto",
+    overflowY: "hidden",
     whiteSpace: "nowrap",
   }),
   back: css({
@@ -44,7 +46,12 @@ export default function AppHeader(props: IAppHeaderProps) {
     <div className={cx(classes.root, className)} style={style}>
       {workspaceId && (
         <div className={classes.back}>
-          <IconButton icon={<FiArrowLeft />} />
+          <IconButton
+            icon={<FiArrowLeft />}
+            onClick={() => {
+              router.push(appWorkspacePaths.workspaces);
+            }}
+          />
         </div>
       )}
       <div className={classes.headers}>

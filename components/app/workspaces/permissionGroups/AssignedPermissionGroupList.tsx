@@ -1,19 +1,31 @@
-import usePagination from "@/lib/hooks/usePagination";
+import IconButton from "@/components/utils/buttons/IconButton";
+import ItemList from "@/components/utils/list/ItemList";
+import ListHeader from "@/components/utils/list/ListHeader";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PaginatedContent from "@/components/utils/page/PaginatedContent";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { StyleableComponentProps } from "@/components/utils/styling/types";
+import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useFetchNonPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
+import { useEntityAssignedPermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
+import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
 import { indexArray } from "@/lib/utils/indexArray";
-import { Space, Typography } from "antd";
-import { PermissionGroup } from "fimidara";
+import { PlusOutlined } from "@ant-design/icons";
+import { useToggle } from "ahooks";
+import { Modal, Space, Typography } from "antd";
+import { noop } from "lodash";
+import Link from "next/link";
 import React from "react";
-import ItemList from "../../../utils/list/ItemList";
-import PageError from "../../../utils/page/PageError";
-import PageLoading from "../../../utils/page/PageLoading";
-import PaginatedContent from "../../../utils/page/PaginatedContent";
+import AssignPermissionGroupsForm from "./AssignPermissionGroupsForm";
+import PermissionGroupMenu from "./PermissionGroupMenu";
 
-export interface IAssignedPermissionGroupListProps {
+export interface IAssignedPermissionGroupListProps
+  extends StyleableComponentProps {
   workspaceId: string;
-  permissionGroups: PermissionGroup[];
-  className?: string;
-  title?: string;
+  entityId: string;
 }
 
 // TODO: add bulk remove, and add bulk actions to other lists
@@ -21,47 +33,122 @@ export interface IAssignedPermissionGroupListProps {
 const AssignedPermissionGroupList: React.FC<
   IAssignedPermissionGroupListProps
 > = (props) => {
-  const { workspaceId, permissionGroups, className, title } = props;
-  const pagination = usePagination();
-  const { data, error, isLoading } = useWorkspacePermissionGroupList({
+  const { workspaceId, entityId, className, style } = props;
+  const { fetchState } = useEntityAssignedPermissionGroupsFetchHook({
+    entityId,
     workspaceId,
-    page: pagination.page,
-    pageSize: pagination.pageSize,
   });
+  const { error, isLoading, resourceList, other } =
+    useFetchNonPaginatedResourceListFetchState(fetchState);
+
+  const [isAssignFormVisible, toggleHook] = useToggle();
+
+  const permissionGroupsMap = React.useMemo(
+    () => indexArray(resourceList, { path: "resourceId" }),
+    [resourceList]
+  );
+
   let content: React.ReactNode = null;
-  const permissionGroupsMap = React.useMemo(() => {
-    return indexArray(data?.permissionGroups, { path: "resourceId" });
-  }, [data?.permissionGroups]);
 
   if (error) {
     content = (
       <PageError
-        message={getBaseError(error) || "Error fetching permission groups."}
+        message={
+          getBaseError(error) || "Error fetching assigned permission groups."
+        }
       />
     );
-  } else if (isLoading || !data) {
-    content = <PageLoading message="Loading permission groups..." />;
-  } else {
+  } else if (isLoading) {
+    content = <PageLoading message="Loading assigned permission groups..." />;
+  } else if (other) {
     content = (
       <ItemList
-        items={permissionGroups}
-        renderItem={(item: PermissionGroup) => {
-          return <div>{item.name}</div>;
+        items={other.immediateAssignedPermissionGroupsMeta}
+        renderItem={(item) => {
+          const permissionGroup = permissionGroupsMap[item.permissionGroupId];
+
+          if (!permissionGroup) {
+            return null;
+          }
+
+          return (
+            <ThumbnailContent
+              key={item.permissionGroupId}
+              main={
+                <div className={appClasses.thumbnailMain}>
+                  <Link
+                    href={appWorkspacePaths.permissionGroup(
+                      workspaceId,
+                      item.permissionGroupId
+                    )}
+                  >
+                    {permissionGroup.name}
+                  </Link>
+                  {permissionGroup.description && (
+                    <Typography.Text type="secondary">
+                      {permissionGroup.description}
+                    </Typography.Text>
+                  )}
+                  <Typography.Text type="secondary">
+                    Assigned {formatDateTime(item.assignedAt)}
+                  </Typography.Text>
+                </div>
+              }
+              menu={
+                <PermissionGroupMenu
+                  key="menu"
+                  permissionGroup={permissionGroup}
+                  unassignParams={{ entityId }}
+                  onCompleteDelete={noop}
+                  onCompleteUnassignPermissionGroup={noop}
+                />
+              }
+            />
+          );
         }}
-        getId={(item: PermissionGroup) => item.resourceId}
+        getId={(item) => item.permissionGroupId}
         emptyMessage={"No assigned permission groups yet."}
       />
     );
   }
 
+  let assignFormNode: React.ReactNode = null;
+
+  if (other && isAssignFormVisible) {
+    assignFormNode = (
+      <Modal open destroyOnClose>
+        <AssignPermissionGroupsForm
+          workspaceId={workspaceId}
+          entityId={entityId}
+          permissionGroups={other.immediateAssignedPermissionGroupsMeta.map(
+            (p) => p.permissionGroupId
+          )}
+        />
+      </Modal>
+    );
+  }
+
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
-      {" "}
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        {title || "Assigned Permission Groups"}
-      </Typography.Title>
-      <PaginatedContent className={className} content={content} />
-    </Space>
+    <React.Fragment>
+      <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          Assigned Permission Groups
+        </Typography.Title>
+        <ListHeader
+          label="Assigned Permission Groups"
+          buttons={
+            <Space>
+              <IconButton
+                icon={<PlusOutlined />}
+                onClick={() => toggleHook.toggle()}
+              />
+            </Space>
+          }
+        />
+        <PaginatedContent className={className} content={content} />
+      </Space>
+      {assignFormNode}
+    </React.Fragment>
   );
 };
 

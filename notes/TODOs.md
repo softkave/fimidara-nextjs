@@ -3,6 +3,7 @@
 ## Now
 
 - [ ] entity assigned permission groups fetch hooks, resolve permissions fetch hooks
+- [ ] assign new permission groups and remove permission groups
 - [ ] a refresh system that doesn't show loading screen but notification or inline loading for resource and list
 - [ ] write tests for fetch hooks and stores
 - [ ] strip data passed to api not part of api def using yup generated?
@@ -31,6 +32,11 @@
 - [ ] prevent header and docs side nav from scrolling across all pages
 - [ ] copy for doc json, in json, ts? should we include comma, and should we use "string" for string, etc, and spread out arrays and objects?
 - [ ] result should be required for success result in docs, also, some params that are reuired like a one of, e.g file matcher, are coming up as not required
+- [ ] download button in file page
+- [ ] issue with mutation hooks, they can't be used in 2 places at a time
+- [ ] consolidate hook for getting and issue presigned paths in image and avatar
+- [ ] surface inherited permission groups in assigned permission groups
+- [ ] bulk ops, like bulk unassign, bulk delete, etc
 
 ## Later
 

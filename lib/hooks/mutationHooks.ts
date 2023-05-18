@@ -8,9 +8,11 @@ import {
   getPublicFimidaraEndpointsUsingUserToken,
 } from "../api/fimidaraEndpoints";
 import UserSessionStorageFns from "../storage/userSession";
+import { indexArray } from "../utils/indexArray";
 import { AnyFn } from "../utils/types";
 import { FetchResourceZustandStore } from "./fetchHookUtils";
 import {
+  useEntityAssignedPermissionGroupsFetchStore,
   useUserWorkspacesFetchStore,
   useWorkspaceAgentTokensFetchStore,
   useWorkspaceCollaborationRequestsFetchStore,
@@ -337,6 +339,29 @@ export const useWorkspacePermissionGroupAssignMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,
     (endpoints) => endpoints.permissionGroups.assignPermissionGroups
+  );
+export const useWorkspacePermissionGroupUnassignMutationHook =
+  makeEndpointMutationHook(
+    getPublicFimidaraEndpointsUsingUserToken,
+    (endpoints) => endpoints.permissionGroups.unassignPermissionGroups,
+    (result, args) => {
+      const argsBody = args[0].body;
+      const entityIdMap = indexArray(argsBody.entityId);
+      const permissionGroupIdMap = indexArray(argsBody.permissionGroups);
+
+      useEntityAssignedPermissionGroupsFetchStore
+        .getState()
+        .mapFetchState((p, s) => {
+          if (entityIdMap[p.entityId] && s.data?.idList) {
+            const newIdList = [...s.data.idList].filter(
+              (id) => !permissionGroupIdMap[id]
+            );
+            return { ...s, data: { ...s.data, idList: newIdList } };
+          } else {
+            return s;
+          }
+        });
+    }
   );
 export const useWorkspaceCollaborationRequestUpdateMutationHook =
   makeEndpointMutationHook(

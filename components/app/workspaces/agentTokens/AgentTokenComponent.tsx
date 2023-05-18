@@ -7,6 +7,7 @@ import React from "react";
 import ComponentHeader from "../../../utils/ComponentHeader";
 import LabeledNode from "../../../utils/LabeledNode";
 import { appClasses } from "../../../utils/theme";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import AgentTokenMenu from "./AgentTokenMenu";
 
 export interface IAgentTokenProps {
@@ -92,6 +93,10 @@ function AgentTokenComponent(props: IAgentTokenProps) {
             }
           />
         )}
+        <AssignedPermissionGroupList
+          entityId={resource.resourceId}
+          workspaceId={resource.workspaceId}
+        />
       </Space>
     </div>
   );

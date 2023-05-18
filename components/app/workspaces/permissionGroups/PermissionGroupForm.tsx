@@ -154,7 +154,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>PermissionGroup Form</Typography.Title>
+            <Typography.Title level={4}>Permission Group Form</Typography.Title>
           </Form.Item>
           <FormAlert error={mergedHook.error} />
           {nameNode}

@@ -2,13 +2,13 @@ import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { IPaginationData } from "@/components/utils/page/utils";
+import { addRootnameToPath } from "@/lib/definitions/folder";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceFoldersFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
 import { Folder } from "fimidara";
 import React from "react";
-import { addRootnameToPath } from "../../../../lib/definitions/folder";
 import FolderList from "./FolderList";
 
 export interface FolderListContainerProps {

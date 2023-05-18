@@ -5,6 +5,10 @@ export const appDimensions = {
     width: 40,
     height: 40,
   },
+  upload: {
+    width: 250,
+    height: 250,
+  },
   app: {
     maxWidth: 720,
   },

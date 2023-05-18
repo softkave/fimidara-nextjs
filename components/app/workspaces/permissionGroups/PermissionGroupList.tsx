@@ -45,6 +45,7 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
             key="menu"
             permissionGroup={item}
             onCompleteDelete={noop}
+            onCompleteUnassignPermissionGroup={noop}
           />
         }
       />

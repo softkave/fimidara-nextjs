@@ -45,7 +45,6 @@ export default function AppWorkspaceHeader(props: IAppWorkspaceHeaderProps) {
     {
       key: appWorkspacePaths.agentTokenList(workspaceId),
       label: `Agent Tokens`,
-      // icon: <TbLockAccess />
       icon: <FiKey />,
     },
     {

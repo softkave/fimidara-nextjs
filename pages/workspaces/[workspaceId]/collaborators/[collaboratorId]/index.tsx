@@ -1,4 +1,4 @@
-import Collaborator from "@/components/app/workspaces/collaborators/Collaborator";
+import CollaboratorComponent from "@/components/app/workspaces/collaborators/CollaboratorComponent";
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import { GetServerSideProps } from "next";
 import React from "react";
@@ -13,7 +13,10 @@ const WorkspaceCollaboratorPage: React.FC<IWorkspaceCollaboratorPageProps> = (
 ) => {
   const { workspaceId, collaboratorId } = props;
   return (
-    <Collaborator collaboratorId={collaboratorId} workspaceId={workspaceId} />
+    <CollaboratorComponent
+      collaboratorId={collaboratorId}
+      workspaceId={workspaceId}
+    />
   );
 };
 

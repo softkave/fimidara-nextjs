@@ -35,6 +35,9 @@ export type FetchResourceStore<TData, TReturnedData, TKeyParams> = {
   findFetchState(
     fn: AnyFn<[TKeyParams, FetchState<TData>], boolean>
   ): [TKeyParams, FetchState<TData>] | undefined;
+  mapFetchState(
+    fn: AnyFn<[TKeyParams, FetchState<TData>], FetchState<TData>>
+  ): void;
 };
 
 export type FetchHookOptions = {
@@ -108,6 +111,17 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
         findFetchState(fn) {
           return this.states.find(([params, state]) => fn(params, state));
         },
+
+        mapFetchState(fn) {
+          set((store) => {
+            const states: Array<[TKeyParams, FetchState<TData>]> =
+              store.states.map(([params, fetchState]) => [
+                params,
+                fn(params, fetchState),
+              ]);
+            return { states };
+          });
+        },
       }),
       { name: storeName }
     )
@@ -131,7 +145,7 @@ export function makeFetchResourceHook<
     TReturnedData,
     Parameters<TFetchFn>[0]
   >,
-  setFn: AnyFn<
+  setFn?: AnyFn<
     [Parameters<TFetchFn>[0], FetchState<TData> | undefined, TData],
     TData
   >,
@@ -162,9 +176,9 @@ export function makeFetchResourceHook<
         const result = await inputFetchFn(params);
 
         useStoreHook.getState().setFetchState(params, (state) => {
-          const setResult = setFn(params, state, result);
+          const savedData = setFn ? setFn(params, state, result) : result;
           return {
-            data: setResult,
+            data: savedData,
             loading: false,
             error: undefined,
           };
@@ -455,7 +469,6 @@ export type FetchResourceListReturnedData<
   TOther = any
 > = {
   resourceList: T[];
-  initialized: boolean;
   other?: TOther;
 };
 export type FetchResourceListGetFn<T extends { resourceId: string }> = AnyFn<
@@ -477,10 +490,9 @@ export function makeFetchResourceListGetFn<
     params: any,
     state: FetchState<FetchResourceListData> | undefined
   ): FetchResourceListReturnedData<T, TOther> => {
-    if (!state?.data) return { resourceList: [], initialized: false };
+    if (!state?.data) return { resourceList: [] };
     const items = useResourceListStore.getState().getList(state.data.idList);
-    const initialized = !!items.length || state.loading || !!state.error;
-    return { initialized, resourceList: items, other: state.data.other };
+    return { resourceList: items, other: state.data.other };
   };
 
   return getFn;
@@ -513,12 +525,12 @@ export function makeFetchResourceListFetchFn<
   return fetchFn;
 }
 
-export function subscribeAndRemoveIdFromIdOnDeleteResources<
+export function subscribeAndRemoveIdOnDeleteResources<
   T extends { resourceId: string }
 >(
   useResourceListStore: ResourceZustandStore<T>,
   useStoreHook: FetchResourceZustandStore<
-    { idList: string[]; count: number },
+    { idList: string[]; count?: number },
     any,
     any
   >
@@ -579,7 +591,21 @@ export function useFetchPaginatedResourceListFetchState<
     error,
     other,
     count: count ?? 0,
-    resourceList: resourceList ?? [],
+    resourceList: resourceList ?? ([] as T["resourceList"]),
+  };
+}
+
+export function useFetchNonPaginatedResourceListFetchState<
+  T extends FetchResourceListReturnedData<any>
+>(fetchState?: FetchReturnedState<T>) {
+  const error = fetchState?.error;
+  const isLoading = fetchState?.loading || !fetchState;
+  const { resourceList, other } = (fetchState?.data ?? {}) as Partial<T>;
+  return {
+    isLoading,
+    error,
+    other,
+    resourceList: resourceList ?? ([] as T["resourceList"]),
   };
 }
 

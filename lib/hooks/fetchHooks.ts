@@ -5,6 +5,7 @@ import {
   Collaborator,
   File,
   Folder,
+  GetEntityAssignedPermissionGroupsParams,
   GetUsageCostsEndpointResult,
   GetUserCollaborationRequestsEndpointParams,
   GetUserWorkspacesEndpointParams,
@@ -25,15 +26,20 @@ import { AnyFn, Omit1 } from "../utils/types";
 import {
   FetchPaginatedResourceListData,
   FetchPaginatedResourceListReturnedData,
+  FetchResourceListData,
+  FetchResourceListReturnedData,
   GetFetchPaginatedResourceListFetchFnOther,
+  GetFetchResourceListFetchFnOther,
   fetchHookDefaultSetFn,
   makeFetchPaginatedResourceListFetchFn,
   makeFetchPaginatedResourceListGetFn,
   makeFetchPaginatedResourceListSetFn,
   makeFetchResourceHook,
+  makeFetchResourceListFetchFn,
+  makeFetchResourceListGetFn,
   makeFetchResourceStoreHook,
   paginatedResourceListShouldFetchFn,
-  subscribeAndRemoveIdFromIdOnDeleteResources,
+  subscribeAndRemoveIdOnDeleteResources,
 } from "./fetchHookUtils";
 import { ResourceZustandStore } from "./makeResourceListStore";
 import {
@@ -166,6 +172,21 @@ async function workspaceUsageRecordsInputFetchFn(
   return { count: count.body.count, resourceList: data.body.records };
 }
 
+async function entityAssignedPermissionGroupsInputFetchFn(
+  params: GetEntityAssignedPermissionGroupsParams
+) {
+  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const data =
+    await endpoints.permissionGroups.getEntityAssignedPermissionGroups({
+      body: params,
+    });
+  const { immediateAssignedPermissionGroupsMeta, permissionGroups } = data.body;
+  return {
+    resourceList: permissionGroups,
+    other: { immediateAssignedPermissionGroupsMeta },
+  };
+}
+
 async function usageCostsInputFetchFn() {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.usageRecords.getUsageCosts();
@@ -200,10 +221,7 @@ function makePaginatedFetchHookAndStore<
     useResourceListStore,
     getIdFromResource
   );
-  subscribeAndRemoveIdFromIdOnDeleteResources(
-    useResourceListStore,
-    useFetchStore
-  );
+  subscribeAndRemoveIdOnDeleteResources(useResourceListStore, useFetchStore);
   const setFn = makeFetchPaginatedResourceListSetFn();
   const useFetchHook = makeFetchResourceHook(
     fetchFn,
@@ -211,6 +229,34 @@ function makePaginatedFetchHookAndStore<
     setFn,
     paginatedResourceListShouldFetchFn
   );
+
+  return { useFetchStore, useFetchHook };
+}
+
+function makeNonPaginatedFetchHookAndStore<
+  TResource extends { resourceId: string },
+  Fn extends AnyFn<any, Promise<FetchResourceListReturnedData<TResource>>>
+>(
+  storeName: string,
+  useResourceListStore: ResourceZustandStore<TResource>,
+  inputFetchFn: Fn,
+  comparisonFn: AnyFn<[Parameters<Fn>[0], Parameters<Fn>[0]], boolean>
+) {
+  const getFn = makeFetchResourceListGetFn<TResource>(useResourceListStore);
+  const useFetchStore = makeFetchResourceStoreHook<
+    FetchResourceListData,
+    FetchResourceListReturnedData<
+      TResource,
+      GetFetchResourceListFetchFnOther<Fn>
+    >,
+    Parameters<Fn>[0]
+  >(storeName, getFn, comparisonFn);
+  const fetchFn = makeFetchResourceListFetchFn(
+    inputFetchFn,
+    useResourceListStore
+  );
+  subscribeAndRemoveIdOnDeleteResources(useResourceListStore, useFetchStore);
+  const useFetchHook = makeFetchResourceHook(fetchFn, useFetchStore);
 
   return { useFetchStore, useFetchHook };
 }
@@ -298,6 +344,27 @@ export const {
   checkIsEqualOmittingPageAndPageSize
 );
 
+export const {
+  useFetchStore: useEntityAssignedPermissionGroupsFetchStore,
+  useFetchHook: useEntityAssignedPermissionGroupsFetchHook,
+} = makeNonPaginatedFetchHookAndStore(
+  "entityAssignedPermissionGroupsFetch",
+  useWorkspacePermissionGroupsStore,
+  entityAssignedPermissionGroupsInputFetchFn,
+  isEqual
+);
+
+export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
+  GetUsageCostsEndpointResult,
+  GetUsageCostsEndpointResult | undefined,
+  undefined
+>("usageCostsFetch", (params, state) => state.data);
+export const useUsageCostsFetchHook = makeFetchResourceHook(
+  usageCostsInputFetchFn,
+  useUsageCostsFetchStore,
+  fetchHookDefaultSetFn
+);
+
 function checkIsEqualOmittingPageAndPageSize(
   p0: IPaginationQuery,
   p1: IPaginationQuery
@@ -312,17 +379,6 @@ function omitPagination<T extends IPaginationQuery>(
   const omitKeys: Array<keyof IPaginationQuery> = ["page", "pageSize"];
   return omit(p0, omitKeys);
 }
-
-export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
-  GetUsageCostsEndpointResult,
-  GetUsageCostsEndpointResult | undefined,
-  undefined
->("usageCostsFetch", (params, state) => state.data);
-export const useUsageCostsFetchHook = makeFetchResourceHook(
-  usageCostsInputFetchFn,
-  useUsageCostsFetchStore,
-  fetchHookDefaultSetFn
-);
 
 export function clearFetchResourceListStores() {
   useUserWorkspacesFetchStore.getState().clear();

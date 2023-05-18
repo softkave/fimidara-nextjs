@@ -6,20 +6,22 @@ import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
+import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space, Typography } from "antd";
 import assert from "assert";
+import { noop } from "lodash";
 import { useRouter } from "next/router";
 import React from "react";
-import { formatDateTime } from "../../../../lib/utils/dateFns";
 import { appClasses } from "../../../utils/theme";
+import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
-export interface IPermissionGroupProps {
+export interface PermissionGroupComponentProps {
   permissionGroupId: string;
 }
 
-function PermissionGroup(props: IPermissionGroupProps) {
+function PermissionGroupComponent(props: PermissionGroupComponentProps) {
   const { permissionGroupId } = props;
   const router = useRouter();
   const { fetchState } = useWorkspacePermissionGroupFetchHook({
@@ -41,6 +43,7 @@ function PermissionGroup(props: IPermissionGroupProps) {
             <PermissionGroupMenu
               permissionGroup={resource}
               onCompleteDelete={onCompleteDeletePermissionGroup}
+              onCompleteUnassignPermissionGroup={noop}
             />
           </ComponentHeader>
           <LabeledNode
@@ -71,6 +74,10 @@ function PermissionGroup(props: IPermissionGroupProps) {
               }
             />
           )}
+          <AssignedPermissionGroupList
+            entityId={permissionGroupId}
+            workspaceId={resource.workspaceId}
+          />
         </Space>
       </div>
     );
@@ -87,4 +94,4 @@ function PermissionGroup(props: IPermissionGroupProps) {
   }
 }
 
-export default PermissionGroup;
+export default PermissionGroupComponent;

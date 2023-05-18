@@ -1,51 +1,48 @@
 {
-    "basePathname": "/v1/permissionGroups/assignPermissionGroups",
+    "basePathname": "/v1/files/issueFilePresignedPath",
     "method": "post",
     "requestBody": {
         "required": true,
-        "description": "Assign permission groups endpoint params.",
+        "description": "Issue file presigned path endpoint params.",
         "__id": "FieldObject",
-        "name": "AssignPermissionGroupsEndpointParams",
+        "name": "IssueFilePresignedPathEndpointParams",
         "fields": {
-            "workspaceId": {
+            "filepath": {
                 "data": {
-                    "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
+                    "description": "File path with workspace rootname.",
                     "__id": "FieldString",
-                    "example": "wrkspce_000000000000000000000"
+                    "example": "/workspace-rootname/my-outer-folder/my-image-file.png"
                 },
                 "optional": true
             },
-            "entityId": {
+            "fileId": {
                 "data": {
-                    "description": "Permission entity resource ID list. A permission entity is a resource granted or deny access. This can be a user, a permission group, or an agent token.",
-                    "__id": "FieldArray",
-                    "type": {
-                        "description": "Permission entity resource ID. A permission entity is a resource granted or deny access. This can be a user, a permission group, or an agent token.",
-                        "__id": "FieldString",
-                        "example": "wrkspce_000000000000000000000"
-                    }
+                    "description": "File ID.",
+                    "__id": "FieldString",
+                    "example": "file000_000000000000000000000"
                 },
-                "required": true
+                "optional": true
             },
-            "permissionGroups": {
+            "duration": {
                 "data": {
-                    "__id": "FieldArray",
-                    "type": {
-                        "__id": "FieldObject",
-                        "name": "AssignPermissionGroupInput",
-                        "fields": {
-                            "permissionGroupId": {
-                                "data": {
-                                    "description": "Permission group ID.",
-                                    "__id": "FieldString",
-                                    "example": "pmgroup_000000000000000000000"
-                                },
-                                "required": true
-                            }
-                        }
-                    }
+                    "description": "Time duration in milliseconds, for example, 1000 for 1 second.",
+                    "__id": "FieldNumber"
                 },
-                "required": true
+                "optional": true
+            },
+            "expires": {
+                "data": {
+                    "description": "Expiration date.",
+                    "__id": "FieldDate"
+                },
+                "optional": true
+            },
+            "usageCount": {
+                "data": {
+                    "description": "How many uses the generated path is valid for.",
+                    "__id": "FieldNumber"
+                },
+                "optional": true
             }
         }
     },
@@ -74,8 +71,46 @@
             }
         }
     },
-    "name": "AssignPermissionGroupsEndpoint",
-    "description": "Assign permission groups endpoint.",
+    "responseHeaders": {
+        "__id": "FieldObject",
+        "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",
+        "fields": {
+            "Content-Type": {
+                "data": {
+                    "description": "HTTP JSON response content type.",
+                    "__id": "FieldString",
+                    "valid": {
+                        "0": "application/json"
+                    }
+                },
+                "required": true
+            },
+            "Content-Length": {
+                "data": {
+                    "description": "HTTP response content length in bytes.",
+                    "__id": "FieldString"
+                },
+                "required": true
+            }
+        }
+    },
+    "responseBody": {
+        "required": true,
+        "description": "Issue file presigned path endpoint success result.",
+        "__id": "FieldObject",
+        "name": "IssueFilePresignedPathEndpointResult",
+        "fields": {
+            "path": {
+                "data": {
+                    "description": "String path that only works with readFile endpoint. Can be used in place of filepath.",
+                    "__id": "FieldString"
+                },
+                "required": true
+            }
+        }
+    },
+    "name": "IssueFilePresignedPathEndpoint",
+    "description": "Issues file presigned paths for reading private files without passing Authorization header, like in <img /> html tags.",
     "errorResponseHeaders": {
         "__id": "FieldObject",
         "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",

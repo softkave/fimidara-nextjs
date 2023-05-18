@@ -1,8 +1,6 @@
 import { systemConstants } from "@/lib/definitions/system";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar } from "antd";
-import { getReadFileURL } from "fimidara";
-import { appDimensions } from "../../utils/theme";
+import AppAvatar from "../../utils/AppAvatar";
 
 export interface IUserAvatarProps {
   userId: string;
@@ -11,21 +9,14 @@ export interface IUserAvatarProps {
 
 export default function UserAvatar(props: IUserAvatarProps) {
   return (
-    <Avatar
+    <AppAvatar
       icon={<UserOutlined />}
-      src={
+      filepath={
         props.userId
-          ? getReadFileURL({
-              serverURL: systemConstants.serverAddr,
-              filepath: systemConstants.userImagesFolder + "/" + props.userId,
-              width: appDimensions.avatar.width,
-              height: appDimensions.avatar.height,
-            })
+          ? systemConstants.userImagesFolder + "/" + props.userId
           : undefined
       }
-      size="default"
       alt={props.alt}
-      shape="circle"
     />
   );
 }

@@ -1,11 +1,9 @@
-import { getReadFileURL, getUploadFileURL } from "@/lib/api/utils";
 import { systemConstants } from "@/lib/definitions/system";
 import { KeyValueKeys, useKvStore } from "@/lib/hooks/storeHooks";
 import React from "react";
 import { formClasses } from "../../form/classNames";
 import { useUserNode } from "../../hooks/useUserNode";
 import ImageAndUploadAvatar from "../../utils/ImageAndUploadAvatar";
-import { appDimensions } from "../../utils/theme";
 
 export default function UploadUserAvatar() {
   const userNode = useUserNode();
@@ -22,15 +20,8 @@ export default function UploadUserAvatar() {
     <div className={formClasses.formContentWrapperClassName}>
       <ImageAndUploadAvatar
         refreshKey={KeyValueKeys.UserImageLastUpdateTime}
-        uploadPath={getUploadFileURL({
-          filepath: systemConstants.userImagesFolder + "/" + userId,
-        })}
         onCompleteUpload={onCompleteUpload}
-        src={getReadFileURL({
-          filepath: systemConstants.userImagesFolder + "/" + userId,
-          width: appDimensions.avatar.width,
-          height: appDimensions.avatar.height,
-        })}
+        filepath={systemConstants.userImagesFolder + "/" + userId}
         alt="Your profile picture"
       />
     </div>

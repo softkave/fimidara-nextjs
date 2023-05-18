@@ -1,12 +1,12 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { formatDateTime } from "@/lib/utils/dateFns";
 import { Space, Typography } from "antd";
 import assert from "assert";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
-import { formatDateTime } from "../../../../lib/utils/dateFns";
 import { appClasses } from "../../../utils/theme";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 

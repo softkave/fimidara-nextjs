@@ -40,6 +40,11 @@ function ItemList<T>(props: IItemListProps<T>) {
 
   const handleRenderItem = (item: T, index: number) => {
     let node = renderItem(item, index);
+
+    if (node === null) {
+      return node;
+    }
+
     return (
       <div
         key={getId ? getId(item, index) : index}

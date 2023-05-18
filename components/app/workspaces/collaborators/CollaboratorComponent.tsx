@@ -1,24 +1,25 @@
+import ComponentHeader from "@/components/utils/ComponentHeader";
+import LabeledNode from "@/components/utils/LabeledNode";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space } from "antd";
-import { Collaborator } from "fimidara";
+import { Collaborator as CollaboratorComponent } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
-import ComponentHeader from "../../../utils/ComponentHeader";
-import LabeledNode from "../../../utils/LabeledNode";
-import PageError from "../../../utils/page/PageError";
-import PageLoading from "../../../utils/page/PageLoading";
-import PageNothingFound from "../../../utils/page/PageNothingFound";
+import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import CollaboratorMenu from "./CollaboratorMenu";
 
-export interface ICollaboratorProps {
+export interface CollaboratorComponentProps {
   workspaceId: string;
   collaboratorId: string;
 }
 
-function Collaborator(props: ICollaboratorProps) {
+function CollaboratorComponent(props: CollaboratorComponentProps) {
   const { collaboratorId, workspaceId } = props;
   const router = useRouter();
   const { fetchState } = useWorkspaceCollaboratorFetchHook({
@@ -39,7 +40,7 @@ function Collaborator(props: ICollaboratorProps) {
           <ComponentHeader title={resource.firstName + " " + resource.lastName}>
             <CollaboratorMenu
               workspaceId={workspaceId}
-              collaborator={resource as Collaborator}
+              collaborator={resource as CollaboratorComponent}
               onCompleteRemove={onCompeleteRemoveCollaborator}
             />
           </ComponentHeader>
@@ -49,6 +50,10 @@ function Collaborator(props: ICollaboratorProps) {
             direction="vertical"
             label="Resource ID"
             node={resource.resourceId}
+          />
+          <AssignedPermissionGroupList
+            entityId={resource.resourceId}
+            workspaceId={resource.workspaceId}
           />
         </Space>
       </div>
@@ -66,4 +71,4 @@ function Collaborator(props: ICollaboratorProps) {
   }
 }
 
-export default Collaborator;
+export default CollaboratorComponent;

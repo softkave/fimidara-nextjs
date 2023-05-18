@@ -1,10 +1,10 @@
 import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
+import { addRootnameToPath } from "@/lib/definitions/folder";
+import { formatDateTime } from "@/lib/utils/dateFns";
 import { Space, Typography } from "antd";
 import { Folder } from "fimidara";
 import path from "path";
-import { addRootnameToPath } from "../../../../lib/definitions/folder";
-import { formatDateTime } from "../../../../lib/utils/dateFns";
 import FolderChildren from "./FolderChildren";
 
 export interface FolderProps {

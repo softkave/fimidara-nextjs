@@ -48,7 +48,6 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
     content = (
       <ItemList
         bordered
-        className={appClasses.mh32}
         items={resourceList}
         getId={(item: Workspace) => item.resourceId}
         renderItem={(item: Workspace) => (
@@ -61,12 +60,16 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
               />
             }
             main={
-              <Space direction="vertical" size={4}>
+              <div className={appClasses.thumbnailMain}>
                 <Link href={appWorkspacePaths.folderList(item.resourceId)}>
                   <Typography.Text strong>{item.name}</Typography.Text>
                 </Link>
-                {item.description}
-              </Space>
+                {item.description && (
+                  <Typography.Text type="secondary">
+                    {item.description}
+                  </Typography.Text>
+                )}
+              </div>
             }
           />
         )}

@@ -207,6 +207,7 @@ export function getReadFileURL(props: {
   return (
     (props.serverURL || defaultServerURL) +
     '/v1/files/readFile' +
+    (props.filepath.startsWith('/') ? '' : '/') +
     encodeURIComponent(props.filepath) +
     query
   );
@@ -219,6 +220,7 @@ export function getUploadFileURL(props: {
   return (
     (props.serverURL || defaultServerURL) +
     '/v1/files/uploadFile' +
+    (props.filepath.startsWith('/') ? '' : '/') +
     encodeURIComponent(props.filepath)
   );
 }

@@ -1,8 +1,6 @@
 import { systemConstants } from "@/lib/definitions/system";
 import { AppstoreOutlined } from "@ant-design/icons";
-import { Avatar } from "antd";
-import { getReadFileURL } from "fimidara";
-import { appDimensions } from "../../utils/theme";
+import AppAvatar from "../../utils/AppAvatar";
 
 export interface IWorkspaceAvatarProps {
   workspaceId: string;
@@ -11,18 +9,10 @@ export interface IWorkspaceAvatarProps {
 
 export default function WorkspaceAvatar(props: IWorkspaceAvatarProps) {
   return (
-    <Avatar
+    <AppAvatar
       icon={<AppstoreOutlined />}
-      src={getReadFileURL({
-        serverURL: systemConstants.serverAddr,
-        filepath:
-          systemConstants.workspaceImagesFolder + "/" + props.workspaceId,
-        width: appDimensions.avatar.width,
-        height: appDimensions.avatar.height,
-      })}
-      size="default"
+      filepath={systemConstants.workspaceImagesFolder + "/" + props.workspaceId}
       alt={props.alt}
-      shape="circle"
     />
   );
 }

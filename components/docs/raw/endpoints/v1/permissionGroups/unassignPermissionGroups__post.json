@@ -1,16 +1,41 @@
 {
-    "basePathname": "/v1/clientLogs/ingestLogs",
+    "basePathname": "/v1/permissionGroups/unassignPermissionGroups",
     "method": "post",
     "requestBody": {
         "required": true,
+        "description": "Unassign permission groups endpoint params.",
         "__id": "FieldObject",
-        "name": "GetJobStatusEndpointParams",
+        "name": "UnassignPermissionGroupsEndpointParams",
         "fields": {
-            "jobId": {
+            "workspaceId": {
                 "data": {
-                    "description": "Long running job ID.",
+                    "description": "Workspace ID. When not provided, will default to using workspace ID from agent token.",
                     "__id": "FieldString",
-                    "example": "job0000_000000000000000000000"
+                    "example": "wrkspce_000000000000000000000"
+                },
+                "optional": true
+            },
+            "entityId": {
+                "data": {
+                    "description": "Permission entity resource ID list. A permission entity is a resource granted or deny access. This can be a user, a permission group, or an agent token.",
+                    "__id": "FieldArray",
+                    "type": {
+                        "description": "Permission entity resource ID. A permission entity is a resource granted or deny access. This can be a user, a permission group, or an agent token.",
+                        "__id": "FieldString",
+                        "example": "wrkspce_000000000000000000000"
+                    }
+                },
+                "required": true
+            },
+            "permissionGroups": {
+                "data": {
+                    "description": "List of permission group IDs.",
+                    "__id": "FieldArray",
+                    "type": {
+                        "description": "Resource ID.",
+                        "__id": "FieldString",
+                        "example": "wrkspce_000000000000000000000"
+                    }
                 },
                 "required": true
             }
@@ -41,52 +66,8 @@
             }
         }
     },
-    "responseHeaders": {
-        "__id": "FieldObject",
-        "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",
-        "fields": {
-            "Content-Type": {
-                "data": {
-                    "description": "HTTP JSON response content type.",
-                    "__id": "FieldString",
-                    "valid": {
-                        "0": "application/json"
-                    }
-                },
-                "required": true
-            },
-            "Content-Length": {
-                "data": {
-                    "description": "HTTP response content length in bytes.",
-                    "__id": "FieldString"
-                },
-                "required": true
-            }
-        }
-    },
-    "responseBody": {
-        "required": true,
-        "description": "Get job status endpoint success result.",
-        "__id": "FieldObject",
-        "name": "GetJobStatusEndpointResult",
-        "fields": {
-            "status": {
-                "data": {
-                    "description": "Job status.",
-                    "__id": "FieldString",
-                    "valid": {
-                        "0": "pending",
-                        "1": "inProgress",
-                        "2": "completed",
-                        "3": "failed"
-                    },
-                    "enumName": "JobStatus"
-                },
-                "required": true
-            }
-        }
-    },
-    "name": "GetJobStatusEndpoint",
+    "name": "UnassignPermissionGroupsEndpoint",
+    "description": "Unassigns permission groups.",
     "errorResponseHeaders": {
         "__id": "FieldObject",
         "name": "HttpEndpointResponseHeaders_ContentType_ContentLength",

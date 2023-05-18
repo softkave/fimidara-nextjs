@@ -4,6 +4,8 @@ import { Typography, Upload, message } from "antd";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import { defaultTo, first } from "lodash";
 import React from "react";
+import { getUploadFileURL } from "../../lib/api/utils";
+import { systemConstants } from "../../lib/definitions/system";
 import { useUserNode } from "../hooks/useUserNode";
 import IconButton from "./buttons/IconButton";
 import { errorMessageNotificatition } from "./errorHandling";
@@ -18,7 +20,7 @@ export type IImageUploadMessages = Partial<{
 export interface IUploadAvatarProps {
   messages?: IImageUploadMessages;
   className?: string;
-  uploadPath: string;
+  filepath: string;
   onCompleteUpload: () => void;
 }
 
@@ -44,7 +46,7 @@ const classes = {
 };
 
 const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
-  const { uploadPath, className, onCompleteUpload } = props;
+  const { filepath, className, onCompleteUpload } = props;
   const u0 = useUserNode();
   const customMessages = {
     ...DEFAULT_MESSAGES,
@@ -102,7 +104,10 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
   return (
     <Upload
       name="data"
-      action={uploadPath}
+      action={getUploadFileURL({
+        filepath,
+        serverURL: systemConstants.serverAddr,
+      })}
       headers={{ Authorization: `Bearer ${clientAssignedToken}` }}
       beforeUpload={beforeUpload}
       onChange={onChange}
