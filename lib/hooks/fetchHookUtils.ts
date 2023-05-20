@@ -40,11 +40,6 @@ export type FetchResourceStore<TData, TReturnedData, TKeyParams> = {
   ): void;
 };
 
-export type FetchHookOptions = {
-  /** Don't fetch automatically if `true`. */
-  manual?: boolean;
-};
-
 export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
   storeName: string,
   getFn: AnyFn<[TKeyParams, FetchState<TData>], TReturnedData>,
@@ -158,64 +153,124 @@ export function makeFetchResourceHook<
     boolean
   >
 ) {
-  const fetchHook = (
-    params: Parameters<TFetchFn>[0],
-    options?: FetchHookOptions
-  ) => {
+  const fetchHook = (params: Parameters<TFetchFn>[0]) => {
     const { handleServerRecommendedActions } =
       useHandleServerRecommendedActions();
+
     let fetchState = useStoreHook((store) => store.getFetchState(params));
-    const fetchFn = React.useCallback(async () => {
-      try {
-        useStoreHook.getState().setFetchState(params, (state) => ({
-          loading: true,
-          error: undefined,
-          data: state?.data,
-        }));
 
-        const result = await inputFetchFn(params);
-
-        useStoreHook.getState().setFetchState(params, (state) => {
-          const savedData = setFn ? setFn(params, state, result) : result;
-          return {
-            data: savedData,
-            loading: false,
+    const fetchFn = React.useCallback(
+      async (inputParams: Parameters<TFetchFn>[0]) => {
+        try {
+          useStoreHook.getState().setFetchState(inputParams, (state) => ({
+            loading: true,
             error: undefined,
-          };
-        });
-      } catch (error: unknown) {
-        useStoreHook.getState().setFetchState(params, (state) => ({
-          loading: false,
-          error: toAppErrorList(error),
-          data: state?.data,
-        }));
+            data: state?.data,
+          }));
+          const result = await inputFetchFn(inputParams);
+          useStoreHook.getState().setFetchState(inputParams, (state) => {
+            const savedData = setFn
+              ? setFn(inputParams, state, result)
+              : result;
+            return { data: savedData, loading: false, error: undefined };
+          });
+        } catch (error: unknown) {
+          useStoreHook.getState().setFetchState(inputParams, (state) => ({
+            loading: false,
+            error: toAppErrorList(error),
+            data: state?.data,
+          }));
 
-        handleServerRecommendedActions(error);
-      }
-    }, [params]);
+          handleServerRecommendedActions(error);
+        }
+      },
+      []
+    );
 
     React.useEffect(() => {
-      // Get latest fetch state seeing more than one component can call the fetch
-      // hook with the same params at a time leading to 2 different load states
-      // which is not too bad. The issue is error handling with message or
-      // notifications are showed twice which is not good UX.
+      // Get latest fetch state seeing more than one component can call the
+      // fetch hook with the same params at a time leading to 2 different load
+      // states which is not too bad. The issue is error handling with message
+      // or notifications are showed twice which is not good UX.
       const currentFetchState = useStoreHook.getState().getFetchState(params);
-
       let willLoad =
-        !options?.manual &&
-        (!currentFetchState ||
-          (!currentFetchState?.loading &&
-            !currentFetchState?.error &&
-            !currentFetchState?.data));
+        !currentFetchState ||
+        (!currentFetchState?.loading &&
+          !currentFetchState?.error &&
+          !currentFetchState?.data);
 
       // TODO: should this be in a memo?
-      if (shouldLoadFn)
+      if (shouldLoadFn) {
         willLoad = shouldLoadFn(willLoad, params, currentFetchState);
+      }
 
-      if (willLoad) fetchFn();
-    }, [options?.manual, params, fetchFn]);
+      if (willLoad) {
+        fetchFn(params);
+      }
+    }, [params, fetchFn]);
 
     return { fetchState, fetchFn };
+  };
+
+  return fetchHook;
+}
+
+export function makeManualFetchResourceHook<
+  TData,
+  TReturnedData,
+  TFetchFn extends AnyFn<any, Promise<TData>>
+>(
+  inputFetchFn: TFetchFn,
+  useStoreHook: FetchResourceZustandStore<
+    TData,
+    TReturnedData,
+    Parameters<TFetchFn>[0]
+  >,
+  setFn?: AnyFn<
+    [Parameters<TFetchFn>[0], FetchState<TData> | undefined, TData],
+    TData
+  >
+) {
+  const fetchHook = () => {
+    const { handleServerRecommendedActions } =
+      useHandleServerRecommendedActions();
+
+    const fetchFn = React.useCallback(
+      async (inputParams: Parameters<TFetchFn>[0]) => {
+        try {
+          useStoreHook.getState().setFetchState(inputParams, (state) => ({
+            loading: true,
+            error: undefined,
+            data: state?.data,
+          }));
+          const result = await inputFetchFn(inputParams);
+          useStoreHook.getState().setFetchState(inputParams, (state) => {
+            const savedData = setFn
+              ? setFn(inputParams, state, result)
+              : result;
+            return { data: savedData, loading: false, error: undefined };
+          });
+        } catch (error: unknown) {
+          useStoreHook.getState().setFetchState(inputParams, (state) => ({
+            loading: false,
+            error: toAppErrorList(error),
+            data: state?.data,
+          }));
+
+          handleServerRecommendedActions(error);
+        }
+      },
+      []
+    );
+
+    const getFetchStateFn = React.useCallback(
+      async (inputParams: Parameters<TFetchFn>[0]) => {
+        return useStoreHook.getState().getFetchState(inputParams);
+      },
+      []
+    );
+
+    return { fetchFn, getFetchStateFn };
   };
 
   return fetchHook;

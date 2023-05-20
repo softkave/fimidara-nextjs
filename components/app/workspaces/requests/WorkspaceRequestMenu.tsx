@@ -5,7 +5,7 @@ import { CollaborationRequestForWorkspace } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
@@ -25,15 +25,10 @@ enum MenuKeys {
 
 const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   const { request, onCompleteDeleteRequest } = props;
-  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+  const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: request.workspaceId,
-    targetType: "collaborationRequest",
-    containerId: request.workspaceId,
-    containerType: "workspace",
     targetId: request.resourceId,
-    appliesTo: "children",
   });
-
   const deleteHook = useWorkspaceCollaborationRequestDeleteMutationHook({
     onSuccess(data, params) {
       message.success("Collaboration request scheduled for deletion.");
@@ -63,10 +58,10 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        toggleVisibility();
+        permissionsHook.toggle();
       }
     },
-    [deleteHook, toggleVisibility]
+    [deleteHook, permissionsHook.toggle]
   );
 
   const isPending = request.status === "pending";
@@ -115,7 +110,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
-      {grantPermissionFormNode}
+      {permissionsHook.node}
     </React.Fragment>
   );
 };

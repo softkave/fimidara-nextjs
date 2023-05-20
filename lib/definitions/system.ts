@@ -45,32 +45,34 @@ export const systemConstants = {
   maxPageSize: 1000,
 };
 
-export interface ISelectedIdRouteMatch {
-  selected?: string;
-}
-
-export function getSelectedItemPath(path: string) {
-  return `${path}/:selected`;
-}
-
-export function getActions(
-  type: WorkspaceAppResourceType,
-  includeWildcard = false
-) {
-  const actions: AppActionType[] = ["create", "read", "update", "delete"];
-
-  if (includeWildcard) {
-    // unshift instead of push for ordered rendering
-    // in grant permission form. it may just be better to
-    // sort in there, but until then, we unshift.
-    actions.unshift("*");
+export function getWorkspaceActionList(
+  type?: WorkspaceAppResourceType
+): AppActionType[] {
+  if (type === "permissionItem") {
+    return ["*", "create", "read", "update", "delete", "grantPermission"];
   }
 
-  if (type === "workspace" || type === "*") {
-    actions.push("grantPermission");
-  }
+  return ["*", "create", "read", "update", "delete"];
+}
 
-  return actions;
+export function getWorkspaceTypeList(): WorkspaceAppResourceType[] {
+  return [
+    "*",
+    "workspace",
+    "collaborationRequest",
+    "agentToken",
+    "permissionGroup",
+    "permissionItem",
+    "folder",
+    "file",
+    "user",
+    "tag",
+    "usageRecord",
+  ];
+}
+
+export function getFolderTypeList(): WorkspaceAppResourceType[] {
+  return ["*", "folder", "file"];
 }
 
 export const actionLabel: Record<AppActionType, string> = {
@@ -80,6 +82,22 @@ export const actionLabel: Record<AppActionType, string> = {
   ["update"]: "Update",
   ["delete"]: "Delete",
   ["grantPermission"]: "Grant permission",
+};
+export const workspaceResourceTypeLabel: Record<
+  WorkspaceAppResourceType,
+  string
+> = {
+  "*": "*",
+  workspace: "workspace",
+  collaborationRequest: "collaborationRequest",
+  agentToken: "agentToken",
+  permissionGroup: "permissionGroup",
+  permissionItem: "permissionItem",
+  folder: "folder",
+  file: "file",
+  user: "user",
+  tag: "tag",
+  usageRecord: "usageRecord",
 };
 
 export const appRootPaths = {

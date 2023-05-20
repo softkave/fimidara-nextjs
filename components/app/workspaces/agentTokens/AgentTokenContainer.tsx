@@ -1,11 +1,11 @@
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceAgentTokenFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { AgentToken } from "fimidara";
 import React from "react";
-import PageError from "../../../utils/page/PageError";
-import PageLoading from "../../../utils/page/PageLoading";
-import PageNothingFound from "../../../utils/page/PageNothingFound";
 
 export interface IAgentTokenContainerProps {
   tokenId: string;

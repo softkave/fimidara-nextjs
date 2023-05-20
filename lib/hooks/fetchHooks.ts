@@ -16,6 +16,8 @@ import {
   GetWorkspaceSummedUsageEndpointParams,
   ListFolderContentEndpointParams,
   PermissionGroup,
+  ResolveEntityPermissionsEndpointParams,
+  ResolveEntityPermissionsEndpointResult,
   UsageRecord,
   Workspace,
 } from "fimidara";
@@ -192,6 +194,15 @@ async function usageCostsInputFetchFn() {
   const data = await endpoints.usageRecords.getUsageCosts();
   return data.body;
 }
+async function resolveEntityPermissionInputFetchFn(
+  params: ResolveEntityPermissionsEndpointParams
+) {
+  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const data = await endpoints.permissionItems.resolveEntityPermissions({
+    body: params,
+  });
+  return data.body;
+}
 
 function makePaginatedFetchHookAndStore<
   TResource extends { resourceId: string },
@@ -362,6 +373,16 @@ export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
 export const useUsageCostsFetchHook = makeFetchResourceHook(
   usageCostsInputFetchFn,
   useUsageCostsFetchStore,
+  fetchHookDefaultSetFn
+);
+export const useResolveEntityPermissionsFetchStore = makeFetchResourceStoreHook<
+  ResolveEntityPermissionsEndpointResult,
+  ResolveEntityPermissionsEndpointResult | undefined,
+  ResolveEntityPermissionsEndpointParams
+>("resolveEntityPermissionsFetch", (params, state) => state.data, isEqual);
+export const useResolveEntityPermissionsFetchHook = makeFetchResourceHook(
+  resolveEntityPermissionInputFetchFn,
+  useResolveEntityPermissionsFetchStore,
   fetchHookDefaultSetFn
 );
 

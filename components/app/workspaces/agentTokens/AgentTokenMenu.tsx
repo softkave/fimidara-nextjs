@@ -5,7 +5,7 @@ import { AgentToken } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
@@ -25,15 +25,10 @@ enum MenuKeys {
 
 const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
   const { token, onCompleteDelete } = props;
-  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+  const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: token.workspaceId,
-    targetType: "agentToken",
-    containerId: token.workspaceId,
-    containerType: "workspace",
     targetId: token.resourceId,
-    appliesTo: "children",
   });
-
   const deleteHook = useWorkspaceAgentTokenDeleteMutationHook({
     onSuccess(data, params) {
       message.success("Agent token scheduled for deletion.");
@@ -63,10 +58,10 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        toggleVisibility();
+        permissionsHook.toggle();
       }
     },
-    [deleteHook, toggleVisibility]
+    [deleteHook, permissionsHook.toggle]
   );
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
@@ -96,7 +91,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
 
   return (
     <React.Fragment>
-      {grantPermissionFormNode}
+      {permissionsHook.node}
       <Dropdown
         disabled={deleteHook.loading}
         trigger={["click"]}

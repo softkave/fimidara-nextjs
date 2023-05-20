@@ -6,7 +6,7 @@ import { File } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { MenuInfo } from "../../../utils/types";
@@ -26,15 +26,10 @@ enum MenuKeys {
 
 const FileMenu: React.FC<FileMenuProps> = (props) => {
   const { file, workspaceRootname, onScheduleDeleteSuccess } = props;
-  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+  const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: file.workspaceId,
-    targetType: "file",
-    containerId: file.parentId || file.workspaceId,
-    containerType: file.parentId ? "folder" : "workspace",
     targetId: file.resourceId,
-    appliesTo: "children",
   });
-
   const deleteHook = useWorkspaceFileDeleteMutationHook({
     onSuccess(data, params) {
       message.success("File scheduled for deletion.");
@@ -69,10 +64,10 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        toggleVisibility();
+        permissionsHook.toggle();
       }
     },
-    [deleteHook, toggleVisibility]
+    [deleteHook, permissionsHook.toggle]
   );
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
@@ -110,7 +105,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
       >
         <IconButton icon={<BsThreeDots />} />
       </Dropdown>
-      {grantPermissionFormNode}
+      {permissionsHook.node}
     </React.Fragment>
   );
 };

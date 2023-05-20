@@ -1,3 +1,8 @@
+import ListHeader from "@/components/utils/list/ListHeader";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
+import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
@@ -8,11 +13,7 @@ import { Space } from "antd";
 import Link from "next/link";
 import React from "react";
 import IconButton from "../../../utils/buttons/IconButton";
-import ListHeader from "../../../utils/list/ListHeader";
-import PageError from "../../../utils/page/PageError";
-import PageLoading from "../../../utils/page/PageLoading";
-import PageNothingFound from "../../../utils/page/PageNothingFound";
-import PaginatedContent from "../../../utils/page/PaginatedContent";
+import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
 import WorkspaceRequestList from "./WorkspaceRequestList";
 
 export interface IWorkspaceRequestsProps {
@@ -61,6 +62,10 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
             <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
               <IconButton icon={<PlusOutlined />} />
             </Link>
+            <WorkspaceResourceListMenu
+              workspaceId={workspaceId}
+              targetType={"collaborationRequest"}
+            />
           </Space>
         }
       />

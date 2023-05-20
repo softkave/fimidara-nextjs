@@ -3,26 +3,26 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
-import { useWorkspacePermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
+import { useWorkspaceAgentTokensFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
-import { PermissionGroup } from "fimidara";
+import { AgentToken } from "fimidara";
 import React from "react";
-import PermissionGroupList from "./PermissionGroupList";
+import AgentTokenList from "./AgentTokenList";
 
-export interface PermissionGroupListContainerProps {
+export interface AgentTokenListContainerProps {
   workspaceId: string;
-  renderItem?: (item: PermissionGroup) => React.ReactNode;
-  renderList?: (items: PermissionGroup[]) => React.ReactNode;
+  renderItem?: (item: AgentToken) => React.ReactNode;
+  renderList?: (items: AgentToken[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
 }
 
-const PermissionGroupListContainer: React.FC<
-  PermissionGroupListContainerProps
-> = (props) => {
-  const { workspaceId, renderItem, renderList, renderRoot } = props;
+const AgentTokenListContainer: React.FC<AgentTokenListContainerProps> = (
+  props
+) => {
+  const { workspaceId, renderList, renderRoot, renderItem } = props;
   const pagination = usePagination();
-  const { fetchState } = useWorkspacePermissionGroupsFetchHook({
+  const { fetchState } = useWorkspaceAgentTokensFetchHook({
     workspaceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
@@ -35,30 +35,34 @@ const PermissionGroupListContainer: React.FC<
   if (error) {
     content = (
       <PageError
-        message={getBaseError(error) || "Error fetching permission groups."}
+        message={getBaseError(error) || "Error fetching agent tokens."}
       />
     );
   } else if (isLoading) {
-    content = <PageLoading message="Loading permission groups..." />;
+    content = <PageLoading message="Loading agent tokens..." />;
   } else if (resourceList.length === 0) {
-    content = <PageNothingFound message="No permission groups yet." />;
+    content = (
+      <PageNothingFound
+        message={
+          "No agent tokens yet. " +
+          "You can create one using the plus button above."
+        }
+      />
+    );
   } else {
     content = renderList ? (
       renderList(resourceList)
     ) : (
-      <PermissionGroupList
+      <AgentTokenList
         workspaceId={workspaceId}
-        permissionGroups={resourceList}
+        tokens={resourceList}
         renderItem={renderItem}
       />
     );
   }
 
   content = (
-    <PaginatedContent
-      content={content}
-      pagination={count ? { ...pagination, count } : undefined}
-    />
+    <PaginatedContent content={content} pagination={{ ...pagination, count }} />
   );
 
   if (renderRoot) {
@@ -68,4 +72,4 @@ const PermissionGroupListContainer: React.FC<
   return <React.Fragment>{content}</React.Fragment>;
 };
 
-export default PermissionGroupListContainer;
+export default AgentTokenListContainer;

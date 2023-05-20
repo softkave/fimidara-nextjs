@@ -5,6 +5,7 @@ import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useWorkspaceDeleteMutationHook } from "../../../lib/hooks/mutationHooks";
+import useTargetGrantPermissionModal from "../../hooks/useTargetGrantPermissionModal";
 import IconButton from "../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
 import { appClasses } from "../../utils/theme";
@@ -24,6 +25,10 @@ enum MenuKeys {
 
 const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
   const { workspace, onCompleteDelete } = props;
+  const permissionsHook = useTargetGrantPermissionModal({
+    workspaceId: workspace.workspaceId,
+    targetId: workspace.resourceId,
+  });
   const deleteHook = useWorkspaceDeleteMutationHook({
     onSuccess(data, params) {
       message.success("Workspace scheduled for deletion.");
@@ -53,10 +58,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        // TODO
+        permissionsHook.toggle();
       }
     },
-    [deleteHook]
+    [deleteHook, permissionsHook.toggle]
   );
 
   const items: MenuProps["items"] = insertAntdMenuDivider([

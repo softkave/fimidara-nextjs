@@ -6,7 +6,7 @@ import { Folder } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
@@ -20,41 +20,17 @@ export interface FolderMenuProps {
 }
 
 enum MenuKeys {
-  ViewItem = "view-item",
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
   GrantPermission = "grant-permission",
-  ChildrenFoldersGrantPermission = "chilldren-folders-grant-permission",
-  ChildrenFilesGrantPermission = "children-files-grant-permission",
 }
 
 const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   const { folder, workspaceRootname, onScheduleDeleteSuccess } = props;
-  const folderGrantPermission = useGrantPermission({
+  const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: folder.workspaceId,
-    targetType: "folder",
-    containerId: folder.parentId || folder.workspaceId,
-    containerType: folder.parentId ? "folder" : "workspace",
     targetId: folder.resourceId,
-    appliesTo: "self",
   });
-
-  const childrenFoldersGrantPermission = useGrantPermission({
-    workspaceId: folder.workspaceId,
-    targetType: "folder",
-    containerId: folder.resourceId,
-    containerType: "folder",
-    appliesTo: "children",
-  });
-
-  const childrenFilesGrantPermission = useGrantPermission({
-    workspaceId: folder.workspaceId,
-    targetType: "file",
-    containerId: folder.resourceId,
-    containerType: "folder",
-    appliesTo: "children",
-  });
-
   const deleteHook = useWorkspaceFolderDeleteMutationHook({
     onSuccess(data, params) {
       message.success("Folder scheduled for deletion.");
@@ -89,19 +65,10 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        folderGrantPermission.toggleVisibility();
-      } else if (info.key === MenuKeys.ChildrenFoldersGrantPermission) {
-        childrenFoldersGrantPermission.toggleVisibility();
-      } else if (info.key === MenuKeys.ChildrenFilesGrantPermission) {
-        childrenFilesGrantPermission.toggleVisibility();
+        permissionsHook.toggle();
       }
     },
-    [
-      deleteHook,
-      folderGrantPermission,
-      childrenFilesGrantPermission,
-      childrenFoldersGrantPermission,
-    ]
+    [deleteHook, permissionsHook.toggle]
   );
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
@@ -120,15 +87,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
     },
     {
       key: MenuKeys.GrantPermission,
-      label: "Folder Permissions",
-    },
-    {
-      key: MenuKeys.ChildrenFilesGrantPermission,
-      label: "Children File Permissions",
-    },
-    {
-      key: MenuKeys.ChildrenFoldersGrantPermission,
-      label: "Children Folder Permissions",
+      label: "Permissions",
     },
     {
       key: MenuKeys.DeleteItem,
@@ -150,9 +109,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
-      {folderGrantPermission.grantPermissionFormNode}
-      {childrenFoldersGrantPermission.grantPermissionFormNode}
-      {childrenFilesGrantPermission.grantPermissionFormNode}
+      {permissionsHook.node}
     </React.Fragment>
   );
 };

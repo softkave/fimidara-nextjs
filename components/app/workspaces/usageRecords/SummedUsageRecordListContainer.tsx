@@ -1,3 +1,8 @@
+import ListHeader from "@/components/utils/list/ListHeader";
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
+import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import {
   useFetchArbitraryFetchState,
   useFetchPaginatedResourceListFetchState,
@@ -13,11 +18,6 @@ import { Space } from "antd";
 import { UsageRecord, Workspace } from "fimidara";
 import { first } from "lodash";
 import React from "react";
-import ListHeader from "../../../utils/list/ListHeader";
-import PageError from "../../../utils/page/PageError";
-import PageLoading from "../../../utils/page/PageLoading";
-import PageNothingFound from "../../../utils/page/PageNothingFound";
-import PaginatedContent from "../../../utils/page/PaginatedContent";
 import SummedUsageRecordList from "./SummedUsageRecordList";
 import SummedUsageRecordListControls from "./SummedUsageRecordListControls";
 

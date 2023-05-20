@@ -9,7 +9,7 @@ import { compact } from "lodash";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
@@ -38,15 +38,10 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     onCompleteUnassignPermissionGroup,
   } = props;
 
-  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+  const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: permissionGroup.workspaceId,
-    targetType: "permissionGroup",
-    containerId: permissionGroup.workspaceId,
-    containerType: "workspace",
     targetId: permissionGroup.resourceId,
-    appliesTo: "children",
   });
-
   const deleteHook = useWorkspacePermissionGroupDeleteMutationHook({
     onSuccess(data, params) {
       message.success("Permission group scheduled for deletion.");
@@ -60,7 +55,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     useWorkspacePermissionGroupUnassignMutationHook({
       onSuccess(data, params) {
         message.success("Permission group unassigned.");
-        onCompleteDelete();
+        onCompleteUnassignPermissionGroup();
       },
       onError(e, params) {
         errorMessageNotificatition(e, "Error unassigning permission group.");
@@ -84,7 +79,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        toggleVisibility();
+        permissionsHook.toggle();
       } else if (
         info.key === MenuKeys.UnassignPermissionGroup &&
         unassignParams?.entityId
@@ -114,7 +109,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
       unassignPermissionGroupHook,
       unassignParams?.entityId,
       permissionGroup,
-      toggleVisibility,
+      permissionsHook.toggle,
     ]
   );
 
@@ -162,7 +157,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
-      {grantPermissionFormNode}
+      {permissionsHook.node}
     </React.Fragment>
   );
 };

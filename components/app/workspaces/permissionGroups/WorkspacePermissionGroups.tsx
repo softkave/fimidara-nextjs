@@ -1,3 +1,4 @@
+import ListHeader from "@/components/utils/list/ListHeader";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { PlusOutlined } from "@ant-design/icons";
 import { Space } from "antd";
@@ -5,7 +6,7 @@ import { PermissionGroup } from "fimidara";
 import Link from "next/link";
 import React from "react";
 import IconButton from "../../../utils/buttons/IconButton";
-import ListHeader from "../../../utils/list/ListHeader";
+import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
 import PermissionGroupListContainer from "./PermissionGroupListContainer";
 
 export interface IWorkspacePermissionGroupsProps {
@@ -33,6 +34,10 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
               >
                 <IconButton icon={<PlusOutlined />} />
               </Link>
+              <WorkspaceResourceListMenu
+                workspaceId={workspaceId}
+                targetType={["permissionGroup", "permissionItem"]}
+              />
               {menu}
             </Space>
           }

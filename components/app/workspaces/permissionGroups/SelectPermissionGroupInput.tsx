@@ -1,3 +1,6 @@
+import InlineError from "@/components/utils/page/InlineError";
+import InlineLoading from "@/components/utils/page/InlineLoading";
+import PagePagination from "@/components/utils/page/PagePagination";
 import { IPermissionGroupInput } from "@/lib/definitions/permissionGroups";
 import usePagination from "@/lib/hooks/usePagination";
 import useWorkspacePermissionGroupList from "@/lib/hooks/workspaces/useWorkspacePermissionGroupList";
@@ -5,9 +8,6 @@ import { indexArray } from "@/lib/utils/indexArray";
 import { DeleteOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Button, Divider, List, Select, Space, Typography } from "antd";
 import React from "react";
-import InlineError from "../../../utils/page/InlineError";
-import InlineLoading from "../../../utils/page/InlineLoading";
-import PagePagination from "../../../utils/page/PagePagination";
 import { appClasses } from "../../../utils/theme";
 
 export interface ISelectPermissionGroupInputProps {

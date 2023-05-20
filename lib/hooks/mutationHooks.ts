@@ -1,7 +1,10 @@
 import { useRequest } from "ahooks";
-import type { Options as UseRequestOptions } from "ahooks/lib/useRequest/src/types";
+import type {
+  Result,
+  Options as UseRequestOptions,
+} from "ahooks/lib/useRequest/src/types";
 import { FimidaraEndpointResult, LoginResult } from "fimidara";
-import { compact, over } from "lodash";
+import { compact, isEqual, over } from "lodash";
 import React from "react";
 import {
   getPrivateFimidaraEndpointsUsingUserToken,
@@ -13,6 +16,7 @@ import { AnyFn } from "../utils/types";
 import { FetchResourceZustandStore } from "./fetchHookUtils";
 import {
   useEntityAssignedPermissionGroupsFetchStore,
+  useResolveEntityPermissionsFetchStore,
   useUserWorkspacesFetchStore,
   useWorkspaceAgentTokensFetchStore,
   useWorkspaceCollaborationRequestsFetchStore,
@@ -439,6 +443,28 @@ export const useWorkspaceDeleteMutationHook = makeEndpointMutationHook(
     }
   }
 );
+export const usePermissionsAddMutationHook = makeEndpointMutationHook(
+  getPublicFimidaraEndpointsUsingUserToken,
+  (endpoints) => endpoints.permissionItems.addItems,
+  (data, params) => {
+    // Success effect is done in-component when done. Reason is, add and
+    // deleteHooks are usually called together, also, permissions form close on
+    // success, so we won't need to handle them here.
+  }
+);
+export const usePermissionsDeleteMutationHook = makeEndpointMutationHook(
+  getPublicFimidaraEndpointsUsingUserToken,
+  (endpoints) => endpoints.permissionItems.deleteItems,
+  (data, params) => {
+    // Success effect is done in-component when done. Reason is, add and
+    // deleteHooks are usually called together, also, permissions form close on
+    // success, so we won't need to handle them here.
+  }
+);
+
+export function clearOutResolvedPermissionFetchStore() {
+  useResolveEntityPermissionsFetchStore.getState().clear();
+}
 
 function workspaceIdMatch<
   T0 extends { workspaceId?: string },
@@ -561,4 +587,23 @@ function deleteWorkspaceChildren(workspaceId: string) {
   deleteChildrenFromStore(useWorkspaceFilesStore);
   deleteChildrenFromStore(useWorkspacePermissionGroupsStore);
   deleteChildrenFromStore(useWorkspaceUsageRecordsStore);
+}
+
+export function useMergeMutationHookStates(...hooks: Array<Result<any, any>>) {
+  let loading = false;
+  let error: Error[] = [];
+  const previousErrorsRef = React.useRef<Error[]>([]);
+
+  hooks.forEach((hook) => {
+    loading ||= hook.loading;
+    if (hook.error) error.push(hook.error);
+  });
+
+  if (isEqual(previousErrorsRef.current, error)) {
+    error = previousErrorsRef.current;
+  } else {
+    previousErrorsRef.current = error;
+  }
+
+  return { error, loading };
 }

@@ -1,31 +1,34 @@
+import useTargetGrantPermissionModal from "@/components/hooks/useTargetGrantPermissionModal";
+import IconButton from "@/components/utils/buttons/IconButton";
+import { appClasses } from "@/components/utils/theme";
+import { MenuInfo } from "@/components/utils/types";
+import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { Dropdown, MenuProps } from "antd";
+import { WorkspaceAppResourceType } from "fimidara";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
-import IconButton from "../../../utils/buttons/IconButton";
-import { appClasses } from "../../../utils/theme";
-import { MenuInfo } from "../../../utils/types";
-import { insertAntdMenuDivider } from "../../../utils/utils";
 
-export interface IRootFilesMenuProps {
+export interface WorkspaceResourceListMenuProps {
   workspaceId: string;
+  targetType: WorkspaceAppResourceType | WorkspaceAppResourceType[];
 }
 
 enum MenuKeys {
-  Permissions = "permissions",
+  GrantPermission = "grant-permission",
 }
 
-const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
-  const { workspaceId } = props;
+const WorkspaceResourceListMenu: React.FC<WorkspaceResourceListMenuProps> = (
+  props
+) => {
+  const { workspaceId, targetType } = props;
   const permissionsHook = useTargetGrantPermissionModal({
     workspaceId,
     targetId: workspaceId,
-    forTargetTypeOnly: ["file", "folder"],
+    forTargetTypeOnly: targetType,
   });
-
   const onSelectMenuItem = React.useCallback(
     (info: MenuInfo) => {
-      if (info.key === MenuKeys.Permissions) {
+      if (info.key === MenuKeys.GrantPermission) {
         permissionsHook.toggle();
       }
     },
@@ -34,13 +37,14 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
     {
-      key: MenuKeys.Permissions,
+      key: MenuKeys.GrantPermission,
       label: "Permissions",
     },
   ]);
 
   return (
     <React.Fragment>
+      {permissionsHook.node}
       <Dropdown
         trigger={["click"]}
         menu={{
@@ -52,9 +56,8 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
-      {permissionsHook.node}
     </React.Fragment>
   );
 };
 
-export default RootFilesMenu;
+export default WorkspaceResourceListMenu;

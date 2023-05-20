@@ -3,26 +3,26 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
-import { useWorkspacePermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
+import { useWorkspaceCollaboratorsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { getBaseError } from "@/lib/utils/errors";
-import { PermissionGroup } from "fimidara";
+import { Collaborator } from "fimidara";
 import React from "react";
-import PermissionGroupList from "./PermissionGroupList";
+import CollaboratorList from "./CollaboratorList";
 
-export interface PermissionGroupListContainerProps {
+export interface CollaboratorListContainer {
   workspaceId: string;
-  renderItem?: (item: PermissionGroup) => React.ReactNode;
-  renderList?: (items: PermissionGroup[]) => React.ReactNode;
+  renderItem?: (item: Collaborator) => React.ReactNode;
+  renderList?: (items: Collaborator[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
 }
 
-const PermissionGroupListContainer: React.FC<
-  PermissionGroupListContainerProps
-> = (props) => {
-  const { workspaceId, renderItem, renderList, renderRoot } = props;
+const CollaboratorListContainer: React.FC<CollaboratorListContainer> = (
+  props
+) => {
+  const { workspaceId, renderList, renderRoot, renderItem } = props;
   const pagination = usePagination();
-  const { fetchState } = useWorkspacePermissionGroupsFetchHook({
+  const { fetchState } = useWorkspaceCollaboratorsFetchHook({
     workspaceId,
     page: pagination.page,
     pageSize: pagination.pageSize,
@@ -35,20 +35,20 @@ const PermissionGroupListContainer: React.FC<
   if (error) {
     content = (
       <PageError
-        message={getBaseError(error) || "Error fetching permission groups."}
+        message={getBaseError(error) || "Error fetching collaborators."}
       />
     );
   } else if (isLoading) {
-    content = <PageLoading message="Loading permission groups..." />;
+    content = <PageLoading message="Loading collaborators..." />;
   } else if (resourceList.length === 0) {
-    content = <PageNothingFound message="No permission groups yet." />;
+    content = <PageNothingFound message="No collaborators yet." />;
   } else {
     content = renderList ? (
-      renderList(resourceList)
+      renderList(resourceList as Collaborator[])
     ) : (
-      <PermissionGroupList
+      <CollaboratorList
         workspaceId={workspaceId}
-        permissionGroups={resourceList}
+        collaborators={resourceList as Collaborator[]}
         renderItem={renderItem}
       />
     );
@@ -68,4 +68,4 @@ const PermissionGroupListContainer: React.FC<
   return <React.Fragment>{content}</React.Fragment>;
 };
 
-export default PermissionGroupListContainer;
+export default CollaboratorListContainer;

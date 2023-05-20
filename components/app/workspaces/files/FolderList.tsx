@@ -1,4 +1,5 @@
 import ItemList from "@/components/utils/list/ItemList";
+import AppIcon from "@/components/utils/page/AppIcon";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Typography } from "antd";
@@ -7,7 +8,6 @@ import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
 import { FiFolder } from "react-icons/fi";
-import AppIcon from "../../../utils/page/AppIcon";
 import { appClasses } from "../../../utils/theme";
 import FolderMenu from "./FolderMenu";
 

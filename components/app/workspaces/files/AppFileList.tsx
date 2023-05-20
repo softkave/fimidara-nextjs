@@ -1,3 +1,6 @@
+import ItemList from "@/components/utils/list/ItemList";
+import AppIcon from "@/components/utils/page/AppIcon";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Typography } from "antd";
 import { File } from "fimidara";
@@ -5,9 +8,6 @@ import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
 import { FiFile } from "react-icons/fi";
-import ItemList from "../../../utils/list/ItemList";
-import AppIcon from "../../../utils/page/AppIcon";
-import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import { appClasses } from "../../../utils/theme";
 import FileMenu from "./FileMenu";
 

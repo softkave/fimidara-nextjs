@@ -1,3 +1,4 @@
+import ItemList from "@/components/utils/list/ItemList";
 import { Space, Typography } from "antd";
 import {
   UsageCosts,
@@ -6,7 +7,6 @@ import {
   Workspace,
 } from "fimidara";
 import React from "react";
-import ItemList from "../../../utils/list/ItemList";
 import SummedUsageRecordListItem from "./SummedUsageRecordListItem";
 
 export interface ISummedUsageRecordListProps {

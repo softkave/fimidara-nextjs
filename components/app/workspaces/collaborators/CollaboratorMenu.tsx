@@ -3,7 +3,7 @@ import { Dropdown, MenuProps, message, Modal } from "antd";
 import { Collaborator } from "fimidara";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import useGrantPermission from "../../../hooks/useGrantPermission";
+import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 import IconButton from "../../../utils/buttons/IconButton";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
 import { appClasses } from "../../../utils/theme";
@@ -24,15 +24,10 @@ enum MenuKeys {
 
 const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
   const { workspaceId, collaborator, onCompleteRemove } = props;
-  const { grantPermissionFormNode, toggleVisibility } = useGrantPermission({
+  const permissionsHook = useTargetGrantPermissionModal({
     workspaceId,
-    targetType: "user",
-    containerId: workspaceId,
-    containerType: "workspace",
     targetId: collaborator.resourceId,
-    appliesTo: "children",
   });
-
   const deleteHook = useWorkspaceCollaboratorDeleteMutationHook({
     onSuccess(data, params) {
       message.success("Collaborator removed.");
@@ -62,10 +57,10 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
           },
         });
       } else if (info.key === MenuKeys.GrantPermission) {
-        toggleVisibility();
+        permissionsHook.toggle();
       }
     },
-    [deleteHook, toggleVisibility]
+    [deleteHook, permissionsHook.toggle]
   );
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
@@ -93,7 +88,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
       </Dropdown>
-      {grantPermissionFormNode}
+      {permissionsHook.node}
     </React.Fragment>
   );
 };

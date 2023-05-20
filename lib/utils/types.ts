@@ -28,3 +28,8 @@ export type AnyFn<Args extends any[] = any[], Result = any> = (
 ) => Result;
 export type AnyObject = { [k: string | number | symbol]: any };
 export type Omit1<T, K extends keyof T> = Omit<T, K>;
+export type InvertRecord<M> = M extends Record<infer K, infer V>
+  ? V extends string | number | symbol
+    ? Record<V, K>
+    : Record<string, K>
+  : never;

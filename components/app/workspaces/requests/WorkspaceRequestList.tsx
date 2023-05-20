@@ -1,3 +1,5 @@
+import ItemList from "@/components/utils/list/ItemList";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { getResourceId } from "@/lib/utils/resource";
@@ -7,8 +9,6 @@ import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
 import { errorMessageNotificatition } from "../../../utils/errorHandling";
-import ItemList from "../../../utils/list/ItemList";
-import ThumbnailContent from "../../../utils/page/ThumbnailContent";
 import { appClasses } from "../../../utils/theme";
 import { SelectInfo } from "../../../utils/types";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
