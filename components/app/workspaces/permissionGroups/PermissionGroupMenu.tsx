@@ -1,3 +1,8 @@
+import IconButton from "@/components/utils/buttons/IconButton";
+import { errorMessageNotificatition } from "@/components/utils/errorHandling";
+import { appClasses } from "@/components/utils/theme";
+import { MenuInfo } from "@/components/utils/types";
+import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import {
   useWorkspacePermissionGroupDeleteMutationHook,
@@ -10,11 +15,6 @@ import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
-import IconButton from "../../../utils/buttons/IconButton";
-import { errorMessageNotificatition } from "../../../utils/errorHandling";
-import { appClasses } from "../../../utils/theme";
-import { MenuInfo } from "../../../utils/types";
-import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface PermissionGroupMenuProps {
   permissionGroup: PermissionGroup;
@@ -124,13 +124,13 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
               permissionGroup.resourceId
             )}
           >
-            Update Permission Group
+            Update
           </Link>
         ),
       },
       unassignParams && {
         key: MenuKeys.UnassignPermissionGroup,
-        label: "Unassign Permission Group",
+        label: "Unassign",
       },
       {
         key: MenuKeys.GrantPermission,
@@ -138,7 +138,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
       },
       {
         key: MenuKeys.DeleteItem,
-        label: "Delete Permission Group",
+        label: "Delete",
       },
     ])
   );

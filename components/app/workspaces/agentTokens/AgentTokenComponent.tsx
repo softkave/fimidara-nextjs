@@ -1,12 +1,12 @@
+import ComponentHeader from "@/components/utils/ComponentHeader";
+import LabeledNode from "@/components/utils/LabeledNode";
+import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { Space, Typography } from "antd";
 import { AgentToken } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
-import ComponentHeader from "../../../utils/ComponentHeader";
-import LabeledNode from "../../../utils/LabeledNode";
-import { appClasses } from "../../../utils/theme";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import AgentTokenMenu from "./AgentTokenMenu";
 

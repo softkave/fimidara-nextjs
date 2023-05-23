@@ -1,3 +1,8 @@
+import IconButton from "@/components/utils/buttons/IconButton";
+import { errorMessageNotificatition } from "@/components/utils/errorHandling";
+import { appClasses } from "@/components/utils/theme";
+import { MenuInfo } from "@/components/utils/types";
+import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
@@ -6,11 +11,6 @@ import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
-import IconButton from "../../../utils/buttons/IconButton";
-import { errorMessageNotificatition } from "../../../utils/errorHandling";
-import { appClasses } from "../../../utils/theme";
-import { MenuInfo } from "../../../utils/types";
-import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface IWorkspaceRequestMenuProps {
   request: CollaborationRequestForWorkspace;

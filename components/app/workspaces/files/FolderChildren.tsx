@@ -1,7 +1,7 @@
+import { StyleableComponentProps } from "@/components/utils/styling/types";
+import { appClasses } from "@/components/utils/theme";
 import { Space } from "antd";
 import { Folder } from "fimidara";
-import { StyleableComponentProps } from "../../../utils/styling/types";
-import { appClasses } from "../../../utils/theme";
 import FileListContainer from "./FileListContainer";
 import FileListContainerHeader from "./FileListContainerHeader";
 import FolderListContainer from "./FolderListContainer";

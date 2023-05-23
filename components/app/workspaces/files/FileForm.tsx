@@ -1,3 +1,5 @@
+import { FormAlert } from "@/components/utils/FormAlert";
+import IconButton from "@/components/utils/buttons/IconButton";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
@@ -26,8 +28,6 @@ import { useRouter } from "next/router";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
-import { FormAlert } from "../../../utils/FormAlert";
-import IconButton from "../../../utils/buttons/IconButton";
 
 export interface FileFormValue {
   description?: string;

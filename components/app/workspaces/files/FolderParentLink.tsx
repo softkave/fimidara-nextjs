@@ -1,7 +1,7 @@
+import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Folder } from "fimidara";
 import Link from "next/link";
-import { StyleableComponentProps } from "../../../utils/styling/types";
 
 export interface FolderParentLinkProps extends StyleableComponentProps {
   folder?: Pick<Folder, "parentId">;

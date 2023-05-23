@@ -1,3 +1,4 @@
+import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
@@ -12,7 +13,6 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Space } from "antd";
 import Link from "next/link";
 import React from "react";
-import IconButton from "../../../utils/buttons/IconButton";
 import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
 import WorkspaceRequestList from "./WorkspaceRequestList";
 

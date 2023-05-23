@@ -45,6 +45,7 @@ const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
     onSelect,
     onClick,
   } = props;
+
   let menuNode: React.ReactNode = null;
   if (menu) {
     menuNode = React.isValidElement(menu) ? (
@@ -72,7 +73,7 @@ const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
     <div
       className={cx(className, classes.root, {
         [appClasses.selectable]: selectable,
-        [appClasses.selected]: selected,
+        [appClasses.selected]: selectable && selected,
         [appClasses.disabled]: disabled,
       })}
       style={rootStyle}

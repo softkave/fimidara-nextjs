@@ -1,22 +1,28 @@
 import { css } from "@emotion/css";
 import { Checkbox, Space, Switch, Typography } from "antd";
 import { PermissionItemAppliesTo, WorkspaceAppResourceType } from "fimidara";
-import { isBoolean, isObject } from "lodash";
 import React from "react";
-import { PermissionMapItemInfoPermitted } from "./types";
+import {
+  PermissionMapItemInfo,
+  PermissionMapItemInfoAppliesToPermitted,
+} from "./types";
+import {
+  isPermissionMapItemInfoAppliesToPermitted,
+  isPermissionMapItemInfoPermitted,
+} from "./utils";
 
 export interface PermissionActionProps {
-  permitted?: PermissionMapItemInfoPermitted;
+  permitted?: PermissionMapItemInfo;
   disabled?: boolean;
   label: string;
   targetType?: WorkspaceAppResourceType;
-  appliesTo?: PermissionItemAppliesTo;
-  onChange: (permitted: PermissionMapItemInfoPermitted) => void;
+  parentTargetType?: WorkspaceAppResourceType;
+  onChange: (permitted: PermissionMapItemInfo) => void;
 }
 
 const classes = {
   labelRoot: css({ display: "flex" }),
-  label: css({ flex: 1, textTransform: "capitalize" }),
+  label: css({ flex: 1 }),
 };
 
 type PermissionItemAppliesToTexts = Record<PermissionItemAppliesTo, string>;
@@ -39,72 +45,99 @@ const defaultAppliesToTexts: PermissionItemAppliesToTexts = {
 };
 
 const PermissionAction: React.FC<PermissionActionProps> = (props) => {
-  const { permitted, label, appliesTo, targetType, disabled, onChange } = props;
+  const { permitted, label, targetType, parentTargetType, disabled, onChange } =
+    props;
 
   let appliesToNode: React.ReactNode = null;
+  const onChangeAppliesToPermitted = (
+    checked: boolean,
+    appliesTo: PermissionItemAppliesTo
+  ) => {
+    if (!isPermissionMapItemInfoAppliesToPermitted(permitted)) return;
 
-  if (targetType === "folder") {
+    const updated: PermissionMapItemInfoAppliesToPermitted = {
+      ...permitted,
+      [appliesTo]: { ...permitted[appliesTo], permitted: checked },
+    };
+    onChange(updated);
+  };
+
+  if (targetType === "folder" && parentTargetType === "folder") {
     const texts = typeToAppliesToTexts[targetType] ?? defaultAppliesToTexts;
-    const checkedAppliesTo = isObject(permitted) ? permitted : {};
-    appliesToNode = (
-      <Space direction="vertical">
-        <Checkbox
-          checked={checkedAppliesTo.self}
-          disabled={disabled}
-          onChange={(evt) => {
-            onChange({ ...checkedAppliesTo, self: evt.target.checked });
-          }}
-        >
-          {texts.self}
-        </Checkbox>
-        <Checkbox
-          checked={checkedAppliesTo.selfAndChildren}
-          disabled={disabled}
-          onChange={(evt) => {
-            onChange({
-              ...checkedAppliesTo,
-              selfAndChildren: evt.target.checked,
-            });
-          }}
-        >
-          {texts.selfAndChildren}
-        </Checkbox>
-        <Checkbox
-          checked={checkedAppliesTo.children}
-          disabled={disabled}
-          onChange={(evt) => {
-            onChange({ ...checkedAppliesTo, children: evt.target.checked });
-          }}
-        >
-          {texts.children}
-        </Checkbox>
-      </Space>
-    );
+
+    if (isPermissionMapItemInfoAppliesToPermitted(permitted)) {
+      console.log({ permitted });
+      appliesToNode = (
+        <Space direction="vertical">
+          <Checkbox
+            checked={permitted.self?.permitted}
+            disabled={disabled}
+            onChange={(evt) => {
+              onChangeAppliesToPermitted(evt.target.checked, "self");
+            }}
+          >
+            {texts.self}
+          </Checkbox>
+          <Checkbox
+            checked={permitted.selfAndChildren?.permitted}
+            disabled={disabled}
+            onChange={(evt) => {
+              onChangeAppliesToPermitted(evt.target.checked, "selfAndChildren");
+            }}
+          >
+            {texts.selfAndChildren}
+          </Checkbox>
+          <Checkbox
+            checked={permitted.children?.permitted}
+            disabled={disabled}
+            onChange={(evt) => {
+              onChangeAppliesToPermitted(evt.target.checked, "children");
+            }}
+          >
+            {texts.children}
+          </Checkbox>
+        </Space>
+      );
+    }
   }
 
-  const checked = isBoolean(permitted)
-    ? permitted
-    : permitted?.self || permitted?.selfAndChildren || permitted?.children;
+  let checked: boolean = false;
+
+  if (isPermissionMapItemInfoPermitted(permitted)) {
+    checked = permitted.permitted;
+  } else {
+    checked =
+      permitted?.self?.permitted ||
+      permitted?.selfAndChildren?.permitted ||
+      permitted?.children?.permitted ||
+      false;
+  }
+
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
       <div className={classes.labelRoot}>
         <Typography.Text className={classes.label}>{label}</Typography.Text>
         <Switch
+          size="small"
           disabled={disabled}
           checked={checked}
           onChange={(checked) => {
             if (targetType === "folder") {
               if (checked) {
-                onChange({ selfAndChildren: true });
+                onChange({
+                  type: 2,
+                  selfAndChildren: { type: 1, permitted: checked },
+                });
               } else {
                 onChange({
-                  self: false,
-                  selfAndChildren: false,
-                  children: false,
+                  type: 2,
+                  self: { type: 1, permitted: false },
+                  selfAndChildren: { type: 1, permitted: false },
+                  children: { type: 1, permitted: false },
                 });
               }
             } else {
-              onChange(checked);
+              onChange({ type: 1, permitted: checked });
             }
           }}
         />

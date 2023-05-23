@@ -65,3 +65,7 @@ export function getResourceTypeFromId(id: string) {
   }
   return type;
 }
+
+export function getResourceId(d: { resourceId: string }) {
+  return d.resourceId;
+}

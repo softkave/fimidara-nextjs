@@ -12,15 +12,29 @@ import PermissionGroupList from "./PermissionGroupList";
 
 export interface PermissionGroupListContainerProps {
   workspaceId: string;
+  selectable?: boolean;
+  withCheckbox?: boolean;
+  selectedMap?: Record<string, boolean>;
   renderItem?: (item: PermissionGroup) => React.ReactNode;
   renderList?: (items: PermissionGroup[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
+  onSelect?: (item: PermissionGroup) => void;
 }
 
 const PermissionGroupListContainer: React.FC<
   PermissionGroupListContainerProps
 > = (props) => {
-  const { workspaceId, renderItem, renderList, renderRoot } = props;
+  const {
+    workspaceId,
+    selectable,
+    withCheckbox,
+    selectedMap,
+    renderItem,
+    renderList,
+    renderRoot,
+    onSelect,
+  } = props;
+
   const pagination = usePagination();
   const { fetchState } = useWorkspacePermissionGroupsFetchHook({
     workspaceId,
@@ -50,6 +64,10 @@ const PermissionGroupListContainer: React.FC<
         workspaceId={workspaceId}
         permissionGroups={resourceList}
         renderItem={renderItem}
+        selectable={selectable}
+        withCheckbox={withCheckbox}
+        selectedMap={selectedMap}
+        onSelect={onSelect}
       />
     );
   }

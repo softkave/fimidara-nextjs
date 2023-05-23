@@ -1,13 +1,13 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
+import BackButton from "@/components/utils/buttons/BackButton";
+import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { Space, Typography } from "antd";
 import { File } from "fimidara";
 import { useRouter } from "next/router";
-import BackButton from "../../../utils/buttons/BackButton";
-import { appClasses } from "../../../utils/theme";
 import FileMenu from "./FileMenu";
 import FolderParentLink from "./FolderParentLink";
 

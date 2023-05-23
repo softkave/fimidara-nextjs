@@ -1,6 +1,7 @@
 import ItemList from "@/components/utils/list/ItemList";
 import AppIcon from "@/components/utils/page/AppIcon";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Typography } from "antd";
 import { File } from "fimidara";
@@ -8,7 +9,6 @@ import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
 import { FiFile } from "react-icons/fi";
-import { appClasses } from "../../../utils/theme";
 import FileMenu from "./FileMenu";
 
 export interface IAppFileListProps {

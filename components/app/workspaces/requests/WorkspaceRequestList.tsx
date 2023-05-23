@@ -1,5 +1,8 @@
+import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { appClasses } from "@/components/utils/theme";
+import { SelectInfo } from "@/components/utils/types";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { getResourceId } from "@/lib/utils/resource";
@@ -8,9 +11,6 @@ import { CollaborationRequestForWorkspace } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { errorMessageNotificatition } from "../../../utils/errorHandling";
-import { appClasses } from "../../../utils/theme";
-import { SelectInfo } from "../../../utils/types";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 
 export interface IWorkspaceRequestListProps {

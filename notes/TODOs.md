@@ -8,6 +8,9 @@
 - [ ] hide tabs and buttons based on resolved permissions
   - [ ] how to target resolved permissions after add and delete
 - [ ] update entity permissions
+- [ ] animation on transitions, like loading, tabs, etc.
+- [ ] entity-side permissions modal
+- [ ] resource thumbnail at top of target and entity permissions form
 - [ ] grant/remove access to entity
 - [ ] a refresh system that doesn't show loading screen but notification or inline loading for resource and list
 - [ ] write tests for fetch hooks and stores

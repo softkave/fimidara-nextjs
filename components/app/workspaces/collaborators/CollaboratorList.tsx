@@ -1,12 +1,12 @@
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Typography } from "antd";
 import { Collaborator } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { appClasses } from "../../../utils/theme";
 import CollaboratorMenu from "./CollaboratorMenu";
 
 export interface CollaboratorListProps {

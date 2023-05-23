@@ -51,6 +51,18 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
             label="Resource ID"
             node={resource.resourceId}
           />
+          <LabeledNode
+            nodeIsText
+            direction="vertical"
+            label="Name"
+            node={resource.firstName + " " + resource.lastName}
+          />
+          <LabeledNode
+            nodeIsText
+            direction="vertical"
+            label="Email Address"
+            node={resource.email}
+          />
           <AssignedPermissionGroupList
             entityId={resource.resourceId}
             workspaceId={resource.workspaceId}

@@ -6,33 +6,36 @@ import { useResolveEntityPermissionsFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { makeKey } from "@/lib/utils/fns";
 import { indexArray } from "@/lib/utils/indexArray";
-import { getResourceTypeFromId } from "@/lib/utils/resource";
 import { Collapse } from "antd";
 import {
-  AppActionType,
   ResolveEntityPermissionsEndpointParams,
   ResolvedEntityPermissionItem,
   WorkspaceAppResourceType,
 } from "fimidara";
 import { first, merge, set } from "lodash";
 import React from "react";
+import { getResourceTypeFromId } from "../../../../lib/utils/resource";
 import PermissionActionList from "./PermissionActionList";
 import {
-  PermissionMapItemInfoType,
-  PermissionsMapType,
+  ResolvedPermissionsMap,
   TargetGrantPermissionFormEntityInfo,
 } from "./types";
+import { isPermissionMapItemInfoAppliesToPermitted } from "./utils";
 
 export interface TargetGrantPermissionFormEntityListProps<
   T extends { resourceId: string }
 > {
   disabled?: boolean;
+  workspaceId: string;
   targetId: string;
   targetType?: WorkspaceAppResourceType;
   items: Array<T>;
-  defaultUpdatedPermissions?: PermissionsMapType;
+  defaultUpdatedPermissions?: ResolvedPermissionsMap;
   getInfoFromItem(item: T): TargetGrantPermissionFormEntityInfo;
-  onChange(updated: PermissionsMapType, original: PermissionsMapType): void;
+  onChange(
+    updated: ResolvedPermissionsMap,
+    original: ResolvedPermissionsMap
+  ): void;
 }
 
 const separator = "#";
@@ -48,6 +51,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
 ) {
   const {
     disabled,
+    workspaceId,
     targetId,
     targetType,
     items,
@@ -59,6 +63,8 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
   const actions = getWorkspaceActionList(targetType);
   const params: ResolveEntityPermissionsEndpointParams = React.useMemo(() => {
     return {
+      workspaceId,
+      // entity: { entityId: ["pmgroup_GrbhyTKJIhb8L9Qkej60n"] },
       entity: { entityId: items.map((item) => item.resourceId) },
       items:
         targetType === "folder"
@@ -79,6 +85,13 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
                 containerAppliesTo: ["children"],
               },
             ]
+          : targetType
+          ? [
+              {
+                action: actions,
+                target: [{ targetId: [targetId], targetType: [targetType] }],
+              },
+            ]
           : [
               {
                 action: actions,
@@ -86,47 +99,51 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
               },
             ],
     };
-  }, []);
+  }, [items, targetId, targetType, workspaceId]);
   const rpHook = useResolveEntityPermissionsFetchHook(params);
   const { data, error, isLoading } = useFetchArbitraryFetchState(
     rpHook.fetchState
   );
 
-  const serverPermissionsMap: PermissionsMapType = React.useMemo(() => {
+  const serverPermissionsMap: ResolvedPermissionsMap = React.useMemo(() => {
     if (targetType === "folder") {
-      const map: PermissionsMapType = {};
+      const map: ResolvedPermissionsMap = {};
       data?.items.forEach((item) => {
-        let key = getKey(item);
+        const key = getKey(item);
         const appliesTo = first(item.containerAppliesTo ?? []) ?? "self";
-        key = `${key}.${appliesTo}`;
-        const info: PermissionMapItemInfoType = {
-          permitted: item.hasAccess,
-          accessEntityId: item.accessEntityId,
-        };
-        set(map, key, info);
+
+        let permitted = map[key];
+        if (!permitted) permitted = map[key] = { type: 2 };
+        if (!isPermissionMapItemInfoAppliesToPermitted(permitted)) return;
+
+        let permittedAppliesTo = permitted[appliesTo];
+        if (!permittedAppliesTo)
+          permittedAppliesTo = permitted[appliesTo] = {
+            type: 1,
+            permitted: item.hasAccess,
+            accessEntityId: item.accessEntityId,
+          };
       });
+
       return map;
     } else {
       return indexArray(data?.items ?? [], {
         indexer: getKey,
         reducer: (item) => ({
+          type: 1,
           permitted: item.hasAccess,
           accessEntityId: item.accessEntityId,
         }),
       });
     }
-  }, []);
+  }, [data?.items, targetType]);
   const [updatedPermissionsMap, setUpdatedPermissionsMap] =
-    React.useState<PermissionsMapType>(defaultUpdatedPermissions ?? {});
+    React.useState<ResolvedPermissionsMap>(defaultUpdatedPermissions ?? {});
   const permissionsMap = React.useMemo(() => {
     return merge({}, serverPermissionsMap, updatedPermissionsMap);
   }, [serverPermissionsMap, updatedPermissionsMap]);
 
-  const getInfo = (entityId: string, action: AppActionType) => {
-    const key = getKey({ action, entityId });
-    const info = permissionsMap[key];
-    return info;
-  };
+  console.log(serverPermissionsMap);
 
   let content: React.ReactNode = null;
 
@@ -139,6 +156,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
   } else if (isLoading) {
     content = <PageLoading message="Resolving permissions..." />;
   } else if (data) {
+    const parentTargetType = getResourceTypeFromId(targetId);
     const itemListNode = items.map((item) => {
       const info = getInfoFromItem(item);
       return (
@@ -148,20 +166,26 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
         >
           <PermissionActionList
             disabled={disabled}
-            targetType={getResourceTypeFromId(targetId)}
+            targetType={targetType}
+            parentTargetType={parentTargetType}
             onChange={(action, permitted) => {
               const key = getKey({ action, entityId: item.resourceId });
-              const updated: PermissionsMapType = {
+              const updated: ResolvedPermissionsMap = {
                 ...updatedPermissionsMap,
-                [key]: { permitted },
               };
+              set(updated, key, permitted);
               setUpdatedPermissionsMap(updated);
               onChange(updated, serverPermissionsMap);
             }}
             getActionPermission={(action) => {
               const key = getKey({ action, entityId: item.resourceId });
-              const info = permissionsMap[key];
-              return info?.permitted;
+              const p = permissionsMap[key];
+
+              if (info.name) {
+                console.log(info.name, p);
+              }
+
+              return p;
             }}
           />
         </Collapse.Panel>

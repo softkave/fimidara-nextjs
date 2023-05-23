@@ -1,4 +1,7 @@
 import IconButton from "@/components/utils/buttons/IconButton";
+import { StyleableComponentProps } from "@/components/utils/styling/types";
+import { appClasses } from "@/components/utils/theme";
+import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { PlusOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
@@ -7,9 +10,6 @@ import { Folder } from "fimidara";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { StyleableComponentProps } from "../../../utils/styling/types";
-import { appClasses } from "../../../utils/theme";
-import { insertAntdMenuDivider } from "../../../utils/utils";
 import FolderMenu from "./FolderMenu";
 import RootFilesMenu from "./RootFilesMenu";
 

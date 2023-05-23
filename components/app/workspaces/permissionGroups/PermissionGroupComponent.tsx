@@ -3,6 +3,7 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
+import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
@@ -13,7 +14,6 @@ import assert from "assert";
 import { noop } from "lodash";
 import { useRouter } from "next/router";
 import React from "react";
-import { appClasses } from "../../../utils/theme";
 import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 

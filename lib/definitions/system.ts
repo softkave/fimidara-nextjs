@@ -87,17 +87,17 @@ export const workspaceResourceTypeLabel: Record<
   WorkspaceAppResourceType,
   string
 > = {
-  "*": "*",
-  workspace: "workspace",
-  collaborationRequest: "collaborationRequest",
-  agentToken: "agentToken",
-  permissionGroup: "permissionGroup",
-  permissionItem: "permissionItem",
-  folder: "folder",
-  file: "file",
-  user: "user",
-  tag: "tag",
-  usageRecord: "usageRecord",
+  "*": "Wildcard",
+  workspace: "Workspace",
+  collaborationRequest: "Collaboration request",
+  agentToken: "Agent token",
+  permissionGroup: "Permission group",
+  permissionItem: "Permission item",
+  folder: "Folder",
+  file: "File",
+  user: "User",
+  tag: "Tag",
+  usageRecord: "Usage record",
 };
 
 export const appRootPaths = {

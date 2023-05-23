@@ -122,11 +122,11 @@ async function workspaceFoldersInputFetchFn(
 ): Promise<FetchPaginatedResourceListReturnedData<Folder>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.folders.listFolderContent({
-    body: { ...params, contentType: ["folder"] },
+    body: { ...params, contentType: "folder" },
   });
   const count = await endpoints.folders.countFolderContent({
     body: {
-      contentType: ["folder"],
+      contentType: "folder",
       folderpath: params.folderpath,
       folderId: params.folderId,
     },
@@ -138,11 +138,11 @@ async function workspaceFilesInputFetchFn(
 ): Promise<FetchPaginatedResourceListReturnedData<File>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.folders.listFolderContent({
-    body: { ...params, contentType: ["file"] },
+    body: { ...params, contentType: "file" },
   });
   const count = await endpoints.folders.countFolderContent({
     body: {
-      contentType: ["file"],
+      contentType: "file",
       folderpath: params.folderpath,
       folderId: params.folderId,
     },
@@ -354,7 +354,6 @@ export const {
   workspaceUsageRecordsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
-
 export const {
   useFetchStore: useEntityAssignedPermissionGroupsFetchStore,
   useFetchHook: useEntityAssignedPermissionGroupsFetchHook,

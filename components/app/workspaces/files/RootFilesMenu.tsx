@@ -1,11 +1,11 @@
+import IconButton from "@/components/utils/buttons/IconButton";
+import { appClasses } from "@/components/utils/theme";
+import { MenuInfo } from "@/components/utils/types";
+import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { Dropdown, MenuProps } from "antd";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
-import IconButton from "../../../utils/buttons/IconButton";
-import { appClasses } from "../../../utils/theme";
-import { MenuInfo } from "../../../utils/types";
-import { insertAntdMenuDivider } from "../../../utils/utils";
 
 export interface IRootFilesMenuProps {
   workspaceId: string;

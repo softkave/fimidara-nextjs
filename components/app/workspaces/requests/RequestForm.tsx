@@ -1,3 +1,4 @@
+import { FormAlert } from "@/components/utils/FormAlert";
 import { ICollaborationRequestInput } from "@/lib/definitions/collaborationRequest";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
@@ -16,7 +17,6 @@ import { useRouter } from "next/router";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
-import { FormAlert } from "../../../utils/FormAlert";
 
 const requestValidation = yup.object().shape({
   recipientEmail: signupValidationParts.email.required(messages.emailRequired),

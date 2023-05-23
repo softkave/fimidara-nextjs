@@ -15,7 +15,7 @@ import { getBaseError } from "@/lib/utils/errors";
 import { indexArray } from "@/lib/utils/indexArray";
 import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
-import { Modal, Space, Typography } from "antd";
+import { Space, Typography } from "antd";
 import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
@@ -34,10 +34,11 @@ const AssignedPermissionGroupList: React.FC<
   IAssignedPermissionGroupListProps
 > = (props) => {
   const { workspaceId, entityId, className, style } = props;
-  const { fetchState } = useEntityAssignedPermissionGroupsFetchHook({
-    entityId,
-    workspaceId,
-  });
+  const { fetchState, clearFetchState } =
+    useEntityAssignedPermissionGroupsFetchHook({
+      entityId,
+      workspaceId,
+    });
   const { error, isLoading, resourceList, other } =
     useFetchNonPaginatedResourceListFetchState(fetchState);
 
@@ -116,24 +117,28 @@ const AssignedPermissionGroupList: React.FC<
 
   if (other && isAssignFormVisible) {
     assignFormNode = (
-      <Modal open destroyOnClose>
-        <AssignPermissionGroupsForm
-          workspaceId={workspaceId}
-          entityId={entityId}
-          permissionGroups={other.immediateAssignedPermissionGroupsMeta.map(
-            (p) => p.permissionGroupId
-          )}
-        />
-      </Modal>
+      <AssignPermissionGroupsForm
+        workspaceId={workspaceId}
+        entityId={entityId}
+        permissionGroups={other.immediateAssignedPermissionGroupsMeta.map(
+          (p) => p.permissionGroupId
+        )}
+        onClose={toggleHook.toggle}
+        onCompleteSubmit={() => {
+          clearFetchState();
+        }}
+      />
     );
   }
 
   return (
     <React.Fragment>
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          Assigned Permission Groups
-        </Typography.Title>
+      <Space
+        direction="vertical"
+        style={{ width: "100%", ...style }}
+        className={className}
+        size="large"
+      >
         <ListHeader
           label="Assigned Permission Groups"
           buttons={
@@ -145,7 +150,7 @@ const AssignedPermissionGroupList: React.FC<
             </Space>
           }
         />
-        <PaginatedContent className={className} content={content} />
+        <PaginatedContent content={content} />
       </Space>
       {assignFormNode}
     </React.Fragment>

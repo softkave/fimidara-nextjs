@@ -1,3 +1,4 @@
+import { FormAlert } from "@/components/utils/FormAlert";
 import {
   INewPermissionGroupInput,
   permissionGroupPermissionsGroupConstants,
@@ -17,7 +18,6 @@ import { useRouter } from "next/router";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
-import { FormAlert } from "../../../utils/FormAlert";
 
 const permissionGroupValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),

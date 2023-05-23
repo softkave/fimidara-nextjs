@@ -10,10 +10,11 @@ import {
   usePermissionsAddMutationHook,
   usePermissionsDeleteMutationHook,
 } from "@/lib/hooks/mutationHooks";
+import { toArray } from "@/lib/utils/fns";
 import { getResourceTypeFromId } from "@/lib/utils/resource";
 import { RightOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Checkbox, Modal, Select, Space, Tabs } from "antd";
+import { Checkbox, Modal, Select, Space, Tabs, message } from "antd";
 import {
   AgentToken,
   AppActionType,
@@ -23,9 +24,16 @@ import {
   PermissionItemInput,
   WorkspaceAppResourceType,
 } from "fimidara";
-import { first, forEach, isBoolean, isEqual, isUndefined, merge } from "lodash";
+import {
+  first,
+  forEach,
+  isBoolean,
+  isEqual,
+  isObject,
+  isUndefined,
+  merge,
+} from "lodash";
 import React from "react";
-import { toArray } from "../../../../lib/utils/fns";
 import AgentTokenListContainer from "../agentTokens/AgentTokenListContainer";
 import CollaboratorListContainer from "../collaborators/CollaboratorListContainer";
 import PermissionGroupListContainer from "../permissionGroups/PermissionGroupListContainer";
@@ -33,7 +41,7 @@ import TargetGrantPermissionFormEntityList, {
   splitKey,
 } from "./TargetGrantPermissionFormEntityList";
 import {
-  PermissionsMapType,
+  ResolvedPermissionsMap,
   TargetIdPermissions,
   TargetTypePermissions,
 } from "./types";
@@ -62,11 +70,13 @@ const classes = {
     },
 
     "& .ant-tabs-nav-wrap": {
-      padding: "0px 16px",
+      marginBottom: "16px",
+      borderBottom: "1px solid #f0f0f0",
+      // padding: "0px 16px",
     },
   }),
   targetTypeRoot: css({ display: "flex" }),
-  targetTypeToggle: css({ flex: 1 }),
+  targetTypeToggle: css({ flex: 1, display: "flex", alignItems: "center" }),
 };
 
 const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
@@ -84,8 +94,8 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
     React.useState<TargetTypePermissions>({});
 
   const handleTargetIdPermissionsOnChange = (
-    updated: PermissionsMapType,
-    original: PermissionsMapType
+    updated: ResolvedPermissionsMap,
+    original: ResolvedPermissionsMap
   ) => {
     const newPermissions = merge({}, targetIdPermissions, {
       original,
@@ -94,8 +104,8 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
     setTargetIdPermissions(newPermissions);
   };
   const handleTargetTypePermissionsOnChange = (
-    updated: PermissionsMapType,
-    original: PermissionsMapType
+    updated: ResolvedPermissionsMap,
+    original: ResolvedPermissionsMap
   ) => {
     if (!targetType) return;
 
@@ -105,8 +115,8 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
     setTargetTypePermissions(newPermissions);
   };
   const handleOnChange = (
-    updated: PermissionsMapType,
-    original: PermissionsMapType
+    updated: ResolvedPermissionsMap,
+    original: ResolvedPermissionsMap
   ) => {
     if (targetType) {
       handleTargetTypePermissionsOnChange(updated, original);
@@ -133,6 +143,10 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
         deleteHook.runAsync({ body: { workspaceId, items: deleteItems } }),
     ]);
 
+    if (addItems.length || deleteItems.length) {
+      message.success(`Permissions updated.`);
+    }
+
     // Close first, to prevent a refetch of resolved permissions in this
     // session/modal Assuming once the user saves, we're already done with
     // permission updates.
@@ -150,6 +164,8 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
   const renderPermissionGroupList = (items: PermissionGroup[]) => {
     return (
       <TargetGrantPermissionFormEntityList
+        key={targetType}
+        workspaceId={workspaceId}
         items={items}
         targetId={targetId}
         targetType={targetType}
@@ -163,6 +179,8 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
   const renderAgentTokenList = (items: AgentToken[]) => {
     return (
       <TargetGrantPermissionFormEntityList
+        key={targetType}
+        workspaceId={workspaceId}
         items={items}
         targetId={targetId}
         targetType={targetType}
@@ -176,6 +194,8 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
   const renderCollaboratorList = (items: Collaborator[]) => {
     return (
       <TargetGrantPermissionFormEntityList
+        key={targetType}
+        workspaceId={workspaceId}
         items={items}
         targetId={targetId}
         targetType={targetType}
@@ -190,12 +210,7 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
   };
 
   const tabsNode = (
-    <Tabs
-      // centered
-      animated={false}
-      defaultActiveKey={activeKey}
-      moreIcon={<RightOutlined />}
-    >
+    <Tabs defaultActiveKey={activeKey} moreIcon={<RightOutlined />}>
       <Tabs.TabPane tab={"Permission Group"} key={TabKey.PermissionGroup}>
         <PermissionGroupListContainer
           workspaceId={workspaceId}
@@ -255,9 +270,11 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
           disabled={!targetType || loading}
           value={targetType}
           style={{ width: 120 }}
-          onChange={setTargetType}
+          onChange={(v, opt) => {
+            setTargetType(v);
+          }}
           options={childrenTypes.map((type) => ({
-            key: type,
+            value: type,
             label: workspaceResourceTypeLabel[type],
           }))}
         />
@@ -266,18 +283,26 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
   }
 
   const errorNode = error.length ? <FormAlertList error={error} /> : null;
+  const windowWidth = window ? window.document.body.clientWidth : undefined;
+  const maxWidth = 520;
+  const modalWidth = windowWidth
+    ? windowWidth < maxWidth
+      ? windowWidth
+      : maxWidth
+    : maxWidth;
 
   return (
     <Modal
       open
       destroyOnClose
       closable={false}
+      width={modalWidth}
       onOk={handleOnSave}
       onCancel={onClose}
       okButtonProps={{ disabled: loading }}
-      cancelButtonProps={{ disabled: loading }}
+      cancelButtonProps={{ danger: true, disabled: loading }}
       okText="Save Permissions"
-      cancelText="Cancel"
+      cancelText="Close"
       className={classes.root}
     >
       <Space direction="vertical" style={{ width: "100%" }}>
@@ -313,31 +338,15 @@ function getAddedAndDeletedTargetIdPermissions(
     )
       return;
 
-    if (originalPermitted) {
-      // Target ID permitted is always boolean
-      if (!isBoolean(originalPermitted.permitted)) return;
+    deleteItems.push({
+      action: [action as AppActionType],
+      entity: { entityId: [entityId] },
+      target: [{ targetId: [targetId] }],
 
-      // If permissions are opposite and original permission belongs to entity,
-      // delete original permission
-      if (
-        originalPermitted.accessEntityId === entityId &&
-        originalPermitted.permitted !== updatedPermitted.permitted
-      ) {
-        deleteItems.push({
-          action: [action as AppActionType],
-          entity: { entityId: [entityId] },
-          target: [{ targetId: [targetId] }],
-          grantAccess: [originalPermitted.permitted],
-          appliesTo: ["self"],
-        });
-
-        // Short-circuit and bail early if new permission is deny and there's an
-        // existing allow permission belonging to entity.
-        if (updatedPermitted.permitted === false) return;
-      }
-    }
-
-    // Add new permission
+      // Delete opposite of permission
+      grantAccess: [!updatedPermitted.permitted],
+      appliesTo: ["self"],
+    });
     addItems.push({
       action: [action as AppActionType],
       entity: { entityId: [entityId] },
@@ -362,9 +371,6 @@ function getAddedAndDeletedTargetTypePermissions(
     const [entityId, action] = splitKey(key);
     const originalPermitted = original[key];
 
-    // Target type permitted is always an object
-    if (isBoolean(updatedPermitted.permitted)) return;
-
     // No need to update if permission is same and access entity is same as
     // entity
     if (
@@ -375,77 +381,76 @@ function getAddedAndDeletedTargetTypePermissions(
       return;
     }
 
-    if (originalPermitted) {
-      if (isBoolean(originalPermitted.permitted)) return;
+    if (isObject(updatedPermitted.permitted)) {
+      if (isObject(updatedPermitted.permitted.self)) {
+        deleteItems.push({
+          action: [action as AppActionType],
+          entity: { entityId: [entityId] },
+          target: [{ targetId: [targetId], targetType: [targetType] }],
 
-      // If permissions are opposite and original permission belongs to entity,
-      // delete original permissions
-      if (originalPermitted.accessEntityId === entityId) {
-        if (
-          originalPermitted.permitted.self &&
-          originalPermitted.permitted.self !== updatedPermitted.permitted.self
-        ) {
-          deleteItems.push({
-            action: [action as AppActionType],
-            entity: { entityId: [entityId] },
-            target: [{ targetId: [targetId], targetType: [targetType] }],
-            grantAccess: [originalPermitted.permitted.self],
-            appliesTo: ["self"],
-          });
-        }
-        if (
-          originalPermitted.permitted.selfAndChildren &&
-          originalPermitted.permitted.selfAndChildren !==
-            updatedPermitted.permitted.selfAndChildren
-        ) {
-          deleteItems.push({
-            action: [action as AppActionType],
-            entity: { entityId: [entityId] },
-            target: [{ targetId: [targetId], targetType: [targetType] }],
-            grantAccess: [originalPermitted.permitted.selfAndChildren],
-            appliesTo: ["selfAndChildren"],
-          });
-        }
-        if (
-          originalPermitted.permitted.children &&
-          originalPermitted.permitted.children !==
-            updatedPermitted.permitted.children
-        ) {
-          deleteItems.push({
-            action: [action as AppActionType],
-            entity: { entityId: [entityId] },
-            target: [{ targetId: [targetId], targetType: [targetType] }],
-            grantAccess: [originalPermitted.permitted.children],
-            appliesTo: ["children"],
-          });
-        }
+          // Delete opposite of permission
+          grantAccess: [!updatedPermitted.permitted.self],
+          appliesTo: ["self"],
+        });
+        addItems.push({
+          action: [action as AppActionType],
+          entity: { entityId: [entityId] },
+          target: [{ targetId: [targetId], targetType: [targetType] }],
+          grantAccess: updatedPermitted.permitted.self,
+          appliesTo: ["self"],
+        });
       }
-    }
+      if (!isUndefined(updatedPermitted.permitted.selfAndChildren)) {
+        deleteItems.push({
+          action: [action as AppActionType],
+          entity: { entityId: [entityId] },
+          target: [{ targetId: [targetId], targetType: [targetType] }],
 
-    if (!isUndefined(updatedPermitted.permitted.self)) {
-      addItems.push({
+          // Delete opposite of permission
+          grantAccess: [!updatedPermitted.permitted.selfAndChildren],
+          appliesTo: ["selfAndChildren"],
+        });
+        addItems.push({
+          action: [action as AppActionType],
+          entity: { entityId: [entityId] },
+          target: [{ targetId: [targetId], targetType: [targetType] }],
+          grantAccess: updatedPermitted.permitted.selfAndChildren,
+          appliesTo: ["selfAndChildren"],
+        });
+      }
+      if (!isUndefined(updatedPermitted.permitted.children)) {
+        deleteItems.push({
+          action: [action as AppActionType],
+          entity: { entityId: [entityId] },
+          target: [{ targetId: [targetId], targetType: [targetType] }],
+
+          // Delete opposite of permission
+          grantAccess: [!updatedPermitted.permitted.children],
+          appliesTo: ["children"],
+        });
+        addItems.push({
+          action: [action as AppActionType],
+          entity: { entityId: [entityId] },
+          target: [{ targetId: [targetId], targetType: [targetType] }],
+          grantAccess: updatedPermitted.permitted.children,
+          appliesTo: ["children"],
+        });
+      }
+    } else {
+      deleteItems.push({
         action: [action as AppActionType],
         entity: { entityId: [entityId] },
         target: [{ targetId: [targetId], targetType: [targetType] }],
-        grantAccess: updatedPermitted.permitted.self,
-        appliesTo: ["self"],
+
+        // Delete opposite of permission
+        grantAccess: [!updatedPermitted.permitted],
+        appliesTo: ["children"],
       });
-    }
-    if (!isUndefined(updatedPermitted.permitted.selfAndChildren)) {
       addItems.push({
         action: [action as AppActionType],
         entity: { entityId: [entityId] },
         target: [{ targetId: [targetId], targetType: [targetType] }],
-        grantAccess: updatedPermitted.permitted.selfAndChildren,
-        appliesTo: ["selfAndChildren"],
-      });
-    }
-    if (!isUndefined(updatedPermitted.permitted.children)) {
-      addItems.push({
-        action: [action as AppActionType],
-        entity: { entityId: [entityId] },
-        target: [{ targetId: [targetId], targetType: [targetType] }],
-        grantAccess: updatedPermitted.permitted.children,
+        grantAccess: updatedPermitted.permitted,
         appliesTo: ["children"],
       });
     }

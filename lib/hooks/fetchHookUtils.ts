@@ -73,9 +73,10 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
         clear(params) {
           set((store) => {
             if (params) {
-              const states = store.states.filter(([entryParams]) =>
-                comparisonFn(params, entryParams)
-              );
+              const states = store.states.filter(([entryParams]) => {
+                const matched = comparisonFn(params, entryParams);
+                return !matched;
+              });
               return { states };
             } else {
               return { states: [] };
@@ -187,6 +188,10 @@ export function makeFetchResourceHook<
       []
     );
 
+    const clearFetchState = React.useCallback(async () => {
+      useStoreHook.getState().clear(params);
+    }, [params]);
+
     React.useEffect(() => {
       // Get latest fetch state seeing more than one component can call the
       // fetch hook with the same params at a time leading to 2 different load
@@ -209,7 +214,7 @@ export function makeFetchResourceHook<
       }
     }, [params, fetchFn]);
 
-    return { fetchState, fetchFn };
+    return { fetchState, fetchFn, clearFetchState };
   };
 
   return fetchHook;
