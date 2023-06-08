@@ -1,19 +1,9 @@
-import {
-  PermissionItemAppliesTo,
-  ResolvedEntityPermissionItem,
-} from "fimidara";
+import { ResolvedEntityPermissionItem } from "fimidara";
 
 export type TargetGrantPermissionFormEntityInfo = { name?: string };
-export type PermissionMapItemInfoPermitted = {
-  type: 1;
+export type PermissionMapItemInfo = {
   permitted: boolean;
 } & Pick<ResolvedEntityPermissionItem, "accessEntityId">;
-export type PermissionMapItemInfoAppliesToPermitted = {
-  type: 2;
-} & Partial<Record<PermissionItemAppliesTo, PermissionMapItemInfoPermitted>>;
-export type PermissionMapItemInfo =
-  | PermissionMapItemInfoPermitted
-  | PermissionMapItemInfoAppliesToPermitted;
 export type ResolvedPermissionsMap = Record<string, PermissionMapItemInfo>;
 export type TargetIdPermissions = {
   original: ResolvedPermissionsMap;

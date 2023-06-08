@@ -8,31 +8,38 @@ export interface IListHeaderProps {
   className?: string;
   label?: React.ReactNode;
   buttons?: React.ReactNode;
+  secondaryControls?: React.ReactNode;
 }
 
 const classes = {
-  root: css({ display: "flex", alignItems: "center" }),
+  header: css({ display: "flex", alignItems: "center" }),
   label: css({ flex: 1 }),
   title: css({ margin: "0px !important" }),
+  secondary: css({ marginTop: "12px" }),
 };
 
 const ListHeader: React.FC<IListHeaderProps> = (props) => {
-  const { buttons, className, label, style } = props;
+  const { buttons, className, label, style, secondaryControls } = props;
 
   if (!label && !buttons) return null;
 
   return (
-    <div className={cx(classes.root, className)} style={style}>
-      <div className={classes.label}>
-        {isString(label) ? (
-          <Typography.Title level={5} className={classes.title}>
-            {label}
-          </Typography.Title>
-        ) : (
-          label
-        )}
+    <div>
+      <div className={cx(classes.header, className)} style={style}>
+        <div className={classes.label}>
+          {isString(label) ? (
+            <Typography.Title level={5} className={classes.title}>
+              {label}
+            </Typography.Title>
+          ) : (
+            label
+          )}
+        </div>
+        {buttons && <div>{buttons}</div>}
       </div>
-      {buttons && <div>{buttons}</div>}
+      {secondaryControls && (
+        <div className={classes.secondary}>{secondaryControls}</div>
+      )}
     </div>
   );
 };

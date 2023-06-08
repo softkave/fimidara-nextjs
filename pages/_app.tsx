@@ -12,6 +12,7 @@ import { appClasses } from "../components/utils/theme";
 import WebHeader from "../components/web/WebHeader";
 import {
   appAccountPaths,
+  appInternalPaths,
   appRootPaths,
   appUserPaths,
 } from "../lib/definitions/system";
@@ -22,7 +23,8 @@ function FilesApp({ Component, pageProps }: AppProps) {
   const { isLoggedIn } = useUserLoggedIn();
   const router = useRouter();
 
-  const isOutsideApp = isOutsideAppPath(router.asPath);
+  const isInWebPath = isWebPath(router.asPath);
+  const isInNoHeaderPath = isNoHeaderPath(router.asPath);
   const shouldRouteToApp = isLoggedIn && isRouteToAppOnInitPath(router.asPath);
 
   React.useEffect(() => {
@@ -34,13 +36,10 @@ function FilesApp({ Component, pageProps }: AppProps) {
 
   if (!shouldRouteToApp && !isUndefined(isLoggedIn)) {
     node = <Component {...pageProps} />;
-    headerNode = isOutsideApp ? (
-      <WebHeader />
-    ) : isLoggedIn ? (
-      <AppHeader />
-    ) : (
-      <WebHeader />
-    );
+
+    if (isInWebPath) headerNode = <WebHeader />;
+    else if (isInNoHeaderPath) headerNode = null;
+    else if (isLoggedIn) headerNode = <AppHeader />;
 
     if (pageProps.markdoc) {
       node = <MarkdocDocsMain pageProps={pageProps}>{node}</MarkdocDocsMain>;
@@ -76,26 +75,30 @@ function FilesApp({ Component, pageProps }: AppProps) {
 export default FilesApp;
 
 // Render WebHeader for these routes starting with these paths
-const outsideAppRoutes = [
+const webRoutes = [
   appAccountPaths.signup,
   appAccountPaths.login,
   appAccountPaths.changePassword,
   appAccountPaths.forgotPassword,
   appAccountPaths.verifyEmail,
 ];
-
+const noHeaderRoutes = [appInternalPaths.waitlist];
 const routeToAppOnInitRoutes = [
   // appRootPaths.home,
   appAccountPaths.signup,
   appAccountPaths.login,
 ];
 
-function isOutsideAppPath(pathname: string) {
-  return outsideAppRoutes.some((r) => {
+function isWebPath(pathname: string) {
+  return webRoutes.some((r) => {
     return pathname.startsWith(r);
   });
 }
-
+function isNoHeaderPath(pathname: string) {
+  return noHeaderRoutes.some((r) => {
+    return pathname.startsWith(r);
+  });
+}
 function isRouteToAppOnInitPath(pathname: string) {
   return (
     pathname === appRootPaths.home ||

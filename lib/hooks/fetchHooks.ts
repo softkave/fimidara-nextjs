@@ -22,7 +22,11 @@ import {
   Workspace,
 } from "fimidara";
 import { isEqual, omit } from "lodash";
-import { getPublicFimidaraEndpointsUsingUserToken } from "../api/fimidaraEndpoints";
+import {
+  getPrivateFimidaraEndpointsUsingUserToken,
+  getPublicFimidaraEndpointsUsingUserToken,
+} from "../api/fimidaraEndpoints";
+import { GetWaitlistedUsersEndpointResult } from "../api/privateTypes";
 import { IPaginationQuery } from "../api/types";
 import { AnyFn, Omit1 } from "../utils/types";
 import {
@@ -201,6 +205,11 @@ async function resolveEntityPermissionInputFetchFn(
   const data = await endpoints.permissionItems.resolveEntityPermissions({
     body: params,
   });
+  return data.body;
+}
+async function getWaitlistedUsersInputFetchFn() {
+  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const data = await endpoints.internals.getWaitlistedUsers();
   return data.body;
 }
 
@@ -382,6 +391,16 @@ export const useResolveEntityPermissionsFetchStore = makeFetchResourceStoreHook<
 export const useResolveEntityPermissionsFetchHook = makeFetchResourceHook(
   resolveEntityPermissionInputFetchFn,
   useResolveEntityPermissionsFetchStore,
+  fetchHookDefaultSetFn
+);
+export const useWaitlistedUsersFetchStore = makeFetchResourceStoreHook<
+  GetWaitlistedUsersEndpointResult,
+  GetWaitlistedUsersEndpointResult | undefined,
+  undefined
+>("waitlistedUsers", (params, state) => state.data, isEqual);
+export const useWaitlistedUsersFetchHook = makeFetchResourceHook(
+  getWaitlistedUsersInputFetchFn,
+  useWaitlistedUsersFetchStore,
   fetchHookDefaultSetFn
 );
 

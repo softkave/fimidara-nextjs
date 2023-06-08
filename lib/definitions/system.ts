@@ -102,6 +102,7 @@ export const workspaceResourceTypeLabel: Record<
 
 export const appRootPaths = {
   home: "/",
+  internal: "/internal",
 };
 
 export const appWorkspacePaths = {
@@ -218,7 +219,9 @@ export const appAccountPaths = {
   forgotPassword: "/forgot-password",
   changePassword: "/change-password",
 };
-
+export const appInternalPaths = {
+  waitlist: `${appRootPaths.internal}/waitlist`,
+};
 export const appUserPaths = {
   settings: "/settings",
   requests: "/collaboration-requests",

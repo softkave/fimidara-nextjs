@@ -41,5 +41,14 @@ export function useSelectList(props: IUseSelectListProps = {}) {
       }
       return selectedList;
     },
+    hasSelected: () => {
+      for (const k in selected) {
+        if (selected[k]) return true;
+      }
+      return false;
+    },
+    clear: () => {
+      setSelected({});
+    },
   };
 }

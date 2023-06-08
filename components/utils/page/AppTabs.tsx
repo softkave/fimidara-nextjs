@@ -1,6 +1,6 @@
+import { AnyFn } from "@/lib/utils/types";
 import { css, cx } from "@emotion/css";
 import React from "react";
-import { AnyFn } from "../../../lib/utils/types";
 import { StyleableComponentProps } from "../styling/types";
 
 export type AppTabItem = {

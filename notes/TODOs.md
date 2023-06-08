@@ -2,14 +2,13 @@
 
 ## Now
 
-- [ ] entity assigned permission groups fetch hooks
-- [ ] assign new permission groups and remove permission groups
 - [ ] see entity permissions
+- [ ] make sure all data stores are cleared on user logout
 - [ ] hide tabs and buttons based on resolved permissions
   - [ ] how to target resolved permissions after add and delete
 - [ ] update entity permissions
+- [ ] form pages should be modals
 - [ ] animation on transitions, like loading, tabs, etc.
-- [ ] entity-side permissions modal
 - [ ] resource thumbnail at top of target and entity permissions form
 - [ ] grant/remove access to entity
 - [ ] a refresh system that doesn't show loading screen but notification or inline loading for resource and list
@@ -17,13 +16,12 @@
 - [ ] strip data passed to api not part of api def using yup generated?
 - [ ] check if user is logged-in and route if in outside routes
 - [ ] integrate forgot password into settings when changing password with forgot password instead of routing to outside
-- [ ] handle overflow in AppTabs
+- [ ] handle overflow in AppTabs/use invisible or thin horizontal scroll
 - [ ] issue with verify email and existing saved token, there'll be same issue with change password with token
 - [ ] include last updated by and at in resource pages
 - [ ] use shaded page empty for all errors and loading
-- [ ] fetch list and count in parallel
 - [ ] resource list store last op, and deleted ids, for faster cascade for subscribers removing from fetch stores
-- [ ] surface description of or combination types
+- [ ] surface description of or-combination types
 - [ ] icons for all menus
 - [ ] fire and forget with updates when uploading file
 - [ ] overlay collaborators without permissions

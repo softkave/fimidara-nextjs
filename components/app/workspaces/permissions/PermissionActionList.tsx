@@ -8,19 +8,12 @@ import { PermissionMapItemInfo } from "./types";
 export interface PermissionActionListProps {
   disabled?: boolean;
   targetType?: WorkspaceAppResourceType;
-  parentTargetType?: WorkspaceAppResourceType;
   onChange: (action: AppActionType, permitted: PermissionMapItemInfo) => void;
   getActionPermission(action: AppActionType): PermissionMapItemInfo;
 }
 
 const PermissionActionList: React.FC<PermissionActionListProps> = (props) => {
-  const {
-    disabled,
-    targetType,
-    parentTargetType,
-    onChange,
-    getActionPermission,
-  } = props;
+  const { disabled, targetType, onChange, getActionPermission } = props;
 
   const actions = getWorkspaceActionList(targetType);
   return (
@@ -32,8 +25,6 @@ const PermissionActionList: React.FC<PermissionActionListProps> = (props) => {
         return (
           <PermissionAction
             label={actionLabel[action]}
-            targetType={targetType}
-            parentTargetType={parentTargetType}
             permitted={permitted}
             disabled={disabled}
             onChange={(inputPermitted) => onChange(action, inputPermitted)}

@@ -150,7 +150,6 @@ export const useUserCollaborationRequestResponseMutationHook =
     getPublicFimidaraEndpointsUsingUserToken,
     (endpoints) => endpoints.collaborationRequests.respondToRequest
   );
-
 export const useWorkspaceAgentTokenAddMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
   (endpoints) => endpoints.agentTokens.addToken,
@@ -440,6 +439,10 @@ export const usePermissionsDeleteMutationHook = makeEndpointMutationHook(
     // deleteHooks are usually called together, also, permissions form close on
     // success, so we won't need to handle them here.
   }
+);
+export const useWaitlistedUsersUpgradeMutationHook = makeEndpointMutationHook(
+  getPrivateFimidaraEndpointsUsingUserToken,
+  (endpoints) => endpoints.internals.upgradeWaitlistedUsers
 );
 
 export function clearOutResolvedPermissionFetchStore() {

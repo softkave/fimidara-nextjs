@@ -2,6 +2,7 @@ import { css, cx } from "@emotion/css";
 import { useRouter } from "next/router";
 import { FiArrowLeft } from "react-icons/fi";
 import { appWorkspacePaths } from "../../lib/definitions/system";
+import { RESOURCE_TYPE_SHORT_NAMES } from "../../lib/utils/resource";
 import IconButton from "../utils/buttons/IconButton";
 import AppUserHeader from "./AppUserHeader";
 import AppWorkspaceHeader from "./AppWorkspaceHeader";
@@ -70,5 +71,8 @@ export default function AppHeader(props: IAppHeaderProps) {
 
 function getWorkspaceId(path: string) {
   const [empty01, p01, workspaceId] = path.split("/");
-  return workspaceId;
+  const isWorkspace = workspaceId?.includes(
+    RESOURCE_TYPE_SHORT_NAMES["workspace"]
+  );
+  if (isWorkspace) return workspaceId;
 }

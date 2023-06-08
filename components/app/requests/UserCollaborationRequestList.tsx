@@ -11,6 +11,8 @@ import ListHeader from "../../utils/list/ListHeader";
 import PageError from "../../utils/page/PageError";
 import PageLoading from "../../utils/page/PageLoading";
 import PaginatedContent from "../../utils/page/PaginatedContent";
+import ThumbnailContent from "../../utils/page/ThumbnailContent";
+import { appClasses } from "../../utils/theme";
 
 export default function UserCollaborationRequestList() {
   const pagination = usePagination();
@@ -39,22 +41,29 @@ export default function UserCollaborationRequestList() {
         bordered
         items={resourceList}
         renderItem={(item) => (
-          <div>
-            <Link href={`${appUserPaths.request(item.resourceId)}`}>
-              <Typography.Text>
-                Request from{" "}
-                <Typography.Text strong>{item.workspaceName}</Typography.Text>
-              </Typography.Text>
-            </Link>
-            <Typography.Text>
-              Send {formatDateTime(item.createdAt)}
-            </Typography.Text>
-            {item.expiresAt && (
-              <Typography.Text>
-                Expires on {formatDateTime(item.expiresAt)}
-              </Typography.Text>
-            )}
-          </div>
+          <ThumbnailContent
+            key={item.resourceId}
+            main={
+              <div className={appClasses.thumbnailMain}>
+                <Link href={`${appUserPaths.request(item.resourceId)}`}>
+                  <Typography.Text style={{ color: "inherit" }}>
+                    Request from{" "}
+                    <Typography.Text strong style={{ color: "inherit" }}>
+                      {item.workspaceName}
+                    </Typography.Text>
+                  </Typography.Text>
+                </Link>
+                <Typography.Text type="secondary">
+                  Sent {formatDateTime(item.createdAt)}
+                </Typography.Text>
+                {item.expiresAt && (
+                  <Typography.Text type="secondary">
+                    Expires on {formatDateTime(item.expiresAt)}
+                  </Typography.Text>
+                )}
+              </div>
+            }
+          />
         )}
         emptyMessage="You do not have any collaboration requests."
       />

@@ -98,7 +98,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   const nameNode = (
     <Form.Item
       required
-      label="PermissionGroup Name"
+      label="Permission Group Name"
       help={
         formik.touched?.name &&
         formik.errors?.name && (

@@ -15,10 +15,12 @@ import { getBaseError } from "@/lib/utils/errors";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Space, Typography } from "antd";
 import { User, Workspace } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
 import ThumbnailContent from "../../utils/page/ThumbnailContent";
 import WorkspaceAvatar from "./WorkspaceAvatar";
+import WorkspaceMenu from "./WorkspaceMenu";
 
 export interface IWorkspaceListProps {
   user: User;
@@ -71,6 +73,13 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
                 )}
               </div>
             }
+            menu={
+              <WorkspaceMenu
+                key="menu"
+                workspace={item}
+                onCompleteDelete={noop}
+              />
+            }
           />
         )}
         emptyMessage={
@@ -78,7 +87,7 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
             message={
               user.isOnWaitlist
                 ? "You are currently on the waitlist so you can't create workspaces, " +
-                  "but you can be added to an existing workspace." +
+                  "but you can be added to an existing workspace. " +
                   "Once you've been upgraded from the waitlist, we'll send an email to you confirming the upgrade."
                 : "Create a workspace to get started."
             }

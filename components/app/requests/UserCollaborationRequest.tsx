@@ -26,12 +26,15 @@ const classes = {
 
 function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
   const { requestId } = props;
-  const { fetchState } = useUserCollaborationRequestFetchHook({ requestId });
+  const { fetchState, clearFetchState } = useUserCollaborationRequestFetchHook({
+    requestId,
+  });
   const { isLoading, error, resource } =
     useFetchSingleResourceFetchState(fetchState);
   const respondHook = useUserCollaborationRequestResponseMutationHook({
     onSuccess(data, params) {
       message.success("Response submitted.");
+      clearFetchState();
     },
     onError(e, params) {
       errorMessageNotificatition(e);
@@ -113,14 +116,20 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
                 Sent {createdDate}
               </Typography.Text>
             </Space>
-            <Space direction="vertical" size={2}>
-              <Typography.Paragraph>{resource.message}</Typography.Paragraph>
-              {expirationDate && (
-                <Typography.Text type="secondary">
-                  Expires {expirationDate}
-                </Typography.Text>
-              )}
-            </Space>
+            {resource.message && expirationDate ? (
+              <Space direction="vertical" size={2}>
+                {resource.message && (
+                  <Typography.Paragraph>
+                    {resource.message}
+                  </Typography.Paragraph>
+                )}
+                {expirationDate && (
+                  <Typography.Text type="secondary">
+                    Expires {expirationDate}
+                  </Typography.Text>
+                )}
+              </Space>
+            ) : null}
             {actions}
           </Space>
         </div>

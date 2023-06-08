@@ -9,12 +9,12 @@ import {
   useWorkspacePermissionGroupUnassignMutationHook,
 } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { indexArray } from "@/lib/utils/indexArray";
 import { css, cx } from "@emotion/css";
 import { Form, Modal, message } from "antd";
 import { isString } from "lodash";
 import React from "react";
 import * as yup from "yup";
-import { indexArray } from "../../../../lib/utils/indexArray";
 import PermissionGroupListContainer from "./PermissionGroupListContainer";
 
 type AssignPermissionGroupsFormValues = {

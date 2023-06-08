@@ -1,19 +1,21 @@
+import IconButton from "@/components/utils/buttons/IconButton";
+import { errorMessageNotificatition } from "@/components/utils/errorHandling";
+import { appClasses } from "@/components/utils/theme";
+import { MenuInfo } from "@/components/utils/types";
+import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useWorkspaceDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, message, Modal } from "antd";
 import { Workspace } from "fimidara";
+import { compact } from "lodash";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useWorkspaceDeleteMutationHook } from "../../../lib/hooks/mutationHooks";
 import useTargetGrantPermissionModal from "../../hooks/useTargetGrantPermissionModal";
-import IconButton from "../../utils/buttons/IconButton";
-import { errorMessageNotificatition } from "../../utils/errorHandling";
-import { appClasses } from "../../utils/theme";
-import { MenuInfo } from "../../utils/types";
-import { insertAntdMenuDivider } from "../../utils/utils";
 
 export interface WorkspaceMenuProps {
   workspace: Workspace;
+  includeDeleteMenuOption?: boolean;
   onCompleteDelete: () => any;
 }
 
@@ -24,7 +26,7 @@ enum MenuKeys {
 }
 
 const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
-  const { workspace, onCompleteDelete } = props;
+  const { workspace, includeDeleteMenuOption, onCompleteDelete } = props;
   const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: workspace.workspaceId,
     targetId: workspace.resourceId,
@@ -64,27 +66,31 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
     [deleteHook, permissionsHook.toggle]
   );
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
-    {
-      // TODO: only show if user has permission
-      key: MenuKeys.UpdateWorkspace,
-      label: (
-        <Link
-          href={appWorkspacePaths.updateWorkspaceForm(workspace.workspaceId)}
-        >
-          Update Workspace
-        </Link>
-      ),
-    },
-    {
-      key: MenuKeys.GrantPermission,
-      label: "Permissions",
-    },
-    {
-      key: MenuKeys.DeleteWorkspace,
-      label: "Delete Workspace",
-    },
-  ]);
+  const items: MenuProps["items"] = insertAntdMenuDivider(
+    compact([
+      {
+        // TODO: only show if user has permission
+        key: MenuKeys.UpdateWorkspace,
+        label: (
+          <Link
+            href={appWorkspacePaths.updateWorkspaceForm(workspace.workspaceId)}
+          >
+            Update Workspace
+          </Link>
+        ),
+      },
+      {
+        key: MenuKeys.GrantPermission,
+        label: "Permissions",
+      },
+      includeDeleteMenuOption
+        ? {
+            key: MenuKeys.DeleteWorkspace,
+            label: "Delete Workspace",
+          }
+        : null,
+    ])
+  );
 
   return (
     <React.Fragment>
@@ -99,7 +105,8 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
         placement="bottomRight"
       >
         <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
-      </Dropdown>
+      </Dropdown>{" "}
+      {permissionsHook.node}
     </React.Fragment>
   );
 };
