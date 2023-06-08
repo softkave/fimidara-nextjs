@@ -1,28 +1,23 @@
-import { css, cx } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Button, Form, Input, message, Typography } from "antd";
-import { useRouter } from "next/router";
-import React from "react";
-import * as yup from "yup";
-import PermissionGroupAPI from "../../../../lib/api/endpoints/permissionGroup";
-import { checkEndpointResult } from "../../../../lib/api/utils";
+import { FormAlert } from "@/components/utils/FormAlert";
 import {
   INewPermissionGroupInput,
-  IPermissionGroup,
   permissionGroupPermissionsGroupConstants,
-} from "../../../../lib/definitions/permissionGroups";
+} from "@/lib/definitions/permissionGroups";
+import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
-  appWorkspacePaths,
-  systemConstants,
-} from "../../../../lib/definitions/system";
-import useFormHelpers from "../../../../lib/hooks/useFormHelpers";
-import usePermissionGroup from "../../../../lib/hooks/workspaces/usePermissionGroup";
-import { messages } from "../../../../lib/messages/messages";
-import { systemValidation } from "../../../../lib/validation/system";
-import { formClasses } from "../../../form/classNames";
+  useWorkspacePermissionGroupAddMutationHook,
+  useWorkspacePermissionGroupUpdateMutationHook,
+} from "@/lib/hooks/mutationHooks";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { messages } from "@/lib/messages/messages";
+import { systemValidation } from "@/lib/validation/system";
+import { css, cx } from "@emotion/css";
+import { Button, Form, Input, Typography, message } from "antd";
+import { PermissionGroup } from "fimidara";
+import { useRouter } from "next/router";
+import * as yup from "yup";
 import FormError from "../../../form/FormError";
-import { FormAlert } from "../../../utils/FormAlert";
-import SelectPermissionGroupInput from "./SelectPermissionGroupInput";
+import { formClasses } from "../../../form/classNames";
 
 const permissionGroupValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -35,24 +30,19 @@ const permissionGroupValidation = yup.object().shape({
 const initialValues: INewPermissionGroupInput = {
   name: "",
   description: "",
-  permissionGroups: [],
 };
 
 function getPermissionGroupFormInputFromPermissionGroup(
-  item: IPermissionGroup
+  item: PermissionGroup
 ): INewPermissionGroupInput {
   return {
     name: item.name,
     description: item.description,
-    permissionGroups: item.permissionGroups.map((item) => ({
-      permissionGroupId: item.permissionGroupId,
-      order: item.order,
-    })),
   };
 }
 
 export interface IPermissionGroupFormProps {
-  permissionGroup?: IPermissionGroup;
+  permissionGroup?: PermissionGroup;
   className?: string;
   workspaceId: string;
 }
@@ -60,55 +50,55 @@ export interface IPermissionGroupFormProps {
 export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   const { permissionGroup, className, workspaceId } = props;
   const router = useRouter();
-  const { mutate } = usePermissionGroup(permissionGroup?.resourceId);
-  const onSubmit = React.useCallback(
-    async (data: INewPermissionGroupInput) => {
-      let permissionGroupId: string | null = null;
-
-      if (permissionGroup) {
-        const result = await PermissionGroupAPI.updatePermissionGroup({
-          permissionGroup: data,
-          permissionGroupId: permissionGroup.resourceId,
-        });
-
-        checkEndpointResult(result);
-        permissionGroupId = result.permissionGroup.resourceId;
-        mutate(result);
-        message.success("Permission group updated");
-      } else {
-        const result = await PermissionGroupAPI.addPermissionGroup({
-          workspaceId: workspaceId,
-          permissionGroup: data,
-        });
-
-        checkEndpointResult(result);
-        permissionGroupId = result.permissionGroup.resourceId;
-        message.success("Permission group created");
-      }
-
+  const updateHook = useWorkspacePermissionGroupUpdateMutationHook({
+    onSuccess(data, params) {
+      message.success("Permission group updated.");
       router.push(
-        appWorkspacePaths.permissionGroup(workspaceId, permissionGroupId)
+        appWorkspacePaths.permissionGroup(
+          data.body.permissionGroup.workspaceId,
+          data.body.permissionGroup.resourceId
+        )
       );
     },
-    [permissionGroup, workspaceId, mutate, router]
-  );
+  });
+  const createHook = useWorkspacePermissionGroupAddMutationHook({
+    onSuccess(data, params) {
+      message.success("Permission group created.");
+      router.push(
+        appWorkspacePaths.permissionGroup(
+          data.body.permissionGroup.workspaceId,
+          data.body.permissionGroup.resourceId
+        )
+      );
+    },
+  });
+  const mergedHook = permissionGroup ? updateHook : createHook;
 
-  const submitResult = useRequest(onSubmit, { manual: true });
   const { formik } = useFormHelpers({
-    errors: submitResult.error,
+    errors: mergedHook.error,
     formikProps: {
       validationSchema: permissionGroupValidation,
       initialValues: permissionGroup
         ? getPermissionGroupFormInputFromPermissionGroup(permissionGroup)
         : initialValues,
-      onSubmit: submitResult.run,
+      onSubmit: (body) =>
+        permissionGroup
+          ? updateHook.runAsync({
+              body: {
+                permissionGroupId: permissionGroup.resourceId,
+                data: body,
+              },
+            })
+          : createHook.runAsync({
+              body: { workspaceId, permissionGroup: body },
+            }),
     },
   });
 
   const nameNode = (
     <Form.Item
       required
-      label="PermissionGroup Name"
+      label="Permission Group Name"
       help={
         formik.touched?.name &&
         formik.errors?.name && (
@@ -124,7 +114,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter permission group name"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={systemConstants.maxNameLength}
         autoComplete="off"
       />
@@ -152,33 +142,9 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter permission group description"
-        disabled={submitResult.loading}
+        disabled={mergedHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
         autoSize={{ minRows: 3 }}
-      />
-    </Form.Item>
-  );
-
-  const assignedPermissionGroupsNode = (
-    <Form.Item
-      label="Assigned Permission Groups"
-      help={
-        formik.touched?.permissionGroups &&
-        formik.errors?.permissionGroups && (
-          <FormError
-            visible={formik.touched.permissionGroups}
-            error={formik.errors.permissionGroups}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <SelectPermissionGroupInput
-        workspaceId={workspaceId}
-        value={formik.values.permissionGroups || []}
-        disabled={submitResult.loading}
-        onChange={(items) => formik.setFieldValue("permissionGroups", items)}
       />
     </Form.Item>
   );
@@ -188,22 +154,21 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
       <div className={formClasses.formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>PermissionGroup Form</Typography.Title>
+            <Typography.Title level={4}>Permission Group Form</Typography.Title>
           </Form.Item>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={mergedHook.error} />
           {nameNode}
           {descriptionNode}
-          {assignedPermissionGroupsNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={mergedHook.loading}
             >
               {permissionGroup
-                ? "Update PermissionGroup"
-                : "Create PermissionGroup"}
+                ? "Update Permission Group"
+                : "Create Permission Group"}
             </Button>
           </Form.Item>
         </form>

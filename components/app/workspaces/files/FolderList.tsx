@@ -1,50 +1,38 @@
-import { FolderOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { List } from "antd";
+import ItemList from "@/components/utils/list/ItemList";
+import AppIcon from "@/components/utils/page/AppIcon";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { Typography } from "antd";
+import { Folder } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { IFolder } from "../../../../lib/definitions/folder";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import { FiFolder } from "react-icons/fi";
 import FolderMenu from "./FolderMenu";
 
-export interface IFolderListProps {
-  folders: IFolder[];
+export interface FolderListProps {
+  folders: Folder[];
   workspaceRootname: string;
   renderFolderItem?: (
-    item: IFolder,
+    item: Folder,
     workspaceRootname: string
   ) => React.ReactNode;
 }
 
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
-
-const FolderList: React.FC<IFolderListProps> = (props) => {
+const FolderList: React.FC<FolderListProps> = (props) => {
   const { folders, workspaceRootname, renderFolderItem } = props;
   const internalRenderItem = React.useCallback(
-    (item: IFolder) => {
+    (item: Folder) => {
       if (renderFolderItem) {
         return renderFolderItem(item, workspaceRootname);
       }
 
       return (
-        <List.Item
+        <ThumbnailContent
           key={item.resourceId}
-          actions={[
-            <FolderMenu
-              key="menu"
-              folder={item}
-              workspaceRootname={workspaceRootname}
-            />,
-          ]}
-        >
-          <List.Item.Meta
-            title={
+          main={
+            <div className={appClasses.thumbnailMain}>
               <Link
                 href={appWorkspacePaths.folder(
                   item.workspaceId,
@@ -53,22 +41,41 @@ const FolderList: React.FC<IFolderListProps> = (props) => {
               >
                 {item.name}
               </Link>
-            }
-            description={item.description}
-            avatar={<FolderOutlined />}
-          />
-        </List.Item>
+              {item.description && (
+                <Typography.Text type="secondary">
+                  {item.description}
+                </Typography.Text>
+              )}
+            </div>
+          }
+          menu={
+            <FolderMenu
+              key="menu"
+              folder={item}
+              workspaceRootname={workspaceRootname}
+              onScheduleDeleteSuccess={noop}
+            />
+          }
+          prefixNode={
+            <AppIcon
+              icon={<FiFolder />}
+              className={appClasses.alignStart}
+              style={{ marginTop: "1px" }}
+            />
+          }
+        />
       );
     },
     [renderFolderItem, workspaceRootname]
   );
 
   return (
-    <List
-      className={classes.list}
-      itemLayout="horizontal"
-      dataSource={folders}
+    <ItemList
+      bordered
+      items={folders}
       renderItem={internalRenderItem}
+      getId={(item: Folder) => item.resourceId}
+      emptyMessage="No folders yet."
     />
   );
 };

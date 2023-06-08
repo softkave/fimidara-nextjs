@@ -1,26 +1,18 @@
+import IconButton from "@/components/utils/buttons/IconButton";
+import ListHeader from "@/components/utils/list/ListHeader";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { PlusOutlined } from "@ant-design/icons";
 import { Space } from "antd";
-import { isUndefined } from "lodash";
+import { PermissionGroup } from "fimidara";
+import Link from "next/link";
 import React from "react";
-import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
-import { PermissionItemAppliesTo } from "../../../../lib/definitions/permissionItem";
-import {
-  AppResourceType,
-  appWorkspacePaths,
-} from "../../../../lib/definitions/system";
-import useWorkspacePermissionGroupList from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import { getBaseError } from "../../../../lib/utils/errors";
-import ListHeader from "../../../utils/ListHeader";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import PageNothingFound from "../../../utils/PageNothingFound";
-import { appClasses } from "../../../utils/theme";
-import GrantPermissionMenu from "../permissionItems/GrantPermissionMenu";
-import PermissionGroupList from "./PermissionGroupList";
+import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
+import PermissionGroupListContainer from "./PermissionGroupListContainer";
 
 export interface IWorkspacePermissionGroupsProps {
   workspaceId: string;
-  renderItem?: (item: IPermissionGroup) => React.ReactNode;
-  renderList?: (items: IPermissionGroup[]) => React.ReactNode;
+  renderItem?: (item: PermissionGroup) => React.ReactNode;
+  renderList?: (items: PermissionGroup[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
   menu?: React.ReactNode;
 }
@@ -28,66 +20,29 @@ export interface IWorkspacePermissionGroupsProps {
 const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
   props
 ) => {
-  const { workspaceId, menu, renderItem, renderList, renderRoot } = props;
-  const { data, error, isLoading } =
-    useWorkspacePermissionGroupList(workspaceId);
-  let content: React.ReactNode = null;
-
-  if (error) {
-    content = (
-      <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching permission groups"}
-      />
-    );
-  } else if (isLoading || !data) {
-    content = <PageLoading messageText="Loading permission groups..." />;
-  } else if (data.permissionGroups.length === 0) {
-    content = (
-      <PageNothingFound
-        className={appClasses.maxWidth420}
-        messageText="No permission groups yet. Create one using the plus button above."
-      />
-    );
-  } else {
-    content = renderList ? (
-      renderList(data.permissionGroups)
-    ) : (
-      <PermissionGroupList
-        workspaceId={workspaceId}
-        permissionGroups={data.permissionGroups}
-        renderItem={renderItem}
-      />
-    );
-  }
-
-  if (renderRoot) {
-    return renderRoot(content);
-  }
+  const { workspaceId, menu } = props;
 
   return (
-    <div className={appClasses.main}>
+    <div>
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <ListHeader
-          title="Permission Groups"
-          formLinkPath={appWorkspacePaths.createPermissionGroupForm(
-            workspaceId
-          )}
-          actions={
-            !isUndefined(menu) ? (
-              menu
-            ) : (
-              <GrantPermissionMenu
+          label="Permission Groups"
+          buttons={
+            <Space>
+              <Link
+                href={appWorkspacePaths.createPermissionGroupForm(workspaceId)}
+              >
+                <IconButton icon={<PlusOutlined />} />
+              </Link>
+              <WorkspaceResourceListMenu
                 workspaceId={workspaceId}
-                itemResourceType={AppResourceType.PermissionGroup}
-                permissionOwnerId={workspaceId}
-                permissionOwnerType={AppResourceType.Workspace}
-                appliesTo={PermissionItemAppliesTo.Children}
+                targetType={["permissionGroup", "permissionItem"]}
               />
-            )
+              {menu}
+            </Space>
           }
         />
-        {content}
+        <PermissionGroupListContainer {...props} />
       </Space>
     </div>
   );

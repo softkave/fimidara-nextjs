@@ -1,22 +1,25 @@
 import { DeleteFilled, LoadingOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
+import { useRequest } from "ahooks";
 import { Button, Image, ImageProps } from "antd";
+import assert from "assert";
+import { getReadFileURL } from "fimidara";
+import { first } from "lodash";
 import React from "react";
-import { useSelector } from "react-redux";
-import KeyValueSelectors from "../../lib/store/key-value/selectors";
-import { IAppState } from "../../lib/store/types";
+import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
+import { systemConstants } from "../../lib/definitions/system";
+import { useKvStore } from "../../lib/hooks/storeHooks";
 import { errorMessageNotificatition } from "./errorHandling";
-import { appDataImages } from "./theme";
+import { appDataImages, appDimensions } from "./theme";
 
 export interface IImageWithFallbackProps {
   allowDelete?: boolean;
   width?: number;
   height?: number;
   fallbackNode?: React.ReactNode;
-  fallbackSrc?: string;
   preview?: ImageProps["preview"];
   refreshKey?: string;
-  src: string;
+  filepath: string;
   alt: string;
   onClick?: (evt: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onDelete?: () => void;
@@ -55,6 +58,12 @@ const classes = {
       display: "inline-block !important",
     },
   }),
+  image: css({
+    border: "1px solid #f0f0f0",
+  }),
+  imagePlaceholder: css({
+    backgroundColor: "#f0f0f0",
+  }),
 };
 
 const skipEventForTag = "skip-click-event-on-delete-btn";
@@ -64,10 +73,9 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
     preview,
     width,
     height,
-    src,
+    filepath,
     alt,
     fallbackNode,
-    fallbackSrc,
     allowDelete,
     refreshKey,
     onClick,
@@ -76,8 +84,8 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
 
   const [imageLoadFailed, setImageLoadFailed] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const imageKey = useSelector<IAppState, string | undefined>(
-    (state) => refreshKey && KeyValueSelectors.getKey(state, refreshKey)
+  const imageKey = useKvStore(
+    (state) => refreshKey && state.get<string>(refreshKey)
   );
 
   const onError = (evt: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -91,7 +99,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
 
       try {
         await onDelete();
-      } catch (error: any) {
+      } catch (error: unknown) {
         errorMessageNotificatition(error, "Error deleting image");
       }
 
@@ -101,20 +109,60 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
     }
   };
 
-  const imageNode = (
+  const getPresignedPath = async () => {
+    const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+    const getResult = await endpoints.files.getFilePresignedPaths({
+      body: { files: [{ filepath }] },
+    });
+
+    if (getResult.body.paths.length) {
+      const p = first(getResult.body.paths);
+      assert(p);
+      return p.path;
+    }
+
+    const issueResult = await endpoints.files.issueFilePresignedPath({
+      body: { filepath },
+    });
+    return issueResult.body.path;
+  };
+
+  const pathHook = useRequest(getPresignedPath);
+
+  let imageNode: React.ReactNode = (
     <Image
-      key={imageKey}
-      preview={preview}
       width={width}
       height={height}
-      src={src}
       alt={alt}
-      onError={onError}
-      fallback={fallbackSrc || appDataImages.brokenImage}
       onClick={onClick}
       style={{ width }}
+      className={classes.image}
+      placeholder={<div className={classes.imagePlaceholder} />}
     />
   );
+
+  if (pathHook.data) {
+    imageNode = (
+      <Image
+        key={imageKey}
+        preview={preview}
+        width={width}
+        height={height}
+        src={getReadFileURL({
+          width: width ?? appDimensions.upload.width,
+          height: height ?? appDimensions.upload.height,
+          serverURL: systemConstants.serverAddr,
+          filepath: "/" + pathHook.data,
+        })}
+        alt={alt}
+        onError={onError}
+        fallback={appDataImages.brokenImage}
+        onClick={onClick}
+        style={{ width }}
+        className={classes.image}
+      />
+    );
+  }
 
   const imageWrapperNode = (
     <div className={classes.root} style={{ width, height }}>

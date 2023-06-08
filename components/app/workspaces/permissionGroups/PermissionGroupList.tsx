@@ -1,70 +1,83 @@
-import { List } from "antd";
+import ItemList from "@/components/utils/list/ItemList";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { getResourceId } from "@/lib/utils/resource";
+import { Typography } from "antd";
+import { PermissionGroup } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import { useSWRConfig } from "swr";
-import { IPermissionGroup } from "../../../../lib/definitions/permissionGroups";
-import { getUseWorkspacePermissionGroupListHookKey } from "../../../../lib/hooks/workspaces/useWorkspacePermissionGroupList";
-import { css } from "@emotion/css";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
-export interface IPermissionGroupListProps {
+export interface PermissionGroupListProps {
   workspaceId: string;
-  permissionGroups: IPermissionGroup[];
-  renderItem?: (item: IPermissionGroup) => React.ReactNode;
+  permissionGroups: PermissionGroup[];
+  selectable?: boolean;
+  withCheckbox?: boolean;
+  selectedMap?: Record<string, boolean>;
+  onSelect?: (item: PermissionGroup) => void;
+  renderItem?: (item: PermissionGroup) => React.ReactNode;
 }
 
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
+const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
+  const {
+    workspaceId,
+    permissionGroups,
+    selectedMap,
+    selectable,
+    withCheckbox,
+    onSelect,
+    renderItem,
+  } = props;
 
-const PermissionGroupList: React.FC<IPermissionGroupListProps> = (props) => {
-  const { workspaceId, permissionGroups, renderItem } = props;
-  const { mutate } = useSWRConfig();
-  const onCompleteDeletePermissionGroup = React.useCallback(async () => {
-    mutate(getUseWorkspacePermissionGroupListHookKey(workspaceId));
-  }, [workspaceId, mutate]);
+  const internalRenderItem = (item: PermissionGroup) => {
+    const nameNode = onSelect ? (
+      item.name
+    ) : (
+      <Link
+        href={appWorkspacePaths.permissionGroup(workspaceId, item.resourceId)}
+      >
+        {item.name}
+      </Link>
+    );
 
-  const internalRenderItem = React.useCallback(
-    (item: IPermissionGroup) => (
-      <List.Item
+    return (
+      <ThumbnailContent
         key={item.resourceId}
-        actions={[
+        selectable={selectable}
+        withCheckbox={withCheckbox}
+        selected={selectedMap && selectedMap[item.resourceId]}
+        onSelect={onSelect && (() => onSelect(item))}
+        main={
+          <div className={appClasses.thumbnailMain}>
+            {nameNode}
+            {item.description && (
+              <Typography.Text type="secondary">
+                {item.description}
+              </Typography.Text>
+            )}
+          </div>
+        }
+        menu={
           <PermissionGroupMenu
             key="menu"
             permissionGroup={item}
-            onCompleteDelete={onCompleteDeletePermissionGroup}
-          />,
-        ]}
-      >
-        <List.Item.Meta
-          title={
-            <Link
-              href={appWorkspacePaths.permissionGroup(
-                workspaceId,
-                item.resourceId
-              )}
-            >
-              {item.name}
-            </Link>
-          }
-          description={item.description}
-        />
-      </List.Item>
-    ),
-    [onCompleteDeletePermissionGroup, workspaceId]
-  );
+            onCompleteDelete={noop}
+            onCompleteUnassignPermissionGroup={noop}
+          />
+        }
+      />
+    );
+  };
 
   return (
-    <List
-      className={classes.list}
-      itemLayout="horizontal"
-      dataSource={permissionGroups}
+    <ItemList
+      bordered
+      items={permissionGroups}
       renderItem={renderItem || internalRenderItem}
+      getId={getResourceId}
+      emptyMessage="No permission groups yet. Click the plus button to add one."
     />
   );
 };

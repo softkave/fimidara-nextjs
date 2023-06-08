@@ -18,17 +18,20 @@ const withPageAuthRequiredHOC = <P extends object>(
   const WithPageAuthRequired: React.FC<P> = (props) => {
     const { returnTo, onRedirecting = defaultOnRedirecting } = options;
     const router = useRouter();
-    const isLoggedIn = useUserLoggedIn();
+    const { isLoggedIn, routeToOnLogout } = useUserLoggedIn();
+
     React.useEffect(() => {
       if (isUndefined(isLoggedIn) || isLoggedIn) return;
 
-      // run the following only is isLoggedIn is strictly false
-      if (!returnTo) {
+      if (routeToOnLogout) {
+        // TODO: should we include return to?
+        router.push(routeToOnLogout);
+      } else if (!returnTo) {
         router.push(appAccountPaths.login);
       } else {
         router.push(appAccountPaths.loginWithReturnPath(returnTo));
       }
-    }, [isLoggedIn, router, returnTo]);
+    }, [isLoggedIn, router, returnTo, routeToOnLogout]);
 
     if (isLoggedIn) return <Component {...(props as any)} />;
     return onRedirecting();

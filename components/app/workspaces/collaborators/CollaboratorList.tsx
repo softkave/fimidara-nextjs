@@ -1,49 +1,29 @@
-import { List } from "antd";
+import ItemList from "@/components/utils/list/ItemList";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { Typography } from "antd";
+import { Collaborator } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import { useSWRConfig } from "swr";
-import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
-import { ICollaborator } from "../../../../lib/definitions/user";
-import { css } from "@emotion/css";
 import CollaboratorMenu from "./CollaboratorMenu";
 
-export interface ICollaboratorListProps {
+export interface CollaboratorListProps {
   workspaceId: string;
-  collaborators: ICollaborator[];
-  renderItem?: (item: ICollaborator) => React.ReactNode;
+  collaborators: Collaborator[];
+  renderItem?: (item: Collaborator) => React.ReactNode;
 }
 
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
-
-const CollaboratorList: React.FC<ICollaboratorListProps> = (props) => {
+const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
   const { workspaceId, collaborators, renderItem } = props;
-  const { mutate } = useSWRConfig();
-  const onCompleteRemoveUser = React.useCallback(async () => {
-    mutate(getUseWorkspaceRequestListHookKey(workspaceId));
-  }, [workspaceId, mutate]);
 
   const internalRenderItem = React.useCallback(
-    (item: ICollaborator) => (
-      <List.Item
+    (item: Collaborator) => (
+      <ThumbnailContent
         key={item.resourceId}
-        actions={[
-          <CollaboratorMenu
-            key="menu"
-            collaborator={item}
-            workspaceId={workspaceId}
-            onCompleteRemove={onCompleteRemoveUser}
-          />,
-        ]}
-      >
-        <List.Item.Meta
-          title={
+        main={
+          <div className={appClasses.thumbnailMain}>
             <Link
               href={appWorkspacePaths.collaborator(
                 workspaceId,
@@ -52,20 +32,31 @@ const CollaboratorList: React.FC<ICollaboratorListProps> = (props) => {
             >
               {item.firstName + " " + item.lastName}
             </Link>
-          }
-          description={item.email}
-        />
-      </List.Item>
+            {item.email && (
+              <Typography.Text type="secondary">{item.email}</Typography.Text>
+            )}
+          </div>
+        }
+        menu={
+          <CollaboratorMenu
+            key="menu"
+            collaborator={item}
+            workspaceId={workspaceId}
+            onCompleteRemove={noop}
+          />
+        }
+      />
     ),
-    [onCompleteRemoveUser, workspaceId]
+    [workspaceId]
   );
 
   return (
-    <List
-      className={classes.list}
-      itemLayout="horizontal"
-      dataSource={collaborators}
+    <ItemList
+      bordered
+      items={collaborators}
       renderItem={renderItem || internalRenderItem}
+      getId={(item: Collaborator) => item.resourceId}
+      emptyMessage="No collaborators yet."
     />
   );
 };

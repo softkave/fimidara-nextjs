@@ -1,95 +1,80 @@
-import { Space } from "antd";
+import ComponentHeader from "@/components/utils/ComponentHeader";
+import LabeledNode from "@/components/utils/LabeledNode";
+import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { formatDateTime } from "@/lib/utils/dateFns";
+import { Space, Typography } from "antd";
 import assert from "assert";
-import { formatRelative } from "date-fns";
-import { last } from "lodash";
+import { CollaborationRequestForWorkspace } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
-import { useSWRConfig } from "swr";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
-import useCollaborationRequest from "../../../../lib/hooks/requests/useRequest";
-import { getUseWorkspaceRequestListHookKey } from "../../../../lib/hooks/workspaces/useWorkspaceRequestList";
-import { getBaseError } from "../../../../lib/utils/errors";
-import ComponentHeader from "../../../utils/ComponentHeader";
-import LabeledNode from "../../../utils/LabeledNode";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import { appClasses } from "../../../utils/theme";
-import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 
 export interface IWorkspaceRequestProps {
-  requestId: string;
+  request: CollaborationRequestForWorkspace;
 }
 
 function WorkspaceRequest(props: IWorkspaceRequestProps) {
-  const { requestId } = props;
+  const { request: resource } = props;
   const router = useRouter();
-  const { error, isLoading, data, mutate } = useCollaborationRequest(requestId);
-  const { mutate: cacheMutate } = useSWRConfig();
+
   const onCompleteDeleteRequest = React.useCallback(async () => {
-    assert(data?.request, new Error("Request not found"));
-    cacheMutate(getUseWorkspaceRequestListHookKey(data.request.workspaceId));
-    router.push(appWorkspacePaths.requestList(data.request.workspaceId));
-  }, [data, cacheMutate, router]);
+    assert(resource, new Error("Collaboration request not found."));
+    router.push(appWorkspacePaths.requestList(resource.workspaceId));
+  }, [resource, router]);
 
-  if (error) {
-    return (
-      <PageError
-        messageText={
-          getBaseError(error) || "Error fetching collaboration request"
-        }
-      />
-    );
-  } else if (isLoading || !data) {
-    return <PageLoading messageText="Loading collaboration request..." />;
-  }
-
-  const request = data.request;
   return (
-    <div className={appClasses.main}>
+    <div>
       <Space direction="vertical" size={32} style={{ width: "100%" }}>
-        <ComponentHeader title={request.recipientEmail}>
+        <ComponentHeader title={resource.recipientEmail}>
           <WorkspaceRequestMenu
-            request={request}
+            request={resource}
             onCompleteDeleteRequest={onCompleteDeleteRequest}
           />
         </ComponentHeader>
         <LabeledNode
           nodeIsText
           copyable
+          code
           direction="vertical"
           label="Resource ID"
-          node={request.resourceId}
+          node={resource.resourceId}
         />
-        {request.message && (
+        {resource.message && (
           <LabeledNode
-            nodeIsText
-            label="Message"
             direction="vertical"
-            node={request.message}
+            label="Message"
+            node={
+              <Typography.Paragraph
+                ellipsis={{ rows: 2 }}
+                className={appClasses.muteMargin}
+              >
+                {resource.message}
+              </Typography.Paragraph>
+            }
           />
         )}
-        {request.expiresAt && (
+        {resource.expiresAt && (
           <LabeledNode
             nodeIsText
             label="Expires"
             direction="vertical"
-            node={formatRelative(new Date(request.expiresAt), new Date())}
+            node={formatDateTime(resource.expiresAt)}
           />
         )}
         <LabeledNode
           nodeIsText
+          code
           label="Status"
           direction="vertical"
-          node={last(request.statusHistory)?.status}
+          node={resource.status}
         />
-        <div className={appClasses.mainNoPadding}>
-          <AssignedPermissionGroupList
-            workspaceId={request.workspaceId}
-            permissionGroups={request.permissionGroupsOnAccept || []}
-            title="Permission Groups Assigned if Accepted"
-          />
-        </div>
+        <LabeledNode
+          nodeIsText
+          direction="vertical"
+          label="Last Updated"
+          node={formatDateTime(resource.lastUpdatedAt)}
+        />
       </Space>
     </div>
   );

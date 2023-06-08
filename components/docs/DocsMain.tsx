@@ -1,133 +1,71 @@
-import { MenuOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { Tag } from "@markdoc/markdoc";
-import { MarkdocNextJsPageProps } from "@markdoc/next.js";
-import Button from "antd/lib/button";
+import { cx } from "@emotion/css";
 import Head from "next/head";
 import React, { useState } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";
-import FimidaraHeader from "../FimidaraHeader";
-import { SideNav } from "./SideNav";
-import { TOCSection } from "./types";
+import { DocsSideNav } from "./DocsSideNav";
 
 export interface IDocsMainProps {
-  pageProps: Required<MarkdocNextJsPageProps>;
+  pageTitle: string;
+  pageDescription?: string;
   children: React.ReactNode;
+  className?: string;
+  contentClassName?: string;
 }
-
-const classes = {
-  docsContent: css({
-    "& tr": {
-      borderTop: "1px solid #BBB",
-      borderRight: "1px solid #BBB",
-    },
-    "& tr:last-of-type": {
-      borderBottom: "1px solid #BBB",
-    },
-    "& tr th": {
-      textAlign: "left",
-      padding: "4px",
-      borderLeft: "1px solid #BBB",
-    },
-    "& tr th:first-of-type": {
-      borderRight: "none",
-    },
-    "& tr td": {
-      textAlign: "left",
-      padding: "4px",
-      borderLeft: "1px solid #BBB",
-    },
-    "& tr td:first-of-type": {
-      borderRight: "none",
-    },
-    "& p": {
-      margin: "8px 0px",
-    },
-    "& h2": {
-      fontSize: "16px",
-      // marginTop: "48px",
-    },
-    "& h2:not(:first-of-type)": {
-      marginTop: "48px",
-    },
-  }),
-};
 
 // TODO: move header styles to headers
 const DocsMain: React.FC<IDocsMainProps> = (props) => {
-  const { pageProps, children } = props;
-  const title = pageProps.markdoc.frontmatter.title;
-  const description = pageProps.markdoc.frontmatter.description;
+  const { pageTitle, pageDescription, className, contentClassName, children } =
+    props;
   const responsive = useAppResponsive();
   const [showMenu, setShowMenu] = useState(!!responsive?.lg);
 
   return (
     <>
       <Head>
-        <title>{title}</title>
+        <title>{pageTitle}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="referrer" content="strict-origin" />
-        <meta name="title" content={title} />
-        <meta name="description" content={description} />
+        <meta name="title" content={pageTitle} />
+        <meta name="description" content={pageDescription} />
       </Head>
-      <div className="page">
-        <div className="header">
-          <FimidaraHeader
-            headerProps={{
-              prefixBtn: (
-                <Button
-                  icon={<MenuOutlined />}
-                  onClick={() => setShowMenu(!showMenu)}
-                />
-              ),
-            }}
-          />
-        </div>
-        <div className="page-without-header">
+      <div className={cx("docsMain", className)}>
+        <div className="docsMainInner">
           {showMenu ? (
-            <div className="side-nav">
-              <SideNav onClose={() => setShowMenu(false)} />
+            <div className="docsSideNav">
+              <DocsSideNav onClose={() => setShowMenu(false)} />
             </div>
           ) : (
             <span />
           )}
           <main>
-            <div className={classes.docsContent}>
-              {/* <TableOfContents toc={toc} /> */}
-              {children}
-            </div>
+            <div className={contentClassName}>{children}</div>
           </main>
         </div>
       </div>
       <style jsx>
         {`
-          .page {
-            overflow: hidden;
+          .docsMain {
+            // overflow: hidden;
             height: 100vh;
+            max-width: 1020px;
+            margin: 0px auto;
           }
-          .header {
-            position: fixed;
-            width: 100%;
-            background-color: white;
-          }
-          .page-without-header {
+          .docsMainInner {
             display: grid;
             grid-template-columns: auto 1fr;
-            padding-top: var(--top-nav-height);
-            width: 100%;
+            width: 100%
             height: 100vh;
             overflow: hidden;
           }
-          .side-nav {
+          .docsSideNav {
             max-height: calc(100vh - var(--top-nav-height));
             overflow: hidden;
           }
-          .side-nav ul {
+          .docsSideNav ul {
             height: 100%;
           }
           main {
-            width: 100%;
-            overflow: auto;
+            overflow-y: scroll;
           }
           main > div {
             padding: 1rem;
@@ -141,26 +79,3 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
 };
 
 export default DocsMain;
-
-function collectHeadings(node: unknown, sections: Array<TOCSection> = []) {
-  if (Tag.isTag(node)) {
-    if (node.name === "Heading") {
-      const title = node.children[0];
-
-      if (typeof title === "string") {
-        sections.push({
-          ...node.attributes,
-          title,
-        });
-      }
-    }
-
-    if (node.children) {
-      for (const child of node.children) {
-        collectHeadings(child, sections);
-      }
-    }
-  }
-
-  return sections;
-}

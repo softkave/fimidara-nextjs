@@ -1,11 +1,11 @@
 import { css, cx } from "@emotion/css";
 import { compact, isString } from "lodash";
 import React from "react";
-import { IAppError } from "../../lib/definitions/system";
+import { AppError } from "../../lib/utils/errors";
 
 type FormMessageType = "error" | "message";
 type MessageWithVisible = { message: string; visible?: boolean };
-type SimpleMessageType = string | Error | IAppError | MessageWithVisible;
+type SimpleMessageType = string | Error | AppError | MessageWithVisible;
 type SimpleMessageTypeWithFalsyValues = SimpleMessageType | null | undefined;
 type StackedMessageType =
   | SimpleMessageTypeWithFalsyValues

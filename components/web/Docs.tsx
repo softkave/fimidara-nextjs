@@ -17,12 +17,12 @@ const docs: IDoc[] = [
   {
     title: "REST API",
     icon: <FileTextOutlined />,
-    link: "/docs/fimidara-rest-api",
+    link: "/docs/fimidara-rest-api/v1",
   },
   {
     title: "JS SDK",
     icon: <ApiOutlined />,
-    link: "https://github.com/softkave/fimidara-js",
+    link: "/docs/fimidara-js-sdk/v1",
   },
 ];
 

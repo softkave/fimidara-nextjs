@@ -1,41 +1,34 @@
+import PageError from "@/components/utils/page/PageError";
+import PageLoading from "@/components/utils/page/PageLoading";
+import PageNothingFound from "@/components/utils/page/PageNothingFound";
+import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
+import { useWorkspaceFolderFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
+import { getBaseError } from "@/lib/utils/errors";
+import { Folder } from "fimidara";
 import React from "react";
-import { KeyedMutator, SWRConfiguration } from "swr";
-import { IGetFolderEndpointResult } from "../../../../lib/api/endpoints/folder";
-import { IFolder } from "../../../../lib/definitions/folder";
-import useFolder from "../../../../lib/hooks/workspaces/useFolder";
-import { getBaseError } from "../../../../lib/utils/errors";
-import PageError from "../../../utils/PageError";
-import PageLoading from "../../../utils/PageLoading";
-import { appClasses } from "../../../utils/theme";
 
-export interface IFolderContainerProps {
+export interface FolderContainerProps {
   folderId: string;
-  render: (
-    folder: IFolder,
-    mutate: KeyedMutator<IGetFolderEndpointResult>
-  ) => React.ReactElement;
-  fetchConfig?: SWRConfiguration;
+  render: (folder: Folder) => React.ReactElement;
 }
 
-const FolderContainer: React.FC<IFolderContainerProps> = (props) => {
-  const { folderId, fetchConfig, render } = props;
-  const { data, error, isLoading, mutate } = useFolder(
-    { folderId },
-    fetchConfig
-  );
+const FolderContainer: React.FC<FolderContainerProps> = (props) => {
+  const { folderId, render } = props;
+  const { fetchState } = useWorkspaceFolderFetchHook({ folderId });
+  const { isLoading, error, resource } =
+    useFetchSingleResourceFetchState(fetchState);
 
-  if (error) {
+  if (resource) {
+    return render(resource);
+  } else if (error) {
     return (
-      <PageError
-        className={appClasses.main}
-        messageText={getBaseError(error) || "Error fetching folder"}
-      />
+      <PageError message={getBaseError(error) || "Error fetching folder"} />
     );
-  } else if (isLoading || !data) {
-    return <PageLoading messageText="Loading folder..." />;
+  } else if (isLoading) {
+    return <PageLoading message="Loading folder..." />;
+  } else {
+    return <PageNothingFound message="Folder not found." />;
   }
-
-  return render(data.folder, mutate);
 };
 
 export default FolderContainer;

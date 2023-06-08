@@ -1,12 +1,5 @@
 const withPlugins = require("next-compose-plugins");
 const withMarkdoc = require("@markdoc/next.js")();
-const withLess = require("next-with-less")({
-  lessLoaderOptions: {
-    lessOptions: {
-      modifyVars: {},
-    },
-  },
-});
 
 // const withBundleAnalyzer = require("@next/bundle-analyzer")({
 //   enabled: process.env.ANALYZE === "true",
@@ -31,17 +24,20 @@ const nextConfig = {
       },
       {
         source: "/docs/fimidara-rest-api",
-        destination: "/docs/fimidara-rest-api/workspaces/getWorkspace",
+        destination: "/docs/fimidara-rest-api/v1",
+        permanent: false,
+      },
+      {
+        source: "/docs/fimidara-js-sdk",
+        destination: "/docs/fimidara-js-sdk/v1",
         permanent: false,
       },
     ];
   },
-  // ...withLess,
 };
 
 module.exports = withPlugins(
   [
-    [withLess],
     [withMarkdoc],
     // [withBundleAnalyzer],
     /* ...other plugins... */

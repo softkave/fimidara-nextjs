@@ -15,8 +15,7 @@ I mentioned earlier that Fimidara enforces access control on files, but how does
 
 In Fimidara, there are 2 types of tokens:
 
-- **Program Access tokens**: These are tokens meant for server-side use. These tokens are used to grant access to the Fimidara to a program.
-- **Client Assigned tokens**: These are tokens meant for client-side use. These tokens are used to grant access to the Fimidara to a browser or mobile app.
+- **Agent tokens**: Access tokens for users and programs.
 
 There is a third type of token: **User tokens** but you won't have to deal with them.
 
@@ -44,7 +43,7 @@ Fimidara is useful in combating "Rogue Links" and similar problems. "Rouge Links
 
 First, **security**. Imagine a web application used to share information and sensitive files in an organization. If a anyone has access to the link referencing a file, and there is no access control guarding against unauthorized access, anyone can access the file. Fimidara solves this by requiring tokens with access to the resource for access to be granted when accessing non-public resources.
 
-Another reason is that "rogue links" can lead to lost revenue. Imagine you run a eCommerce site that sells eBooks. If someone buys the product, and you provide them a link to download the eBook, if the link is not protected by access-control, if the link is shared with someone else, they can access the eBook without having to purchase it. With Fimidara, you can protect the link by only granting access to the eBook to the users (client assigned tokens) who have purchased the eBook.
+Another reason is that "rogue links" can lead to lost revenue. Imagine you run a eCommerce site that sells eBooks. If someone buys the product, and you provide them a link to download the eBook, if the link is not protected by access-control, if the link is shared with someone else, they can access the eBook without having to purchase it. With Fimidara, you can protect the link by only granting access to the eBook to the users (agent tokens) who have purchased the eBook.
 
 ### File hosting
 

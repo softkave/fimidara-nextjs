@@ -1,50 +1,70 @@
 import assert from "assert";
+import { LoginResult } from "fimidara";
 import React from "react";
-import { useUserActions } from "../../lib/hooks/actionHooks/useUserActions";
-import useUser from "../../lib/hooks/useUser";
+import { useFetchSingleResourceFetchState } from "../../lib/hooks/fetchHookUtils";
+import { useUserSessionFetchHook } from "../../lib/hooks/singleResourceFetchHooks";
+import { useHandleRequiresPasswordChange } from "../../lib/hooks/useHandleServerRecommendedActions";
+import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { getBaseError } from "../../lib/utils/errors";
-import PageError from "../utils/PageError";
-import PageLoading from "../utils/PageLoading";
-import { IPageNothingFoundPassedDownProps } from "../utils/PageNothingFound";
+import PageError from "../utils/page/PageError";
+import PageLoading from "../utils/page/PageLoading";
+import PageNothingFound, {
+  IPageNothingFoundPassedDownProps,
+} from "../utils/page/PageNothingFound";
 
-export interface IUseUserNodeResult extends ReturnType<typeof useUser> {
-  renderNode: React.ReactElement | null;
+export interface IUseUserNodeResult {
+  renderedNode: React.ReactElement | null;
 
   /**
    * Make sure to check for and return `renderNode` or make sure to check that
    * result is not loading or in error state before using `assertGet`
    */
-  assertGet: () => NonNullable<ReturnType<typeof useUser>["data"]>;
+  assertGet: () => NonNullable<LoginResult>;
 }
 
 export function useUserNode(
   props: { renderNode?: IPageNothingFoundPassedDownProps } = {}
 ): IUseUserNodeResult {
-  const u0 = useUser();
-  const userActions = useUserActions();
-  const { isLoading, error, data } = u0;
-  let renderNode: React.ReactElement | null = null;
+  const { handleRequiresPasswordChange } = useHandleRequiresPasswordChange();
+  const { fetchState } = useUserSessionFetchHook(undefined);
+  const { isLoading, error, resource, initialized, other } =
+    useFetchSingleResourceFetchState(fetchState);
+  const { logout } = useUserLoggedIn();
+  let renderedNode: React.ReactElement | null = null;
   const renderNodeProps = props.renderNode || {};
+
+  // React.useEffect(() => {
+  //   if (resource?.requiresPasswordChange) {
+  //     handleRequiresPasswordChange();
+  //   }
+  // }, [resource?.requiresPasswordChange]);
+
   if (error) {
-    renderNode = (
+    renderedNode = (
       <PageError
         {...renderNodeProps}
-        messageText={getBaseError(error) || "Error fetching user"}
+        message={getBaseError(error) || "Error fetching user."}
         actions={[
-          { children: "Logout", onClick: userActions.logout, danger: true },
+          { children: "Logout", onClick: () => logout(), danger: true },
         ]}
       />
     );
-  } else if (isLoading) {
-    renderNode = (
-      <PageLoading {...renderNodeProps} messageText="Loading user..." />
+  } else if (isLoading || !initialized) {
+    renderedNode = (
+      <PageLoading {...renderNodeProps} message="Loading user..." />
     );
+  } else if (!resource) {
+    renderedNode = <PageNothingFound message="User not found." />;
   }
 
-  const assertGet = React.useCallback(() => {
-    assert(data);
-    return data;
-  }, [data]);
+  const assertGet = (): LoginResult => {
+    assert(resource && other);
+    return {
+      user: resource,
+      token: other.userToken,
+      clientAssignedToken: other.clientToken,
+    };
+  };
 
-  return { renderNode, assertGet, ...u0 };
+  return { renderedNode, assertGet };
 }

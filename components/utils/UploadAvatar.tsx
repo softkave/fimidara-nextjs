@@ -1,10 +1,13 @@
 import { CloudUploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Button, message, Typography, Upload } from "antd";
+import { Typography, Upload, message } from "antd";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import { defaultTo, first } from "lodash";
 import React from "react";
+import { getUploadFileURL } from "../../lib/api/utils";
+import { systemConstants } from "../../lib/definitions/system";
 import { useUserNode } from "../hooks/useUserNode";
+import IconButton from "./buttons/IconButton";
 import { errorMessageNotificatition } from "./errorHandling";
 import { appDimensions } from "./theme";
 
@@ -17,19 +20,19 @@ export type IImageUploadMessages = Partial<{
 export interface IUploadAvatarProps {
   messages?: IImageUploadMessages;
   className?: string;
-  uploadPath: string;
+  filepath: string;
   onCompleteUpload: () => void;
 }
 
 const DEFAULT_MESSAGES: IImageUploadMessages = {
-  uploading: "Uploading image",
-  successful: "Uploaded image successfully",
-  failed: "Error uploading image",
+  uploading: "Uploading image.",
+  successful: "Uploaded image successfully.",
+  failed: "Error uploading image.",
 };
 
 function beforeUpload(file: RcFile) {
   if (first(file.type.split("/")) !== "image") {
-    errorMessageNotificatition("Invalid image type");
+    errorMessageNotificatition("Invalid image type.");
   }
 
   return true;
@@ -43,7 +46,7 @@ const classes = {
 };
 
 const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
-  const { uploadPath, className, onCompleteUpload } = props;
+  const { filepath, className, onCompleteUpload } = props;
   const u0 = useUserNode();
   const customMessages = {
     ...DEFAULT_MESSAGES,
@@ -85,22 +88,27 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
     }
   };
 
-  if (u0.renderNode) {
-    return u0.renderNode;
+  if (u0.renderedNode) {
+    return u0.renderedNode;
   }
 
   const clientAssignedToken = u0.assertGet().clientAssignedToken;
   const uploadButton = (
-    <Button icon={<CloudUploadOutlined />} disabled={loading}>
-      Upload image
-    </Button>
+    <IconButton
+      icon={<CloudUploadOutlined />}
+      disabled={loading}
+      title={"Upload image"}
+    />
   );
 
   return (
     <Upload
       name="data"
-      action={uploadPath}
-      headers={{ authorization: `Bearer ${clientAssignedToken}` }}
+      action={getUploadFileURL({
+        filepath,
+        serverURL: systemConstants.serverAddr,
+      })}
+      headers={{ Authorization: `Bearer ${clientAssignedToken}` }}
       beforeUpload={beforeUpload}
       onChange={onChange}
       disabled={loading}

@@ -1,15 +1,14 @@
-import { Badge, Button, Dropdown, Menu, Popover } from "antd";
-import Link from "next/link";
-import { appUserPaths } from "../../lib/definitions/system";
-import { useUserActions } from "../../lib/hooks/actionHooks/useUserActions";
+import { Badge, Button, Dropdown, MenuProps, Popover } from "antd";
+import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { useUserNode } from "../hooks/useUserNode";
+import { insertAntdMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
 
 const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
-  const userActions = useUserActions();
-  const { renderNode, assertGet } = useUserNode({
+  const { logout } = useUserLoggedIn();
+  const userNode = useUserNode({
     renderNode: { withoutMargin: true },
   });
 
@@ -30,35 +29,34 @@ export default function UserMenu() {
     );
   };
 
-  if (renderNode) {
+  if (userNode.renderedNode) {
     return (
-      <Popover content={renderNode} placement="bottomRight">
+      <Popover content={userNode.renderedNode} placement="bottomRight">
         {renderBtnNode(/** userId */ "", /** withError */ true)}
       </Popover>
     );
   }
 
+  const items: MenuProps["items"] = insertAntdMenuDivider([
+    {
+      label: "Logout",
+      key: LOGOUT_MENU_KEY,
+    },
+  ]);
+
+  const onClick: MenuProps["onClick"] = async (info) => {
+    if (info.key === LOGOUT_MENU_KEY) {
+      logout();
+    }
+  };
+
   return (
     <Dropdown
       trigger={["click"]}
-      overlay={
-        <Menu
-          onClick={async (info) => {
-            if (info.key === LOGOUT_MENU_KEY) {
-              userActions.logout();
-            }
-          }}
-          style={{ minWidth: "150px" }}
-        >
-          <Menu.Item key={appUserPaths.settings}>
-            <Link href={appUserPaths.settings}>Settings</Link>
-          </Menu.Item>
-          <Menu.Divider key={"divider-01"} />
-          <Menu.Item key={LOGOUT_MENU_KEY}>Logout</Menu.Item>
-        </Menu>
-      }
+      menu={{ items, onClick, style: { minWidth: "150px" } }}
+      placement="bottomRight"
     >
-      {renderBtnNode(assertGet().user.resourceId)}
+      {renderBtnNode(userNode.assertGet().user.resourceId)}
     </Dropdown>
   );
 }

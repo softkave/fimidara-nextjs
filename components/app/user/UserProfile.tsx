@@ -1,33 +1,29 @@
-import { css } from "@emotion/css";
-import { useRequest } from "ahooks";
-import { Button, Form, Input, message } from "antd";
-import React from "react";
-import * as yup from "yup";
+import FormError from "@/components/form/FormError";
 import {
   formBodyClassName,
   formContentWrapperClassName,
-} from "../../../components/form/classNames";
-import FormError from "../../../components/form/FormError";
-import { preSubmitCheck } from "../../../components/form/formUtils";
-import UserEndpoint from "../../../lib/api/endpoints/user";
-import { checkEndpointResult } from "../../../lib/api/utils";
-import {
-  EmailAddressNotAvailableError,
-  IUser,
-  IUserProfileInput,
-  userConstants,
-} from "../../../lib/definitions/user";
-import useFormHelpers from "../../../lib/hooks/useFormHelpers";
-import useUser from "../../../lib/hooks/useUser";
-import { messages } from "../../../lib/messages/messages";
-import { getBaseError, toAppErrorsArray } from "../../../lib/utils/errors";
-import { flattenErrorList } from "../../../lib/utils/utils";
-import { signupValidationParts } from "../../../lib/validation/user";
+} from "@/components/form/classNames";
+import { preSubmitCheck } from "@/components/form/formUtils";
+import { userConstants } from "@/lib/definitions/user";
+import { useUserUpdateMutationHook } from "@/lib/hooks/mutationHooks";
+import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { messages } from "@/lib/messages/messages";
+import { signupValidationParts } from "@/lib/validation/user";
+import { css } from "@emotion/css";
+import { Button, Form, Input, message } from "antd";
+import { LoginResult, User } from "fimidara";
+import * as yup from "yup";
 import { FormAlert } from "../../utils/FormAlert";
-import PageError from "../../utils/PageError";
-import PageLoading from "../../utils/PageLoading";
 
-export interface IUserProfileProps {}
+export interface IUserProfileProps {
+  session: LoginResult;
+}
+
+interface UserProfileFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
 const userSettingsValidation = yup.object().shape({
   firstName: signupValidationParts.name.required(messages.firstNameRequired),
@@ -35,7 +31,7 @@ const userSettingsValidation = yup.object().shape({
   email: signupValidationParts.email.required(messages.emailRequired),
 });
 
-function getInitialValues(user?: IUser): IUserProfileInput {
+function getInitialValues(user?: User): UserProfileFormValues {
   if (!user) {
     return {
       firstName: "",
@@ -52,57 +48,20 @@ function getInitialValues(user?: IUser): IUserProfileInput {
 }
 
 export default function UserProfile(props: IUserProfileProps) {
-  const { isLoading, error, data, mutate } = useUser();
-  const onSubmit = React.useCallback(
-    async (data: IUserProfileInput) => {
-      try {
-        const result = await UserEndpoint.updateUser(data);
-        checkEndpointResult(result);
-        mutate(result, false);
-        message.success("Profile updated");
-      } catch (error) {
-        const errArray = toAppErrorsArray(error);
-        const flattenedErrors = flattenErrorList(errArray);
-        const emailExistsErr = errArray.find((err) => {
-          return err.name === EmailAddressNotAvailableError.name;
-        });
-
-        if (emailExistsErr) {
-          flattenedErrors["email"] = [emailExistsErr.message];
-        }
-
-        throw flattenedErrors;
-      }
-    },
-    [mutate]
-  );
-
-  const submitResult = useRequest(onSubmit, { manual: true });
-  const { formik } = useFormHelpers({
-    errors: submitResult.error,
-    formikProps: {
-      validationSchema: userSettingsValidation,
-
-      // Will be replaced in a useEffect when user loads
-      initialValues: getInitialValues(),
-      onSubmit: submitResult.run,
+  const { session } = props;
+  const updateUserHook = useUserUpdateMutationHook({
+    onSuccess(data, params) {
+      message.success("Profile updated.");
     },
   });
-
-  const setValues = formik.setValues;
-  React.useEffect(() => {
-    if (data?.user) {
-      setValues(getInitialValues(data.user));
-    }
-  }, [data?.user, setValues]);
-
-  if (error) {
-    return (
-      <PageError messageText={getBaseError(error) || "Error fetching user"} />
-    );
-  } else if (isLoading) {
-    return <PageLoading messageText="Loading user..." />;
-  }
+  const { formik } = useFormHelpers({
+    errors: updateUserHook.error,
+    formikProps: {
+      validationSchema: userSettingsValidation,
+      initialValues: getInitialValues(session.user),
+      onSubmit: (body) => updateUserHook.runAsync({ body }),
+    },
+  });
 
   const firstNameNode = (
     <Form.Item
@@ -127,7 +86,7 @@ export default function UserProfile(props: IUserProfileProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter your first name"
-        disabled={submitResult.loading}
+        disabled={updateUserHook.loading}
         maxLength={userConstants.maxNameLength}
       />
     </Form.Item>
@@ -156,7 +115,7 @@ export default function UserProfile(props: IUserProfileProps) {
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
         placeholder="Enter your last name"
-        disabled={submitResult.loading}
+        disabled={updateUserHook.loading}
         maxLength={userConstants.maxNameLength}
       />
     </Form.Item>
@@ -184,7 +143,7 @@ export default function UserProfile(props: IUserProfileProps) {
         value={formik.values.email}
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        disabled={submitResult.loading}
+        disabled={updateUserHook.loading}
         placeholder="Enter your email address"
       />
     </Form.Item>
@@ -194,7 +153,7 @@ export default function UserProfile(props: IUserProfileProps) {
     <div className={formBodyClassName}>
       <div className={formContentWrapperClassName}>
         <form onSubmit={formik.handleSubmit}>
-          <FormAlert error={submitResult.error} />
+          <FormAlert error={updateUserHook.error} />
           {firstNameNode}
           {lastNameNode}
           {emailNode}
@@ -203,10 +162,10 @@ export default function UserProfile(props: IUserProfileProps) {
               block
               type="primary"
               htmlType="submit"
-              loading={submitResult.loading}
+              loading={updateUserHook.loading}
               onClick={() => preSubmitCheck(formik)}
             >
-              {submitResult.loading ? "Updating Profile" : "Update Profile"}
+              {updateUserHook.loading ? "Updating Profile" : "Update Profile"}
             </Button>
           </Form.Item>
         </form>

@@ -1,68 +1,75 @@
-import { FileOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { List } from "antd";
+import ItemList from "@/components/utils/list/ItemList";
+import AppIcon from "@/components/utils/page/AppIcon";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { appClasses } from "@/components/utils/theme";
+import { appWorkspacePaths } from "@/lib/definitions/system";
+import { Typography } from "antd";
+import { File } from "fimidara";
+import { noop } from "lodash";
 import Link from "next/link";
 import React from "react";
-import { IFile } from "../../../../lib/definitions/file";
-import { appWorkspacePaths } from "../../../../lib/definitions/system";
+import { FiFile } from "react-icons/fi";
 import FileMenu from "./FileMenu";
 
 export interface IAppFileListProps {
-  files: IFile[];
+  files: File[];
   workspaceRootname: string;
-  renderFileItem?: (item: IFile, workspaceRootname: string) => React.ReactNode;
+  renderFileItem?: (item: File, workspaceRootname: string) => React.ReactNode;
 }
-
-const classes = {
-  list: css({
-    "& .ant-list-item-action > li": {
-      padding: "0px",
-    },
-  }),
-};
 
 const AppFileList: React.FC<IAppFileListProps> = (props) => {
   const { files, workspaceRootname, renderFileItem } = props;
   const internalRenderItem = React.useCallback(
-    (item: IFile) => {
+    (item: File) => {
       if (renderFileItem) {
         return renderFileItem(item, workspaceRootname);
       }
 
+      const extension = item.extension ? `.${item.extension}` : "";
       return (
-        <List.Item
+        <ThumbnailContent
           key={item.resourceId}
-          actions={[
-            <FileMenu
-              key="menu"
-              file={item}
-              workspaceRootname={workspaceRootname}
-            />,
-          ]}
-        >
-          <List.Item.Meta
-            title={
+          main={
+            <div className={appClasses.thumbnailMain}>
               <Link
                 href={appWorkspacePaths.file(item.workspaceId, item.resourceId)}
               >
-                {item.name}
+                {item.name + extension}
               </Link>
-            }
-            description={item.description}
-            avatar={<FileOutlined />}
-          />
-        </List.Item>
+              {item.description && (
+                <Typography.Text type="secondary">
+                  {item.description}
+                </Typography.Text>
+              )}
+            </div>
+          }
+          menu={
+            <FileMenu
+              workspaceRootname={workspaceRootname}
+              file={item}
+              onScheduleDeleteSuccess={noop}
+            />
+          }
+          prefixNode={
+            <AppIcon
+              icon={<FiFile />}
+              className={appClasses.alignStart}
+              style={{ marginTop: "1px" }}
+            />
+          }
+        />
       );
     },
     [renderFileItem, workspaceRootname]
   );
 
   return (
-    <List
-      className={classes.list}
-      itemLayout="horizontal"
-      dataSource={files}
+    <ItemList
+      bordered
+      items={files}
       renderItem={internalRenderItem}
+      getId={(item: File) => item.resourceId}
+      emptyMessage="No files yet."
     />
   );
 };

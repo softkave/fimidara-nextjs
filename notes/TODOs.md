@@ -1,9 +1,59 @@
 # TODOs
 
+## Now
+
+- [ ] see entity permissions
+- [ ] make sure all data stores are cleared on user logout
+- [ ] hide tabs and buttons based on resolved permissions
+  - [ ] how to target resolved permissions after add and delete
+- [ ] update entity permissions
+- [ ] form pages should be modals
+- [ ] animation on transitions, like loading, tabs, etc.
+- [ ] resource thumbnail at top of target and entity permissions form
+- [ ] grant/remove access to entity
+- [ ] a refresh system that doesn't show loading screen but notification or inline loading for resource and list
+- [ ] write tests for fetch hooks and stores
+- [ ] strip data passed to api not part of api def using yup generated?
+- [ ] check if user is logged-in and route if in outside routes
+- [ ] integrate forgot password into settings when changing password with forgot password instead of routing to outside
+- [ ] handle overflow in AppTabs/use invisible or thin horizontal scroll
+- [ ] issue with verify email and existing saved token, there'll be same issue with change password with token
+- [ ] include last updated by and at in resource pages
+- [ ] use shaded page empty for all errors and loading
+- [ ] resource list store last op, and deleted ids, for faster cascade for subscribers removing from fetch stores
+- [ ] surface description of or-combination types
+- [ ] icons for all menus
+- [ ] fire and forget with updates when uploading file
+- [ ] overlay collaborators without permissions
+- [ ] permissions
+- [ ] waitlist
+- [ ] hide agent token jwt and reveal it
+- [ ] error field replacement for update form
+- [ ] show actions only if user has permissions
+- [ ] new docs toc format
+- [ ] new endpoints rest doc format
+- [ ] logout not working
+- [ ] mobile
+- [ ] use next layout for header and docs nav, and main class instead of in \_app
+- [ ] prevent header and docs side nav from scrolling across all pages
+- [ ] copy for doc json, in json, ts? should we include comma, and should we use "string" for string, etc, and spread out arrays and objects?
+- [ ] result should be required for success result in docs, also, some params that are reuired like a one of, e.g file matcher, are coming up as not required
+- [ ] issue with file resizing
+  - [ ] crop user and workspace images
+- [ ] download button in file page
+- [ ] issue with mutation hooks, they can't be used in 2 places at a time
+- [ ] consolidate hook for getting and issue presigned paths in image and avatar
+- [ ] surface inherited permission groups in assigned permission groups
+- [ ] bulk ops, like bulk unassign, bulk delete, etc
+- [ ] show type description for lists without description in rest-api
+
+## Later
+
 - [ ] increase SEO
+- [ ] Virtualized list for folders and files
 - [ ] use new FormAlert and errorMessageNotification functions
 - [ ] auto route to app when logged in
-- [ ] Multiselect and batch actions in lists like client assigned tokens
+- [ ] Multiselect and batch actions in lists like agent tokens
 - [ ] Test that people who shouldn't have access can't access the permission groups, also that they can't do what they shouldn't be able to, like removing an admin
 - [ ] Add more information to all the pages and lists
 - [ ] Call mutate to invalidate lists when item is updated
