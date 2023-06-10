@@ -1,6 +1,5 @@
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
-import { getWorkspaceActionList } from "@/lib/definitions/system";
 import { useFetchArbitraryFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useResolveEntityPermissionsFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
@@ -8,6 +7,7 @@ import { makeKey } from "@/lib/utils/fns";
 import { indexArray } from "@/lib/utils/indexArray";
 import { Collapse } from "antd";
 import {
+  AppActionType,
   ResolveEntityPermissionsEndpointParams,
   ResolvedEntityPermissionItem,
   WorkspaceAppResourceType,
@@ -58,7 +58,10 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
     onChange,
   } = props;
 
-  const actions = getWorkspaceActionList(targetType);
+  const actions: AppActionType[] = ["read"];
+  // const actions = getWorkspaceActionList(
+  //   targetType ?? getResourceTypeFromId(targetId)
+  // );
   const params: ResolveEntityPermissionsEndpointParams = React.useMemo(() => {
     return {
       workspaceId,
@@ -128,7 +131,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
         >
           <PermissionActionList
             disabled={disabled}
-            targetType={targetType}
+            actions={actions}
             onChange={(action, permitted) => {
               const key = getKey({ action, entityId: item.resourceId });
               const updated: ResolvedPermissionsMap = {

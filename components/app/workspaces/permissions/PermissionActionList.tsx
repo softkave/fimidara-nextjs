@@ -1,21 +1,20 @@
 import ItemList from "@/components/utils/list/ItemList";
-import { actionLabel, getWorkspaceActionList } from "@/lib/definitions/system";
-import { AppActionType, WorkspaceAppResourceType } from "fimidara";
+import { actionLabel } from "@/lib/definitions/system";
+import { AppActionType } from "fimidara";
 import React from "react";
 import PermissionAction from "./PermissionAction";
 import { PermissionMapItemInfo } from "./types";
 
 export interface PermissionActionListProps {
+  actions: AppActionType[];
   disabled?: boolean;
-  targetType?: WorkspaceAppResourceType;
   onChange: (action: AppActionType, permitted: PermissionMapItemInfo) => void;
   getActionPermission(action: AppActionType): PermissionMapItemInfo;
 }
 
 const PermissionActionList: React.FC<PermissionActionListProps> = (props) => {
-  const { disabled, targetType, onChange, getActionPermission } = props;
+  const { actions, disabled, onChange, getActionPermission } = props;
 
-  const actions = getWorkspaceActionList(targetType);
   return (
     <ItemList
       bordered

@@ -24,15 +24,7 @@ import {
   PermissionItemInput,
   WorkspaceAppResourceType,
 } from "fimidara";
-import {
-  first,
-  forEach,
-  isBoolean,
-  isEqual,
-  isObject,
-  isUndefined,
-  merge,
-} from "lodash";
+import { first, forEach, isBoolean, isEqual, merge } from "lodash";
 import React from "react";
 import AgentTokenListContainer from "../agentTokens/AgentTokenListContainer";
 import CollaboratorListContainer from "../collaborators/CollaboratorListContainer";
@@ -269,7 +261,7 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
         <Select
           disabled={!targetType || loading}
           value={targetType}
-          style={{ width: 120 }}
+          style={{ minWidth: 180 }}
           onChange={(v, opt) => {
             setTargetType(v);
           }}
@@ -381,79 +373,22 @@ function getAddedAndDeletedTargetTypePermissions(
       return;
     }
 
-    if (isObject(updatedPermitted.permitted)) {
-      if (isObject(updatedPermitted.permitted.self)) {
-        deleteItems.push({
-          action: [action as AppActionType],
-          entity: { entityId: [entityId] },
-          target: [{ targetId: [targetId], targetType: [targetType] }],
+    deleteItems.push({
+      action: [action as AppActionType],
+      entity: { entityId: [entityId] },
+      target: [{ targetId: [targetId], targetType: [targetType] }],
 
-          // Delete opposite of permission
-          grantAccess: [!updatedPermitted.permitted.self],
-          appliesTo: ["self"],
-        });
-        addItems.push({
-          action: [action as AppActionType],
-          entity: { entityId: [entityId] },
-          target: [{ targetId: [targetId], targetType: [targetType] }],
-          grantAccess: updatedPermitted.permitted.self,
-          appliesTo: ["self"],
-        });
-      }
-      if (!isUndefined(updatedPermitted.permitted.selfAndChildren)) {
-        deleteItems.push({
-          action: [action as AppActionType],
-          entity: { entityId: [entityId] },
-          target: [{ targetId: [targetId], targetType: [targetType] }],
-
-          // Delete opposite of permission
-          grantAccess: [!updatedPermitted.permitted.selfAndChildren],
-          appliesTo: ["selfAndChildren"],
-        });
-        addItems.push({
-          action: [action as AppActionType],
-          entity: { entityId: [entityId] },
-          target: [{ targetId: [targetId], targetType: [targetType] }],
-          grantAccess: updatedPermitted.permitted.selfAndChildren,
-          appliesTo: ["selfAndChildren"],
-        });
-      }
-      if (!isUndefined(updatedPermitted.permitted.children)) {
-        deleteItems.push({
-          action: [action as AppActionType],
-          entity: { entityId: [entityId] },
-          target: [{ targetId: [targetId], targetType: [targetType] }],
-
-          // Delete opposite of permission
-          grantAccess: [!updatedPermitted.permitted.children],
-          appliesTo: ["children"],
-        });
-        addItems.push({
-          action: [action as AppActionType],
-          entity: { entityId: [entityId] },
-          target: [{ targetId: [targetId], targetType: [targetType] }],
-          grantAccess: updatedPermitted.permitted.children,
-          appliesTo: ["children"],
-        });
-      }
-    } else {
-      deleteItems.push({
-        action: [action as AppActionType],
-        entity: { entityId: [entityId] },
-        target: [{ targetId: [targetId], targetType: [targetType] }],
-
-        // Delete opposite of permission
-        grantAccess: [!updatedPermitted.permitted],
-        appliesTo: ["children"],
-      });
-      addItems.push({
-        action: [action as AppActionType],
-        entity: { entityId: [entityId] },
-        target: [{ targetId: [targetId], targetType: [targetType] }],
-        grantAccess: updatedPermitted.permitted,
-        appliesTo: ["children"],
-      });
-    }
+      // Delete opposite of permission
+      grantAccess: [!updatedPermitted.permitted],
+      appliesTo: ["children"],
+    });
+    addItems.push({
+      action: [action as AppActionType],
+      entity: { entityId: [entityId] },
+      target: [{ targetId: [targetId], targetType: [targetType] }],
+      grantAccess: updatedPermitted.permitted,
+      appliesTo: ["children"],
+    });
   });
 
   return { addItems, deleteItems };

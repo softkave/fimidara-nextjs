@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { Typography } from "antd";
+import { Divider, Typography } from "antd";
 import { map } from "lodash";
 import prettyBytes from "pretty-bytes";
 import React from "react";
@@ -12,6 +12,7 @@ import {
   isFieldCustomType,
   isFieldDate,
   isFieldNumber,
+  isFieldOrCombination,
   isFieldString,
 } from "./utils";
 
@@ -208,6 +209,14 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
         </Typography.Paragraph>
       );
     }
+  } else if (isFieldOrCombination(fieldbase)) {
+    const descriptions = map(fieldbase.types ?? {}, (type, i) => (
+      <React.Fragment key={i}>
+        {i != 0 && <Divider>OR</Divider>}
+        <FieldDescription fieldbase={type} />
+      </React.Fragment>
+    ));
+    nodes.push(...descriptions);
   }
 
   return (

@@ -97,7 +97,7 @@ export type FieldOrCombination = {
   __id: "FieldOrCombination";
   required?: boolean;
   description?: string;
-  types?: Array<FieldType>;
+  types?: Record<number, FieldType>;
 };
 
 export type FieldBinary = {
