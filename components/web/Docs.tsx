@@ -1,11 +1,12 @@
 import { ApiOutlined, FileTextOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { List, Space, Typography } from "antd";
+import AestheticDot from "./AestheticDot";
 
 interface IDoc {
   title: string;
   link: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
 }
 
 const docs: IDoc[] = [
@@ -29,6 +30,7 @@ const docs: IDoc[] = [
 const classes = {
   link: css({
     textDecoration: "underline",
+    color: "#1677ff !important",
   }),
 };
 
@@ -46,7 +48,7 @@ export default function Docs() {
                   {item.title}
                 </a>
               }
-              avatar={item.icon}
+              avatar={<AestheticDot />}
             />
           </List.Item>
         )}

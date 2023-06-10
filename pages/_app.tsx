@@ -23,7 +23,6 @@ function FilesApp({ Component, pageProps }: AppProps) {
   const { isLoggedIn } = useUserLoggedIn();
   const router = useRouter();
 
-  const isInWebPath = isWebPath(router.asPath);
   const isInNoHeaderPath = isNoHeaderPath(router.asPath);
   const shouldRouteToApp = isLoggedIn && isRouteToAppOnInitPath(router.asPath);
 
@@ -37,9 +36,11 @@ function FilesApp({ Component, pageProps }: AppProps) {
   if (!shouldRouteToApp && !isUndefined(isLoggedIn)) {
     node = <Component {...pageProps} />;
 
-    if (isInWebPath) headerNode = <WebHeader />;
-    else if (isInNoHeaderPath) headerNode = null;
-    else if (isLoggedIn) headerNode = <AppHeader />;
+    if (isInNoHeaderPath) headerNode = null;
+    else {
+      if (isLoggedIn) headerNode = <AppHeader />;
+      else headerNode = <WebHeader />;
+    }
 
     if (pageProps.markdoc) {
       node = <MarkdocDocsMain pageProps={pageProps}>{node}</MarkdocDocsMain>;
@@ -90,9 +91,12 @@ const routeToAppOnInitRoutes = [
 ];
 
 function isWebPath(pathname: string) {
-  return webRoutes.some((r) => {
-    return pathname.startsWith(r);
-  });
+  return (
+    pathname === appRootPaths.home ||
+    webRoutes.some((r) => {
+      return pathname.startsWith(r);
+    })
+  );
 }
 function isNoHeaderPath(pathname: string) {
   return noHeaderRoutes.some((r) => {

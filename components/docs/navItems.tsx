@@ -7,39 +7,55 @@ import restApiTableOfContent from "./raw/toc/v1/table-of-content.json";
 import { IRawNavItem } from "./types";
 
 export const DOCS_BASE_PATH = "/docs";
+export const apiVersion = "v1";
 
-export function getNavItemPath(item: IRawNavItem, rootItem: IRawNavItem) {
-  return `${DOCS_BASE_PATH}/${rootItem.key}/${item.key}`;
+export function getNavItemPath(item: IRawNavItem, parentItems: IRawNavItem[]) {
+  const rootItem = first(parentItems);
+  const prefixPath = rootItem
+    ? `/${rootItem.key}/${apiVersion}`
+    : `/${item.key}/${apiVersion}`;
+  return `${DOCS_BASE_PATH}${prefixPath}/${item.key}`;
 }
 
-export function renderRawNavItemLink(item: IRawNavItem, rootItem: IRawNavItem) {
-  const itemPath = getNavItemPath(item, rootItem);
+export function renderRawNavItemLink(
+  item: IRawNavItem,
+  parentItems: IRawNavItem[]
+) {
+  const itemPath = getNavItemPath(item, parentItems);
   return <Link href={itemPath}>{item.label}</Link>;
+}
+
+export function getAntDMenuItemKey(itemKey: string, rootItemKey?: string) {
+  if (rootItemKey) return `${rootItemKey}_${itemKey}`;
+  else return itemKey;
 }
 
 function renderToAntDMenuItem(
   item: IRawNavItem,
-  rootItem: IRawNavItem
+  parentItems: IRawNavItem[]
 ): ItemType {
   const { withLink, ...itemRest } = item;
+  const rootItem = first(parentItems);
+  const key = getAntDMenuItemKey(item.key, rootItem?.key);
   return {
     ...itemRest,
-    label: withLink ? renderRawNavItemLink(item, rootItem) : item.label,
+    key,
+    label: withLink ? renderRawNavItemLink(item, parentItems) : item.label,
     children: item.children
-      ? renderToAntDMenuItemList(item.children, rootItem)
+      ? renderToAntDMenuItemList(item.children, parentItems.concat(item))
       : undefined,
   };
 }
 
 function renderToAntDMenuItemList(
   items: IRawNavItem[],
-  rootItem: IRawNavItem
+  parentItems: IRawNavItem[]
 ): ItemType[] {
   return compact(
     flatten(
       items.map((item, i) => {
         return [
-          renderToAntDMenuItem(item, rootItem),
+          renderToAntDMenuItem(item, parentItems),
           i < items.length - 1 ? { type: "divider" } : undefined,
         ];
       })
@@ -50,10 +66,14 @@ function renderToAntDMenuItemList(
 export const restApiRawNavItems = extractRestApiFromRawTableOfContent(
   restApiTableOfContent as any
 );
-
+export const docNavRootKeys = {
+  fimidara: "fimidara",
+  restApi: "fimidara-rest-api",
+  jsSdk: "fimidara-js-sdk",
+} as const;
 export const fimidaraNavItems: IRawNavItem[] = [
   {
-    key: "fimidara",
+    key: docNavRootKeys.fimidara,
     label: "fimidara",
     children: [
       {
@@ -76,14 +96,14 @@ export const fimidaraNavItems: IRawNavItem[] = [
 ];
 export const fimidaraRestApiNavItems: IRawNavItem[] = [
   {
-    key: "fimidara-rest-api",
+    key: docNavRootKeys.restApi,
     label: "fimidara REST API",
     children: (
       [
         {
           withLink: true,
           label: "overview",
-          key: "",
+          key: "overview",
         },
       ] as IRawNavItem[]
     ).concat(restApiRawNavItems),
@@ -91,14 +111,14 @@ export const fimidaraRestApiNavItems: IRawNavItem[] = [
 ];
 export const fimidaraJsSdkNavItems: IRawNavItem[] = [
   {
-    key: "fimidara-js-sdk",
+    key: docNavRootKeys.jsSdk,
     label: "fimidara JS SDK",
     children: (
       [
         {
           withLink: true,
           label: "overview",
-          key: "",
+          key: "overview",
         },
       ] as IRawNavItem[]
     ).concat(restApiRawNavItems),
@@ -107,18 +127,21 @@ export const fimidaraJsSdkNavItems: IRawNavItem[] = [
 
 export const fimidaraAntdNavItems = renderToAntDMenuItemList(
   fimidaraNavItems,
-  first(fimidaraNavItems)!
+  []
 );
 export const fimidaraRestApiAntdNavItems = renderToAntDMenuItemList(
   fimidaraRestApiNavItems,
-  first(fimidaraRestApiNavItems)!
+  []
 );
 export const fimidaraJsSdkAntdNavItems = renderToAntDMenuItemList(
   fimidaraJsSdkNavItems,
-  first(fimidaraJsSdkNavItems)!
+  []
 );
 
-function extractRestApiFromRawTableOfContent(records: Array<[string, string]>) {
+function extractRestApiFromRawTableOfContent(
+  records: Array<[string, string]>,
+  includeEndpointMethod = true
+) {
   interface RawNavItemWithRecord {
     key: string;
     label: React.ReactNode;
@@ -130,29 +153,30 @@ function extractRestApiFromRawTableOfContent(records: Array<[string, string]>) {
   const linksMap: Record<string, RawNavItemWithRecord> = {};
 
   function setEntry(endpointPath: string, endpointMethod: string) {
-    const [e01, version, ...rest] = endpointPath.split("/");
-    const fnName = last(rest);
+    const [unused, version, ...restPath] = endpointPath.split("/");
+    const fnName = last(restPath);
 
-    rest.forEach((k0, index) => {
-      const k1 = rest.slice(0, index + 1);
-      const k2 = k1.join("__");
-      const isFn = k0 === fnName;
-      const k3 = isFn
-        ? `${version}/${k2}__${endpointMethod}`
-        : `${version}/${k2}`;
-      let k4 = k1.join(".children.");
-      k4 = isFn ? `${k4}__${endpointMethod}` : k4;
+    restPath.forEach((nextKey, index) => {
+      const keyList = restPath.slice(0, index + 1);
+      const keysJoined = keyList.join("__");
+      const isFn = nextKey === fnName;
+      const itemKey =
+        isFn && includeEndpointMethod
+          ? `${keysJoined}__${endpointMethod}`
+          : `${keysJoined}`;
+      let fullKeyPath = keyList.join(".children.");
+      fullKeyPath = isFn ? `${fullKeyPath}__${endpointMethod}` : fullKeyPath;
       const label = isFn
-        ? `${k0}${htmlCharacterCodes.doubleDash}${endpointMethod}`
-        : k0;
+        ? `${nextKey}${htmlCharacterCodes.doubleDash}${endpointMethod}`
+        : nextKey;
       const item: IRawNavItem = {
         label,
-        key: k3,
+        key: itemKey,
         withLink: isFn,
       };
 
-      if (!get(linksMap, k4)) {
-        set(linksMap, k4, item);
+      if (!get(linksMap, fullKeyPath)) {
+        set(linksMap, fullKeyPath, item);
       }
     });
   }
@@ -161,16 +185,13 @@ function extractRestApiFromRawTableOfContent(records: Array<[string, string]>) {
     parentLinks: IRawNavItem[],
     items: Record<string, RawNavItemWithRecord>
   ) {
-    forEach(items, (i1) => {
-      const item: IRawNavItem = {
-        ...i1,
-        children: undefined,
-      };
+    forEach(items, (nextItem) => {
+      const item: IRawNavItem = { ...nextItem, children: undefined };
       parentLinks.push(item);
 
-      if (i1.children && !isObjectEmpty(i1.children)) {
+      if (nextItem.children && !isObjectEmpty(nextItem.children)) {
         item.children = [];
-        navItemsWithRecordToList(item.children, i1.children);
+        navItemsWithRecordToList(item.children, nextItem.children);
       }
     });
   }

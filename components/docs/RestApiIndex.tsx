@@ -1,3 +1,4 @@
+import { toCompactArray } from "@/lib/utils/fns";
 import { Typography } from "antd";
 import { first } from "lodash";
 import Link from "next/link";
@@ -27,7 +28,10 @@ function renderNavItemList(
   parentLabel: React.ReactNode
 ) {
   const nodes = items.map((item) => {
-    const itemPath = getNavItemPath(item, first(fimidaraRestApiNavItems)!);
+    const itemPath = getNavItemPath(
+      item,
+      toCompactArray(first(fimidaraRestApiNavItems))
+    );
 
     if (item.withLink) {
       return (

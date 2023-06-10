@@ -17,20 +17,24 @@ import {
 
 export interface FieldDescriptionProps extends StyleableComponentProps {
   fieldbase: any;
+  type?: "secondary";
 }
 
 const classes = {
   root: css({
     margin: "2px 0px",
   }),
+  underline: css({
+    textDecoration: "underline",
+  }),
 };
 
 const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
-  const { fieldbase, style, className } = props;
+  const { fieldbase, style, className, type } = props;
   const nodes: React.ReactNode[] = [];
   if (fieldbase && (fieldbase as Pick<FieldBase, "description">)) {
     nodes.push(
-      <Typography.Paragraph key="description">
+      <Typography.Paragraph key="description" type={type}>
         {fieldbase.description}
       </Typography.Paragraph>
     );
@@ -40,7 +44,7 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.valid) {
       nodes.push(
         <Typography.Paragraph key="string-enum">
-          <b>Enum: </b>
+          <Typography.Text className={classes.underline}>Enum</Typography.Text>:{" "}
           {map(fieldbase.valid, (enumString) => (
             <Typography.Text code>{enumString}</Typography.Text>
           ))}
@@ -50,24 +54,30 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.min) {
       nodes.push(
         <Typography.Paragraph key="string-min">
-          <b>Min characters: </b>
-          {fieldbase.min}
+          <Typography.Text className={classes.underline}>
+            Min characters
+          </Typography.Text>
+          : {fieldbase.min}
         </Typography.Paragraph>
       );
     }
     if (fieldbase.max) {
       nodes.push(
         <Typography.Paragraph key="string-max">
-          <b>Max characters: </b>
-          {fieldbase.max}
+          <Typography.Text className={classes.underline}>
+            Max characters
+          </Typography.Text>
+          : {fieldbase.max}
         </Typography.Paragraph>
       );
     }
     if (fieldbase.example) {
       nodes.push(
         <Typography.Paragraph key="string-example">
-          <b>Example: </b>
-          {fieldbase.example}
+          <Typography.Text className={classes.underline}>
+            Example
+          </Typography.Text>
+          : {fieldbase.example}
         </Typography.Paragraph>
       );
     }
@@ -75,15 +85,19 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.integer) {
       nodes.push(
         <Typography.Paragraph key="number-subset">
-          <b>Number subset: </b>
-          <Typography.Text code>integer</Typography.Text> only
+          <Typography.Text className={classes.underline}>
+            Number subset
+          </Typography.Text>
+          : <Typography.Text code>integer</Typography.Text> only
         </Typography.Paragraph>
       );
     } else {
       nodes.push(
         <Typography.Paragraph key="number-subset">
-          <b>Number subset: </b>
-          <Typography.Text code>floating point</Typography.Text> or{" "}
+          <Typography.Text className={classes.underline}>
+            Number subset
+          </Typography.Text>
+          : <Typography.Text code>floating point</Typography.Text> or{" "}
           <Typography.Text code>integer</Typography.Text>
         </Typography.Paragraph>
       );
@@ -92,7 +106,7 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.min) {
       nodes.push(
         <Typography.Paragraph key="number-min">
-          <b>Min: </b>
+          <Typography.Text className={classes.underline}>Min</Typography.Text>:{" "}
           {fieldbase.min}
         </Typography.Paragraph>
       );
@@ -100,7 +114,7 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.max) {
       nodes.push(
         <Typography.Paragraph key="number-max">
-          <b>Max: </b>
+          <Typography.Text className={classes.underline}>Max</Typography.Text>:{" "}
           {fieldbase.max}
         </Typography.Paragraph>
       );
@@ -108,8 +122,10 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.example) {
       nodes.push(
         <Typography.Paragraph key="number-example">
-          <b>Example: </b>
-          {fieldbase.example}
+          <Typography.Text className={classes.underline}>
+            Example
+          </Typography.Text>
+          : {fieldbase.example}
         </Typography.Paragraph>
       );
     }
@@ -117,8 +133,10 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.example) {
       nodes.push(
         <Typography.Paragraph key="boolean-example">
-          <b>Example: </b>
-          {fieldbase.example}
+          <Typography.Text className={classes.underline}>
+            Example
+          </Typography.Text>
+          : {fieldbase.example}
         </Typography.Paragraph>
       );
     }
@@ -132,8 +150,10 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.example) {
       nodes.push(
         <Typography.Paragraph key="date-example">
-          <b>Example: </b>
-          {fieldbase.example}
+          <Typography.Text className={classes.underline}>
+            Example
+          </Typography.Text>
+          : {fieldbase.example}
         </Typography.Paragraph>
       );
     }
@@ -141,16 +161,20 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.min) {
       nodes.push(
         <Typography.Paragraph key="array-min">
-          <b>Min items: </b>
-          {fieldbase.min}
+          <Typography.Text className={classes.underline}>
+            Min items
+          </Typography.Text>
+          : {fieldbase.min}
         </Typography.Paragraph>
       );
     }
     if (fieldbase.max) {
       nodes.push(
         <Typography.Paragraph key="array-max">
-          <b>Max items: </b>
-          {fieldbase.max}
+          <Typography.Text className={classes.underline}>
+            Max items
+          </Typography.Text>
+          : {fieldbase.max}
         </Typography.Paragraph>
       );
     }
@@ -158,16 +182,20 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.min) {
       nodes.push(
         <Typography.Paragraph key="binary-min">
-          <b>Min bytes: </b>
-          {prettyBytes(fieldbase.min)}
+          <Typography.Text className={classes.underline}>
+            Min bytes
+          </Typography.Text>
+          : {prettyBytes(fieldbase.min)}
         </Typography.Paragraph>
       );
     }
     if (fieldbase.max) {
       nodes.push(
         <Typography.Paragraph key="binary-max">
-          <b>Max bytes: </b>
-          {prettyBytes(fieldbase.max)}
+          <Typography.Text className={classes.underline}>
+            Max bytes
+          </Typography.Text>
+          : {prettyBytes(fieldbase.max)}
         </Typography.Paragraph>
       );
     }
@@ -175,7 +203,7 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
     if (fieldbase.descriptionLink) {
       nodes.push(
         <Typography.Paragraph key="custom-type-description-link">
-          <b>Link: </b>
+          <Typography.Text className={classes.underline}>Link</Typography.Text>:{" "}
           <a href={fieldbase.descriptionLink}>{fieldbase.descriptionLink}</a>
         </Typography.Paragraph>
       );

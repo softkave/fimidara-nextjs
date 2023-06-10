@@ -16,9 +16,15 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
   const fimidaraJsDescriptionNode = (
     <Space direction="vertical" size={"middle"}>
       <Typography.Text>
-        Run <Typography.Text code>npm i fimidara</Typography.Text>
+        Run{" "}
+        <Typography.Text code copyable>
+          npm i fimidara
+        </Typography.Text>
         &nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
-        <Typography.Text code>yarn add fimidara</Typography.Text> to install.
+        <Typography.Text code copyable>
+          yarn add fimidara
+        </Typography.Text>{" "}
+        to install.
       </Typography.Text>
       <div>
         <Typography.Paragraph>
@@ -39,14 +45,14 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
         </Typography.Paragraph>
         <Typography.Text code>
           const fimidaraEndpoints = new FimidaraEndpoints({"{"}authToken: "agent
-          token JWT auth token"{"}"});
+          token JWT token"{"}"});
         </Typography.Text>
       </div>
     </Space>
   );
   const endpointsNode = renderNavItemList(
     restApiRawNavItems,
-    /** parent path */ "",
+    first(fimidaraJsSdkNavItems)!,
     "FimidaraEndpoints"
   );
   const othersNode = (
@@ -88,12 +94,13 @@ export default JsSdkIndex;
 
 function renderNavItemList(
   items: IRawNavItem[],
-  parentPath: string,
-  parentLabel: React.ReactNode,
+  rootItem: IRawNavItem,
+  label: React.ReactNode,
   descriptionNode?: React.ReactNode
 ) {
   const nodes = items.map((item) => {
-    const itemPath = getNavItemPath(item, first(fimidaraJsSdkNavItems)!);
+    const itemPath = getNavItemPath(item, [rootItem]);
+
     if (item.withLink) {
       return (
         <li key={item.key}>
@@ -101,15 +108,15 @@ function renderNavItemList(
         </li>
       );
     } else if (item.children) {
-      return renderNavItemList(item.children, itemPath, item.label);
+      return renderNavItemList(item.children, rootItem, item.label);
     }
   });
 
   return (
     <div>
-      <Typography.Title level={5}>{parentLabel}</Typography.Title>
+      <Typography.Title level={5}>{label}</Typography.Title>
       {descriptionNode}
-      <ul key={parentPath}>{nodes}</ul>
+      <ul>{nodes}</ul>
     </div>
   );
 }

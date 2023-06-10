@@ -5,30 +5,34 @@ description: A quick introduction to workspaces in fimidara
 
 # {% $markdoc.frontmatter.title %}
 
-## What is a workspace
+## What is a workspace?
 
-A workspace is the root of all resources and operations in Fimidara. You can also think of a workspace as a special (root) folder identified by the rootname. But a workspace is not just for files and folders, it is also a collection of collaborators, agent tokens , permission groups, and other resources. To have others work with you in your workspace, you need to send a collaboration request. You do this by providing their email and Fimidara will send them a request to join your workspace. Should they accept the request, they will be added to your workspace. Another necessary part of the collaboration request process is assigning permission groups that will be assigned to the recipient if the request is accepted. This is needed because everything in Fimidara is permission-based so even if they accept the collaboration request, they will not be able to access your workspace unless they are assigned a permission group that gives them access to your workspace's resources. You can also do this after the request is sent, or assign them permission groups after they accept the request. By default, three permission groups are created for you:
+The workspace is the root of all resources and operations in fimidara. You can also think of a workspace as a special (root) folder identified by the workspace **rootname**. It isn't just for files and folders though, it is also a collection of collaborators, agent tokens, permission groups, and other resources. Besides being a collection, it also facilitates collaboration. In a workspace, you can send invites to others to collaborate with you. Should they accept your invitation, you can then assign them permissions or permission groups as needed. A necessary part of the collaboration request/invitation process is assigning permissions to the invitee on accepting the request. This is needed because everything in fimidara is permission-based so even if they accept the invitation, they will not be able to access your workspace besides reading the details of the workspace. By default, three permission groups are automatically created upon creating a workspace:
 
-- `public` - for unauthenticated requests, basically, the internet's permission group
-- `collaborators` - intended for collaborators
-- `admins` - workspace admins
+- `public` - for unauthenticated requests, basically, everyone on the internet. Starts with no permissions, so, to allow public read of a file, you'll have to grant it read permission to said file.
+- `collaborator` - intended for collaborators who've accepted your collaboration request. Comes with mostly read permissions, and the ability to create, read, and update folders and files, but not delete them.
+- `admin` - workspace admins. This is the permission automatically assigned to the workspace creator, and it allows access to every resource in the workspace.
 
 ## Files and folder
 
-Seeing Fimidara's main offering is it's file storage service with fine-grained access control, to make it easier to manage files and their permissions, Fimidara offers folders. With folders, you can group together similar files and folders, and then grant access to the whole group. Folders and files in Fimidara are identified by their path which is a slash-separated list of names with the workspace's rootname as the first name and the file or folder's name as the last name.
+Seeing fimidara's main offering is it's file storage service with fine-grained access control, to make it easier to manage said files and their permissions, fimidara offers **folders**. With folders, you can group together similar files and other folders, and grant/deny access to the whole. Folders and files in fimidara are identified by their path which is a unique, slash-separated list of names with the workspace's rootname coming first, then the folder names, then lastly the file name. Example, `/workspace-rootname/web/images/funny-image.png`.
 
-Another thing of note is that we currently have an individual file limit of `200Mb` but we plan on increasing it in the future of if someone needs it increased urgently. If you do, reach out to `abayomi@softkave.com`.
+Another thing of note is that we currently have an individual file limit of `200Mb` which we plan to in the future increase. If you do need a large file limit, please reach out to `abayomi@softkave.com`.
 
 ## Usage records
 
-Fimidara records usage in the following categories:
+fimidara is a paid service, following the pay-for-what-you-use model. So, fimidara records usage in the following categories:
 
-- `storage` - for files stored in bytes
-- `bandwidth-in` - for data transferred into Fimidara in bytes
-- `bandwidth-out` - for data transferred out of Fimidara in bytes
-- `total` - for total usage in USD
+- `storage` - for files stored, in bytes.
+- `bandwidth-in` - for data transferred into fimidara, in bytes.
+- `bandwidth-out` - for data transferred out of fimidara, in bytes.
+- `total` - for total usage, in USD,
 
-We plan to add more usage categories in the future. Each usage category is reported monthly and is calculated from the 26th of the previous month to the 25th of the current month. For example, the `storage` usage for the month of January is calculated from the 26th of December to the 25th of January. Currently, we don't support billing but it's in the works so we offer a free tier for now. The total usage of the free tier is 5 USD per month. **You can reach out to `abayomi@softkave.com` to request a free tier increase.** Within a reporting month, if you exceed your usage limit, you will be notified via email and your workspace will be locked until the next reporting period. You can also check your usage in the dashboard. Subsequent requests will be dropped and summed up into the `dropped` usage records for the reporting period. You can also check these in the dashboard. So, usage records come in two fulfillment states:
+We would add other categories in the future, but these are currently sufficient. **Each usage category is reported monthly and is calculated from the 26th of the previous month to the 25th of the current month**. For example, the `storage` usage for the month of January is calculated from the 26th of December to the 25th of January.
 
-- `fulfilled` - for usage that is within the usage limit and was fulfilled
-- `dropped` - for usage outside the usage limit and was dropped
+Though fimidara is a paid service, but due to the scale of the features needed and our engineering capacity, we have not built the billing system. Meaning, fimidara currently only offers the free tier, for now. The total usage of the free tier is 30 USD per workspace per month. 30 USD per workspace is ample though. With it, you can store upto 600Gb of storage, or upto 200Gb of bandwidth in and out, in a month. **But should you need an increase to the free tier, you can reach out to `abayomi@softkave.com`.** Within a reporting month, if you exceed your usage limit, you will be notified via email and your workspace will be locked until the next reporting period, to avoid overcharge when we eventually implement billing. You can also check your usage in the dashboard. For locked workspaces, subsequent requests will be dropped and summed up into the `dropped` usage record group for the reporting period. You can also check these in the dashboard. Usage records come in two fulfillment states:
+
+- `fulfilled` - for usage that is within the usage limit and was fulfilled.
+- `dropped` - for usage outside the usage limit and was dropped.
+
+**Regarding billing, upon launch, we guarantee that it would be cheaper than AWS S3 and similar file backend offerings.**

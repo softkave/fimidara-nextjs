@@ -28,6 +28,9 @@ const classes = {
   prefixBtnContainer: css({
     marginRight: "16px",
   }),
+  login: css({
+    textDecoration: "underline",
+  }),
 };
 
 const WebHeader: React.FC<IWebHeaderProps> = (props) => {
@@ -50,7 +53,9 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
 
   sideLinksNode = (
     <Space size={"middle"}>
-      <Link href={appAccountPaths.login}>Login</Link>
+      <Link href={appAccountPaths.login} className={classes.login}>
+        Login
+      </Link>
       <Dropdown trigger={["click"]} menu={{ items }} placement="bottomRight">
         <IconButton icon={<BsThreeDots />} className={appClasses.iconBtn} />
       </Dropdown>

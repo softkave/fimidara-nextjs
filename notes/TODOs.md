@@ -3,6 +3,8 @@
 ## Now
 
 - [ ] see entity permissions
+- [ ] implement 404 nextjs page
+- [ ] only show post for js sdk when there's post and get
 - [ ] make sure all data stores are cleared on user logout
 - [ ] hide tabs and buttons based on resolved permissions
   - [ ] how to target resolved permissions after add and delete
@@ -46,6 +48,7 @@
 - [ ] surface inherited permission groups in assigned permission groups
 - [ ] bulk ops, like bulk unassign, bulk delete, etc
 - [ ] show type description for lists without description in rest-api
+- [ ] a page for users to try out different options of image resize
 
 ## Later
 

@@ -8,6 +8,7 @@ import useAppResponsive from "../../lib/hooks/useAppResponsive";
 import IconButton from "../utils/buttons/IconButton";
 import {
   DOCS_BASE_PATH,
+  docNavRootKeys,
   fimidaraAntdNavItems,
   fimidaraJsSdkAntdNavItems,
   fimidaraRestApiAntdNavItems,
@@ -86,8 +87,25 @@ export function DocsSideNav(props: IDocsSideNavProps) {
   const responsive = useAppResponsive();
   const pathname = router.asPath;
   const { openKeys, selectedKeys } = useMemo(() => {
-    const currentDocsPath = last(pathname.split(DOCS_BASE_PATH));
-    const openKeys = compact(currentDocsPath?.split("/"));
+    const docPath = last(pathname.split(DOCS_BASE_PATH));
+    const docKeys = compact(docPath?.split("/"));
+    const [rootKey, ...restKeys] = docKeys;
+    let openKeys = docKeys;
+
+    if (
+      rootKey === docNavRootKeys.restApi ||
+      rootKey === docNavRootKeys.jsSdk
+    ) {
+      const [version, endpointKey] = restKeys;
+      const parentKeys = endpointKey.split("__").slice(0, -2);
+      openKeys = [rootKey, ...parentKeys, endpointKey];
+    }
+
+    openKeys = openKeys.map((key, i) => {
+      if (i === 0) return key;
+      if (rootKey) return `${rootKey}_${key}`;
+      else return key;
+    });
     const selectedKeys = compact([last(openKeys)]);
     return { openKeys, selectedKeys };
   }, [pathname]);

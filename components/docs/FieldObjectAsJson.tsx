@@ -165,7 +165,6 @@ function renderFieldObjectAsJson(
             id={getTypeNameID(nextObject.name)}
             level={5}
             className={cx(classes.title, appClasses.muteMargin)}
-            type="secondary"
           >
             {nextObject.name}
           </Typography.Title>
@@ -176,7 +175,7 @@ function renderFieldObjectAsJson(
           <Typography.Text code>Optional</Typography.Text>
         )}
       </Space>
-      <FieldDescription fieldbase={nextObject} />
+      <FieldDescription fieldbase={nextObject} type="secondary" />
       <div className={classes.jsonContent}>
         &#123;
         {rows}

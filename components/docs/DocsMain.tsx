@@ -45,7 +45,6 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
       <style jsx>
         {`
           .docsMain {
-            // overflow: hidden;
             height: 100vh;
             max-width: 1020px;
             margin: 0px auto;
@@ -71,6 +70,10 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
             padding: 1rem;
             max-width: 820px;
             margin: 0 auto;
+          }
+          main * {
+            font-size: 14px;
+            color: rgba(38, 38, 38, 0.88);
           }
         `}
       </style>
