@@ -3,6 +3,7 @@
 ## Now
 
 - [ ] see entity permissions
+- [ ] add the new red file props to docs or automate them
 - [ ] implement 404 nextjs page
 - [ ] only show post for js sdk when there's post and get
 - [ ] make sure all data stores are cleared on user logout

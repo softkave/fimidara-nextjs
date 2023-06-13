@@ -41,35 +41,32 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
     },
   });
 
-  const onSelectMenuItem = React.useCallback(
-    (info: MenuInfo) => {
-      if (info.key === MenuKeys.DeleteItem) {
-        Modal.confirm({
-          title: "Are you sure you want to delete this folder?",
-          okText: "Yes",
-          cancelText: "No",
-          okType: "primary",
-          okButtonProps: { danger: true },
-          onOk: async () => {
-            await deleteHook.runAsync({
-              body: {
-                folderpath: addRootnameToPath(
-                  folder.namePath.join(folderConstants.nameSeparator),
-                  workspaceRootname
-                ),
-              },
-            });
-          },
-          onCancel() {
-            // do nothing
-          },
-        });
-      } else if (info.key === MenuKeys.GrantPermission) {
-        permissionsHook.toggle();
-      }
-    },
-    [deleteHook, permissionsHook.toggle]
-  );
+  const onSelectMenuItem = (info: MenuInfo) => {
+    if (info.key === MenuKeys.DeleteItem) {
+      Modal.confirm({
+        title: "Are you sure you want to delete this folder?",
+        okText: "Yes",
+        cancelText: "No",
+        okType: "primary",
+        okButtonProps: { danger: true },
+        onOk: async () => {
+          await deleteHook.runAsync({
+            body: {
+              folderpath: addRootnameToPath(
+                folder.namePath.join(folderConstants.nameSeparator),
+                workspaceRootname
+              ),
+            },
+          });
+        },
+        onCancel() {
+          // do nothing
+        },
+      });
+    } else if (info.key === MenuKeys.GrantPermission) {
+      permissionsHook.toggle();
+    }
+  };
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
     {

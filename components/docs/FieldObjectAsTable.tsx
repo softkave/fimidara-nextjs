@@ -54,7 +54,7 @@ const FieldObjectAsTable: React.FC<FieldObjectAsTableProps> = (props) => {
     });
 
     return nodes;
-  }, [objectsToProcess, fieldObject, isForJsSdk]);
+  }, [objectsToProcess, fieldObject, isForJsSdk, hideTitle, propName]);
 
   return (
     <Space

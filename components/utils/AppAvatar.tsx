@@ -2,7 +2,7 @@ import { systemConstants } from "@/lib/definitions/system";
 import { useRequest } from "ahooks";
 import { Avatar, AvatarProps } from "antd";
 import assert from "assert";
-import { getReadFileURL } from "fimidara";
+import { getFimidaraReadFileURL } from "fimidara";
 import { first } from "lodash";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
 import { Omit1 } from "../../lib/utils/types";
@@ -44,7 +44,7 @@ export default function AppAvatar(props: IAppAvatarProps) {
       {...restProps}
       src={
         pathHook.data
-          ? getReadFileURL({
+          ? getFimidaraReadFileURL({
               serverURL: systemConstants.serverAddr,
               filepath: "/" + pathHook.data,
               width: appDimensions.avatar.width,

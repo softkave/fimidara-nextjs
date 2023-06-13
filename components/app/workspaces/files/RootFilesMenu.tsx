@@ -23,14 +23,11 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
     forTargetTypeOnly: ["file", "folder"],
   });
 
-  const onSelectMenuItem = React.useCallback(
-    (info: MenuInfo) => {
-      if (info.key === MenuKeys.Permissions) {
-        permissionsHook.toggle();
-      }
-    },
-    [permissionsHook.toggle]
-  );
+  const onSelectMenuItem = (info: MenuInfo) => {
+    if (info.key === MenuKeys.Permissions) {
+      permissionsHook.toggle();
+    }
+  };
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
     {

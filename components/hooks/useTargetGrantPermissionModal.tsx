@@ -32,7 +32,7 @@ export default function useTargetGrantPermissionModal(
     } else {
       return null;
     }
-  }, [visible, targetId]);
+  }, [visible, targetId, forTargetTypeOnly, workspaceId, toggleHook.toggle]);
 
   return { node, toggle: toggleHook.toggle };
 }

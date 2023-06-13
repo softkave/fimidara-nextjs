@@ -64,7 +64,7 @@ const FieldObjectAsJson: React.FC<FieldObjectAsJsonProps> = (props) => {
     });
 
     return nodes;
-  }, [objectsToProcess, isForJsSdk, fieldObject]);
+  }, [objectsToProcess, isForJsSdk, fieldObject, propName]);
 
   return <React.Fragment>{nodes}</React.Fragment>;
 };
@@ -105,7 +105,7 @@ export function renderJsonFieldType(
     if (!data.types) return "";
     const nodes: React.ReactNode[] = [];
     forEach(data.types, (nextType, index) => {
-      if (index > 0) nodes.push(" | ");
+      if (Number(index) > 0) nodes.push(" | ");
       nodes.push(renderJsonFieldType(nextType, isForJsSdk));
     });
     return nodes;

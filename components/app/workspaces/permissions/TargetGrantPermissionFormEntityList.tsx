@@ -1,13 +1,14 @@
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
+import { getWorkspaceActionList } from "@/lib/definitions/system";
 import { useFetchArbitraryFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useResolveEntityPermissionsFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { makeKey } from "@/lib/utils/fns";
 import { indexArray } from "@/lib/utils/indexArray";
+import { getResourceTypeFromId } from "@/lib/utils/resource";
 import { Collapse } from "antd";
 import {
-  AppActionType,
   ResolveEntityPermissionsEndpointParams,
   ResolvedEntityPermissionItem,
   WorkspaceAppResourceType,
@@ -58,10 +59,10 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
     onChange,
   } = props;
 
-  const actions: AppActionType[] = ["read"];
-  // const actions = getWorkspaceActionList(
-  //   targetType ?? getResourceTypeFromId(targetId)
-  // );
+  const actions = React.useMemo(
+    () => getWorkspaceActionList(targetType ?? getResourceTypeFromId(targetId)),
+    [targetId, targetType]
+  );
   const params: ResolveEntityPermissionsEndpointParams = React.useMemo(() => {
     return {
       workspaceId,
@@ -89,7 +90,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
               },
             ],
     };
-  }, [items, targetId, targetType, workspaceId]);
+  }, [items, targetId, targetType, workspaceId, actions]);
   const rpHook = useResolveEntityPermissionsFetchHook(params);
   const { data, error, isLoading } = useFetchArbitraryFetchState(
     rpHook.fetchState
@@ -104,7 +105,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
         accessEntityId: item.accessEntityId,
       }),
     });
-  }, [data?.items, targetType]);
+  }, [data?.items]);
   const [updatedPermissionsMap, setUpdatedPermissionsMap] =
     React.useState<ResolvedPermissionsMap>(defaultUpdatedPermissions ?? {});
   const permissionsMap = React.useMemo(() => {

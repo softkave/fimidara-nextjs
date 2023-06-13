@@ -26,14 +26,12 @@ const WorkspaceResourceListMenu: React.FC<WorkspaceResourceListMenuProps> = (
     targetId: workspaceId,
     forTargetTypeOnly: targetType,
   });
-  const onSelectMenuItem = React.useCallback(
-    (info: MenuInfo) => {
-      if (info.key === MenuKeys.GrantPermission) {
-        permissionsHook.toggle();
-      }
-    },
-    [permissionsHook.toggle]
-  );
+
+  const onSelectMenuItem = (info: MenuInfo) => {
+    if (info.key === MenuKeys.GrantPermission) {
+      permissionsHook.toggle();
+    }
+  };
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
     {

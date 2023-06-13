@@ -17,7 +17,7 @@ export default function UploadWorkspaceAvatar(
 
   const onCompleteUpload = React.useCallback(() => {
     useKvStore.getState().set(refreshKey, Date.now());
-  }, []);
+  }, [refreshKey]);
 
   return (
     <div className={className} style={style}>

@@ -70,26 +70,20 @@ function makeEndpointMutationHook<
       },
       []
     );
-    const onSuccessFn = React.useCallback(
-      (data: TData, params: TParams) => {
-        const fn = over(compact([baseOnSuccess, requestOptions?.onSuccess]));
-        fn(data, params);
-      },
-      [requestOptions?.onSuccess]
-    );
-    const onErrorFn = React.useCallback(
-      (e: Error, params: TParams) => {
-        const fn = over(
-          compact([
-            baseOnError,
-            requestOptions?.onError,
-            handleServerRecommendedActions,
-          ])
-        );
-        fn(e, params);
-      },
-      [requestOptions?.onError]
-    );
+    const onSuccessFn = (data: TData, params: TParams) => {
+      const fn = over(compact([baseOnSuccess, requestOptions?.onSuccess]));
+      fn(data, params);
+    };
+    const onErrorFn = (e: Error, params: TParams) => {
+      const fn = over(
+        compact([
+          baseOnError,
+          requestOptions?.onError,
+          handleServerRecommendedActions,
+        ])
+      );
+      fn(e, params);
+    };
 
     const request = useRequest(mutationFn, {
       manual: true,

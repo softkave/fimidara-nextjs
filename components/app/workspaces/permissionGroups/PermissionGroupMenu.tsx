@@ -62,56 +62,47 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
       },
     });
 
-  const onSelectMenuItem = React.useCallback(
-    (info: MenuInfo) => {
-      if (info.key === MenuKeys.DeleteItem) {
-        Modal.confirm({
-          title: "Are you sure you want to delete this permission group?",
-          okText: "Yes",
-          cancelText: "No",
-          okType: "primary",
-          okButtonProps: { danger: true },
-          onOk: async () => {
-            await deleteHook.runAsync();
-          },
-          onCancel() {
-            // do nothing
-          },
-        });
-      } else if (info.key === MenuKeys.GrantPermission) {
-        permissionsHook.toggle();
-      } else if (
-        info.key === MenuKeys.UnassignPermissionGroup &&
-        unassignParams?.entityId
-      ) {
-        Modal.confirm({
-          title: "Are you sure you want to unassign this permission group?",
-          okText: "Yes",
-          cancelText: "No",
-          okType: "primary",
-          okButtonProps: { danger: true },
-          onOk: async () => {
-            await unassignPermissionGroupHook.runAsync({
-              body: {
-                entityId: [unassignParams.entityId],
-                permissionGroups: [permissionGroup.resourceId],
-              },
-            });
-          },
-          onCancel() {
-            // do nothing
-          },
-        });
-      }
-    },
-    [
-      deleteHook,
-      unassignPermissionGroupHook,
-      unassignParams?.entityId,
-      permissionGroup,
-      permissionsHook.toggle,
-    ]
-  );
+  const onSelectMenuItem = (info: MenuInfo) => {
+    if (info.key === MenuKeys.DeleteItem) {
+      Modal.confirm({
+        title: "Are you sure you want to delete this permission group?",
+        okText: "Yes",
+        cancelText: "No",
+        okType: "primary",
+        okButtonProps: { danger: true },
+        onOk: async () => {
+          await deleteHook.runAsync();
+        },
+        onCancel() {
+          // do nothing
+        },
+      });
+    } else if (info.key === MenuKeys.GrantPermission) {
+      permissionsHook.toggle();
+    } else if (
+      info.key === MenuKeys.UnassignPermissionGroup &&
+      unassignParams?.entityId
+    ) {
+      Modal.confirm({
+        title: "Are you sure you want to unassign this permission group?",
+        okText: "Yes",
+        cancelText: "No",
+        okType: "primary",
+        okButtonProps: { danger: true },
+        onOk: async () => {
+          await unassignPermissionGroupHook.runAsync({
+            body: {
+              entityId: [unassignParams.entityId],
+              permissionGroups: [permissionGroup.resourceId],
+            },
+          });
+        },
+        onCancel() {
+          // do nothing
+        },
+      });
+    }
+  };
 
   const items: MenuProps["items"] = insertAntdMenuDivider(
     compact([

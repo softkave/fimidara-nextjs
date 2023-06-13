@@ -3,7 +3,7 @@ import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
 import { Button, Image, ImageProps } from "antd";
 import assert from "assert";
-import { getReadFileURL } from "fimidara";
+import { getFimidaraReadFileURL } from "fimidara";
 import { first } from "lodash";
 import React from "react";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
@@ -148,7 +148,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
         preview={preview}
         width={width}
         height={height}
-        src={getReadFileURL({
+        src={getFimidaraReadFileURL({
           width: width ?? appDimensions.upload.width,
           height: height ?? appDimensions.upload.height,
           serverURL: systemConstants.serverAddr,

@@ -84,11 +84,9 @@ function PageContent<T>(props: IPageContentProps<T>) {
       );
     } else {
       return (
-        <EmptyMessage
-          shouldPad
-          key="empty-message"
-          children={emptyMessage || "Not found"}
-        />
+        <EmptyMessage key="empty-message">
+          {emptyMessage || "Not found"}
+        </EmptyMessage>
       );
     }
   }

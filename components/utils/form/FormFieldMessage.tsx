@@ -34,8 +34,8 @@ const FormFieldMessage: React.FC<IFormFieldMessageProps> = (props) => {
       {messages.length === 1 && renderMessage(messages[0])}
       {messages.length > 1 && (
         <ul>
-          {messages.map((nextMessage) => {
-            return <li>{renderMessage(nextMessage)}</li>;
+          {messages.map((nextMessage, i) => {
+            return <li key={i}>{renderMessage(nextMessage)}</li>;
           })}
         </ul>
       )}

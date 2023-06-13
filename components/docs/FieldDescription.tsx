@@ -212,7 +212,7 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
   } else if (isFieldOrCombination(fieldbase)) {
     const descriptions = map(fieldbase.types ?? {}, (type, i) => (
       <React.Fragment key={i}>
-        {i != 0 && <Divider>OR</Divider>}
+        {Number(i) != 0 && <Divider>OR</Divider>}
         <FieldDescription fieldbase={type} />
       </React.Fragment>
     ));

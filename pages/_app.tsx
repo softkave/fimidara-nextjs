@@ -28,7 +28,7 @@ function FilesApp({ Component, pageProps }: AppProps) {
 
   React.useEffect(() => {
     if (shouldRouteToApp) router.push(appUserPaths.workspaces);
-  }, [shouldRouteToApp]);
+  }, [shouldRouteToApp, router]);
 
   let node: React.ReactNode = null;
   let headerNode: React.ReactNode = null;

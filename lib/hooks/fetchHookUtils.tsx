@@ -124,10 +124,10 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
   );
 }
 
+type MakeFetchResourceStoreHookFn<TData, TReturnedData, TKeyParams> =
+  typeof makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>;
 export type FetchResourceZustandStore<TData, TReturnedData, TKeyParams> =
-  ReturnType<
-    typeof makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>
-  >;
+  ReturnType<MakeFetchResourceStoreHookFn<TData, TReturnedData, TKeyParams>>;
 
 /** Fetch hook defining general purpose fetch behaviour. */
 export function makeFetchResourceHook<
@@ -154,7 +154,7 @@ export function makeFetchResourceHook<
     boolean
   >
 ) {
-  const fetchHook = (params: Parameters<TFetchFn>[0]) => {
+  const useFetchHook = (params: Parameters<TFetchFn>[0]) => {
     const { handleServerRecommendedActions } =
       useHandleServerRecommendedActions();
 
@@ -217,7 +217,7 @@ export function makeFetchResourceHook<
     return { fetchState, fetchFn, clearFetchState };
   };
 
-  return fetchHook;
+  return useFetchHook;
 }
 
 export function makeManualFetchResourceHook<
@@ -236,7 +236,7 @@ export function makeManualFetchResourceHook<
     TData
   >
 ) {
-  const fetchHook = () => {
+  const useFetchHook = () => {
     const { handleServerRecommendedActions } =
       useHandleServerRecommendedActions();
 
@@ -278,7 +278,7 @@ export function makeManualFetchResourceHook<
     return { fetchFn, getFetchStateFn };
   };
 
-  return fetchHook;
+  return useFetchHook;
 }
 
 export function fetchHookDefaultSetFn(

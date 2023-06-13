@@ -8,9 +8,7 @@ import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { getBaseError } from "../../lib/utils/errors";
 import PageError from "../utils/page/PageError";
 import PageLoading from "../utils/page/PageLoading";
-import PageNothingFound, {
-  IPageNothingFoundPassedDownProps,
-} from "../utils/page/PageNothingFound";
+import PageNothingFound from "../utils/page/PageNothingFound";
 
 export interface IUseUserNodeResult {
   renderedNode: React.ReactElement | null;
@@ -22,16 +20,13 @@ export interface IUseUserNodeResult {
   assertGet: () => NonNullable<LoginResult>;
 }
 
-export function useUserNode(
-  props: { renderNode?: IPageNothingFoundPassedDownProps } = {}
-): IUseUserNodeResult {
+export function useUserNode(): IUseUserNodeResult {
   const { handleRequiresPasswordChange } = useHandleRequiresPasswordChange();
   const { fetchState } = useUserSessionFetchHook(undefined);
   const { isLoading, error, resource, initialized, other } =
     useFetchSingleResourceFetchState(fetchState);
   const { logout } = useUserLoggedIn();
   let renderedNode: React.ReactElement | null = null;
-  const renderNodeProps = props.renderNode || {};
 
   // React.useEffect(() => {
   //   if (resource?.requiresPasswordChange) {
@@ -42,7 +37,6 @@ export function useUserNode(
   if (error) {
     renderedNode = (
       <PageError
-        {...renderNodeProps}
         message={getBaseError(error) || "Error fetching user."}
         actions={[
           { children: "Logout", onClick: () => logout(), danger: true },
@@ -50,9 +44,7 @@ export function useUserNode(
       />
     );
   } else if (isLoading || !initialized) {
-    renderedNode = (
-      <PageLoading {...renderNodeProps} message="Loading user..." />
-    );
+    renderedNode = <PageLoading message="Loading user..." />;
   } else if (!resource) {
     renderedNode = <PageNothingFound message="User not found." />;
   }

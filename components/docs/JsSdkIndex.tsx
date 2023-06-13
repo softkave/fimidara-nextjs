@@ -34,8 +34,8 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
           <Typography.Text code>FimidaraEndpointError</Typography.Text>.
         </Typography.Paragraph>
         <Typography.Text code>
-          import {"{"}FimidaraEndpoints, getReadFileURL, getUploadFileURL{"}"}{" "}
-          from "fimidara"
+          import {"{"}FimidaraEndpoints, getFimidaraReadFileURL,
+          getUploadFileURL{"}"} from &quotfimidara&quot
         </Typography.Text>
       </div>
       <div>
@@ -44,8 +44,8 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
           <Typography.Text code>FimidaraEndpoints</Typography.Text> like so.
         </Typography.Paragraph>
         <Typography.Text code>
-          const fimidaraEndpoints = new FimidaraEndpoints({"{"}authToken: "agent
-          token JWT token"{"}"});
+          const fimidaraEndpoints = new FimidaraEndpoints({"{"}authToken:
+          &quotagent token JWT token&quot{"}"});
         </Typography.Text>
       </div>
     </Space>
@@ -60,17 +60,17 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
       <Typography.Title level={5}>Others</Typography.Title>
       <div>
         <JsSdkFunction
-          functionName="getReadFileURL"
-          params={[{ name: "props", type: getReadFileURLParams() }]}
-          result={getReadFileURLResult()}
+          functionName="getFimidaraReadFileURL"
+          params={[{ name: "props", type: getFimidaraReadFileURLParams() }]}
+          result={getFimidaraReadFileURLResult()}
         />
       </div>
       <Divider />
       <div>
         <JsSdkFunction
           functionName="getUploadFileURL"
-          params={[{ name: "props", type: getUploadFileURLParams() }]}
-          result={getReadFileURLResult()}
+          params={[{ name: "props", type: getFimidaraUploadFileURLParams() }]}
+          result={getFimidaraReadFileURLResult()}
         />
       </div>
     </div>
@@ -121,11 +121,11 @@ function renderNavItemList(
   );
 }
 
-function getReadFileURLParams(): FieldObject {
+function getFimidaraReadFileURLParams(): FieldObject {
   return {
     __id: "FieldObject",
     required: true,
-    name: "GetReadFileURLParams",
+    name: "GetFimidaraReadFileURLParams",
     fields: {
       filepath: {
         required: true,
@@ -156,7 +156,7 @@ function getReadFileURLParams(): FieldObject {
   };
 }
 
-function getReadFileURLResult(): FieldString {
+function getFimidaraReadFileURLResult(): FieldString {
   return {
     __id: "FieldString",
     description: "File path.",
@@ -164,11 +164,11 @@ function getReadFileURLResult(): FieldString {
   };
 }
 
-function getUploadFileURLParams(): FieldObject {
+function getFimidaraUploadFileURLParams(): FieldObject {
   return {
     __id: "FieldObject",
     required: true,
-    name: "GetUploadFileURLParams",
+    name: "GetFimidaraUploadFileURLParams",
     fields: {
       filepath: {
         required: true,

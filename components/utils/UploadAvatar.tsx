@@ -2,9 +2,9 @@ import { CloudUploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { Typography, Upload, message } from "antd";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
+import { getFimidaraUploadFileURL } from "fimidara";
 import { defaultTo, first } from "lodash";
 import React from "react";
-import { getUploadFileURL } from "../../lib/api/utils";
 import { systemConstants } from "../../lib/definitions/system";
 import { useUserNode } from "../hooks/useUserNode";
 import IconButton from "./buttons/IconButton";
@@ -104,7 +104,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
   return (
     <Upload
       name="data"
-      action={getUploadFileURL({
+      action={getFimidaraUploadFileURL({
         filepath,
         serverURL: systemConstants.serverAddr,
       })}

@@ -38,30 +38,27 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
     },
   });
 
-  const onSelectMenuItem = React.useCallback(
-    (info: MenuInfo) => {
-      if (info.key === MenuKeys.DeleteItem) {
-        Modal.confirm({
-          title: "Are you sure you want to remove this collaborator?",
-          okText: "Yes",
-          cancelText: "No",
-          okType: "primary",
-          okButtonProps: { danger: true },
-          onOk: async () => {
-            await deleteHook.runAsync({
-              body: { workspaceId, collaboratorId: collaborator.resourceId },
-            });
-          },
-          onCancel() {
-            // do nothing
-          },
-        });
-      } else if (info.key === MenuKeys.GrantPermission) {
-        permissionsHook.toggle();
-      }
-    },
-    [deleteHook, permissionsHook.toggle]
-  );
+  const onSelectMenuItem = (info: MenuInfo) => {
+    if (info.key === MenuKeys.DeleteItem) {
+      Modal.confirm({
+        title: "Are you sure you want to remove this collaborator?",
+        okText: "Yes",
+        cancelText: "No",
+        okType: "primary",
+        okButtonProps: { danger: true },
+        onOk: async () => {
+          await deleteHook.runAsync({
+            body: { workspaceId, collaboratorId: collaborator.resourceId },
+          });
+        },
+        onCancel() {
+          // do nothing
+        },
+      });
+    } else if (info.key === MenuKeys.GrantPermission) {
+      permissionsHook.toggle();
+    }
+  };
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
     {

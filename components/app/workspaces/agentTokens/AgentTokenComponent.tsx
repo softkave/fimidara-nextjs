@@ -27,7 +27,7 @@ function AgentTokenComponent(props: IAgentTokenProps) {
         ? appWorkspacePaths.agentTokenList(resource.workspaceId)
         : appWorkspacePaths.workspaces
     );
-  }, [router]);
+  }, [router, resource]);
 
   const expirationDate = resource.expires && formatDateTime(resource.expires);
 

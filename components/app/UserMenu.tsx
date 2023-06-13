@@ -8,9 +8,7 @@ const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
   const { logout } = useUserLoggedIn();
-  const userNode = useUserNode({
-    renderNode: { withoutMargin: true },
-  });
+  const userNode = useUserNode();
 
   const renderBtnNode = (userId: string, withError?: boolean) => {
     const userAvatarNode = (
