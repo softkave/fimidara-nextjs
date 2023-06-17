@@ -1,5 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { useRouter } from "next/router";
+import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import { appWorkspacePaths } from "../../lib/definitions/system";
 import { RESOURCE_TYPE_SHORT_NAMES } from "../../lib/utils/resource";

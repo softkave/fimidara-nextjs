@@ -1,5 +1,5 @@
+import { useLogout } from "@/lib/hooks/sessionHook";
 import { Badge, Button, Dropdown, MenuProps, Popover } from "antd";
-import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { useUserNode } from "../hooks/useUserNode";
 import { insertAntdMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
@@ -7,12 +7,12 @@ import UserAvatar from "./user/UserAvatar";
 const LOGOUT_MENU_KEY = "logout";
 
 export default function UserMenu() {
-  const { logout } = useUserLoggedIn();
+  const { logout } = useLogout();
   const userNode = useUserNode();
 
   const renderBtnNode = (userId: string, withError?: boolean) => {
     const userAvatarNode = (
-      <UserAvatar userId={userId} alt="Your profile picture" />
+      <UserAvatar userId={userId} alt="Your profile picture." />
     );
     return (
       <Button

@@ -1,8 +1,8 @@
+import { useSessionHook, useUserLoggedIn } from "@/lib/hooks/sessionHook";
 import { isUndefined } from "lodash";
 import { useRouter } from "next/router";
 import React from "react";
 import { appAccountPaths } from "../../lib/definitions/system";
-import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 
 const defaultOnRedirecting = (): React.ReactElement => <></>;
 
@@ -18,7 +18,8 @@ const withPageAuthRequiredHOC = <P extends object>(
   const WithPageAuthRequired: React.FC<P> = (props) => {
     const { returnTo, onRedirecting = defaultOnRedirecting } = options;
     const router = useRouter();
-    const { isLoggedIn, routeToOnLogout } = useUserLoggedIn();
+    const { routeToOnLogout, set } = useSessionHook();
+    const { isLoggedIn } = useUserLoggedIn();
 
     React.useEffect(() => {
       if (isUndefined(isLoggedIn) || isLoggedIn) return;
@@ -31,6 +32,8 @@ const withPageAuthRequiredHOC = <P extends object>(
       } else {
         router.push(appAccountPaths.loginWithReturnPath(returnTo));
       }
+
+      set({ routeToOnLogout: undefined });
     }, [isLoggedIn, router, returnTo, routeToOnLogout]);
 
     if (isLoggedIn) return <Component {...(props as any)} />;

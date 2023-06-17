@@ -78,14 +78,24 @@ export const { useFetchStore: useUserSessionFetchStore } = makeSingleFetchStore<
   () => true
 );
 
-export function clearFetchSingleResourceStores() {
-  useUserSessionFetchStore.getState().clear();
-  useUserWorkspaceFetchStore.getState().clear();
-  useUserCollaborationRequestFetchStore.getState().clear();
-  useWorkspaceCollaborationRequestFetchStore.getState().clear();
-  useWorkspaceCollaboratorFetchStore.getState().clear();
-  useWorkspaceAgentTokenFetchStore.getState().clear();
-  useWorkspaceFolderFetchStore.getState().clear();
-  useWorkspaceFileFetchStore.getState().clear();
-  useWorkspacePermissionGroupFetchStore.getState().clear();
+export function clearFetchSingleResourceStores(
+  props: { exclude: any[] } = { exclude: [] }
+) {
+  const stores = [
+    useUserSessionFetchStore,
+    useUserWorkspaceFetchStore,
+    useUserCollaborationRequestFetchStore,
+    useWorkspaceCollaborationRequestFetchStore,
+    useWorkspaceCollaboratorFetchStore,
+    useWorkspaceAgentTokenFetchStore,
+    useWorkspaceFolderFetchStore,
+    useWorkspaceFileFetchStore,
+    useWorkspacePermissionGroupFetchStore,
+  ];
+
+  stores.forEach((s) => {
+    if (!props.exclude.includes(s)) {
+      s.getState().clear();
+    }
+  });
 }

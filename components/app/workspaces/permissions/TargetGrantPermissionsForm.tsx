@@ -67,8 +67,20 @@ const classes = {
       // padding: "0px 16px",
     },
   }),
-  targetTypeRoot: css({ display: "flex" }),
-  targetTypeToggle: css({ flex: 1, display: "flex", alignItems: "center" }),
+  targetTypeRoot: css({
+    display: "flex",
+    "@media (max-width: 600px)": {
+      display: "block",
+    },
+  }),
+  targetTypeToggle: css({
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    "@media (max-width: 600px)": {
+      marginBottom: "16px",
+    },
+  }),
 };
 
 const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (

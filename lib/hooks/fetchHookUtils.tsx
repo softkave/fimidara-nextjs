@@ -60,11 +60,7 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
 
           if (entry) {
             const data = getFn(params, entry[1]);
-            return {
-              data,
-              loading: entry[1].loading,
-              error: entry[1].error,
-            };
+            return { data, loading: entry[1].loading, error: entry[1].error };
           }
 
           return undefined;
@@ -292,13 +288,12 @@ export function fetchHookDefaultSetFn(
 /** fetch hook defining behaviour for fetching a single resource. */
 export type FetchSingleResourceData<TOther = any> = {
   id: string;
-  initialized: boolean;
   other?: TOther;
 };
 export type FetchSingleResourceReturnedData<
   T extends { resourceId: string },
   TOther = any
-> = { resource?: T; other?: TOther; initialized: boolean };
+> = { resource?: T; other?: TOther };
 export type FetchSingleResourceFetchFnData<
   T extends { resourceId: string },
   TOther = any
@@ -323,19 +318,11 @@ export function makeFetchSingleResourceGetFn<
     state: FetchState<FetchSingleResourceData> | undefined
   ): FetchSingleResourceReturnedData<T, TOther> => {
     if (!state?.data) {
-      return {
-        resource: undefined,
-        other: undefined,
-        initialized: false,
-      };
+      return { resource: undefined, other: undefined };
     }
 
     const resource = useResourceListStore.getState().get(state.data.id);
-    return {
-      resource,
-      other: state?.data?.other,
-      initialized: state?.data?.initialized ?? false,
-    };
+    return { resource, other: state?.data?.other };
   };
 
   return getFn;
@@ -354,11 +341,7 @@ export function makeFetchSingleResourceFetchFn<
     useResourceListStore
       .getState()
       .set(result.resource.resourceId, result.resource);
-    return {
-      id: result.resource.resourceId,
-      other: result.other,
-      initialized: true,
-    };
+    return { id: result.resource.resourceId, other: result.other };
   };
 
   return fetchFn;
@@ -381,7 +364,6 @@ export function singleResourceShouldFetchFn(
 export type FetchPaginatedResourceListData<TOther = any> = {
   idList: string[];
   count: number;
-  initialized: boolean;
   other?: TOther;
 };
 export type FetchPaginatedResourceListKeyParams = {
@@ -458,7 +440,6 @@ export function makeFetchPaginatedResourceListFetchFn<
       idList: pageFetchedIdList,
       count: result.count,
       other: result.other,
-      initialized: true,
     };
   };
 
@@ -481,11 +462,7 @@ export function makeFetchPaginatedResourceListSetFn() {
       .concat(update.idList, presentIdList.slice(page * pageSize));
     newIdList = uniq(newIdList);
 
-    return {
-      idList: newIdList,
-      count: update.count,
-      initialized: update.initialized,
-    };
+    return { idList: newIdList, count: update.count };
   };
 
   return setFn;
@@ -521,7 +498,6 @@ export function paginatedResourceListShouldFetchFn(
 /** Fetch hook defining behaviour for fetching resource non-paginated list. */
 export type FetchResourceListData<TOther = any> = {
   idList: string[];
-  initialized: boolean;
   other?: TOther;
 };
 export type FetchResourceListReturnedData<
@@ -575,11 +551,7 @@ export function makeFetchResourceListFetchFn<
         return [id, nextResource];
       })
     );
-    return {
-      idList: pageFetchedIdList,
-      other: result.other,
-      initialized: true,
-    };
+    return { idList: pageFetchedIdList, other: result.other };
   };
 
   return fetchFn;
@@ -635,9 +607,8 @@ export function useFetchSingleResourceFetchState<
 >(fetchState?: FetchReturnedState<T>) {
   const error = fetchState?.error;
   const isLoading = fetchState?.loading || !fetchState;
-  const { resource, other, initialized } = (fetchState?.data ??
-    {}) as Partial<T>;
-  return { isLoading, error, resource, other, initialized };
+  const { resource, other } = (fetchState?.data ?? {}) as Partial<T>;
+  return { isLoading, error, resource, other };
 }
 
 export function useFetchPaginatedResourceListFetchState<
@@ -674,9 +645,5 @@ export function useFetchArbitraryFetchState<T>(
 ) {
   const error = fetchState?.error;
   const isLoading = fetchState?.loading || !fetchState;
-  return {
-    isLoading,
-    error,
-    data: fetchState?.data,
-  };
+  return { isLoading, error, data: fetchState?.data };
 }

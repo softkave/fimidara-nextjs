@@ -68,7 +68,7 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
       <Divider />
       <div>
         <JsSdkFunction
-          functionName="getUploadFileURL"
+          functionName="getFimidaraUploadFileURL"
           params={[{ name: "props", type: getFimidaraUploadFileURLParams() }]}
           result={getFimidaraReadFileURLResult()}
         />

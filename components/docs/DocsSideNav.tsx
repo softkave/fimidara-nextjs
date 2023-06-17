@@ -8,7 +8,7 @@ import useAppResponsive from "../../lib/hooks/useAppResponsive";
 import IconButton from "../utils/buttons/IconButton";
 import {
   DOCS_BASE_PATH,
-  docNavRootKeys,
+  DocNavRootKeysMap,
   fimidaraAntdNavItems,
   fimidaraJsSdkAntdNavItems,
   fimidaraRestApiAntdNavItems,
@@ -43,13 +43,9 @@ const classes = {
       marginBottom: "0px !important",
       marginTop: "0px !important",
     },
-    "& .ant-menu-submenu": {
-      // height: "32px !important",
-    },
     "& .ant-menu-submenu-title": {
       height: "32px !important",
     },
-    // "& .ant-menu-item:not(:last-child)": {},
   }),
   sideNavMobileRoot: css({
     "& .ant-menu-inline": {
@@ -93,8 +89,8 @@ export function DocsSideNav(props: IDocsSideNavProps) {
     let openKeys = docKeys;
 
     if (
-      rootKey === docNavRootKeys.restApi ||
-      rootKey === docNavRootKeys.jsSdk
+      rootKey === DocNavRootKeysMap.restApi ||
+      rootKey === DocNavRootKeysMap.jsSdk
     ) {
       const [version, endpointKey] = restKeys;
       const parentKeys = endpointKey.split("__").slice(0, -2);

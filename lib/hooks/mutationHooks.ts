@@ -508,7 +508,6 @@ function updateUserSessionWhenResultIsLoginResult(
         ...fetchState,
         data: {
           id: user.resourceId,
-          initialized: true,
           other: { clientToken: clientAssignedToken, userToken: token },
         },
       },
@@ -524,7 +523,6 @@ function updateUserSessionWhenResultIsLoginResult(
         error: undefined,
         data: {
           id: user.resourceId,
-          initialized: true,
           other: { clientToken: clientAssignedToken, userToken: token },
         },
       },

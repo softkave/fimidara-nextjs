@@ -3,9 +3,9 @@
 ## Now
 
 - [ ] see entity permissions
-- [ ] add the new red file props to docs or automate them
+- [ ] extract return to from path in withPageAuthRequiredHOC
+- [ ] add the new fimidara read and upload file URL props to docs or automate them
 - [ ] implement 404 nextjs page
-- [ ] only show post for js sdk when there's post and get
 - [ ] make sure all data stores are cleared on user logout
 - [ ] hide tabs and buttons based on resolved permissions
   - [ ] how to target resolved permissions after add and delete

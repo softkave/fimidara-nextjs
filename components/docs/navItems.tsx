@@ -1,3 +1,4 @@
+import { ObjectValues } from "@/lib/api/utils";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import { compact, first, flatten, forEach, get, last, set } from "lodash";
 import Link from "next/link";
@@ -11,9 +12,16 @@ export const apiVersion = "v1";
 
 export function getNavItemPath(item: IRawNavItem, parentItems: IRawNavItem[]) {
   const rootItem = first(parentItems);
-  const prefixPath = rootItem
-    ? `/${rootItem.key}/${apiVersion}`
-    : `/${item.key}/${apiVersion}`;
+  const includeVersion =
+    rootItem?.key === DocNavRootKeysMap.jsSdk ||
+    rootItem?.key === DocNavRootKeysMap.restApi;
+  let prefixPath = "";
+
+  if (rootItem) {
+    if (includeVersion) prefixPath = `/${rootItem.key}/${apiVersion}`;
+    else prefixPath = `/${rootItem.key}`;
+  }
+
   return `${DOCS_BASE_PATH}${prefixPath}/${item.key}`;
 }
 
@@ -63,17 +71,25 @@ function renderToAntDMenuItemList(
   );
 }
 
-export const restApiRawNavItems = extractRestApiFromRawTableOfContent(
-  restApiTableOfContent as any
-);
-export const docNavRootKeys = {
+export const DocNavRootKeysMap = {
   fimidara: "fimidara",
   restApi: "fimidara-rest-api",
   jsSdk: "fimidara-js-sdk",
 } as const;
+export type DocNavRootKeys = ObjectValues<typeof DocNavRootKeysMap>;
+
+export const restApiRawNavItems = extractRestApiFromRawTableOfContent(
+  restApiTableOfContent as any,
+  DocNavRootKeysMap.restApi
+);
+export const jsSdkRawNavItems = extractRestApiFromRawTableOfContent(
+  restApiTableOfContent as any,
+  DocNavRootKeysMap.jsSdk
+);
+
 export const fimidaraNavItems: IRawNavItem[] = [
   {
-    key: docNavRootKeys.fimidara,
+    key: DocNavRootKeysMap.fimidara,
     label: "fimidara",
     children: [
       {
@@ -96,7 +112,7 @@ export const fimidaraNavItems: IRawNavItem[] = [
 ];
 export const fimidaraRestApiNavItems: IRawNavItem[] = [
   {
-    key: docNavRootKeys.restApi,
+    key: DocNavRootKeysMap.restApi,
     label: "fimidara REST API",
     children: (
       [
@@ -111,7 +127,7 @@ export const fimidaraRestApiNavItems: IRawNavItem[] = [
 ];
 export const fimidaraJsSdkNavItems: IRawNavItem[] = [
   {
-    key: docNavRootKeys.jsSdk,
+    key: DocNavRootKeysMap.jsSdk,
     label: "fimidara JS SDK",
     children: (
       [
@@ -121,7 +137,7 @@ export const fimidaraJsSdkNavItems: IRawNavItem[] = [
           key: "overview",
         },
       ] as IRawNavItem[]
-    ).concat(restApiRawNavItems),
+    ).concat(jsSdkRawNavItems),
   },
 ];
 
@@ -140,7 +156,7 @@ export const fimidaraJsSdkAntdNavItems = renderToAntDMenuItemList(
 
 function extractRestApiFromRawTableOfContent(
   records: Array<[string, string]>,
-  includeEndpointMethod = true
+  use: DocNavRootKeys
 ) {
   interface RawNavItemWithRecord {
     key: string;
@@ -160,15 +176,13 @@ function extractRestApiFromRawTableOfContent(
       const keyList = restPath.slice(0, index + 1);
       const keysJoined = keyList.join("__");
       const isFn = nextKey === fnName;
-      const itemKey =
-        isFn && includeEndpointMethod
-          ? `${keysJoined}__${endpointMethod}`
-          : `${keysJoined}`;
+      const itemKey = isFn ? `${keysJoined}__${endpointMethod}` : keysJoined;
       let fullKeyPath = keyList.join(".children.");
       fullKeyPath = isFn ? `${fullKeyPath}__${endpointMethod}` : fullKeyPath;
-      const label = isFn
-        ? `${nextKey}${htmlCharacterCodes.doubleDash}${endpointMethod}`
-        : nextKey;
+      const label =
+        isFn && use === DocNavRootKeysMap.restApi
+          ? `${nextKey}${htmlCharacterCodes.doubleDash}${endpointMethod}`
+          : nextKey;
       const item: IRawNavItem = {
         label,
         key: itemKey,
@@ -193,6 +207,20 @@ function extractRestApiFromRawTableOfContent(
         item.children = [];
         navItemsWithRecordToList(item.children, nextItem.children);
       }
+    });
+  }
+
+  if (use === DocNavRootKeysMap.jsSdk) {
+    const localMap: Record<string, [string, string]> = {};
+    records = records.filter(([endpointPath, endpointMethod]) => {
+      const entry = localMap[endpointPath];
+
+      if (entry) {
+        if (entry[1] === "post") return false;
+      }
+
+      localMap[endpointPath] = [endpointPath, endpointMethod];
+      return true;
     });
   }
 

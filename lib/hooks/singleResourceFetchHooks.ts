@@ -21,6 +21,7 @@ import { getPublicFimidaraEndpointsUsingUserToken } from "../api/fimidaraEndpoin
 import { AnyFn } from "../utils/types";
 import {
   FetchResourceZustandStore,
+  FetchReturnedState,
   FetchSingleResourceData,
   FetchSingleResourceFetchFnData,
   FetchSingleResourceReturnedData,
@@ -154,7 +155,23 @@ function makeSingleFetchHook<
     >,
     any
   >,
-  inputFetchFn: Fn
+  inputFetchFn: Fn,
+  shouldLoadFn?: AnyFn<
+    [
+      boolean,
+      FetchSingleResourceData<GetFetchSingleResourceFetchFnOther<Fn>>,
+      (
+        | FetchReturnedState<
+            FetchSingleResourceReturnedData<
+              TResource,
+              GetFetchSingleResourceFetchFnOther<Fn>
+            >
+          >
+        | undefined
+      )
+    ],
+    boolean
+  >
 ) {
   const fetchFn = makeFetchSingleResourceFetchFn(
     inputFetchFn,
@@ -164,7 +181,7 @@ function makeSingleFetchHook<
     fetchFn,
     useFetchStore,
     fetchHookDefaultSetFn,
-    singleResourceShouldFetchFn
+    shouldLoadFn ?? singleResourceShouldFetchFn
   );
 
   return { useFetchHook, fetchFn };
@@ -219,5 +236,8 @@ export const { useFetchHook: useWorkspacePermissionGroupFetchHook } =
 export const { useFetchHook: useUserSessionFetchHook } = makeSingleFetchHook(
   useUsersStore,
   useUserSessionFetchStore,
-  getUserDataInputFetchFn
+  getUserDataInputFetchFn,
+  (willLoad: boolean, params: any, fetchState: any) => {
+    return willLoad || !fetchState;
+  }
 );

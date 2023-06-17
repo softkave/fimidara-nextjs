@@ -1,10 +1,9 @@
+import { useLogout } from "@/lib/hooks/sessionHook";
 import assert from "assert";
 import { LoginResult } from "fimidara";
 import React from "react";
 import { useFetchSingleResourceFetchState } from "../../lib/hooks/fetchHookUtils";
 import { useUserSessionFetchHook } from "../../lib/hooks/singleResourceFetchHooks";
-import { useHandleRequiresPasswordChange } from "../../lib/hooks/useHandleServerRecommendedActions";
-import { useUserLoggedIn } from "../../lib/hooks/useUserLoggedIn";
 import { getBaseError } from "../../lib/utils/errors";
 import PageError from "../utils/page/PageError";
 import PageLoading from "../utils/page/PageLoading";
@@ -21,18 +20,11 @@ export interface IUseUserNodeResult {
 }
 
 export function useUserNode(): IUseUserNodeResult {
-  const { handleRequiresPasswordChange } = useHandleRequiresPasswordChange();
   const { fetchState } = useUserSessionFetchHook(undefined);
-  const { isLoading, error, resource, initialized, other } =
+  const { isLoading, error, resource, other } =
     useFetchSingleResourceFetchState(fetchState);
-  const { logout } = useUserLoggedIn();
+  const { logout } = useLogout();
   let renderedNode: React.ReactElement | null = null;
-
-  // React.useEffect(() => {
-  //   if (resource?.requiresPasswordChange) {
-  //     handleRequiresPasswordChange();
-  //   }
-  // }, [resource?.requiresPasswordChange]);
 
   if (error) {
     renderedNode = (
@@ -43,7 +35,7 @@ export function useUserNode(): IUseUserNodeResult {
         ]}
       />
     );
-  } else if (isLoading || !initialized) {
+  } else if (isLoading) {
     renderedNode = <PageLoading message="Loading user..." />;
   } else if (!resource) {
     renderedNode = <PageNothingFound message="User not found." />;

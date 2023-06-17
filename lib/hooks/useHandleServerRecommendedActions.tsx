@@ -3,14 +3,13 @@ import { useRouter } from "next/router";
 import { isFimidaraEndpointError } from "../api/localUtils";
 import { appAccountPaths } from "../definitions/system";
 import { AnyFn } from "../utils/types";
-import { useUserLoggedIn } from "./useUserLoggedIn";
+import { useLogout } from "./sessionHook";
 
 const kTimeout = 3000; // 3 seconds
 const kMessageDuration = 10; // seconds
 
 export function useHandleRequiresPasswordChange() {
-  const { logout } = useUserLoggedIn();
-  const router = useRouter();
+  const { logout } = useLogout();
 
   const handleRequiresPasswordChange = () => {
     let closeMessageFn: AnyFn = message.loading({
@@ -38,7 +37,7 @@ export function useHandleRequiresPasswordChange() {
 }
 
 export function useHandleLoginAgain() {
-  const { logout } = useUserLoggedIn();
+  const { logout } = useLogout();
   const router = useRouter();
 
   const handleLoginAgain = () => {
