@@ -51,17 +51,12 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
   const updateHook = useWorkspaceUpdateMutationHook({
     onSuccess(data, params) {
       message.success("Workspace updated.");
-      router.push(
-        appWorkspacePaths.updateWorkspaceForm(data.body.workspace.resourceId)
-      );
     },
   });
   const createHook = useWorkspaceAddMutationHook({
     onSuccess(data, params) {
       message.success("Workspace created.");
-      router.push(
-        appWorkspacePaths.updateWorkspaceForm(data.body.workspace.resourceId)
-      );
+      router.push(appWorkspacePaths.folderList(data.body.workspace.resourceId));
     },
   });
   const stateHook = workspace ? updateHook : createHook;

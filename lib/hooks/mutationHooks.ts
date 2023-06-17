@@ -501,11 +501,12 @@ function updateUserSessionWhenResultIsLoginResult(
   useUsersStore.getState().set(user.resourceId, user);
 
   if (states[0]) {
-    const [params, fetchState] = states[0];
+    const [params] = states[0];
     states[0] = [
       params,
       {
-        ...fetchState,
+        error: undefined,
+        loading: false,
         data: {
           id: user.resourceId,
           other: { clientToken: clientAssignedToken, userToken: token },
