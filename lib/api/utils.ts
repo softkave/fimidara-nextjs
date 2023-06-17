@@ -22,6 +22,7 @@ type FimidaraEndpointErrorItem = {
 
 export class FimidaraEndpointError extends Error {
   name = 'FimidaraEndpointError';
+  isFimidaraEndpointError = true;
 
   constructor(
     public errors: Array<FimidaraEndpointErrorItem>,
