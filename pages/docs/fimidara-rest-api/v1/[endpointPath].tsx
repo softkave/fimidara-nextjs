@@ -29,7 +29,7 @@ const FimidaraRestApiEndpointDocPage: NextPage<
           message={
             <p>
               Endpoint <Typography.Text code>{endpointPath}</Typography.Text>{" "}
-              not found!
+              not found.
             </p>
           }
         />

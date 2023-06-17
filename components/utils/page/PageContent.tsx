@@ -85,7 +85,7 @@ function PageContent<T>(props: IPageContentProps<T>) {
     } else {
       return (
         <EmptyMessage key="empty-message">
-          {emptyMessage || "Not found"}
+          {emptyMessage || "Not found."}
         </EmptyMessage>
       );
     }

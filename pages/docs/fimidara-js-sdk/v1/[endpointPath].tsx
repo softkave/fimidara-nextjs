@@ -29,7 +29,7 @@ const FimidaraJsSdkEndpointDocPage: NextPage<
           message={
             <p>
               Method <Typography.Text code>{endpointPath}</Typography.Text> not
-              found!
+              found.
             </p>
           }
         />

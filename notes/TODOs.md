@@ -3,9 +3,12 @@
 ## Now
 
 - [ ] see entity permissions
+- [ ] add created or last updated date to all resource lists
+- [ ] add file size to file list, maybe folder list too
 - [ ] extract return to from path in withPageAuthRequiredHOC
 - [ ] add the new fimidara read and upload file URL props to docs or automate them
 - [ ] implement 404 nextjs page
+- [ ] download button for files
 - [ ] make sure all data stores are cleared on user logout
 - [ ] hide tabs and buttons based on resolved permissions
   - [ ] how to target resolved permissions after add and delete
