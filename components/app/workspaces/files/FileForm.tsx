@@ -73,7 +73,7 @@ export default function FileForm(props: FileFormProps) {
       );
     },
   });
-  const createHook = useWorkspaceFileUploadMutationHook({
+  const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
       message.success("File uploaded.");
       router.push(
@@ -81,7 +81,7 @@ export default function FileForm(props: FileFormProps) {
       );
     },
   });
-  const mergedHook = file ? updateHook : createHook;
+  const mergedHook = file ? updateHook : uploadHook;
 
   const { formik } = useFormHelpers({
     errors: mergedHook.error,
@@ -99,7 +99,7 @@ export default function FileForm(props: FileFormProps) {
 
         if (file) {
           if (inputFile) {
-            return await createHook.runAsync({
+            return await uploadHook.runAsync({
               body: {
                 fileId: file.resourceId,
                 description: data.description,
@@ -127,7 +127,7 @@ export default function FileForm(props: FileFormProps) {
               : data.name,
             workspaceRootname
           );
-          return await createHook.runAsync({
+          return await uploadHook.runAsync({
             body: {
               filepath,
               description: data.description,

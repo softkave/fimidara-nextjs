@@ -14,6 +14,7 @@
   - [ ] how to target resolved permissions after add and delete
 - [ ] update entity permissions
 - [ ] form pages should be modals
+- [ ] hide features by permission
 - [ ] animation on transitions, like loading, tabs, etc.
 - [ ] resource thumbnail at top of target and entity permissions form
 - [ ] grant/remove access to entity

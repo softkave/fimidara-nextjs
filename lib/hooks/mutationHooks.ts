@@ -4,7 +4,7 @@ import type {
   Options as UseRequestOptions,
 } from "ahooks/lib/useRequest/src/types";
 import { FimidaraEndpointResult, LoginResult } from "fimidara";
-import { compact, isEqual, over } from "lodash";
+import { compact, isEqual, over, uniq } from "lodash";
 import React from "react";
 import {
   getPrivateFimidaraEndpointsUsingUserToken,
@@ -470,7 +470,9 @@ function insertInFetchStoreAddMutationFn<
       fetchState[0],
       (state) => {
         if (!state?.data) return state as any;
-        const idList = [resource.resourceId].concat(state?.data?.idList ?? []);
+        const idList = uniq(
+          [resource.resourceId].concat(state?.data?.idList ?? [])
+        );
         return {
           ...state,
           data: {
