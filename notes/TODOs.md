@@ -3,7 +3,12 @@
 ## Now
 
 - [ ] see entity permissions
-- [ ] add created or last updated date to all resource lists
+- [ ] add created, description, or last updated date to all resource lists
+- [ ] upload button in file page
+- [ ] error message not showing when uploading files
+- [ ] multi-file upload
+- [ ] background loading with progress for big files
+- [ ] do not attempt to login for some paths like change-password
 - [ ] add file size to file list, maybe folder list too
 - [ ] extract return to from path in withPageAuthRequiredHOC
 - [ ] add the new fimidara read and upload file URL props to docs or automate them

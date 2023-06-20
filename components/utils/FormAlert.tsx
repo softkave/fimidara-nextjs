@@ -1,5 +1,4 @@
 import { Alert, AlertProps, Form } from "antd";
-import React from "react";
 import { enrichErrorMessage } from "./errorHandling";
 
 export interface IFormAlertProps extends Omit<AlertProps, "message"> {
@@ -8,7 +7,7 @@ export interface IFormAlertProps extends Omit<AlertProps, "message"> {
 
 export function FormAlert(props: IFormAlertProps) {
   const { error } = props;
-  const errorMessage = enrichErrorMessage(error);
+  const errorMessage = enrichErrorMessage(error) ?? "An error occurred.";
   return errorMessage ? (
     <Form.Item>
       <Alert type="error" {...props} message={errorMessage} />

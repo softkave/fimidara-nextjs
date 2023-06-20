@@ -11,6 +11,7 @@ const CreateRootLevelFileFormPage: React.FC<IWorkspaceComponentProps> = (
   props
 ) => {
   const { workspaceId } = props;
+
   return (
     <WorkspaceContainer
       workspaceId={workspaceId}
