@@ -51,6 +51,4 @@ async function copyGeneratedStuffFromServer() {
   );
 }
 
-//  C:\Users\yword\Desktop\projects\fimidara\fimidara-server-node\mdoc\rest-api
-
 copyGeneratedStuffFromServer().catch(console.error.bind(console));

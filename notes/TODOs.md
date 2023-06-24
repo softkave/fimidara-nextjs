@@ -3,11 +3,23 @@
 ## Now
 
 - [ ] see entity permissions
+- [ ] mobile view
+- [ ] upload progress and continue with other things
+- [ ] tab on mobile and scroll
+- [ ] assign permission like in softkave and use drawer?
+- [ ] use drawer for forms?
 - [ ] add created, description, or last updated date to all resource lists
 - [ ] upload button in file page
 - [ ] error message not showing when uploading files
 - [ ] multi-file upload
+- [ ] folder upload
+- [ ] blog with tags starting with product updates
+- [ ] opt-out of email updates
+- [ ] add github repo link
+- [ ] show opt-in for email notification when signing up
+- [ ] allow toggling on and off email notifications in settings
 - [ ] background loading with progress for big files
+- [ ] show folder in new file and folder forms with back button
 - [ ] do not attempt to login for some paths like change-password
 - [ ] add file size to file list, maybe folder list too
 - [ ] extract return to from path in withPageAuthRequiredHOC
