@@ -5,6 +5,7 @@ import {fetch, Headers} from 'cross-fetch';
 import FormData from 'isomorphic-form-data';
 import {compact, isArray, last, map} from 'lodash';
 import path from 'path';
+import {File, Folder} from './publicTypes';
 
 const defaultServerURL =
   (process ? process.env.FIMIDARA_SERVER_URL : undefined) ??
@@ -93,7 +94,7 @@ export async function invokeEndpoint(props: IInvokeEndpointParams) {
   if (formdata) {
     const contentFormdata = new FormData();
     for (const key in formdata) {
-      if (formdata[key] !== undefined)
+      if (formdata[key] !== undefined || formdata[key] !== null)
         contentFormdata.append(key, formdata[key]);
     }
     contentBody = contentFormdata;
@@ -214,7 +215,6 @@ function getFilepath(props: {
   workspaceRootname?: string;
   filepathWithoutRootname?: string;
 }) {
-  let query = '';
   const filepath = props.filepath
     ? props.filepath
     : props.filepathWithoutRootname && props.workspaceRootname
@@ -384,4 +384,21 @@ export function getFimidaraUploadFileURL(props: {
     (filepath.startsWith('/') ? '' : '/') +
     encodeURIComponent(filepath)
   );
+}
+
+export function stringifyFimidaraFileNamePath(
+  file: Pick<File, 'namePath' | 'extension'>,
+  rootname?: string
+) {
+  const nm =
+    file.namePath.join('/') + (file.extension ? `.${file.extension}` : '');
+  return rootname ? fimidaraAddRootnameToPath(nm, rootname) : nm;
+}
+
+export function stringifyFimidaraFolderNamePath(
+  file: Pick<Folder, 'namePath'>,
+  rootname?: string
+) {
+  const nm = file.namePath.join('/');
+  return rootname ? fimidaraAddRootnameToPath(nm, rootname) : nm;
 }

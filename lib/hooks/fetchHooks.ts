@@ -26,7 +26,11 @@ import {
   getPrivateFimidaraEndpointsUsingUserToken,
   getPublicFimidaraEndpointsUsingUserToken,
 } from "../api/fimidaraEndpoints";
-import { GetWaitlistedUsersEndpointResult } from "../api/privateTypes";
+import {
+  GetUsersEndpointResult,
+  GetWaitlistedUsersEndpointResult,
+  GetWorkspacesEndpointResult,
+} from "../api/privateTypes";
 import { IPaginationQuery } from "../api/types";
 import { AnyFn, Omit1 } from "../utils/types";
 import {
@@ -210,6 +214,16 @@ async function resolveEntityPermissionInputFetchFn(
 async function getWaitlistedUsersInputFetchFn() {
   const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.internals.getWaitlistedUsers();
+  return data.body;
+}
+async function getUsersInputFetchFn() {
+  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const data = await endpoints.internals.getUsers();
+  return data.body;
+}
+async function getWorkspacesInputFetchFn() {
+  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const data = await endpoints.internals.getWorkspaces();
   return data.body;
 }
 
@@ -401,6 +415,26 @@ export const useWaitlistedUsersFetchStore = makeFetchResourceStoreHook<
 export const useWaitlistedUsersFetchHook = makeFetchResourceHook(
   getWaitlistedUsersInputFetchFn,
   useWaitlistedUsersFetchStore,
+  fetchHookDefaultSetFn
+);
+export const useInternalUsersFetchStore = makeFetchResourceStoreHook<
+  GetUsersEndpointResult,
+  GetUsersEndpointResult | undefined,
+  undefined
+>("internalUsers", (params, state) => state.data, isEqual);
+export const useInternalUsersFetchHook = makeFetchResourceHook(
+  getUsersInputFetchFn,
+  useInternalUsersFetchStore,
+  fetchHookDefaultSetFn
+);
+export const useInternalWorkspacesFetchStore = makeFetchResourceStoreHook<
+  GetWorkspacesEndpointResult,
+  GetWorkspacesEndpointResult | undefined,
+  undefined
+>("internalWorkspaces", (params, state) => state.data, isEqual);
+export const useInternalWorkspacesFetchHook = makeFetchResourceHook(
+  getWorkspacesInputFetchFn,
+  useInternalWorkspacesFetchStore,
   fetchHookDefaultSetFn
 );
 

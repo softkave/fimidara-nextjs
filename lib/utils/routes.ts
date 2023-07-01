@@ -27,6 +27,9 @@ export function isWebPath(pathname: string) {
     })
   );
 }
+export function isInternalPath(pathname: string) {
+  return pathname.startsWith(`${appRootPaths.internal}/`);
+}
 export function isNoHeaderPath(pathname: string) {
   return noHeaderRoutes.some((r) => {
     return pathname.startsWith(r);

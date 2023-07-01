@@ -1,5 +1,5 @@
-import WaitlistedUsers from "@/components/app/waitlist/WaitlistedUsers";
 import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
+import WaitlistedUsers from "@/components/internal/waitlist/WaitlistedUsers";
 import type { NextPage } from "next";
 
 export interface IWaitlistPageProps {}
