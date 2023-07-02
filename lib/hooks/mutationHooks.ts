@@ -221,8 +221,13 @@ export const useWorkspaceFileUploadMutationHook = makeEndpointMutationHook(
         useWorkspaceFilesFetchStore,
         (resource, params) => {
           // TODO: handle folderpath
-          const folderId = params.folderId ?? null;
-          return resource.parentId === folderId;
+          // Parent ID is set to null for files and folders without parent folder,
+          // and for those, parentId is undefined.
+          if (resource.parentId === null) {
+            return params.folderId === undefined;
+          } else {
+            return params.folderId === resource.parentId;
+          }
         }
       );
     }
@@ -263,9 +268,13 @@ export const useWorkspaceFolderAddMutationHook = makeEndpointMutationHook(
       useWorkspaceFoldersFetchStore,
       (resource, params) => {
         // TODO: handle folderpath
-        // Parent ID is set to null for files and folders without parent folder
-        const folderId = params.folderId ?? null;
-        return resource.parentId === folderId;
+        // Parent ID is set to null for files and folders without parent folder,
+        //and for those, parentId is undefined.
+        if (resource.parentId === null) {
+          return params.folderId === undefined;
+        } else {
+          return params.folderId === resource.parentId;
+        }
       }
     )
 );
