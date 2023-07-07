@@ -13,14 +13,17 @@ type KVStore = {
 };
 
 export enum KeyValueKeys {
-  LoginAgain = "LoginAgain",
-  UserImageLastUpdateTime = "UserImageLastUpdateTime",
-  WorkspaceImageLastUpdateTime = "WorkspaceImageLastUpdateTime",
+  LoginAgain = "loginAgain",
+  UserImageLastUpdateTime = "userImageLastUpdateTime",
+  WorkspaceImageLastUpdateTime = "workspaceImageLastUpdateTime",
+  TransferProgress = "transferProgress",
 }
 
 export class KeyValueDynamicKeys {
   static getWorkspaceImageLastUpdateTime = (workspaceId: string) =>
     `${KeyValueKeys.WorkspaceImageLastUpdateTime}_${workspaceId}`;
+  static getTransferProgress = (identifier: string) =>
+    `${KeyValueKeys.TransferProgress}_${identifier}`;
 }
 
 export const useKvStore = create<

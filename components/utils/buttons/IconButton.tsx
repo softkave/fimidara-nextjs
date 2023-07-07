@@ -1,6 +1,6 @@
 import { Omit1 } from "@/lib/utils/types";
 import { cx } from "@emotion/css";
-import { Button, Tooltip } from "antd";
+import { Button, ButtonProps, Tooltip } from "antd";
 import React from "react";
 
 export interface IIconButtonProps {
@@ -10,14 +10,17 @@ export interface IIconButtonProps {
   title?: string;
   icon: React.ReactNode;
   onClick?: () => void;
+  buttonProps?: Partial<ButtonProps>;
 }
 
 export type IExtendsIconButtonProps = Omit1<IIconButtonProps, "icon">;
 
 const IconButton: React.FC<IIconButtonProps> = (props) => {
-  const { style, className, disabled, icon, title, onClick } = props;
+  const { style, className, disabled, icon, title, onClick, buttonProps } =
+    props;
   const btnNode = (
     <Button
+      {...buttonProps}
       disabled={disabled}
       onClick={onClick}
       className={cx("icon-btn", className)}

@@ -4,6 +4,7 @@
 
 - [ ] see entity permissions
 - [ ] mobile view
+- [ ] update js sdk doc to include info on non-endpoint code and changes
 - [ ] upload progress and continue with other things
 - [ ] tab on mobile and scroll
 - [ ] assign permission like in softkave and use drawer?

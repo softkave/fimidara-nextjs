@@ -1,4 +1,5 @@
 import { FormAlert } from "@/components/utils/FormAlert";
+import { TransferProgressList } from "@/components/utils/TransferProgress";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
@@ -7,6 +8,7 @@ import {
   useWorkspaceFileUploadMutationHook,
 } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { useTransferProgressHandler } from "@/lib/hooks/useTransferProgress";
 import { messages } from "@/lib/messages/messages";
 import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
@@ -22,7 +24,7 @@ import {
   UploadFile,
   message,
 } from "antd";
-import { File } from "fimidara";
+import { File, stringifyFimidaraFileNamePath } from "fimidara";
 import { first } from "lodash";
 import { useRouter } from "next/router";
 import * as yup from "yup";
@@ -65,6 +67,7 @@ export interface FileFormProps {
 export default function FileForm(props: FileFormProps) {
   const { file, className, workspaceId, folderpath, workspaceRootname } = props;
   const router = useRouter();
+  const progressHandlerHook = useTransferProgressHandler();
   const updateHook = useWorkspaceFileUpdateMutationHook({
     onSuccess(data, params) {
       message.success("File updated.");
@@ -106,6 +109,9 @@ export default function FileForm(props: FileFormProps) {
                 data: inputFile as any,
                 mimetype: inputFile.type,
               },
+              onUploadProgress: progressHandlerHook.getProgressHandler(
+                stringifyFimidaraFileNamePath(file)
+              ),
             });
           } else {
             return await updateHook.runAsync({
@@ -134,6 +140,7 @@ export default function FileForm(props: FileFormProps) {
               data: inputFile as any,
               mimetype: inputFile.type,
             },
+            onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
           });
         }
       },
@@ -245,6 +252,13 @@ export default function FileForm(props: FileFormProps) {
           {nameNode}
           {descriptionNode}
           {selectFileNode}
+          {progressHandlerHook.identifiers.length > 0 && (
+            <Form.Item>
+              <TransferProgressList
+                identifiers={progressHandlerHook.identifiers}
+              />
+            </Form.Item>
+          )}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
               block

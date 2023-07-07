@@ -131,7 +131,8 @@ function getFimidaraReadFileURLParams(): FieldObject {
         required: true,
         data: {
           __id: "FieldString",
-          description: "File path.",
+          description:
+            "Filepath including workspace rootname OR file presigned path.",
         },
       },
       width: {
@@ -174,7 +175,8 @@ function getFimidaraUploadFileURLParams(): FieldObject {
         required: true,
         data: {
           __id: "FieldString",
-          description: "File path.",
+          description:
+            "Filepath including workspace rootname OR file presigned path.",
         },
       },
     },

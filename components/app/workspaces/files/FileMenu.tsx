@@ -5,6 +5,7 @@ import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
+import { useDownloadFile } from "@/lib/hooks/useDownloadFile";
 import { Dropdown, MenuProps, Modal, message } from "antd";
 import { File } from "fimidara";
 import Link from "next/link";
@@ -22,6 +23,7 @@ enum MenuKeys {
   DeleteItem = "delete-item",
   UpdateItem = "update-item",
   GrantPermission = "grant-permission",
+  DownloadFile = "download",
 }
 
 const FileMenu: React.FC<FileMenuProps> = (props) => {
@@ -39,6 +41,8 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
       errorMessageNotificatition(e, "Error deleting file.");
     },
   });
+  const filename = file.name + (file.extension ?? "");
+  const downloadHook = useDownloadFile(file.resourceId, filename);
 
   const onSelectMenuItem = (info: MenuInfo) => {
     if (info.key === MenuKeys.DeleteItem) {
@@ -64,6 +68,8 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
       });
     } else if (info.key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
+    } else if (info.key === MenuKeys.DownloadFile) {
+      downloadHook.downloadHook.run();
     }
   };
 
@@ -83,6 +89,11 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
       label: "Permissions",
     },
     {
+      key: MenuKeys.DownloadFile,
+      label: downloadHook.downloadHook.loading ? "Downloading..." : "Download",
+      disabled: downloadHook.downloadHook.loading,
+    },
+    {
       key: MenuKeys.DeleteItem,
       label: "Delete File",
     },
@@ -90,6 +101,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
 
   return (
     <React.Fragment>
+      {downloadHook.messageContextHolder}
       <Dropdown
         disabled={deleteHook.loading}
         trigger={["click"]}

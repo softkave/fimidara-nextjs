@@ -34,4 +34,5 @@ export function insertAntdMenuDivider(items: MenuProps["items"]) {
 
 export const htmlCharacterCodes = {
   doubleDash: "—",
+  middleDot: "·",
 };
