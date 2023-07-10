@@ -5,11 +5,6 @@ import { KeyValueDynamicKeys, useKvStore } from "./storeHooks";
 
 export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
   const [identifiers, setIdentifiers] = React.useState(inputIdentifiers);
-  const progressList = useKvStore((state) => {
-    return state.getList(
-      identifiers.map(KeyValueDynamicKeys.getTransferProgress)
-    ) as FimidaraEndpointProgressEvent[];
-  });
 
   const getProgressHandler = React.useCallback((identifier: string) => {
     setIdentifiers((identifiers) => uniq(identifiers.concat(identifier)));
@@ -20,17 +15,28 @@ export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
     };
   }, []);
 
-  return { progressList, identifiers, getProgressHandler };
+  const setOpError = React.useCallback((identifier: string, error: unknown) => {
+    useKvStore
+      .getState()
+      .set(KeyValueDynamicKeys.getOpError(identifier), error);
+  }, []);
+
+  return { identifiers, getProgressHandler, setOpError };
 }
 
-export function useTransferProgress(identifier?: string) {
+export function useTransferProgress(identifier?: string, progressKey?: string) {
   const progress = useKvStore((state) => {
     return identifier
       ? state.get<FimidaraEndpointProgressEvent>(
-          KeyValueDynamicKeys.getTransferProgress(identifier)
+          progressKey ?? KeyValueDynamicKeys.getTransferProgress(identifier)
         )
       : undefined;
   });
+  const error = useKvStore((state) => {
+    return identifier
+      ? state.get<unknown>(KeyValueDynamicKeys.getOpError(identifier))
+      : undefined;
+  });
 
-  return { progress };
+  return { progress, error };
 }

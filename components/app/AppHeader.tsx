@@ -1,4 +1,5 @@
 import { css, cx } from "@emotion/css";
+import { Space } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
@@ -8,6 +9,7 @@ import IconButton from "../utils/buttons/IconButton";
 import AppUserHeader from "./AppUserHeader";
 import AppWorkspaceHeader from "./AppWorkspaceHeader";
 import UserMenu from "./UserMenu";
+import { UploadingFilesProgressButton } from "./workspaces/files/UploadingFilesProgress";
 
 export interface IAppHeaderProps {
   className?: string;
@@ -63,9 +65,10 @@ export default function AppHeader(props: IAppHeaderProps) {
           <AppUserHeader />
         )}
       </div>
-      <div className={classes.sideLinks}>
+      <Space className={classes.sideLinks}>
+        <UploadingFilesProgressButton />
         <UserMenu />
-      </div>
+      </Space>
     </div>
   );
 }

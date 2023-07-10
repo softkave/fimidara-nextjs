@@ -17,7 +17,7 @@ export function enrichErrorMessage(error: any) {
     return "";
   }
 
-  let errorMessage: React.ReactNode = getBaseError(error);
+  let errorMessage: React.ReactElement = getBaseError(error);
   const hasEmailNotVerifiedError = hasErrorTypes(error, [
     EmailAddressNotVerifiedError.name,
   ]);

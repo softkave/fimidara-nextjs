@@ -17,6 +17,7 @@ export enum KeyValueKeys {
   UserImageLastUpdateTime = "userImageLastUpdateTime",
   WorkspaceImageLastUpdateTime = "workspaceImageLastUpdateTime",
   TransferProgress = "transferProgress",
+  OpError = "opError",
 }
 
 export class KeyValueDynamicKeys {
@@ -24,6 +25,8 @@ export class KeyValueDynamicKeys {
     `${KeyValueKeys.WorkspaceImageLastUpdateTime}_${workspaceId}`;
   static getTransferProgress = (identifier: string) =>
     `${KeyValueKeys.TransferProgress}_${identifier}`;
+  static getOpError = (identifier: string) =>
+    `${KeyValueKeys.OpError}_${identifier}`;
 }
 
 export const useKvStore = create<

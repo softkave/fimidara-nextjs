@@ -2,7 +2,7 @@ import { FormAlert } from "@/components/utils/FormAlert";
 import { TransferProgressList } from "@/components/utils/TransferProgress";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
-import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceFileUpdateMutationHook,
   useWorkspaceFileUploadMutationHook,
@@ -14,19 +14,12 @@ import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import {
-  Button,
-  Form,
-  Input,
-  Space,
-  Typography,
-  Upload,
-  UploadFile,
-  message,
-} from "antd";
-import { File, stringifyFimidaraFileNamePath } from "fimidara";
+import { Button, Form, Input, Space, Typography, Upload, message } from "antd";
+import { RcFile } from "antd/lib/upload";
+import { File as FimidaraFile, stringifyFimidaraFileNamePath } from "fimidara";
 import { first } from "lodash";
 import { useRouter } from "next/router";
+import { FiDownload } from "react-icons/fi";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
@@ -37,7 +30,7 @@ export interface FileFormValue {
   extension?: string;
   mimetype?: string;
   data?: Blob;
-  file: Array<UploadFile>;
+  file: Array<RcFile>;
   name: string;
 }
 
@@ -46,7 +39,7 @@ const initialValues: FileFormValue = {
   file: [],
 };
 
-function getFileFormInputFromFile(item: File): FileFormValue {
+function getFileFormInputFromFile(item: FimidaraFile): FileFormValue {
   return {
     name: item.name,
     description: item.description,
@@ -55,7 +48,7 @@ function getFileFormInputFromFile(item: File): FileFormValue {
 }
 
 export interface FileFormProps {
-  file?: File;
+  file?: FimidaraFile;
   className?: string;
 
   /** file parent folder without rootname. */
@@ -71,17 +64,21 @@ export default function FileForm(props: FileFormProps) {
   const updateHook = useWorkspaceFileUpdateMutationHook({
     onSuccess(data, params) {
       message.success("File updated.");
-      router.push(
-        appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
-      );
+      // router.push(
+      //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
+      // );
     },
   });
   const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
       message.success("File uploaded.");
-      router.push(
-        appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
-      );
+      // router.push(
+      //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
+      // );
+    },
+    onError(e, params) {
+      const filepath = params[0].body.filepath;
+      if (filepath) progressHandlerHook.setOpError(filepath, e);
     },
   });
   const mergedHook = file ? updateHook : uploadHook;
@@ -106,7 +103,7 @@ export default function FileForm(props: FileFormProps) {
               body: {
                 fileId: file.resourceId,
                 description: data.description,
-                data: inputFile as any,
+                data: inputFile,
                 mimetype: inputFile.type,
               },
               onUploadProgress: progressHandlerHook.getProgressHandler(
@@ -137,7 +134,7 @@ export default function FileForm(props: FileFormProps) {
             body: {
               filepath,
               description: data.description,
-              data: inputFile as any,
+              data: inputFile,
               mimetype: inputFile.type,
             },
             onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
@@ -241,6 +238,8 @@ export default function FileForm(props: FileFormProps) {
     </Form.Item>
   );
 
+  // TODO: should "uploading files progress" below open the progress drawer on
+  // click?
   return (
     <div className={cx(formClasses.formBodyClassName, className)}>
       <div className={formClasses.formContentWrapperClassName}>
@@ -254,6 +253,19 @@ export default function FileForm(props: FileFormProps) {
           {selectFileNode}
           {progressHandlerHook.identifiers.length > 0 && (
             <Form.Item>
+              <Typography.Paragraph type="secondary">
+                You can navigate away from this page and track the upload
+                progress using the{" "}
+                <IconButton
+                  disabled
+                  icon={<FiDownload />}
+                  title={`Uploading files progress button appearance`}
+                />{" "}
+                <Typography.Text strong>
+                  Uploading files progress
+                </Typography.Text>{" "}
+                button.
+              </Typography.Paragraph>
               <TransferProgressList
                 identifiers={progressHandlerHook.identifiers}
               />

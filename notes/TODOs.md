@@ -4,9 +4,14 @@
 
 - [ ] see entity permissions
 - [ ] mobile view
+- [ ] pricing page
+- [ ] add non-alphanumeric chars to file names and other names, cause currently, () do not work. Also add better error messages.
+- [ ] on server and client, increase name limits for files and resources
+- [ ] undefined description for files
 - [ ] update js sdk doc to include info on non-endpoint code and changes
 - [ ] upload progress and continue with other things
 - [ ] tab on mobile and scroll
+- [ ] surface fied errors in non-field areas like components without fields that call endpoints, e.g transfer progress
 - [ ] assign permission like in softkave and use drawer?
 - [ ] use drawer for forms?
 - [ ] add created, description, or last updated date to all resource lists

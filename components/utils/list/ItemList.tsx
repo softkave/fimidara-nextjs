@@ -9,6 +9,8 @@ import ListHeader from "./ListHeader";
 export interface IItemListExportedProps extends StyleableComponentProps {
   emptyMessage?: string | React.ReactNode;
   bordered?: boolean;
+  itemClassName?: string;
+  itemStyle?: React.CSSProperties;
 }
 
 export interface IItemListProps<T = any> extends IItemListExportedProps {
@@ -35,8 +37,17 @@ const classes = {
 };
 
 function ItemList<T>(props: IItemListProps<T>) {
-  const { items, emptyMessage, bordered, className, style, renderItem, getId } =
-    props;
+  const {
+    items,
+    emptyMessage,
+    bordered,
+    className,
+    style,
+    itemClassName,
+    itemStyle,
+    renderItem,
+    getId,
+  } = props;
 
   const handleRenderItem = (item: T, index: number) => {
     let node = renderItem(item, index);
@@ -50,8 +61,10 @@ function ItemList<T>(props: IItemListProps<T>) {
         key={getId ? getId(item, index) : index}
         className={cx(
           classes.item,
-          bordered && index !== items.length - 1 && classes.bordered
+          bordered && index !== items.length - 1 && classes.bordered,
+          itemClassName
         )}
+        style={itemStyle}
       >
         {node}
       </div>

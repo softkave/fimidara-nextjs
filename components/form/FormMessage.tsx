@@ -1,11 +1,16 @@
 import { css, cx } from "@emotion/css";
-import { compact, isString } from "lodash";
+import { compact, isObject, isString } from "lodash";
 import React from "react";
 import { AppError } from "../../lib/utils/errors";
 
 type FormMessageType = "error" | "message";
 type MessageWithVisible = { message: string; visible?: boolean };
-type SimpleMessageType = string | Error | AppError | MessageWithVisible;
+type SimpleMessageType =
+  | string
+  | Error
+  | AppError
+  | MessageWithVisible
+  | React.ReactElement;
 type SimpleMessageTypeWithFalsyValues = SimpleMessageType | null | undefined;
 type StackedMessageType =
   | SimpleMessageTypeWithFalsyValues
@@ -21,11 +26,12 @@ export interface IFormMessageProps {
 
 const FormMessage: React.FC<IFormMessageProps> = (props) => {
   const { children, message, type, className, style, visible } = props;
+
   if (!visible) {
     return null;
   }
 
-  let messages: Array<SimpleMessageType> = Array.isArray(message)
+  const messages: Array<SimpleMessageType> = Array.isArray(message)
     ? compact(message)
     : message
     ? [message]
@@ -35,11 +41,14 @@ const FormMessage: React.FC<IFormMessageProps> = (props) => {
   messages.forEach((message) => {
     if (isString(message)) {
       renderedMessages.push(message);
+    } else if (React.isValidElement(message)) {
+      renderedMessages.push(message);
     } else if (
-      message.message &&
+      isObject(message) &&
+      (message as Error).message &&
       (message as MessageWithVisible).visible !== false
     ) {
-      renderedMessages.push(message.message);
+      renderedMessages.push((message as Error).message);
     }
   });
 
@@ -55,7 +64,6 @@ const FormMessage: React.FC<IFormMessageProps> = (props) => {
         css({
           color: getFontColor(type as FormMessageType),
           lineHeight: "24px",
-          padding: "4px 0",
         })
       )}
     >
@@ -81,16 +89,14 @@ function getFontColor(type: FormMessageType) {
   switch (type) {
     case "error":
       return "red";
-
     case "message":
       return "green";
-
     default:
       return "black";
   }
 }
 
-export function filterMessagesWithVisible(
+export function getVisibleMessages(
   messages: { message?: string; visible?: boolean }[]
 ): MessageWithVisible[] {
   return messages.filter((message) => {
