@@ -7,6 +7,8 @@ import {
   FimidaraEndpointResult,
   FimidaraEndpointParamsRequired,
   FimidaraEndpointParamsOptional,
+  FimidaraEndpointWithBinaryResponseParamsRequired,
+  FimidaraEndpointWithBinaryResponseParamsOptional,
 } from './utils';
 import {
   ChangePasswordWithCurrentPasswordEndpointParams,
@@ -34,6 +36,7 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<LoginResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/users/changePasswordWithCurrentPassword',
         method: 'POST',
@@ -46,6 +49,7 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<LoginResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/users/changePasswordWithToken',
         method: 'POST',
@@ -58,6 +62,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<LoginResult>> => {
     return this.executeJson(
       {
+        ...props,
+
         path: '/v1/users/confirmEmailAddress',
         method: 'POST',
       },
@@ -69,6 +75,7 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<undefined>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/users/forgotPassword',
         method: 'POST',
@@ -81,6 +88,7 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<LoginResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/users/login',
         method: 'POST',
@@ -93,6 +101,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<undefined>> => {
     return this.executeJson(
       {
+        ...props,
+
         path: '/v1/users/sendEmailVerificationCode',
         method: 'POST',
       },
@@ -104,6 +114,7 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<LoginResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/users/signup',
         method: 'POST',
@@ -116,6 +127,7 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<UserExistsEndpointResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/users/userExists',
         method: 'POST',
@@ -132,6 +144,7 @@ export class CollaboratorsEndpoints extends FimidaraEndpointsBase {
   > => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/collaborators/getCollaboratorsWithoutPermission',
         method: 'POST',
@@ -146,6 +159,7 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<GetWaitlistedUsersEndpointResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/internals/getWaitlistedUsers',
         method: 'POST',
@@ -158,6 +172,7 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<undefined>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/internals/upgradeWaitlistedUsers',
         method: 'POST',
@@ -170,6 +185,7 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<GetUsersEndpointResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/internals/getUsers',
         method: 'POST',
@@ -182,6 +198,7 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
   ): Promise<FimidaraEndpointResult<GetWorkspacesEndpointResult>> => {
     return this.executeJson(
       {
+        ...props,
         data: props?.body,
         path: '/v1/internals/getWorkspaces',
         method: 'POST',

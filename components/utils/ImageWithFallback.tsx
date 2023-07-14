@@ -111,7 +111,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
 
   const getPresignedPath = async () => {
     const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-    const getResult = await endpoints.files.getFilePresignedPaths({
+    const getResult = await endpoints.files.getPresignedPathsForFiles({
       body: { files: [{ filepath }] },
     });
 

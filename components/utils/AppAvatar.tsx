@@ -19,7 +19,7 @@ export default function AppAvatar(props: IAppAvatarProps) {
     if (!filepath) return undefined;
 
     const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-    const getResult = await endpoints.files.getFilePresignedPaths({
+    const getResult = await endpoints.files.getPresignedPathsForFiles({
       body: { files: [{ filepath }] },
     });
 

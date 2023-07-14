@@ -1,15 +1,19 @@
 // This file is copied over from server-generated js sdk.
 // Do not modify directly. For util code, use localUtils.ts file instead.
 
-import {fetch, Headers} from 'cross-fetch';
+import axios, {AxiosProgressEvent, AxiosResponse, Method} from 'axios';
 import FormData from 'isomorphic-form-data';
-import {compact, isArray, last, map} from 'lodash';
+import {compact, isArray, isObject, isString, last, map} from 'lodash';
 import path from 'path';
 import {File, Folder} from './publicTypes';
 
 const defaultServerURL =
   (process ? process.env.FIMIDARA_SERVER_URL : undefined) ??
   'https://api.fimidara.com';
+
+export type EndpointHeaders = {
+  [key: string]: string | string[] | number | boolean | null;
+};
 
 type FimidaraEndpointErrorItem = {
   name: string;
@@ -27,9 +31,9 @@ export class FimidaraEndpointError extends Error {
 
   constructor(
     public errors: Array<FimidaraEndpointErrorItem>,
-    public statusCode: number,
-    public statusText: string,
-    public headers: typeof Headers
+    public statusCode?: number,
+    public statusText?: string,
+    public headers?: EndpointHeaders
   ) {
     super('Fimidara endpoint error.');
   }
@@ -72,8 +76,8 @@ export class FimidaraJsConfig {
   }
 }
 
-const HTTP_HEADER_CONTENT_TYPE = 'Content-Type';
-const HTTP_HEADER_AUTHORIZATION = 'Authorization';
+const HTTP_HEADER_CONTENT_TYPE = 'content-type';
+const HTTP_HEADER_AUTHORIZATION = 'authorization';
 const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
 
 export interface IInvokeEndpointParams {
@@ -82,20 +86,35 @@ export interface IInvokeEndpointParams {
   data?: any;
   formdata?: any;
   path: string;
-  headers?: Record<string, string>;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  headers?: EndpointHeaders;
+  method: Method;
+  responseType: 'blob' | 'json' | 'stream';
+  onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
 }
 
 export async function invokeEndpoint(props: IInvokeEndpointParams) {
-  const {data, path, headers, method, token, formdata, serverURL} = props;
+  const {
+    data,
+    path,
+    headers,
+    method,
+    token,
+    formdata,
+    serverURL,
+    responseType,
+    onDownloadProgress,
+    onUploadProgress,
+  } = props;
   const incomingHeaders = {...headers};
   let contentBody = undefined;
 
   if (formdata) {
     const contentFormdata = new FormData();
     for (const key in formdata) {
-      if (formdata[key] !== undefined || formdata[key] !== null)
+      if (formdata[key] !== undefined && formdata[key] !== null) {
         contentFormdata.append(key, formdata[key]);
+      }
     }
     contentBody = contentFormdata;
   } else if (data) {
@@ -108,38 +127,78 @@ export async function invokeEndpoint(props: IInvokeEndpointParams) {
   }
 
   const endpointURL = (serverURL || defaultServerURL) + path;
-  const result = await fetch(endpointURL, {
-    method,
-    headers: incomingHeaders,
-    body: contentBody as any,
-    mode: 'cors',
-  });
 
-  if (result.ok) {
+  try {
+    /**
+     * Axios accepts the following:
+     * - string, plain object, ArrayBuffer, ArrayBufferView, URLSearchParams
+     * - Browser only: FormData, File, Blob
+     * - Node only: Stream, Buffer
+     *
+     * TODO: enforce environment dependent options or have a universal
+     * transformRequest
+     */
+    const result = await axios({
+      method,
+      responseType,
+      onUploadProgress,
+      onDownloadProgress,
+      url: endpointURL,
+      headers: incomingHeaders,
+      data: contentBody,
+      maxRedirects: 0, // avoid buffering the entire stream
+    });
+
     return result;
-  }
+  } catch (error: unknown) {
+    let errors: FimidaraEndpointErrorItem[] = [];
+    let statusCode: number | undefined = undefined;
+    let statusText: string | undefined = undefined;
+    let responseHeaders: EndpointHeaders | undefined = undefined;
 
-  const isResultJSON = result.headers
-    .get(HTTP_HEADER_CONTENT_TYPE)
-    ?.includes(CONTENT_TYPE_APPLICATION_JSON);
+    if ((error as any).response) {
+      // The request was made and the server responded with a status code that
+      // falls out of the range of 2xx
+      const response = (error as any).response as AxiosResponse;
+      // console.log(response.data);
+      // console.log(response.status);
+      // console.log(response.headers);
 
-  let errors: FimidaraEndpointErrorItem[] = [];
-  if (isResultJSON) {
-    const body = (await result.json()) as
-      | {errors: FimidaraEndpointErrorItem[]}
-      | undefined;
+      statusCode = response.status;
+      statusText = response.statusText;
+      responseHeaders = response.headers as EndpointHeaders;
 
-    if (body?.errors) {
-      errors = body.errors;
+      const contentType = response.headers[HTTP_HEADER_CONTENT_TYPE];
+      const isResultJSON =
+        isString(contentType) &&
+        contentType.includes(CONTENT_TYPE_APPLICATION_JSON);
+
+      if (isResultJSON && isString(response.data)) {
+        const body = JSON.parse(response.data);
+        if (isArray(body?.errors)) errors = body.errors;
+      } else if (
+        isObject(response.data) &&
+        isArray((response.data as any).errors)
+      ) {
+        errors = (response.data as any).errors;
+      }
+    } else if ((error as any).request) {
+      // The request was made but no response was received `error.request` is an
+      // instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      // console.log(error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      // console.log('Error', error.message);
     }
-  }
 
-  throw new FimidaraEndpointError(
-    errors,
-    result.status,
-    result.statusText,
-    result.headers as any
-  );
+    throw new FimidaraEndpointError(
+      errors,
+      statusCode,
+      statusText,
+      responseHeaders
+    );
+  }
 }
 
 export class FimidaraEndpointsBase extends FimidaraJsConfig {
@@ -152,48 +211,57 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
   }
 
   protected async executeRaw(
-    p01: Pick<IInvokeEndpointParams, 'data' | 'formdata' | 'path' | 'method'>,
+    p01: IInvokeEndpointParams,
     p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>
-  ) {
+  ): Promise<FimidaraEndpointResult<any>> {
     const response = await invokeEndpoint({
       serverURL: this.getServerURL(p02),
       token: this.getAuthToken(p02),
       ...p01,
     });
-    const result = {
-      headers: response.headers as any,
-      body: response,
+    return {
+      status: response.status,
+      statusText: response.statusText,
+      body: response.data,
+      headers: response.headers as EndpointHeaders,
     };
-    return result;
   }
 
   protected async executeJson(
     p01: Pick<IInvokeEndpointParams, 'data' | 'formdata' | 'path' | 'method'>,
     p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>
   ) {
-    const response = await this.executeRaw(p01, p02);
-    const result = {
-      headers: response.headers,
-      body: (await response.body.json()) as any,
-    };
-    return result;
+    return await this.executeRaw({...p01, responseType: 'json'}, p02);
   }
 }
 
 export type FimidaraEndpointResult<T> = {
+  status: number;
+  statusText: string;
   body: T;
-  headers: typeof Headers;
+  headers: EndpointHeaders;
 };
-export type FimidaraEndpointParamsOptional<T> = {
-  serverURL?: string;
-  authToken?: string;
-  body?: T;
-};
+export type FimidaraEndpointProgressEvent = AxiosProgressEvent;
 export type FimidaraEndpointParamsRequired<T> = {
+  body: T;
   serverURL?: string;
   authToken?: string;
-  body: T;
+
+  /** **NOTE**: doesn't work in Node.js at the moment. */
+  onUploadProgress?: (progressEvent: FimidaraEndpointProgressEvent) => void;
+  onDownloadProgress?: (progressEvent: FimidaraEndpointProgressEvent) => void;
 };
+export type FimidaraEndpointWithBinaryResponseParamsRequired<T> =
+  FimidaraEndpointParamsRequired<T> & {
+    responseType: 'blob' | 'stream';
+  };
+export type FimidaraEndpointParamsOptional<T> = Partial<
+  FimidaraEndpointParamsRequired<T>
+>;
+export type FimidaraEndpointWithBinaryResponseParamsOptional<T> =
+  FimidaraEndpointParamsOptional<T> & {
+    responseType: 'blob' | 'stream';
+  };
 
 export function fimidaraAddRootnameToPath<
   T extends string | string[] = string | string[]
@@ -210,9 +278,11 @@ export function fimidaraAddRootnameToPath<
 }
 
 function getFilepath(props: {
-  /** Filepath including workspace rootname. */
+  /** Filepath including workspace rootname OR file presigned path. */
   filepath?: string;
   workspaceRootname?: string;
+
+  /** Filepath without workspace rootname. Does not accept file presigned paths. */
   filepathWithoutRootname?: string;
 }) {
   const filepath = props.filepath
@@ -300,9 +370,11 @@ export const ImageFormatEnumMap = {
 export type ImageFormatEnum = ObjectValues<typeof ImageFormatEnumMap>;
 
 export type GetFimidaraReadFileURLProps = {
-  /** Filepath including workspace rootname. */
+  /** Filepath including workspace rootname OR file presigned path. */
   filepath?: string;
   workspaceRootname?: string;
+
+  /** Filepath without workspace rootname. Does not accept file presigned paths. */
   filepathWithoutRootname?: string;
   serverURL?: string;
   width?: number;
@@ -371,9 +443,11 @@ export function getFimidaraReadFileURL(props: GetFimidaraReadFileURLProps) {
 }
 
 export function getFimidaraUploadFileURL(props: {
-  /** Filepath including workspace rootname. */
+  /** Filepath including workspace rootname OR file presigned path. */
   filepath?: string;
   workspaceRootname?: string;
+
+  /** Filepath without workspace rootname. Does not accept file presigned paths. */
   filepathWithoutRootname?: string;
   serverURL?: string;
 }) {
@@ -390,15 +464,15 @@ export function stringifyFimidaraFileNamePath(
   file: Pick<File, 'namePath' | 'extension'>,
   rootname?: string
 ) {
-  const nm =
+  const name =
     file.namePath.join('/') + (file.extension ? `.${file.extension}` : '');
-  return rootname ? fimidaraAddRootnameToPath(nm, rootname) : nm;
+  return rootname ? fimidaraAddRootnameToPath(name, rootname) : name;
 }
 
 export function stringifyFimidaraFolderNamePath(
   file: Pick<Folder, 'namePath'>,
   rootname?: string
 ) {
-  const nm = file.namePath.join('/');
-  return rootname ? fimidaraAddRootnameToPath(nm, rootname) : nm;
+  const name = file.namePath.join('/');
+  return rootname ? fimidaraAddRootnameToPath(name, rootname) : name;
 }

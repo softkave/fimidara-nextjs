@@ -5,6 +5,8 @@
 - [ ] see entity permissions
 - [ ] mobile view
 - [ ] pricing page
+- [ ] terms of use
+- [ ] email consent
 - [ ] add non-alphanumeric chars to file names and other names, cause currently, () do not work. Also add better error messages.
 - [ ] on server and client, increase name limits for files and resources
 - [ ] undefined description for files

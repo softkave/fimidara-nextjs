@@ -7,7 +7,7 @@ async function copyGeneratedStuffFromServer() {
   const serverRootpath = "../fimidara-server-node";
   const serverRestApiEndpointsPath = `${serverRootpath}/mdoc/rest-api/endpoints`;
   const serverRestApiTableOfContentPath = `${serverRootpath}/mdoc/rest-api/toc`;
-  const serverSdkRootpath = `${serverRootpath}/sdk/js-sdk/v1/src`;
+  const serverSdkRootpath = `${serverRootpath}/sdk/js-sdk/src`;
   const serverSdkUtilsFilepath = `${serverSdkRootpath}/utils.ts`;
   const serverSdkUtilsPrivateEndpointsPath = `${serverSdkRootpath}/privateEndpoints.ts`;
   const serverSdkUtilsPrivateTypesPath = `${serverSdkRootpath}/privateTypes.ts`;
