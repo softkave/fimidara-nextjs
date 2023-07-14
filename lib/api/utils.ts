@@ -5,7 +5,6 @@ import axios, {AxiosProgressEvent, AxiosResponse, Method} from 'axios';
 import FormData from 'isomorphic-form-data';
 import {compact, isArray, isObject, isString, last, map} from 'lodash';
 import path from 'path';
-import {File, Folder} from './publicTypes';
 
 const defaultServerURL =
   (process ? process.env.FIMIDARA_SERVER_URL : undefined) ??
@@ -461,7 +460,7 @@ export function getFimidaraUploadFileURL(props: {
 }
 
 export function stringifyFimidaraFileNamePath(
-  file: Pick<File, 'namePath' | 'extension'>,
+  file: {namePath: string[]; extension?: string},
   rootname?: string
 ) {
   const name =
@@ -470,7 +469,7 @@ export function stringifyFimidaraFileNamePath(
 }
 
 export function stringifyFimidaraFolderNamePath(
-  file: Pick<Folder, 'namePath'>,
+  file: {namePath: string[]; extension?: string},
   rootname?: string
 ) {
   const name = file.namePath.join('/');
