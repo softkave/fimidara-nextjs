@@ -3,8 +3,11 @@
 ## Now
 
 - [ ] see entity permissions
+- [ ] test uploading files progress drawer
 - [ ] mobile view
+- [ ] usage record month & year options
 - [ ] pricing page
+- [ ] show count of files and folders in item list
 - [ ] terms of use
 - [ ] email consent
 - [ ] add non-alphanumeric chars to file names and other names, cause currently, () do not work. Also add better error messages.

@@ -34,12 +34,8 @@ export const systemConstants = {
   ),
   serverAddr: defaultTo(
     process.env.NEXT_PUBLIC_SERVER_ADDR,
-    "http://localhost:5000"
+    "https://api.fimidara.com"
   ),
-  complaintEmailAddress: "abayomi@softkave.com",
-  demoQueryKey: "isDemo",
-  demoUserEmail: "boards-demo-user@softkave.com",
-  demoUserName: "Demo User",
   minPage: 0,
   minPageSize: 1,
   maxPageSize: 1000,
