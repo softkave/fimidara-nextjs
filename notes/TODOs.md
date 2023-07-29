@@ -4,12 +4,16 @@
 
 - [ ] see entity permissions
 - [ ] test uploading files progress drawer
+- [ ] bulk upload is showing just one file after upload, reloading shows the rest
 - [ ] mobile view
+- [ ] add custom message to all yup schemas
+- [ ] increase max width for file name and maybe folder name
 - [ ] usage record month & year options
 - [ ] pricing page
 - [ ] show count of files and folders in item list
 - [ ] terms of use
 - [ ] email consent
+- [ ] implement drag and drop upload for files and avatars
 - [ ] add non-alphanumeric chars to file names and other names, cause currently, () do not work. Also add better error messages.
 - [ ] on server and client, increase name limits for files and resources
 - [ ] undefined description for files

@@ -1,6 +1,9 @@
 import { FormAlert } from "@/components/utils/FormAlert";
 import { TransferProgressList } from "@/components/utils/TransferProgress";
+import CustomIcon from "@/components/utils/buttons/CustomIcon";
+import DeleteButton from "@/components/utils/buttons/DeleteButton";
 import IconButton from "@/components/utils/buttons/IconButton";
+import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { systemConstants } from "@/lib/definitions/system";
 import {
@@ -10,42 +13,101 @@ import {
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { useTransferProgressHandler } from "@/lib/hooks/useTransferProgress";
 import { messages } from "@/lib/messages/messages";
+import { indexArray } from "@/lib/utils/indexArray";
 import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
+import { yupObject } from "@/lib/validation/utils";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Button, Form, Input, Space, Typography, Upload, message } from "antd";
+import {
+  Button,
+  Collapse,
+  Form,
+  Input,
+  Space,
+  Typography,
+  Upload,
+  message,
+} from "antd";
 import { RcFile } from "antd/lib/upload";
-import { File as FimidaraFile, stringifyFimidaraFileNamePath } from "fimidara";
-import { first } from "lodash";
+import { File as FimidaraFile } from "fimidara";
+import { FormikErrors, FormikTouched } from "formik";
+import { compact, isArray, isObject, isString } from "lodash";
 import { useRouter } from "next/router";
+import prettyBytes from "pretty-bytes";
 import { FiDownload } from "react-icons/fi";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
 
-export interface FileFormValue {
+export type SingleFileFormValue = {
+  __localId: string;
+  resourceId: string | undefined;
   description?: string;
   encoding?: string;
-  extension?: string;
   mimetype?: string;
-  data?: Blob;
-  file: Array<RcFile>;
+  file?: RcFile;
   name: string;
+};
+
+export interface FileFormValue {
+  files: Array<SingleFileFormValue>;
 }
 
 const initialValues: FileFormValue = {
-  name: "",
-  file: [],
+  files: [],
 };
+
+function getNewLocalId() {
+  return Math.random().toString();
+}
 
 function getFileFormInputFromFile(item: FimidaraFile): FileFormValue {
   return {
-    name: item.name,
-    description: item.description,
-    file: [],
+    files: [
+      {
+        __localId: getNewLocalId(),
+        resourceId: item.resourceId,
+        name: item.name,
+        description: item.description,
+        encoding: item.encoding,
+        mimetype: item.mimetype,
+      },
+    ],
   };
 }
+
+const newFileValidationSchema = yupObject<
+  Omit<SingleFileFormValue, "__localId" | "resourceId">
+>({
+  name: fileValidationParts.filename.required(messages.fieldIsRequired),
+  description: systemValidation.description.nullable(),
+  file: yup.mixed().required(messages.fieldIsRequired),
+  encoding: yup.string(),
+  mimetype: yup.string(),
+});
+const existingFileValidationSchema = yupObject<
+  Omit<SingleFileFormValue, "__localId" | "resourceId">
+>({
+  name: fileValidationParts.filename.required(messages.fieldIsRequired),
+  description: systemValidation.description.nullable(),
+  file: yup.mixed(),
+  encoding: yup.string(),
+  mimetype: yup.string(),
+});
+const newFileFormValidationSchema = yupObject<FileFormValue>({
+  files: yup.array().of(newFileValidationSchema).min(1).required(),
+});
+const existingFileFormValidationSchema = yupObject<FileFormValue>({
+  files: yup.array().of(existingFileValidationSchema).min(1).required(),
+});
+
+const classes = {
+  multi: {
+    panelHeader: css({ display: "flex" }),
+    panelLabel: css({ flex: 1 }),
+  },
+};
 
 export interface FileFormProps {
   file?: FimidaraFile;
@@ -83,160 +145,115 @@ export default function FileForm(props: FileFormProps) {
   });
   const mergedHook = file ? updateHook : uploadHook;
 
+  const submitFile = async (input: SingleFileFormValue) => {
+    const filepath = addRootnameToPath(
+      folderpath
+        ? `${folderpath}${folderConstants.nameSeparator}${input.name}`
+        : input.name,
+      workspaceRootname
+    );
+
+    if (input.resourceId) {
+      // Existing file
+
+      if (input.file) {
+        return await uploadHook.runAsync({
+          body: {
+            fileId: input.resourceId,
+            data: input.file,
+            description: input.description,
+            mimetype: input.mimetype,
+            encoding: input.encoding,
+          },
+          onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
+        });
+      } else {
+        return await updateHook.runAsync({
+          body: {
+            fileId: input.resourceId,
+            file: {
+              description: input.description,
+              mimetype: input.mimetype,
+
+              // TODO: add to server
+              // encoding: input.encoding,
+            },
+          },
+        });
+      }
+    } else {
+      if (!input.file) {
+        // TODO: show error?
+        return;
+      }
+
+      return await uploadHook.runAsync({
+        body: {
+          filepath,
+          data: input.file,
+          description: input.description,
+          mimetype: input.mimetype,
+          encoding: input.encoding,
+        },
+        onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
+      });
+    }
+  };
+
   const { formik } = useFormHelpers({
     errors: mergedHook.error,
     formikProps: {
-      validationSchema: yup.object().shape({
-        name: fileValidationParts.filename.required(messages.fieldIsRequired),
-        description: systemValidation.description.nullable(),
-        file: !file
-          ? yup.mixed().required(messages.fieldIsRequired)
-          : yup.mixed(),
-      }),
+      validationSchema: file
+        ? existingFileFormValidationSchema
+        : newFileFormValidationSchema,
       initialValues: file ? getFileFormInputFromFile(file) : initialValues,
       onSubmit: async (data) => {
-        const inputFile = first(data.file);
-
-        if (file) {
-          if (inputFile) {
-            return await uploadHook.runAsync({
-              body: {
-                fileId: file.resourceId,
-                description: data.description,
-                data: inputFile,
-                mimetype: inputFile.type,
-              },
-              onUploadProgress: progressHandlerHook.getProgressHandler(
-                stringifyFimidaraFileNamePath(file)
-              ),
-            });
-          } else {
-            return await updateHook.runAsync({
-              body: {
-                fileId: file.resourceId,
-                file: { description: data.description },
-              },
-            });
-          }
-        } else {
-          if (!inputFile) {
-            // TODO: show error?
-            return;
-          }
-
-          const filepath = addRootnameToPath(
-            folderpath
-              ? `${folderpath}${folderConstants.nameSeparator}${data.name}`
-              : data.name,
-            workspaceRootname
-          );
-          return await uploadHook.runAsync({
-            body: {
-              filepath,
-              description: data.description,
-              data: inputFile,
-              mimetype: inputFile.type,
-            },
-            onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
-          });
-        }
+        await Promise.all(data.files.map(submitFile));
       },
     },
   });
 
-  const nameNode = (
-    <Form.Item
-      required
-      label="File Name"
-      help={
-        formik.touched?.name && formik.errors?.name ? (
-          <FormError visible={formik.touched.name} error={formik.errors.name} />
-        ) : (
-          "Name can include the file's extension, e.g image.png"
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Space direction="vertical" style={{ width: "100%" }}>
-        <Input
-          name="name"
-          value={formik.values.name}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-          placeholder="Enter file name"
-          disabled={mergedHook.loading || !!file}
-          maxLength={systemConstants.maxNameLength}
-          autoComplete="off"
-        />
-        {!file && first(formik.values.file) && (
-          <Button
-            type="link"
-            onClick={() => {
-              formik.setFieldValue("name", first(formik.values.file)?.name);
-            }}
-            style={{ paddingLeft: 0, paddingRight: 0 }}
-          >
-            Auto-fill from selected file
-          </Button>
-        )}
-      </Space>
-    </Form.Item>
-  );
+  let contentNode: React.ReactNode = null;
 
-  const descriptionNode = (
-    <Form.Item
-      label="Description"
-      help={
-        formik.touched?.description &&
-        formik.errors?.description && (
-          <FormError
-            visible={formik.touched.description}
-            error={formik.errors.description}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input.TextArea
-        name="description"
-        value={formik.values.description}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter file description"
-        disabled={mergedHook.loading}
-        maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
-      />
-    </Form.Item>
-  );
-
-  // TODO: include max file size
-  const selectFileNode = (
-    <Form.Item
-      label="Select File"
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Upload
-        multiple={false}
-        fileList={formik.values.file}
-        beforeUpload={(file, fileList) => {
-          formik.setFieldValue("file", fileList);
-          return false;
-        }}
-        onRemove={() => {
-          formik.setFieldValue("file", []);
-        }}
+  if (file) {
+    const touched = formik.touched?.files ? formik.touched.files[0] : undefined;
+    const error = formik.errors?.files ? formik.errors.files[0] : undefined;
+    contentNode = (
+      <Form.Item
+        help={
+          touched && isString(error) ? (
+            <FormError visible error={error} />
+          ) : null
+        }
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
       >
-        <IconButton
-          icon={<UploadOutlined />}
-          title={file ? "Replace File" : "Select File"}
+        <SingleFileForm
+          value={formik.values.files[0]}
+          touched={touched}
+          errors={error}
+          disabled={mergedHook.loading}
+          onChange={(partialValue) =>
+            formik.setValues({
+              files: [{ ...formik.values.files[0], ...partialValue }],
+            })
+          }
         />
-      </Upload>
-    </Form.Item>
-  );
+      </Form.Item>
+    );
+  } else {
+    contentNode = (
+      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+        <MultipleFileForms
+          values={formik.values.files}
+          disabled={mergedHook.loading}
+          errors={formik.errors.files}
+          touched={formik.touched.files}
+          onChange={(files) => formik.setValues({ files })}
+        />
+      </Form.Item>
+    );
+  }
 
   // TODO: should "uploading files progress" below open the progress drawer on
   // click?
@@ -248,9 +265,7 @@ export default function FileForm(props: FileFormProps) {
             <Typography.Title level={4}>File Form</Typography.Title>
           </Form.Item>
           <FormAlert error={mergedHook.error} />
-          {nameNode}
-          {descriptionNode}
-          {selectFileNode}
+          {contentNode}
           {progressHandlerHook.identifiers.length > 0 && (
             <Form.Item>
               <Typography.Paragraph type="secondary">
@@ -283,6 +298,265 @@ export default function FileForm(props: FileFormProps) {
           </Form.Item>
         </form>
       </div>
+    </div>
+  );
+}
+
+export interface MultipleFilesFormProps extends StyleableComponentProps {
+  disabled?: boolean;
+  values: SingleFileFormValue[];
+  touched?: FormikTouched<SingleFileFormValue>[];
+  errors?: string | string[] | FormikErrors<SingleFileFormValue[]>;
+  onChange: (values: SingleFileFormValue[]) => void;
+}
+
+export function MultipleFileForms(props: MultipleFilesFormProps) {
+  const { disabled, values, touched, errors, className, style, onChange } =
+    props;
+
+  const handleRemoveFile = (index: number) =>
+    onChange(values.filter((nextValue, nextIndex) => nextIndex !== index));
+
+  const handleUpdateFile = (
+    index: number,
+    updatedValue: Partial<SingleFileFormValue>
+  ) => {
+    const newValues = [...values];
+    newValues[index] = { ...newValues[index], ...updatedValue };
+    onChange(newValues);
+  };
+
+  const panelNodes = values.map((value, index) => (
+    <Collapse.Panel
+      key={value.__localId}
+      header={
+        <div className={classes.multi.panelHeader}>
+          <Space
+            direction="vertical"
+            className={classes.multi.panelLabel}
+            size={0}
+          >
+            <Typography.Text>{value.name}</Typography.Text>
+            {errors && errors[index] ? (
+              <Typography.Text type="danger">
+                Entry contains error
+              </Typography.Text>
+            ) : null}
+          </Space>
+          <Space size="middle" style={{ marginLeft: "16px" }}>
+            {value?.file ? (
+              <Typography.Text type="secondary">
+                {prettyBytes(value.file.size)}
+              </Typography.Text>
+            ) : null}
+            <DeleteButton onClick={() => handleRemoveFile(index)} />
+          </Space>
+        </div>
+      }
+    >
+      <SingleFileForm
+        key={value.__localId}
+        value={value}
+        onChange={(updatedValue) => handleUpdateFile(index, updatedValue)}
+        disabled={disabled}
+        errors={errors && errors[index]}
+        touched={touched && touched[index]}
+      />
+    </Collapse.Panel>
+  ));
+  const collapseNode = panelNodes.length ? (
+    <Form.Item>
+      <Collapse>{panelNodes}</Collapse>
+    </Form.Item>
+  ) : null;
+
+  // TODO: include max file size
+  // Only show the default upload button when we're uploading new files
+  const selectFileNode = (
+    <Form.Item
+      // label="Select Files"
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
+      help={
+        touched && isString(errors) ? (
+          <FormError visible error={errors} />
+        ) : null
+      }
+    >
+      <Upload
+        multiple
+        showUploadList={false}
+        disabled={disabled}
+        fileList={compact(values.map((item) => item.file))}
+        beforeUpload={(file, fileList) => {
+          const existingFilesMap = indexArray(values, {
+            indexer(current) {
+              return current.file?.uid ?? current.name;
+            },
+          });
+          onChange(
+            values.concat(
+              fileList
+                .filter((file) => !existingFilesMap[file.uid ?? file.name])
+                .map(
+                  (file): SingleFileFormValue => ({
+                    file,
+                    __localId: getNewLocalId(),
+                    resourceId: undefined,
+                    name: file.name,
+                    mimetype: file.type,
+                  })
+                )
+            )
+          );
+          return false;
+        }}
+      >
+        <Button title="Select Files">
+          <Space>
+            <CustomIcon icon={<UploadOutlined />} />
+            Select Files
+          </Space>
+        </Button>
+      </Upload>
+    </Form.Item>
+  );
+
+  return (
+    <div className={cx(className)} style={style}>
+      {collapseNode}
+      {selectFileNode}
+    </div>
+  );
+}
+
+export interface SingleFileFormProps extends StyleableComponentProps {
+  disabled?: boolean;
+  value?: SingleFileFormValue;
+  touched?: FormikTouched<SingleFileFormValue>;
+  errors?: string | string[] | FormikErrors<SingleFileFormValue>;
+  onChange: (values: Partial<SingleFileFormValue>) => void;
+}
+
+export function SingleFileForm(props: SingleFileFormProps) {
+  const {
+    value: values,
+    touched,
+    errors,
+    disabled,
+    style,
+    className,
+    onChange,
+  } = props;
+
+  const nameNode = (
+    <Form.Item
+      required
+      label="File Name"
+      help={
+        touched?.name &&
+        isObject(errors) &&
+        !isArray(errors) &&
+        errors?.name ? (
+          <FormError visible={touched.name} error={errors.name} />
+        ) : (
+          "Name can include the file's extension, e.g image.png"
+        )
+      }
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
+    >
+      <Space direction="vertical" style={{ width: "100%" }} size={0}>
+        <Input
+          value={values?.name}
+          onChange={(evt) => onChange({ name: evt.target.value })}
+          placeholder="Enter file name"
+          disabled={disabled || !!values?.resourceId}
+          maxLength={systemConstants.maxNameLength}
+          autoComplete="off"
+        />
+        {values?.file && (
+          <Button
+            type="link"
+            onClick={() => onChange({ name: values.file?.name })}
+            style={{ paddingLeft: 0, paddingRight: 0 }}
+          >
+            <Typography.Text
+              style={{ textDecoration: "underline", color: "inherit" }}
+            >
+              Autofill from selected file
+            </Typography.Text>
+          </Button>
+        )}
+      </Space>
+    </Form.Item>
+  );
+
+  const descriptionNode = (
+    <Form.Item
+      label="Description"
+      help={
+        touched?.description &&
+        isObject(errors) &&
+        !isArray(errors) &&
+        errors?.description && (
+          <FormError visible={touched.description} error={errors.description} />
+        )
+      }
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
+    >
+      <Input.TextArea
+        name="description"
+        value={values?.description}
+        onChange={(evt) => onChange({ description: evt.target.value })}
+        placeholder="Enter file description"
+        disabled={disabled}
+        maxLength={systemConstants.maxDescriptionLength}
+        autoSize={{ minRows: 2 }}
+      />
+    </Form.Item>
+  );
+
+  // TODO: include max file size
+  const selectFileNode = (
+    <Form.Item
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
+      help={touched && isString(errors) && <FormError visible error={errors} />}
+    >
+      <Upload
+        showUploadList={false}
+        multiple={false}
+        disabled={disabled}
+        fileList={values?.file ? [values.file] : []}
+        beforeUpload={(file, fileList) => {
+          onChange({ file });
+          return false;
+        }}
+      >
+        <Space size="middle">
+          <IconButton
+            icon={<UploadOutlined />}
+            title={values?.file ? "Replace File" : "Select File"}
+          />
+          {values?.file ? (
+            <Typography.Text type="secondary">
+              {prettyBytes(values.file.size)}
+            </Typography.Text>
+          ) : null}
+        </Space>
+      </Upload>
+    </Form.Item>
+  );
+
+  // TODO: should "uploading files progress" below open the progress drawer on
+  // click?
+  return (
+    <div className={className} style={style}>
+      {nameNode}
+      {descriptionNode}
+      {selectFileNode}
     </div>
   );
 }
