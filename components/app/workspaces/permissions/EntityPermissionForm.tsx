@@ -1,0 +1,81 @@
+import { kDisabledPermissions } from "@/lib/definitions/system";
+import { AppActionType } from "fimidara";
+import React from "react";
+import PermissionActionList from "./PermissionActionList";
+import { PermissionMapItemInfo, ResolvedPermissionsMap } from "./types";
+import { getResolvedPermissionToKey } from "./utils";
+
+export interface EntityPermissionFormProps<T extends { resourceId: string }> {
+  disabled?: boolean;
+  entity: T;
+  permissionsMap: ResolvedPermissionsMap;
+  actions: AppActionType[];
+  everyAction: AppActionType[];
+  onChange(
+    entity: T,
+    action: AppActionType,
+    permitted: PermissionMapItemInfo
+  ): void;
+}
+
+function EntityPermissionForm<T extends { resourceId: string }>(
+  props: EntityPermissionFormProps<T>
+) {
+  const { disabled, permissionsMap, actions, everyAction, entity, onChange } =
+    props;
+
+  const handleChange = React.useCallback(
+    (action: AppActionType, permitted: PermissionMapItemInfo) => {
+      onChange(entity, action, permitted);
+    },
+    [entity, onChange]
+  );
+
+  const getActionPermission = React.useCallback(
+    (action: AppActionType) => {
+      const key = getResolvedPermissionToKey({
+        action,
+        entityId: entity.resourceId,
+      });
+      const p = permissionsMap[key];
+      const isActionDisabled =
+        kDisabledPermissions.includes(action) || !actions.includes(action);
+      const disabledReason = isActionDisabled
+        ? "Permission is not fully supported yet"
+        : "";
+
+      return {
+        action,
+        disabledReason,
+        disabled: isActionDisabled,
+        entityId: p?.entityId ?? entity.resourceId,
+        access: p?.access ?? false,
+      };
+    },
+    [entity, permissionsMap]
+  );
+
+  const pList = React.useMemo(() => {
+    return everyAction
+      .map((action) => getActionPermission(action))
+      .sort((p01, p02) => {
+        if (p01.disabled && !p02.disabled) {
+          return 1;
+        } else if (p02.disabled && !p01.disabled) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+  }, [everyAction, getActionPermission]);
+
+  return (
+    <PermissionActionList
+      disabled={disabled}
+      items={pList}
+      onChange={handleChange}
+    />
+  );
+}
+
+export default EntityPermissionForm;
