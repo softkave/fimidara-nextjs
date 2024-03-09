@@ -63,9 +63,9 @@ export function TransferProgress(props: ITransferProgressProps) {
             : "Estimated time unknown"}
         </Typography.Text>
       </Space>
-      {progressHook.error && (
+      {progressHook.error ? (
         <FormError visible enrich error={progressHook.error as any} />
-      )}
+      ) : null}
     </Space>
   );
 }

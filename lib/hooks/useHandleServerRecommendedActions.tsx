@@ -1,5 +1,5 @@
 import { message, notification } from "antd";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { isFimidaraEndpointError } from "../api/localUtils";
 import { appAccountPaths } from "../definitions/system";
 import { AnyFn } from "../utils/types";

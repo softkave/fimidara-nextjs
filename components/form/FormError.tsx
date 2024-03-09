@@ -8,6 +8,7 @@ export interface IFormErrorProps {
   error?: IFormMessageProps["message"];
   visible?: boolean;
   enrich?: boolean;
+  children?: React.ReactNode;
 }
 
 const FormError: React.FC<IFormErrorProps> = (props) => {

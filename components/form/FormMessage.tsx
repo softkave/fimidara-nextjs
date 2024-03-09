@@ -22,6 +22,7 @@ export interface IFormMessageProps {
   message?: StackedMessageType;
   type?: FormMessageType;
   visible?: boolean;
+  children?: React.ReactNode;
 }
 
 const FormMessage: React.FC<IFormMessageProps> = (props) => {

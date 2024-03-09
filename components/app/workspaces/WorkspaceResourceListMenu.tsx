@@ -4,13 +4,13 @@ import { appClasses } from "@/components/utils/theme";
 import { MenuInfo } from "@/components/utils/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { Dropdown, MenuProps } from "antd";
-import { AppResourceType } from "fimidara";
+import { FimidaraResourceType } from "fimidara";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 
 export interface WorkspaceResourceListMenuProps {
   workspaceId: string;
-  targetType: AppResourceType;
+  targetType: FimidaraResourceType;
 }
 
 enum MenuKeys {

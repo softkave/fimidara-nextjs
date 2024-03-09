@@ -11,9 +11,9 @@ import { Modal, Space, Tabs, message } from "antd";
 import {
   AgentToken,
   AppActionType,
-  AppResourceType,
   Collaborator,
   DeletePermissionItemInput,
+  FimidaraResourceType,
   PermissionGroup,
   PermissionItemInput,
 } from "fimidara";
@@ -30,7 +30,7 @@ import { ResolvedPermissionsMap, TargetIdPermissions } from "./types";
 export interface TargetGrantPermissionFormProps {
   workspaceId: string;
   targetId: string;
-  targetType: AppResourceType;
+  targetType: FimidaraResourceType;
   onClose: () => void;
 }
 

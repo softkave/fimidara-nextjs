@@ -13,7 +13,7 @@ import { indexArray } from "@/lib/utils/indexArray";
 import { Collapse } from "antd";
 import {
   AppActionType,
-  AppResourceType,
+  FimidaraResourceType,
   ResolveEntityPermissionItemInput,
   ResolveEntityPermissionsEndpointParams,
   ResolvedEntityPermissionItem,
@@ -33,7 +33,7 @@ export interface TargetGrantPermissionFormEntityListProps<
   disabled?: boolean;
   workspaceId: string;
   targetId: string;
-  targetType: AppResourceType;
+  targetType: FimidaraResourceType;
   entities: Array<T>;
   defaultUpdatedPermissions?: ResolvedPermissionsMap;
   getInfoFromItem(item: T): TargetGrantPermissionFormEntityInfo;
@@ -55,10 +55,10 @@ export const resolvedPermissionToKey = (
 /** Returns a tuple of `[entityId, action]` */
 export const splitKey = (key: string) => key.split(separator);
 
-function resolveChildrenTypes(type: AppResourceType) {
-  const visited = new Map<AppResourceType, AppResourceType>();
-  const children: AppResourceType[] = [];
-  const visitNext: AppResourceType[] = [type];
+function resolveChildrenTypes(type: FimidaraResourceType) {
+  const visited = new Map<FimidaraResourceType, FimidaraResourceType>();
+  const children: FimidaraResourceType[] = [];
+  const visitNext: FimidaraResourceType[] = [type];
 
   for (let next = visitNext.shift(); next; next = visitNext.shift()) {
     const c01 = kResourceTypeToChildrenTypesMap[next];
@@ -74,7 +74,7 @@ function resolveChildrenTypes(type: AppResourceType) {
   return children;
 }
 
-function resolveActions(types: AppResourceType[]) {
+function resolveActions(types: FimidaraResourceType[]) {
   return uniq(
     flatten(
       types.map((type) => {

@@ -58,6 +58,7 @@ import {
   getCollaboratorStoreKey,
   useUserCollaborationRequestsStore,
   useWorkspaceAgentTokensStore,
+  useWorkspaceBackendConfigsStore,
   useWorkspaceCollaborationRequestsStore,
   useWorkspaceCollaboratorsStore,
   useWorkspaceFilesStore,
@@ -181,7 +182,7 @@ async function workspaceBackendConfigsInputFetchFn(
   const count = await endpoints.permissionGroups.countWorkspacePermissionGroups(
     { body: omitPagination(params) }
   );
-  return { count: count.body.count, resourceList: data.body.permissionGroups };
+  return { count: count.body.count, resourceList: data.body.configs };
 }
 async function workspaceUsageRecordsInputFetchFn(
   params: GetWorkspaceSummedUsageEndpointParams

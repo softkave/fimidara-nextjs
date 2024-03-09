@@ -36,7 +36,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
               </Link>
               <WorkspaceResourceListMenu
                 workspaceId={workspaceId}
-                targetType={["permissionGroup", "permissionItem"]}
+                targetType="permissionGroup"
               />
               {menu}
             </Space>

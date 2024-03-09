@@ -1,12 +1,12 @@
 import { useToggle } from "ahooks";
-import { AppResourceType } from "fimidara";
+import { FimidaraResourceType } from "fimidara";
 import React from "react";
 import TargetGrantPermissionForm from "../app/workspaces/permissions/TargetGrantPermissionsForm";
 
 export interface UseTargetGrantPermissionModalProps {
   workspaceId: string;
   targetId: string;
-  targetType: AppResourceType;
+  targetType: FimidaraResourceType;
 }
 
 export enum GrantPermissionKey {

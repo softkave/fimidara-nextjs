@@ -1,4 +1,4 @@
-import { AppActionType, AppResourceType } from "fimidara";
+import { AppActionType, FimidaraResourceType } from "fimidara";
 import { defaultTo } from "lodash";
 
 if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
@@ -41,7 +41,7 @@ export const systemConstants = {
   maxPageSize: 1000,
 };
 
-export function getWorkspaceTypeList(): AppResourceType[] {
+export function getWorkspaceTypeList(): FimidaraResourceType[] {
   return [
     "*",
     "workspace",
@@ -59,7 +59,7 @@ export function getWorkspaceTypeList(): AppResourceType[] {
   ];
 }
 
-export function getFolderTypeList(): AppResourceType[] {
+export function getFolderTypeList(): FimidaraResourceType[] {
   return ["*", "folder", "file"];
 }
 
@@ -107,7 +107,7 @@ export const kActionLabel: Record<AppActionType, string> = {
   updateFileBackendMount: "Update backend mount",
 };
 
-export const kResourceTypeLabel: Record<AppResourceType, string> = {
+export const kResourceTypeLabel: Record<FimidaraResourceType, string> = {
   "*": "Every resource",
   workspace: "Workspace",
   collaborationRequest: "Collaboration request",
@@ -132,7 +132,7 @@ export const kResourceTypeLabel: Record<AppResourceType, string> = {
 };
 
 export const kResourceTypeToPermittedActions: Record<
-  AppResourceType,
+  FimidaraResourceType,
   /** group inherits from item */
   { item: AppActionType[]; group?: AppActionType[] }
 > = {
@@ -202,8 +202,8 @@ export const kResourceTypeToPermittedActions: Record<
 };
 
 export const kResourceTypeToChildrenTypesMap: Record<
-  AppResourceType,
-  AppResourceType[]
+  FimidaraResourceType,
+  FimidaraResourceType[]
 > = {
   "*": ["*"],
   workspace: [
@@ -241,7 +241,7 @@ export const kResourceTypeToChildrenTypesMap: Record<
 };
 
 /** resource types to prevent UI actions on, for whatever reason */
-export const kDisabledResourceTypes: AppResourceType[] = [
+export const kDisabledResourceTypes: FimidaraResourceType[] = [
   // server/internal resource types
   "*",
   "app",

@@ -30,8 +30,8 @@ const initialValues: NewAgentTokenInput = {
 
 function getAgentTokenFormInputFromToken(item: AgentToken): NewAgentTokenInput {
   return {
-    expires: item.expires,
-    providedResourceId: item.providedResourceId,
+    expires: item.expiresAt,
+    providedResourceId: item.providedResourceId || undefined,
   };
 }
 

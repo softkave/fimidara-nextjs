@@ -54,28 +54,28 @@ export class FimidaraJsConfig {
     protected config: FimidaraJsConfigOptions = {},
     protected inheritConfigFrom?: FimidaraJsConfig
   ) {
-    inheritConfigFrom?.registerInheritor_(this);
+    inheritConfigFrom?.registerSdkConfigInheritor(this);
   }
 
-  setAuthToken_(token: string) {
-    this.setConfig_({authToken: token});
+  setSdkAuthToken(token: string) {
+    this.setSdkConfig({authToken: token});
   }
 
-  setConfig_(update: Partial<FimidaraJsConfigOptions>) {
+  setSdkConfig(update: Partial<FimidaraJsConfigOptions>) {
     this.config = {...this.config, ...update};
-    this.fanoutConfigUpdate_(update);
+    this.fanoutSdkConfigUpdate(update);
   }
 
-  getConfig_() {
+  getSdkConfig() {
     return this.config;
   }
 
-  protected registerInheritor_(inheritor: FimidaraJsConfig) {
+  protected registerSdkConfigInheritor(inheritor: FimidaraJsConfig) {
     this.inheritors.push(inheritor);
   }
 
-  protected fanoutConfigUpdate_(update: Partial<FimidaraJsConfigOptions>) {
-    this.inheritors.forEach(inheritor => inheritor.setConfig_(update));
+  protected fanoutSdkConfigUpdate(update: Partial<FimidaraJsConfigOptions>) {
+    this.inheritors.forEach(inheritor => inheritor.setSdkConfig(update));
   }
 }
 
@@ -287,6 +287,8 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
       path: endpointPath,
       method: p01.method,
       responseType: p01.responseType,
+      onDownloadProgress: p01.onUploadProgress,
+      onUploadProgress: p01.onDownloadProgress,
     });
     return {
       status: response.status,

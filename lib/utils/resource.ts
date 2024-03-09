@@ -1,6 +1,4 @@
-import { WorkspaceAppResourceType } from "fimidara";
-import { invert } from "lodash";
-import { InvertRecord } from "./types";
+import { FimidaraResourceType } from "fimidara";
 
 const RESOURCE_TYPE_SHORT_NAME_MAX_LEN = 7;
 const RESOURCE_TYPE_SHORT_NAME_PADDING = "0";
@@ -16,54 +14,56 @@ function padShortName(shortName: string) {
     .toLowerCase();
 }
 
-export const RESOURCE_TYPE_SHORT_NAMES: Record<
-  WorkspaceAppResourceType,
-  string
-> = {
-  ["*"]: padShortName("*"),
-  ["workspace"]: padShortName("wrkspce"),
-  ["collaborationRequest"]: padShortName("corqst"),
-  ["agentToken"]: padShortName("agtoken"),
-  ["permissionGroup"]: padShortName("pmgroup"),
-  ["permissionItem"]: padShortName("prmitem"),
-  ["folder"]: padShortName("folder"),
-  ["file"]: padShortName("file"),
-  ["user"]: padShortName("user"),
-  ["tag"]: padShortName("tag"),
-  ["usageRecord"]: padShortName("urecord"),
+export const kFimidaraResourceType = {
+  All: "*",
+  System: "system",
+  Public: "public",
+  Workspace: "workspace",
+  CollaborationRequest: "collaborationRequest",
+  AgentToken: "agentToken",
+  PermissionGroup: "permissionGroup",
+  PermissionItem: "permissionItem",
+  Folder: "folder",
+  File: "file",
+  User: "user",
+  Tag: "tag",
+  UsageRecord: "usageRecord",
+  AssignedItem: "assignedItem",
+  EndpointRequest: "endpointRequest",
+  Job: "job",
+  PresignedPath: "presignedPath",
+  FileBackendConfig: "fileBackendConfig",
+  FileBackendMount: "fileBackendMount",
+  ResolvedMountEntry: "resolvedMountEntry",
+  App: "app",
+} as const;
+export const RESOURCE_TYPE_SHORT_NAMES: Record<FimidaraResourceType, string> = {
+  [kFimidaraResourceType.All]: padShortName("*"),
+  [kFimidaraResourceType.System]: padShortName("system"),
+  [kFimidaraResourceType.Public]: padShortName("public"),
+  [kFimidaraResourceType.Workspace]: padShortName("wrkspce"),
+  [kFimidaraResourceType.CollaborationRequest]: padShortName("corqst"),
+  [kFimidaraResourceType.AgentToken]: padShortName("agtoken"),
+  [kFimidaraResourceType.PermissionGroup]: padShortName("pmgroup"),
+  [kFimidaraResourceType.PermissionItem]: padShortName("prmitem"),
+  [kFimidaraResourceType.Folder]: padShortName("folder"),
+  [kFimidaraResourceType.File]: padShortName("file"),
+  [kFimidaraResourceType.User]: padShortName("user"),
+  [kFimidaraResourceType.Tag]: padShortName("tag"),
+  [kFimidaraResourceType.AssignedItem]: padShortName("asgitem"),
+  [kFimidaraResourceType.UsageRecord]: padShortName("urecord"),
+  [kFimidaraResourceType.EndpointRequest]: padShortName("endrqst"),
+  [kFimidaraResourceType.Job]: padShortName("job"),
+  [kFimidaraResourceType.PresignedPath]: padShortName("presgnd"),
+  [kFimidaraResourceType.App]: padShortName("app"),
+  [kFimidaraResourceType.FileBackendConfig]: padShortName("bckconf"),
+  [kFimidaraResourceType.FileBackendMount]: padShortName("mount"),
+  [kFimidaraResourceType.ResolvedMountEntry]: padShortName("rmtentr"),
 };
-
-const SHORT_NAME_TO_RESOURCE_TYPE = invert(
-  RESOURCE_TYPE_SHORT_NAMES
-) as InvertRecord<typeof RESOURCE_TYPE_SHORT_NAMES>;
 
 export class InvalidResourceIdError extends Error {
   name = "InvalidResourceIdError";
   message = "Invalid resource ID";
-}
-
-export function isAppResourceId(resourceId: string) {
-  const shortName = resourceId.slice(0, RESOURCE_TYPE_SHORT_NAME_MAX_LEN);
-  if (!shortName ?? !SHORT_NAME_TO_RESOURCE_TYPE[shortName]) {
-    return false;
-  }
-  return true;
-}
-
-export function tryGetResourceTypeFromId(
-  id: string
-): WorkspaceAppResourceType | undefined {
-  const shortName = id.slice(0, RESOURCE_TYPE_SHORT_NAME_MAX_LEN);
-  const type = SHORT_NAME_TO_RESOURCE_TYPE[shortName];
-  return type;
-}
-
-export function getResourceTypeFromId(id: string) {
-  const type = tryGetResourceTypeFromId(id);
-  if (!type) {
-    throw new InvalidResourceIdError();
-  }
-  return type;
 }
 
 export function getResourceId(d: { resourceId: string }) {

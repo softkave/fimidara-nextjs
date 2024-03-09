@@ -29,7 +29,6 @@ import {
   getFolderByPath,
   useUsersStore,
   useWorkspaceAgentTokensStore,
-  useWorkspaceBackendConfigsStore,
   useWorkspaceCollaborationRequestsStore,
   useWorkspaceCollaboratorsStore,
   useWorkspaceFilesStore,
@@ -325,31 +324,6 @@ export const useWorkspacePermissionGroupUpdateMutationHook =
       useWorkspacePermissionGroupsStore
         .getState()
         .set(data.body.permissionGroup.resourceId, data.body.permissionGroup);
-    }
-  );
-export const useWorkspaceFileBackendConfigAddMutationHook =
-  makeEndpointMutationHook(
-    getPublicFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.fileBackends.addConfig,
-    (result) =>
-      insertInFetchStoreAddMutationFn(
-        result.body.config,
-        useWorkspaceBackendConfigsStore,
-        useWorkspaceFileBackendConfigsFetchStore,
-        workspaceIdMatch
-      )
-  );
-export const useWorkspaceFileBackendConfigUpdateMutationHook =
-  makeEndpointMutationHook(
-    getPublicFimidaraEndpointsUsingUserToken,
-    (endpoints) => endpoints.fileBackendConfigs.updateFileBackendConfig,
-    (data) => {
-      useWorkspaceFileBackendConfigsStore
-        .getState()
-        .set(
-          data.body.fileBackendConfig.resourceId,
-          data.body.fileBackendConfig
-        );
     }
   );
 export const useWorkspacePermissionGroupDeleteMutationHook =

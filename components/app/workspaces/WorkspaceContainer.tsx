@@ -10,6 +10,7 @@ import PageNothingFound from "../../utils/page/PageNothingFound";
 export interface WorkspaceContainerProps {
   workspaceId: string;
   render?: (workspace: Workspace) => React.ReactElement;
+  children?: React.ReactNode;
 }
 
 const WorkspaceContainer: React.FC<WorkspaceContainerProps> = (props) => {

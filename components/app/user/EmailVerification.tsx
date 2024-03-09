@@ -43,7 +43,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
           Your email address is not verified.
         </Typography.Text>
         <Button
-          onClick={sendEmailVerificationHook.run}
+          onClick={() => sendEmailVerificationHook.run()}
           loading={sendEmailVerificationHook.loading}
           disabled={cooldown.isInCooldown}
         >
