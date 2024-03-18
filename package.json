@@ -17,7 +17,7 @@
     "build-dev": "env-cmd -f \".env.development\" npm run build",
     "dev-prod": "env-cmd -f \".env.production\" npm run start-dev",
     "build-prod": "env-cmd -f \".env.production\" npm run build",
-    "start-prod": "npm run build-prod && npm run start",
+    "start-prod": "npm run build-prod && env-cmd -f \".env.production\" npm run start",
     "lint": "next lint"
   },
   "dependencies": {
