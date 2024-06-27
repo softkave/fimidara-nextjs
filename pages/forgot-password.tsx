@@ -33,7 +33,7 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
     onSuccess(data, params) {
       notification.success({
         type: "success",
-        message: `Change password email sent to ${params[0].body.email}`,
+        message: `You should see a change password email soon at ${params[0].body.email}`,
         duration: appComponentConstants.messageDuration,
       });
     },

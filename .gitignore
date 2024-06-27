@@ -39,3 +39,7 @@ yarn-error.log*
 
 # Environment variables
 .env*
+
+# yalc
+.yalc
+yalc.lock

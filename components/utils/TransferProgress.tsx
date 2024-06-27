@@ -98,13 +98,15 @@ export function TransferProgressList(props: ITransferProgressListProps) {
     <ItemList
       bordered={false}
       items={itemList}
-      renderItem={(item) => (
-        <TransferProgress
-          key={item.key}
-          identifier={item.identifier}
-          progressKey={item.key}
-        />
-      )}
+      renderItem={(item) => {
+        return (
+          <TransferProgress
+            key={item.key}
+            identifier={item.identifier}
+            progressKey={item.key}
+          />
+        );
+      }}
       getId={identity}
     />
   );

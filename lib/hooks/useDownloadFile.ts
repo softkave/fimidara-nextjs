@@ -7,11 +7,13 @@ import { systemConstants } from "../definitions/system";
 import { flattenErrorList, toAppErrorList } from "../utils/errors";
 
 function downloadFile(filename: string, url: string) {
-  const a = document.createElement("a");
-  document.body.appendChild(a);
-  a.download = filename;
-  a.href = url;
-  a.click();
+  const downloadAnchor = document.createElement("a");
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.download = filename;
+  downloadAnchor.href = url;
+  downloadAnchor.target = "_blank";
+  downloadAnchor.click();
+  document.body.removeChild(downloadAnchor);
 }
 
 export function useDownloadFile(fileId: string, filename: string) {
@@ -33,6 +35,7 @@ export function useDownloadFile(fileId: string, filename: string) {
     const url = getFimidaraReadFileURL({
       serverURL: systemConstants.serverAddr,
       filepath: presignedPath,
+      download: true,
     });
     downloadFile(filename, url);
   };

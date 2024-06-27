@@ -42,7 +42,7 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
       errorMessageNotificatition(e, "Error deleting file");
     },
   });
-  const filename = file.name + (file.extension ?? "");
+  const filename = file.name + (file.ext ?? "");
   const downloadHook = useDownloadFile(file.resourceId, filename);
 
   const onSelectMenuItem = (info: MenuInfo) => {

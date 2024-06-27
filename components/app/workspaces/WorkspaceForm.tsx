@@ -6,8 +6,8 @@ import {
 } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
-import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
+import { workspaceValidationParts } from "@/lib/validation/workspace.js";
 import { css, cx } from "@emotion/css";
 import { Button, Form, Input, Space, Typography, message } from "antd";
 import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
@@ -20,7 +20,9 @@ import { getRootnameFromName } from "./utils";
 
 const workspaceValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
-  rootname: fileValidationParts.filename.required(messages.fieldIsRequired),
+  rootname: workspaceValidationParts.rootname.required(
+    messages.fieldIsRequired
+  ),
   description: systemValidation.description,
 });
 

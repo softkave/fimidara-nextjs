@@ -489,10 +489,10 @@
                                 "__id": "FieldObjectField",
                                 "required": true
                             },
-                            "extension": {
+                            "ext": {
                                 "data": {
                                     "__id": "FieldString",
-                                    "description": "File extension, case insensitive"
+                                    "description": "File ext, case insensitive"
                                 },
                                 "__id": "FieldObjectField",
                                 "required": false

@@ -1,0 +1,6 @@
+- custom yup error messages
+- confirm file errors are showing in uploaded file list
+- files and folders multi-select
+- menu + developer tools
+- invalidate on create/update
+- show status of long-running tasks

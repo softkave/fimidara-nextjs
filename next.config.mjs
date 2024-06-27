@@ -2,8 +2,8 @@
 // @ts-ignore
 // import withPlugins from "next-compose-plugins";
 
-const markdocNextJs = require("@markdoc/next.js");
-const withPlugins = require("next-compose-plugins");
+import markdocNextJs from "@markdoc/next.js";
+import withPlugins from "next-compose-plugins";
 
 const withMarkdoc = markdocNextJs();
 
@@ -13,7 +13,7 @@ const withMarkdoc = markdocNextJs();
 // });
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const baseNextConfig = {
   experimental: {
     instrumentationHook: true,
   },
@@ -65,11 +65,13 @@ const nextConfig = {
   ],
 };
 
-module.exports = withPlugins(
+const nextConfig = withPlugins(
   [
     [withMarkdoc],
     // [withBundleAnalyzer],
     /* ...other plugins... */
   ],
-  nextConfig
+  baseNextConfig
 );
+
+export default nextConfig;

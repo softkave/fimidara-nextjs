@@ -25,7 +25,7 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
         return renderFileItem(item, workspaceRootname);
       }
 
-      const extension = item.extension ? `.${item.extension}` : "";
+      const extension = item.ext ? `.${item.ext}` : "";
       return (
         <ThumbnailContent
           key={item.resourceId}

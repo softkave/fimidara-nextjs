@@ -101,13 +101,15 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
     />
   );
 
+  const uploadURL = getFimidaraUploadFileURL({
+    filepath,
+    serverURL: systemConstants.serverAddr,
+  });
+
   return (
     <Upload
       name="data"
-      action={getFimidaraUploadFileURL({
-        filepath,
-        serverURL: systemConstants.serverAddr,
-      })}
+      action={uploadURL}
       headers={{ Authorization: `Bearer ${clientAssignedToken}` }}
       beforeUpload={beforeUpload}
       onChange={onChange}

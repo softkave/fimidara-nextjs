@@ -10,7 +10,7 @@ export interface FileeDownloadButtonProps {
 
 const FileDownloadButton: React.FC<FileeDownloadButtonProps> = (props) => {
   const { file } = props;
-  const filename = file.name + (file.extension ?? "");
+  const filename = file.name + (file.ext ?? "");
   const downloadHook = useDownloadFile(file.resourceId, filename);
 
   return (

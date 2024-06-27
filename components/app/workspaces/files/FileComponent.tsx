@@ -19,7 +19,7 @@ export interface FileComponentProps {
 function FileComponent(props: FileComponentProps) {
   const { file, workspaceRootname } = props;
   const router = useRouter();
-  const extension = file.extension ? `.${file.extension}` : "";
+  const extension = file.ext ? `.${file.ext}` : "";
 
   return (
     <div>

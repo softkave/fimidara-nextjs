@@ -8,7 +8,7 @@
                 "data": {
                     "__id": "FieldString",
                     "description": "File path with workspace rootname (case insensitive) or file ID",
-                    "example": "/workspace-rootname/folder/file.extension or file000-remaining-file-id"
+                    "example": "/workspace-rootname/folder/file.ext or file000-remaining-file-id"
                 },
                 "__id": "FieldObjectField",
                 "required": false
@@ -280,10 +280,10 @@
                             "__id": "FieldObjectField",
                             "required": true
                         },
-                        "extension": {
+                        "ext": {
                             "data": {
                                 "__id": "FieldString",
-                                "description": "File extension, case insensitive"
+                                "description": "File ext, case insensitive"
                             },
                             "__id": "FieldObjectField",
                             "required": false

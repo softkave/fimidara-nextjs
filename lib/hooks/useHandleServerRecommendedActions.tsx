@@ -12,7 +12,7 @@ export function useHandleRequiresPasswordChange() {
   const { logout } = useLogout();
 
   const handleRequiresPasswordChange = () => {
-    let closeMessageFn: AnyFn = message.loading({
+    const closeMessageFn: AnyFn = message.loading({
       type: "loading",
       content: "An error occurred, logging you out...",
       duration: 0,

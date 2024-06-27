@@ -51,7 +51,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
             folder?.resourceId
           )}
         >
-          Create Folder
+          Add Folder
         </Link>
       ),
     },
@@ -64,7 +64,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
             folder?.resourceId
           )}
         >
-          Upload File
+          Add File
         </Link>
       ),
     },

@@ -41,7 +41,7 @@ function EntityPermissionForm<T extends { resourceId: string }>(
       const isActionDisabled =
         kDisabledPermissions.includes(action) || !actions.includes(action);
       const disabledReason = isActionDisabled
-        ? "Permission is not fully supported yet"
+        ? "Permission support implementation pending"
         : "";
 
       return {
@@ -57,6 +57,7 @@ function EntityPermissionForm<T extends { resourceId: string }>(
 
   const pList = React.useMemo(() => {
     return everyAction
+      .filter((action) => actions.includes(action))
       .map((action) => getActionPermission(action))
       .sort((p01, p02) => {
         if (p01.disabled && !p02.disabled) {

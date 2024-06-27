@@ -1,13 +1,14 @@
 // This file is copied over from server-generated js sdk.
 // Do not modify directly. For util code, use localUtils.ts file instead.
 
+import assert from 'assert';
 import axios, {
   AxiosProgressEvent,
   AxiosResponse,
   Method,
   toFormData,
 } from 'axios';
-import {compact, isArray, isObject, isString, last, map} from 'lodash';
+import {compact, isArray, isObject, isString, last, map} from 'lodash-es';
 import path from 'path-browserify';
 
 const kDefaultServerURL = 'https://api.fimidara.com';
@@ -18,8 +19,8 @@ export type EndpointHeaders = {
 
 type FimidaraEndpointErrorItem = {
   name: string;
-  message: string;
   field?: string;
+  message: string;
 
   // TODO: find a way to include in generated doc for when we add new
   // recommended actions
@@ -85,10 +86,11 @@ const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
 
 export interface InvokeEndpointParams {
   serverURL?: string;
+  path?: string;
+  endpointURL?: string;
   token?: string;
   data?: any;
   formdata?: any;
-  path: string;
   headers?: EndpointHeaders;
   query?: AnyObject;
   method: Method;
@@ -99,17 +101,18 @@ export interface InvokeEndpointParams {
 
 export async function invokeEndpoint(props: InvokeEndpointParams) {
   const {
-    data,
+    serverURL,
     path,
+    data,
     headers,
     method,
     token,
     formdata,
-    serverURL,
     responseType,
     query,
     onDownloadProgress,
     onUploadProgress,
+    endpointURL: propsEndpointURL,
   } = props;
   const incomingHeaders = {...headers};
   let contentBody = undefined;
@@ -124,7 +127,8 @@ export async function invokeEndpoint(props: InvokeEndpointParams) {
     incomingHeaders[HTTP_HEADER_AUTHORIZATION] = `Bearer ${token}`;
   }
 
-  const endpointURL = (serverURL || kDefaultServerURL) + path;
+  const endpointURL =
+    propsEndpointURL || (serverURL || kDefaultServerURL) + path;
 
   try {
     /**
@@ -250,8 +254,8 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
           }
 
           case 'body':
-          default: // do nothing
-            body[field] = value;
+          default:
+            body[field || key] = value;
         }
       });
     } else if (data) {
@@ -266,6 +270,7 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
     p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>,
     mapping?: Mapping
   ): Promise<FimidaraEndpointResult<any>> {
+    assert(p01.path, 'Endpoint path not provided');
     const {headers, query, data, endpointPath} = this.applyMapping(
       p01.path,
       p01.data || p01.formdata,
@@ -444,12 +449,22 @@ export type ImageFormatEnum = ObjectValues<typeof ImageFormatEnumMap>;
 export type GetFimidaraReadFileURLProps = {
   /** Filepath including workspace rootname OR file presigned path. */
   filepath?: string;
+
+  /** Filepath without workspace rootname. Does not accept file presigned paths.
+   * You must also provide `workspaceRootname` */
+  filepathWithoutRootname?: string;
+
+  /** Workspace rootname, required if you're using `filepathWithoutRootname` */
   workspaceRootname?: string;
 
-  /** Filepath without workspace rootname. Does not accept file presigned paths. */
-  filepathWithoutRootname?: string;
+  /** Server URL, for if you're hosting you're own fimidara, or prefer a certain
+   * host */
   serverURL?: string;
+
+  /** Resize image to width */
   width?: number;
+
+  /** Resize image to height */
   height?: number;
 
   /** How the image should be resized to fit both provided dimensions.
@@ -467,6 +482,11 @@ export type GetFimidaraReadFileURLProps = {
   /** Do not enlarge if the width or height are already less than the specified
    * dimensions. (optional, default false) */
   withoutEnlargement?: boolean;
+
+  /** Whether the server should add "Content-Disposition: attachment" header
+   * which forces browsers to download files like HTML, JPEG, etc. which it'll
+   * otherwise open in the browser */
+  download?: boolean;
 };
 
 // export type ReadFileEndpointHttpQuery = {
@@ -475,7 +495,7 @@ export type GetFimidaraReadFileURLProps = {
 //   fit?: keyof ImageResizeFitEnum;
 //   pos?: number | ImageResizePositionEnum;
 //   bg?: string;
-//   wEnlargement?: boolean;
+//   withoutEnlargement?: boolean;
 //   format?: ImageFormatEnum;
 // };
 
@@ -487,7 +507,8 @@ const kReadFileQueryMap: Partial<
   fit: 'fit',
   position: 'pos',
   background: 'bg',
-  withoutEnlargement: 'wEnlargement',
+  withoutEnlargement: 'withoutEnlargement',
+  download: 'download',
 };
 
 export function getFimidaraReadFileURL(props: GetFimidaraReadFileURLProps) {
@@ -507,9 +528,10 @@ export function getFimidaraReadFileURL(props: GetFimidaraReadFileURLProps) {
 
   return (
     (props.serverURL || kDefaultServerURL) +
-    '/v1/files/readFile' +
-    (filepath.startsWith('/') ? '' : '/') +
-    encodeURIComponent(filepath) +
+    '/v1/files/readFile/' +
+    encodeURIComponent(
+      filepath.startsWith('/') ? filepath.slice(1) : filepath
+    ) +
     query
   );
 }
@@ -517,32 +539,36 @@ export function getFimidaraReadFileURL(props: GetFimidaraReadFileURLProps) {
 export function getFimidaraUploadFileURL(props: {
   /** Filepath including workspace rootname OR file presigned path. */
   filepath?: string;
+
+  /** Filepath without workspace rootname. Does not accept file presigned paths.
+   * You must also provide `workspaceRootname` */
+  filepathWithoutRootname?: string;
+
+  /** Workspace rootname, required if you're using `filepathWithoutRootname` */
   workspaceRootname?: string;
 
-  /** Filepath without workspace rootname. Does not accept file presigned paths. */
-  filepathWithoutRootname?: string;
+  /** Server URL, for if you're hosting you're own fimidara, or prefer a certain
+   * host */
   serverURL?: string;
 }) {
   const filepath = getFilepath(props);
   return (
     (props.serverURL || kDefaultServerURL) +
-    '/v1/files/uploadFile' +
-    (filepath.startsWith('/') ? '' : '/') +
-    encodeURIComponent(filepath)
+    '/v1/files/uploadFile/' +
+    encodeURIComponent(filepath.startsWith('/') ? filepath.slice(1) : filepath)
   );
 }
 
 export function stringifyFimidaraFilenamepath(
-  file: {namepath: string[]; extension?: string},
+  file: {namepath: string[]; ext?: string},
   rootname?: string
 ) {
-  const name =
-    file.namepath.join('/') + (file.extension ? `.${file.extension}` : '');
+  const name = file.namepath.join('/') + (file.ext ? `.${file.ext}` : '');
   return rootname ? fimidaraAddRootnameToPath(name, rootname) : name;
 }
 
 export function stringifyFimidaraFoldernamepath(
-  file: {namepath: string[]; extension?: string},
+  file: {namepath: string[]; ext?: string},
   rootname?: string
 ) {
   const name = file.namepath.join('/');
