@@ -1,11 +1,9 @@
-import PageError from "@/components/utils/page/PageError";
-import PageLoading from "@/components/utils/page/PageLoading";
+import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceAgentTokensFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { getBaseError } from "@/lib/utils/errors";
 import { AgentToken } from "fimidara";
 import React from "react";
 import AgentTokenList from "./AgentTokenList";
@@ -27,49 +25,54 @@ const AgentTokenListContainer: React.FC<AgentTokenListContainerProps> = (
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const { count, error, isLoading, resourceList } =
+  const { count, error, isLoading, resourceList, isDataFetched } =
     useFetchPaginatedResourceListFetchState(fetchState);
 
-  let content: React.ReactNode = null;
-
-  if (error) {
-    content = (
-      <PageError
-        message={getBaseError(error) || "Error fetching agent tokens"}
-      />
-    );
-  } else if (isLoading) {
-    content = <PageLoading message="Loading agent tokens..." />;
-  } else if (resourceList.length === 0) {
-    content = (
-      <PageNothingFound
-        message={
-          "No agent tokens yet. " +
-          "You can create one using the plus button above"
+  let contentNode = (
+    <PageContent02
+      error={error}
+      isLoading={isLoading}
+      isDataFetched={isDataFetched}
+      data={resourceList}
+      defaultErrorMessage="Error fetching agent tokens"
+      defaultLoadingMessage="Loading agent tokens..."
+      render={(data) => {
+        if (data.length) {
+          return renderList ? (
+            renderList(data)
+          ) : (
+            <AgentTokenList
+              workspaceId={workspaceId}
+              tokens={resourceList}
+              renderItem={renderItem}
+            />
+          );
+        } else {
+          return (
+            <PageNothingFound
+              message={
+                "No agent tokens yet. " +
+                "You can create one using the plus button above"
+              }
+            />
+          );
         }
-      />
-    );
-  } else {
-    content = renderList ? (
-      renderList(resourceList)
-    ) : (
-      <AgentTokenList
-        workspaceId={workspaceId}
-        tokens={resourceList}
-        renderItem={renderItem}
-      />
-    );
-  }
+      }}
+    />
+  );
 
-  content = (
-    <PaginatedContent content={content} pagination={{ ...pagination, count }} />
+  contentNode = (
+    <PaginatedContent
+      content={contentNode}
+      pagination={{ ...pagination, count }}
+    />
   );
 
   if (renderRoot) {
-    return renderRoot(content);
+    return renderRoot(contentNode);
   }
 
-  return <React.Fragment>{content}</React.Fragment>;
+  return <React.Fragment>{contentNode}</React.Fragment>;
 };
 
 export default AgentTokenListContainer;

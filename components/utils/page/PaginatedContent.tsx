@@ -37,7 +37,10 @@ function PaginatedContent(props: IPaginatedContentProps) {
       {header}
       {content}
       {pagination && (
-        <PagePagination {...pagination} className={paginationClassName} />
+        <PagePagination
+          {...pagination}
+          className={cx(paginationClassName, appClasses.pt16)}
+        />
       )}
     </div>
   );

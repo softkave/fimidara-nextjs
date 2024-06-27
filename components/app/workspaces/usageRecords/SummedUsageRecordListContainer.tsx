@@ -1,6 +1,5 @@
 import ListHeader from "@/components/utils/list/ListHeader";
-import PageError from "@/components/utils/page/PageError";
-import PageLoading from "@/components/utils/page/PageLoading";
+import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import {
@@ -12,7 +11,6 @@ import {
   useWorkspaceUsageRecordsFetchHook,
 } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { getBaseError } from "@/lib/utils/errors";
 import { cast } from "@/lib/utils/fns";
 import { Space } from "antd";
 import { UsageRecord, Workspace } from "fimidara";
@@ -50,8 +48,7 @@ const SummedUsageRecordListContainer: React.FC<
   const usageCosts = useFetchArbitraryFetchState(usageCostsFetchState);
   const error = usageRecords.error || usageCosts.error;
   const isLoading = usageRecords.isLoading || usageCosts.isLoading;
-
-  let content: React.ReactNode = null;
+  const isDataFetched = usageRecords.isDataFetched && !!usageCosts.data;
 
   const { fulfilledRecords, droppedRecords, dateOptions } =
     React.useMemo(() => {
@@ -92,38 +89,49 @@ const SummedUsageRecordListContainer: React.FC<
       return { dateOptions, fulfilledRecords, droppedRecords };
     }, [usageRecords.resourceList]);
 
-  if (error) {
-    content = (
-      <PageError
-        message={getBaseError(error) || "Error loading usage records"}
-      />
-    );
-  } else if (isLoading || !usageCosts.data) {
-    content = <PageLoading message="Loading usage records..." />;
-  } else if (usageRecords.resourceList.length === 0) {
-    content = (
-      <PageNothingFound
-        message={
-          "No usage records found for this workspace. Please check back later"
+  const data =
+    usageCosts.data && usageRecords.resourceList
+      ? {
+          resourceList: usageRecords.resourceList,
+          usageCostsData: usageCosts.data,
         }
-      />
-    );
-  } else {
-    const monthFulfilledRecords =
-      fulfilledRecords[dateOption.year]?.[dateOption.month] || [];
-    const monthDroppedRecords =
-      droppedRecords[dateOption.year]?.[dateOption.month] || [];
+      : undefined;
+  const contentNode = (
+    <PageContent02
+      error={error}
+      isLoading={isLoading}
+      isDataFetched={isDataFetched}
+      data={data}
+      defaultErrorMessage="Error fetching usage records"
+      defaultLoadingMessage="Loading usage records..."
+      render={(data) => {
+        if (data.resourceList.length) {
+          const monthFulfilledRecords =
+            fulfilledRecords[dateOption.year]?.[dateOption.month] || [];
+          const monthDroppedRecords =
+            droppedRecords[dateOption.year]?.[dateOption.month] || [];
 
-    content = (
-      <SummedUsageRecordList
-        fulfilledRecords={monthFulfilledRecords}
-        droppedRecords={monthDroppedRecords}
-        usageCosts={usageCosts.data.costs}
-        workspace={workspace}
-        renderItem={renderItem}
-      />
-    );
-  }
+          return (
+            <SummedUsageRecordList
+              fulfilledRecords={monthFulfilledRecords}
+              droppedRecords={monthDroppedRecords}
+              usageCosts={data.usageCostsData.costs}
+              workspace={workspace}
+              renderItem={renderItem}
+            />
+          );
+        } else {
+          return (
+            <PageNothingFound
+              message={
+                "No usage records found for this workspace. Please check back later"
+              }
+            />
+          );
+        }
+      }}
+    />
+  );
 
   const controls = (
     <SummedUsageRecordListControls
@@ -144,7 +152,7 @@ const SummedUsageRecordListContainer: React.FC<
     <Space direction="vertical" size="large" style={{ width: "100%" }}>
       <ListHeader label="Usage Records" buttons={controls} />
       <PaginatedContent
-        content={content}
+        content={contentNode}
         pagination={{ ...pagination, count: usageRecords.count }}
       />
     </Space>

@@ -25,8 +25,16 @@ function PaginatedContent(props: IPaginatedContentProps) {
   } = props;
 
   const onPaginationChange = (inputPage: number, inputPageSize: number) => {
-    if (page !== inputPage) setPage(inputPage);
-    if (pageSize !== inputPageSize) setPageSize(inputPageSize);
+    // fimidara's pagination is 0-based, but antd is not, we need to minus 1
+    inputPage = inputPage - 1;
+
+    if (page !== inputPage) {
+      setPage(inputPage);
+    }
+
+    if (pageSize !== inputPageSize) {
+      setPageSize(inputPageSize);
+    }
   };
 
   const itemRender: PaginationProps["itemRender"] = (
@@ -42,6 +50,7 @@ function PaginatedContent(props: IPaginatedContentProps) {
         />
       );
     }
+
     if (type === "next") {
       return (
         <IconButton
@@ -50,14 +59,16 @@ function PaginatedContent(props: IPaginatedContentProps) {
         />
       );
     }
+
     return originalElement;
   };
 
   return (
     <Pagination
-      size="small"
       hideOnSinglePage
-      current={page}
+      size="small"
+      // fimidara's pagination is 0-based, but antd is not, we need to plus 1
+      current={page + 1}
       onChange={onPaginationChange}
       total={count}
       pageSize={pageSize}

@@ -15,6 +15,7 @@ export type FetchState<TData> = {
   data: TData | undefined;
   error: AppError[] | undefined;
 };
+
 export type FetchReturnedState<TData> = {
   loading: boolean;
   data: TData;
@@ -59,8 +60,14 @@ export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
           );
 
           if (entry) {
-            const data = getFn(params, entry[1]);
-            return { data, loading: entry[1].loading, error: entry[1].error };
+            const fetchState = entry[1];
+            const data = getFn(params, fetchState);
+
+            return {
+              data,
+              error: fetchState.error,
+              loading: fetchState.loading,
+            };
           }
 
           return undefined;
@@ -164,11 +171,14 @@ export function makeFetchResourceHook<
             error: undefined,
             data: state?.data,
           }));
+
           const result = await inputFetchFn(inputParams);
+
           useStoreHook.getState().setFetchState(inputParams, (state) => {
             const savedData = setFn
               ? setFn(inputParams, state, result)
               : result;
+
             return { data: savedData, loading: false, error: undefined };
           });
         } catch (error: unknown) {
@@ -184,7 +194,7 @@ export function makeFetchResourceHook<
       []
     );
 
-    const clearFetchState = React.useCallback(async () => {
+    const clearFetchState = React.useCallback(() => {
       useStoreHook.getState().clear(params);
     }, [params]);
 
@@ -194,7 +204,7 @@ export function makeFetchResourceHook<
       // states which is not too bad. The issue is error handling with message
       // or notifications are showed twice which is not good UX.
       const currentFetchState = useStoreHook.getState().getFetchState(params);
-      let willLoad =
+      let shouldLoad =
         !currentFetchState ||
         (!currentFetchState?.loading &&
           !currentFetchState?.error &&
@@ -202,10 +212,10 @@ export function makeFetchResourceHook<
 
       // TODO: should this be in a memo?
       if (shouldLoadFn) {
-        willLoad = shouldLoadFn(willLoad, params, currentFetchState);
+        shouldLoad = shouldLoadFn(shouldLoad, params, currentFetchState);
       }
 
-      if (willLoad) {
+      if (shouldLoad) {
         fetchFn(params);
       }
     }, [params, fetchFn]);
@@ -366,10 +376,12 @@ export type FetchPaginatedResourceListData<TOther = any> = {
   count: number;
   other?: TOther;
 };
+
 export type FetchPaginatedResourceListKeyParams = {
   page?: number;
   pageSize?: number;
 };
+
 export type FetchPaginatedResourceListReturnedData<
   T extends { resourceId: string },
   TOther = any
@@ -378,6 +390,7 @@ export type FetchPaginatedResourceListReturnedData<
   count: number;
   other?: TOther;
 };
+
 export type GetFetchPaginatedResourceListFetchFnOther<TFn> = TFn extends AnyFn<
   any,
   Promise<FetchPaginatedResourceListReturnedData<any, infer TOther>>
@@ -393,7 +406,9 @@ export function makeFetchPaginatedResourceListGetFn<
     params: FetchPaginatedResourceListKeyParams,
     state: FetchState<FetchPaginatedResourceListData> | undefined
   ): FetchPaginatedResourceListReturnedData<T, TOther> => {
-    if (!state?.data) return { resourceList: [], count: 0 };
+    if (!state?.data) {
+      return { resourceList: [], count: 0 };
+    }
 
     const page = params.page ?? 0;
     const pageSize = params.pageSize ?? systemConstants.maxPageSize;
@@ -402,6 +417,7 @@ export function makeFetchPaginatedResourceListGetFn<
       (page + 1) * pageSize
     );
     const items = useResourceListStore.getState().getList(pageIdList);
+
     return {
       resourceList: items,
       count: state.data.count,
@@ -427,6 +443,7 @@ export function makeFetchPaginatedResourceListFetchFn<
     ...params: Parameters<Fn>
   ): Promise<FetchPaginatedResourceListData> => {
     const result = await inputFetchFn(...params);
+
     const resourceList = result.resourceList;
     const pageFetchedIdList: string[] = [];
     useResourceListStore.getState().setList(
@@ -436,6 +453,7 @@ export function makeFetchPaginatedResourceListFetchFn<
         return [id, nextResource];
       })
     );
+
     return {
       idList: pageFetchedIdList,
       count: result.count,
@@ -469,13 +487,16 @@ export function makeFetchPaginatedResourceListSetFn() {
 }
 
 export function paginatedResourceListShouldFetchFn(
-  willLoad: boolean,
+  shouldLoad: boolean,
   params: FetchPaginatedResourceListKeyParams,
   fetchState:
     | FetchReturnedState<FetchPaginatedResourceListReturnedData<any>>
     | undefined
 ) {
-  if (willLoad) return true;
+  if (shouldLoad) {
+    return true;
+  }
+
   if (
     fetchState?.data &&
     params.pageSize &&
@@ -489,7 +510,9 @@ export function paginatedResourceListShouldFetchFn(
       params.page
     );
 
-    if (fetchState.data.resourceList.length < expectedPageSize) return true;
+    if (fetchState.data.resourceList.length < expectedPageSize) {
+      return true;
+    }
   }
 
   return false;
@@ -608,6 +631,7 @@ export function useFetchSingleResourceFetchState<
   const error = fetchState?.error;
   const isLoading = fetchState?.loading || !fetchState;
   const { resource, other } = (fetchState?.data ?? {}) as Partial<T>;
+
   return { isLoading, error, resource, other };
 }
 
@@ -617,12 +641,14 @@ export function useFetchPaginatedResourceListFetchState<
   const error = fetchState?.error;
   const isLoading = fetchState?.loading || !fetchState;
   const { resourceList, other, count } = (fetchState?.data ?? {}) as Partial<T>;
+
   return {
-    isLoading,
     error,
     other,
+    isLoading,
     count: count ?? 0,
     resourceList: resourceList ?? ([] as T["resourceList"]),
+    isDataFetched: !!resourceList,
   };
 }
 
@@ -632,11 +658,13 @@ export function useFetchNonPaginatedResourceListFetchState<
   const error = fetchState?.error;
   const isLoading = fetchState?.loading || !fetchState;
   const { resourceList, other } = (fetchState?.data ?? {}) as Partial<T>;
+
   return {
-    isLoading,
     error,
     other,
+    isLoading,
     resourceList: resourceList ?? ([] as T["resourceList"]),
+    isDataFetched: !!resourceList,
   };
 }
 
@@ -645,5 +673,6 @@ export function useFetchArbitraryFetchState<T>(
 ) {
   const error = fetchState?.error;
   const isLoading = fetchState?.loading || !fetchState;
+
   return { isLoading, error, data: fetchState?.data };
 }

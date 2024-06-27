@@ -2,6 +2,7 @@ import { FormAlert } from "@/components/utils/FormAlert";
 import CustomIcon from "@/components/utils/buttons/CustomIcon";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { useWorkspaceFoldersFetchHook } from "@/lib/hooks/fetchHooks";
 import {
   useWorkspaceFileUploadMutationHook,
   useWorkspaceFolderAddMutationHook,
@@ -19,7 +20,7 @@ import { Folder } from "fimidara";
 import { FormikTouched } from "formik";
 import { compact, isString } from "lodash";
 import { useRouter } from "next/router";
-import { ChangeEventHandler, ReactNode, useMemo } from "react";
+import { ChangeEventHandler, ReactNode, useEffect, useMemo } from "react";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";
@@ -107,6 +108,23 @@ export default function FolderForm(props: FolderFormProps) {
       if (filepath) progressHandlerHook.setOpError(filepath, e);
     },
   });
+
+  // We don't need to clear files state for folder/root because uploaded files
+  // mutate the list and add themselves
+  const { clearFetchState } = useWorkspaceFoldersFetchHook({
+    page: 0 /** not necessary */,
+    pageSize: 1 /** not necessary */,
+    folderId: folder?.resourceId,
+    folderpath: folder
+      ? addRootnameToPath(folder.namepath, workspaceRootname).join("/")
+      : workspaceRootname,
+  });
+
+  useEffect(() => {
+    // TODO: should we have scheduled refresh or refresh on page load instead?
+    // Refetch folder children after leaving form
+    return () => clearFetchState();
+  }, []);
 
   const hookLoading =
     uploadHook.loading || createHook.loading || updateHook.loading;

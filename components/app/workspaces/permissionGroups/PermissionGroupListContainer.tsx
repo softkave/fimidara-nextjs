@@ -1,11 +1,9 @@
-import PageError from "@/components/utils/page/PageError";
-import PageLoading from "@/components/utils/page/PageLoading";
+import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspacePermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { getBaseError } from "@/lib/utils/errors";
 import { PermissionGroup } from "fimidara";
 import React from "react";
 import PermissionGroupList from "./PermissionGroupList";
@@ -41,49 +39,51 @@ const PermissionGroupListContainer: React.FC<
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const { count, error, isLoading, resourceList } =
+  const { count, error, isLoading, resourceList, isDataFetched } =
     useFetchPaginatedResourceListFetchState(fetchState);
 
-  let content: React.ReactNode = null;
+  let contentNode = (
+    <PageContent02
+      error={error}
+      isLoading={isLoading}
+      isDataFetched={isDataFetched}
+      data={resourceList}
+      defaultErrorMessage="Error fetching permission groups"
+      defaultLoadingMessage="Loading permission groups..."
+      render={(data) => {
+        if (data.length) {
+          return renderList ? (
+            renderList(resourceList)
+          ) : (
+            <PermissionGroupList
+              workspaceId={workspaceId}
+              permissionGroups={resourceList}
+              renderItem={renderItem}
+              selectable={selectable}
+              withCheckbox={withCheckbox}
+              selectedMap={selectedMap}
+              onSelect={onSelect}
+            />
+          );
+        } else {
+          return <PageNothingFound message="No permission groups yet" />;
+        }
+      }}
+    />
+  );
 
-  if (error) {
-    content = (
-      <PageError
-        message={getBaseError(error) || "Error fetching permission groups"}
-      />
-    );
-  } else if (isLoading) {
-    content = <PageLoading message="Loading permission groups..." />;
-  } else if (resourceList.length === 0) {
-    content = <PageNothingFound message="No permission groups yet" />;
-  } else {
-    content = renderList ? (
-      renderList(resourceList)
-    ) : (
-      <PermissionGroupList
-        workspaceId={workspaceId}
-        permissionGroups={resourceList}
-        renderItem={renderItem}
-        selectable={selectable}
-        withCheckbox={withCheckbox}
-        selectedMap={selectedMap}
-        onSelect={onSelect}
-      />
-    );
-  }
-
-  content = (
+  contentNode = (
     <PaginatedContent
-      content={content}
+      content={contentNode}
       pagination={count ? { ...pagination, count } : undefined}
     />
   );
 
   if (renderRoot) {
-    return renderRoot(content);
+    return renderRoot(contentNode);
   }
 
-  return <React.Fragment>{content}</React.Fragment>;
+  return <React.Fragment>{contentNode}</React.Fragment>;
 };
 
 export default PermissionGroupListContainer;

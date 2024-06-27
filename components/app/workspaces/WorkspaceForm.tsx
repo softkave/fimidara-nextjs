@@ -7,7 +7,7 @@ import {
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
-import { workspaceValidationParts } from "@/lib/validation/workspace.js";
+import { workspaceValidationParts } from "@/lib/validation/workspace";
 import { css, cx } from "@emotion/css";
 import { Button, Form, Input, Space, Typography, message } from "antd";
 import { AddWorkspaceEndpointParams, Workspace } from "fimidara";

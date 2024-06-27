@@ -78,6 +78,7 @@ async function userWorkspacesInputFetchFn(
   const count = await endpoints.workspaces.countUserWorkspaces();
   return { count: count.body.count, resourceList: data.body.workspaces };
 }
+
 async function userCollaborationRequestsInputFetchFn(
   params: GetUserCollaborationRequestsEndpointParams
 ): Promise<
@@ -90,6 +91,7 @@ async function userCollaborationRequestsInputFetchFn(
   const count = await endpoints.collaborationRequests.countUserRequests();
   return { count: count.body.count, resourceList: data.body.requests };
 }
+
 async function workspaceCollaborationRequestsInputFetchFn(
   params: GetWorkspaceCollaborationRequestsEndpointParams
 ): Promise<
@@ -104,6 +106,7 @@ async function workspaceCollaborationRequestsInputFetchFn(
   });
   return { count: count.body.count, resourceList: data.body.requests };
 }
+
 async function workspaceCollaboratorsInputFetchFn(
   params: GetWorkspaceCollaboratorsEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<Collaborator>> {
@@ -116,6 +119,7 @@ async function workspaceCollaboratorsInputFetchFn(
   });
   return { count: count.body.count, resourceList: data.body.collaborators };
 }
+
 async function workspaceAgentTokensInputFetchFn(
   params: GetWorkspaceAgentTokensEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<AgentToken>> {
@@ -128,6 +132,7 @@ async function workspaceAgentTokensInputFetchFn(
   });
   return { count: count.body.count, resourceList: data.body.tokens };
 }
+
 async function workspaceFoldersInputFetchFn(
   params: Omit<ListFolderContentEndpointParams, "contentType">
 ): Promise<FetchPaginatedResourceListReturnedData<Folder>> {
@@ -144,6 +149,7 @@ async function workspaceFoldersInputFetchFn(
   });
   return { count: count.body.foldersCount, resourceList: data.body.folders };
 }
+
 async function workspaceFilesInputFetchFn(
   params: Omit<ListFolderContentEndpointParams, "contentType">
 ): Promise<FetchPaginatedResourceListReturnedData<File>> {
@@ -160,6 +166,7 @@ async function workspaceFilesInputFetchFn(
   });
   return { count: count.body.filesCount, resourceList: data.body.files };
 }
+
 async function workspacePermissionGroupsInputFetchFn(
   params: GetWorkspacePermissionGroupsEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<PermissionGroup>> {
@@ -172,6 +179,7 @@ async function workspacePermissionGroupsInputFetchFn(
   );
   return { count: count.body.count, resourceList: data.body.permissionGroups };
 }
+
 async function workspaceBackendConfigsInputFetchFn(
   params: GetFileBackendConfigsEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<FileBackendConfig>> {
@@ -184,6 +192,7 @@ async function workspaceBackendConfigsInputFetchFn(
   );
   return { count: count.body.count, resourceList: data.body.configs };
 }
+
 async function workspaceUsageRecordsInputFetchFn(
   params: GetWorkspaceSummedUsageEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<UsageRecord>> {
@@ -217,6 +226,7 @@ async function usageCostsInputFetchFn() {
   const data = await endpoints.usageRecords.getUsageCosts();
   return data.body;
 }
+
 async function resolveEntityPermissionInputFetchFn(
   params: ResolveEntityPermissionsEndpointParams
 ) {
@@ -226,16 +236,19 @@ async function resolveEntityPermissionInputFetchFn(
   });
   return data.body;
 }
+
 async function getWaitlistedUsersInputFetchFn() {
   const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.internals.getWaitlistedUsers();
   return data.body;
 }
+
 async function getUsersInputFetchFn() {
   const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.internals.getUsers();
   return data.body;
 }
+
 async function getWorkspacesInputFetchFn() {
   const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.internals.getWorkspaces();
@@ -265,6 +278,7 @@ function makePaginatedFetchHookAndStore<
     >,
     Parameters<Fn>[0]
   >(storeName, getFn, comparisonFn);
+
   const fetchFn = makeFetchPaginatedResourceListFetchFn(
     inputFetchFn,
     useResourceListStore,
@@ -319,6 +333,7 @@ export const {
   userWorkspacesInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useUserCollaborationRequestsFetchStore,
   useFetchHook: useUserCollaborationRequestsFetchHook,
@@ -328,6 +343,7 @@ export const {
   userCollaborationRequestsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useWorkspaceCollaborationRequestsFetchStore,
   useFetchHook: useWorkspaceCollaborationRequestsFetchHook,
@@ -337,6 +353,7 @@ export const {
   workspaceCollaborationRequestsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useWorkspaceCollaboratorsFetchStore,
   useFetchHook: useWorkspaceCollaboratorsFetchHook,
@@ -347,6 +364,7 @@ export const {
   checkIsEqualOmittingPageAndPageSize,
   getCollaboratorStoreKey
 );
+
 export const {
   useFetchStore: useWorkspaceAgentTokensFetchStore,
   useFetchHook: useWorkspaceAgentTokensFetchHook,
@@ -356,6 +374,7 @@ export const {
   workspaceAgentTokensInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useWorkspaceFoldersFetchStore,
   useFetchHook: useWorkspaceFoldersFetchHook,
@@ -365,6 +384,7 @@ export const {
   workspaceFoldersInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useWorkspaceFilesFetchStore,
   useFetchHook: useWorkspaceFilesFetchHook,
@@ -374,6 +394,7 @@ export const {
   workspaceFilesInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useWorkspacePermissionGroupsFetchStore,
   useFetchHook: useWorkspacePermissionGroupsFetchHook,
@@ -383,6 +404,7 @@ export const {
   workspacePermissionGroupsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useWorkspaceBackendConfigsFetchStore,
   useFetchHook: useWorkspaceBackendConfigsFetchHook,
@@ -392,6 +414,7 @@ export const {
   workspaceBackendConfigsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useWorkspaceUsageRecordsFetchStore,
   useFetchHook: useWorkspaceUsageRecordsFetchHook,
@@ -401,6 +424,7 @@ export const {
   workspaceUsageRecordsInputFetchFn,
   checkIsEqualOmittingPageAndPageSize
 );
+
 export const {
   useFetchStore: useEntityAssignedPermissionGroupsFetchStore,
   useFetchHook: useEntityAssignedPermissionGroupsFetchHook,
@@ -416,46 +440,55 @@ export const useUsageCostsFetchStore = makeFetchResourceStoreHook<
   GetUsageCostsEndpointResult | undefined,
   undefined
 >("usageCostsFetch", (params, state) => state.data);
+
 export const useUsageCostsFetchHook = makeFetchResourceHook(
   usageCostsInputFetchFn,
   useUsageCostsFetchStore,
   fetchHookDefaultSetFn
 );
+
 export const useResolveEntityPermissionsFetchStore = makeFetchResourceStoreHook<
   ResolveEntityPermissionsEndpointResult,
   ResolveEntityPermissionsEndpointResult | undefined,
   ResolveEntityPermissionsEndpointParams
 >("resolveEntityPermissionsFetch", (params, state) => state.data, isEqual);
+
 export const useResolveEntityPermissionsFetchHook = makeFetchResourceHook(
   resolveEntityPermissionInputFetchFn,
   useResolveEntityPermissionsFetchStore,
   fetchHookDefaultSetFn
 );
+
 export const useWaitlistedUsersFetchStore = makeFetchResourceStoreHook<
   GetWaitlistedUsersEndpointResult,
   GetWaitlistedUsersEndpointResult | undefined,
   undefined
 >("waitlistedUsers", (params, state) => state.data, isEqual);
+
 export const useWaitlistedUsersFetchHook = makeFetchResourceHook(
   getWaitlistedUsersInputFetchFn,
   useWaitlistedUsersFetchStore,
   fetchHookDefaultSetFn
 );
+
 export const useInternalUsersFetchStore = makeFetchResourceStoreHook<
   GetUsersEndpointResult,
   GetUsersEndpointResult | undefined,
   undefined
 >("internalUsers", (params, state) => state.data, isEqual);
+
 export const useInternalUsersFetchHook = makeFetchResourceHook(
   getUsersInputFetchFn,
   useInternalUsersFetchStore,
   fetchHookDefaultSetFn
 );
+
 export const useInternalWorkspacesFetchStore = makeFetchResourceStoreHook<
   GetWorkspacesEndpointResult,
   GetWorkspacesEndpointResult | undefined,
   undefined
 >("internalWorkspaces", (params, state) => state.data, isEqual);
+
 export const useInternalWorkspacesFetchHook = makeFetchResourceHook(
   getWorkspacesInputFetchFn,
   useInternalWorkspacesFetchStore,

@@ -1,12 +1,10 @@
-import PageError from "@/components/utils/page/PageError";
-import PageLoading from "@/components/utils/page/PageLoading";
+import PageContent02 from "@/components/utils/page/PageContent02";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { IPaginationData } from "@/components/utils/page/utils";
 import { addRootnameToPath } from "@/lib/definitions/folder";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceFoldersFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { getBaseError } from "@/lib/utils/errors";
 import { Folder } from "fimidara";
 import React from "react";
 import FolderList from "./FolderList";
@@ -32,13 +30,13 @@ export interface FolderListContainerProps {
 
 const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
   const {
-    workspaceId,
     workspaceRootname,
     folder,
     renderFolderItem,
     renderFolderList,
     renderRoot,
   } = props;
+
   const pagination = usePagination();
   const { fetchState } = useWorkspaceFoldersFetchHook({
     page: pagination.page,
@@ -48,30 +46,30 @@ const FolderListContainer: React.FC<FolderListContainerProps> = (props) => {
       ? addRootnameToPath(folder.namepath, workspaceRootname).join("/")
       : workspaceRootname,
   });
-  const { count, error, isLoading, resourceList } =
+  const { count, error, isLoading, resourceList, isDataFetched } =
     useFetchPaginatedResourceListFetchState(fetchState);
 
-  let contentNode: React.ReactNode = null;
-
-  if (error) {
-    contentNode = (
-      <PageError message={getBaseError(error) || "Error fetching folders"} />
-    );
-  } else if (isLoading) {
-    contentNode = <PageLoading message="Loading folders..." />;
-  } else {
-    const folderNode = renderFolderList ? (
-      renderFolderList(resourceList, workspaceRootname)
-    ) : (
-      <FolderList
-        folders={resourceList}
-        workspaceRootname={workspaceRootname}
-        renderFolderItem={renderFolderItem}
-      />
-    );
-
-    contentNode = folderNode;
-  }
+  const contentNode = (
+    <PageContent02
+      error={error}
+      isLoading={isLoading}
+      isDataFetched={isDataFetched}
+      data={resourceList}
+      defaultErrorMessage="Error fetching folders"
+      defaultLoadingMessage="Loading folders..."
+      render={(data) =>
+        renderFolderList ? (
+          renderFolderList(data, workspaceRootname)
+        ) : (
+          <FolderList
+            folders={data}
+            workspaceRootname={workspaceRootname}
+            renderFolderItem={renderFolderItem}
+          />
+        )
+      }
+    />
+  );
 
   if (renderRoot) {
     // TODO: handle pagination

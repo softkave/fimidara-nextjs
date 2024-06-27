@@ -14,7 +14,6 @@ export interface IPageMessageProps
     StyleableComponentProps {
   type?: TextProps["type"];
   message: Pick<AppError, "message"> | React.ReactNode;
-
   /** Don't wrap in EmptyMessage which renders a large icon and a message */
   showMessageOnly?: boolean;
   actions?: Array<IPageMessageAction | React.ReactElement>;
@@ -65,6 +64,7 @@ function isError(message: any): message is Pick<AppError, "message"> {
   if (message && (message as Pick<AppError, "message">).message) {
     return true;
   }
+
   return false;
 }
 

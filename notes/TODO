@@ -2,5 +2,6 @@
 - confirm file errors are showing in uploaded file list
 - files and folders multi-select
 - menu + developer tools
-- invalidate on create/update
 - show status of long-running tasks
+- move lodash to lodash-es
+- soft refresh data on first load page (remove clear fetch state in folder form also)

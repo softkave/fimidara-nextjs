@@ -2,8 +2,7 @@ import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
-import PageError from "@/components/utils/page/PageError";
-import PageLoading from "@/components/utils/page/PageLoading";
+import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { appClasses } from "@/components/utils/theme";
@@ -11,7 +10,6 @@ import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { getBaseError } from "@/lib/utils/errors";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Space, Typography } from "antd";
 import { User, Workspace } from "fimidara";
@@ -33,67 +31,67 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const { count, error, isLoading, resourceList } =
+  const { count, error, isLoading, resourceList, isDataFetched } =
     useFetchPaginatedResourceListFetchState(fetchState);
 
-  let content: React.ReactNode = null;
-
-  if (error) {
-    content = (
-      <PageError message={getBaseError(error) || "Error fetching workspaces"} />
-    );
-  } else if (isLoading) {
-    content = <PageLoading message="Loading workspaces..." />;
-  } else {
-    content = (
-      <ItemList
-        bordered
-        items={resourceList}
-        getId={(item: Workspace) => item.resourceId}
-        renderItem={(item: Workspace) => (
-          <ThumbnailContent
-            key={item.resourceId}
-            prefixNode={
-              <WorkspaceAvatar
-                workspaceId={item.resourceId}
-                alt={`Workspace picture for ${item.name}`}
-              />
-            }
-            main={
-              <div className={appClasses.thumbnailMain}>
-                <Link href={appWorkspacePaths.folderList(item.resourceId)}>
-                  <Typography.Text strong>{item.name}</Typography.Text>
-                </Link>
-                {item.description && (
-                  <Typography.Text type="secondary">
-                    {item.description}
-                  </Typography.Text>
-                )}
-              </div>
-            }
-            menu={
-              <WorkspaceMenu
-                key="menu"
-                workspace={item}
-                onCompleteDelete={noop}
-              />
-            }
-          />
-        )}
-        emptyMessage={
-          <PageNothingFound
-            message={
-              user.isOnWaitlist
-                ? "You are currently on the waitlist so you can't create workspaces, " +
-                  "but you can be added to an existing workspace. " +
-                  "Once you've been upgraded from the waitlist, we'll send an email to you confirming the upgrade"
-                : "Create a workspace to get started"
-            }
-          />
-        }
-      />
-    );
-  }
+  const contentNode = (
+    <PageContent02
+      error={error}
+      isLoading={isLoading}
+      isDataFetched={isDataFetched}
+      data={resourceList}
+      defaultErrorMessage="Error fetching workspaces"
+      defaultLoadingMessage="Loading workspaces..."
+      render={(data) => (
+        <ItemList
+          bordered
+          items={data}
+          getId={(item: Workspace) => item.resourceId}
+          renderItem={(item: Workspace) => (
+            <ThumbnailContent
+              key={item.resourceId}
+              prefixNode={
+                <WorkspaceAvatar
+                  workspaceId={item.resourceId}
+                  alt={`Workspace picture for ${item.name}`}
+                />
+              }
+              main={
+                <div className={appClasses.thumbnailMain}>
+                  <Link href={appWorkspacePaths.folderList(item.resourceId)}>
+                    <Typography.Text strong>{item.name}</Typography.Text>
+                  </Link>
+                  {item.description && (
+                    <Typography.Text type="secondary">
+                      {item.description}
+                    </Typography.Text>
+                  )}
+                </div>
+              }
+              menu={
+                <WorkspaceMenu
+                  key="menu"
+                  workspace={item}
+                  onCompleteDelete={noop}
+                />
+              }
+            />
+          )}
+          emptyMessage={
+            <PageNothingFound
+              message={
+                user.isOnWaitlist
+                  ? "You are currently on the waitlist so you can't create workspaces, " +
+                    "but you can be added to an existing workspace. " +
+                    "Once you've been upgraded from the waitlist, we'll send an email to you confirming the upgrade"
+                  : "Create a workspace to get started"
+              }
+            />
+          }
+        />
+      )}
+    />
+  );
 
   return (
     <Space direction="vertical" style={{ width: "100%" }} size="large">
@@ -110,7 +108,7 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
         }
       />
       <PaginatedContent
-        content={content}
+        content={contentNode}
         pagination={count ? { ...pagination, count } : undefined}
       />
     </Space>

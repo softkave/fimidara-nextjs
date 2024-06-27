@@ -7,6 +7,7 @@ export interface IEmptyMessageProps {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
+  image?: React.ReactNode;
 }
 
 const classes = {
@@ -19,10 +20,10 @@ const classes = {
 };
 
 const EmptyMessage: React.FC<IEmptyMessageProps> = (props) => {
-  const { children, className, style } = props;
+  const { children, className, style, image } = props;
   return (
     <div className={cx(className, classes.root)} style={style}>
-      <Empty description={children} className={appClasses.w100} />
+      <Empty description={children} className={appClasses.w100} image={image} />
     </div>
   );
 };

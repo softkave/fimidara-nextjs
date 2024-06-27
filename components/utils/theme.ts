@@ -114,8 +114,13 @@ export const appClasses = {
   w100: css({
     width: "100%",
   }),
+
+  // padding
   p16: css({
     padding: "16px",
+  }),
+  pt16: css({
+    paddingTop: "16px",
   }),
 
   // margins

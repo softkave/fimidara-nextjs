@@ -270,7 +270,7 @@ export const useWorkspaceFolderAddMutationHook = makeEndpointMutationHook(
       (resource, params) => {
         // TODO: handle folderpath
         // Parent ID is set to null for files and folders without parent folder,
-        //and for those, parentId is undefined.
+        // and for those, parentId is undefined.
         if (resource.parentId === null) {
           return params.folderId === undefined;
         } else {

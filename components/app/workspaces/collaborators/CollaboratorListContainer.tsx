@@ -1,11 +1,9 @@
-import PageError from "@/components/utils/page/PageError";
-import PageLoading from "@/components/utils/page/PageLoading";
+import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceCollaboratorsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { getBaseError } from "@/lib/utils/errors";
 import { Collaborator } from "fimidara";
 import React from "react";
 import CollaboratorList from "./CollaboratorList";
@@ -27,45 +25,47 @@ const CollaboratorListContainer: React.FC<CollaboratorListContainer> = (
     page: pagination.page,
     pageSize: pagination.pageSize,
   });
-  const { count, error, isLoading, resourceList } =
+  const { count, error, isLoading, resourceList, isDataFetched } =
     useFetchPaginatedResourceListFetchState(fetchState);
 
-  let content: React.ReactNode = null;
+  let contentNode = (
+    <PageContent02
+      error={error}
+      isLoading={isLoading}
+      isDataFetched={isDataFetched}
+      data={resourceList}
+      defaultErrorMessage="Error fetching collaborators"
+      defaultLoadingMessage="Loading collaborators..."
+      render={(data) => {
+        if (data.length) {
+          return renderList ? (
+            renderList(resourceList as Collaborator[])
+          ) : (
+            <CollaboratorList
+              workspaceId={workspaceId}
+              collaborators={resourceList as Collaborator[]}
+              renderItem={renderItem}
+            />
+          );
+        } else {
+          return <PageNothingFound message="No collaborators yet" />;
+        }
+      }}
+    />
+  );
 
-  if (error) {
-    content = (
-      <PageError
-        message={getBaseError(error) || "Error fetching collaborators"}
-      />
-    );
-  } else if (isLoading) {
-    content = <PageLoading message="Loading collaborators..." />;
-  } else if (resourceList.length === 0) {
-    content = <PageNothingFound message="No collaborators yet" />;
-  } else {
-    content = renderList ? (
-      renderList(resourceList as Collaborator[])
-    ) : (
-      <CollaboratorList
-        workspaceId={workspaceId}
-        collaborators={resourceList as Collaborator[]}
-        renderItem={renderItem}
-      />
-    );
-  }
-
-  content = (
+  contentNode = (
     <PaginatedContent
-      content={content}
+      content={contentNode}
       pagination={count ? { ...pagination, count } : undefined}
     />
   );
 
   if (renderRoot) {
-    return renderRoot(content);
+    return renderRoot(contentNode);
   }
 
-  return <React.Fragment>{content}</React.Fragment>;
+  return <React.Fragment>{contentNode}</React.Fragment>;
 };
 
 export default CollaboratorListContainer;
