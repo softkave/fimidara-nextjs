@@ -10,9 +10,9 @@ import { css } from "@emotion/css";
 import { Modal, Space, Tabs, message } from "antd";
 import {
   AgentToken,
-  AppActionType,
   Collaborator,
   DeletePermissionItemInput,
+  FimidaraPermissionAction,
   FimidaraResourceType,
   PermissionGroup,
   PermissionItemInput,
@@ -255,7 +255,7 @@ function getAddedAndDeletedTargetIdPermissions(
 
     deleteItems.push({
       entityId,
-      action: action as AppActionType,
+      action: action as FimidaraPermissionAction,
       target: { targetId },
 
       // Delete opposite of permission
@@ -263,7 +263,7 @@ function getAddedAndDeletedTargetIdPermissions(
     });
     addItems.push({
       entityId,
-      action: action as AppActionType,
+      action: action as FimidaraPermissionAction,
       target: { targetId },
       access: updatedPermitted.access,
     });

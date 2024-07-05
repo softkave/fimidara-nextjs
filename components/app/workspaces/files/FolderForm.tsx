@@ -144,6 +144,7 @@ export default function FolderForm(props: FolderFormProps) {
           filepath,
           // fileId: input.resourceId,
           data: input.file,
+          size: input.file.size,
           description: input.description,
           mimetype: input.mimetype,
           encoding: input.encoding,

@@ -35,7 +35,7 @@
     "axios": "^1.4.0",
     "core-js": "^3.21.1",
     "date-fns": "^2.28.0",
-    "fimidara": "^1.19.0",
+    "fimidara": "^1.20.0",
     "formik": "^2.2.9",
     "immer": "^10.0.3",
     "isomorphic-form-data": "^2.0.0",
@@ -55,6 +55,7 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/isomorphic-form-data": "^2.0.1",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "17.0.21",
     "@types/path-browserify": "^1.0.0",
     "env-cmd": "^10.1.0",

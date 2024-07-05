@@ -1,4 +1,4 @@
-import { AppActionType, FimidaraResourceType } from "fimidara";
+import { FimidaraPermissionAction, FimidaraResourceType } from "fimidara";
 import { defaultTo } from "lodash";
 
 if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
@@ -63,7 +63,7 @@ export function getFolderTypeList(): FimidaraResourceType[] {
   return ["*", "folder", "file"];
 }
 
-export const kActionLabel: Record<AppActionType, string> = {
+export const kActionLabel: Record<FimidaraPermissionAction, string> = {
   "*": "Every action",
   updateWorkspace: "Update workspace",
   deleteWorkspace: "Delete workspace",
@@ -121,20 +121,16 @@ export const kResourceTypeLabel: Record<FimidaraResourceType, string> = {
   usageRecord: "Usage record",
   system: "System",
   public: "Public",
-  assignedItem: "Assigned item",
-  endpointRequest: "Endpoint request",
   job: "Job",
   presignedPath: "Presigned path",
   fileBackendConfig: "Backend config",
   fileBackendMount: "Backend mount",
-  resolvedMountEntry: "Resolved mount entry",
-  app: "App",
 };
 
 export const kResourceTypeToPermittedActions: Record<
   FimidaraResourceType,
   /** group inherits from item */
-  { item: AppActionType[]; group?: AppActionType[] }
+  { item: FimidaraPermissionAction[]; group?: FimidaraPermissionAction[] }
 > = {
   "*": { item: ["*"] },
   workspace: {
@@ -193,12 +189,8 @@ export const kResourceTypeToPermittedActions: Record<
   },
   system: { item: [] },
   public: { item: [] },
-  assignedItem: { item: [] },
-  endpointRequest: { item: [] },
   job: { item: [] },
   presignedPath: { item: [] },
-  resolvedMountEntry: { item: [] },
-  app: { item: [] },
 };
 
 export const kResourceTypeToChildrenTypesMap: Record<
@@ -232,25 +224,17 @@ export const kResourceTypeToChildrenTypesMap: Record<
   fileBackendMount: [],
   system: [],
   public: [],
-  assignedItem: [],
-  endpointRequest: [],
   job: [],
   presignedPath: [],
-  resolvedMountEntry: [],
-  app: [],
 };
 
 /** resource types to prevent UI actions on, for whatever reason */
 export const kDisabledResourceTypes: FimidaraResourceType[] = [
   // server/internal resource types
   "*",
-  "app",
-  "assignedItem",
-  "endpointRequest",
   "job",
   "presignedPath",
   "public",
-  "resolvedMountEntry",
   "system",
 
   // we do not fully support tags yet
@@ -258,7 +242,7 @@ export const kDisabledResourceTypes: FimidaraResourceType[] = [
 ];
 
 /** actions to prevent UI actions on, for whatever reason */
-export const kDisabledPermissions: AppActionType[] = [
+export const kDisabledPermissions: FimidaraPermissionAction[] = [
   // we don't full support tags yet
   "addTag",
   "updateTag",

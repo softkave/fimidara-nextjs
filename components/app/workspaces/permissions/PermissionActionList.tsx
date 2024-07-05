@@ -1,6 +1,6 @@
 import ItemList from "@/components/utils/list/ItemList";
 import { kActionLabel } from "@/lib/definitions/system";
-import { AppActionType } from "fimidara";
+import { FimidaraPermissionAction } from "fimidara";
 import React from "react";
 import PermissionAction from "./PermissionAction";
 import { PermissionMapItemInfo } from "./types";
@@ -8,7 +8,10 @@ import { PermissionMapItemInfo } from "./types";
 export interface PermissionActionListProps {
   disabled?: boolean;
   items: PermissionMapItemInfo[];
-  onChange: (action: AppActionType, permitted: PermissionMapItemInfo) => void;
+  onChange: (
+    action: FimidaraPermissionAction,
+    permitted: PermissionMapItemInfo
+  ) => void;
 }
 
 const PermissionActionList: React.FC<PermissionActionListProps> = (props) => {

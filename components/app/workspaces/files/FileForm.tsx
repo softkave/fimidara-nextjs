@@ -112,6 +112,7 @@ export default function FileForm(props: FileFormProps) {
           body: {
             fileId: input.resourceId,
             data: input.file,
+            size: input.file.size,
             description: input.description,
             mimetype: input.mimetype,
             encoding: input.encoding,
@@ -142,6 +143,7 @@ export default function FileForm(props: FileFormProps) {
         body: {
           filepath,
           data: input.file,
+          size: input.file.size,
           description: input.description,
           mimetype: input.mimetype,
           encoding: input.encoding,

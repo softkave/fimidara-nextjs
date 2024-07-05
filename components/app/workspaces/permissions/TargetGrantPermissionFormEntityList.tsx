@@ -12,7 +12,7 @@ import { makeKey } from "@/lib/utils/fns";
 import { indexArray } from "@/lib/utils/indexArray";
 import { Collapse } from "antd";
 import {
-  AppActionType,
+  FimidaraPermissionAction,
   FimidaraResourceType,
   ResolveEntityPermissionItemInput,
   ResolveEntityPermissionsEndpointParams,
@@ -105,7 +105,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
   );
 
   const everyAction = React.useMemo(
-    () => Object.keys(kActionLabel) as AppActionType[],
+    () => Object.keys(kActionLabel) as FimidaraPermissionAction[],
     []
   );
 
@@ -144,7 +144,11 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
   }, [rpMap, updatedPermissionsMap]);
 
   const handleChange = React.useCallback(
-    (entity: T, action: AppActionType, permitted: PermissionMapItemInfo) => {
+    (
+      entity: T,
+      action: FimidaraPermissionAction,
+      permitted: PermissionMapItemInfo
+    ) => {
       const key = resolvedPermissionToKey({
         action,
         entityId: entity.resourceId,

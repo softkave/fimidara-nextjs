@@ -50,15 +50,11 @@ export const RESOURCE_TYPE_SHORT_NAMES: Record<FimidaraResourceType, string> = {
   [kFimidaraResourceType.File]: padShortName("file"),
   [kFimidaraResourceType.User]: padShortName("user"),
   [kFimidaraResourceType.Tag]: padShortName("tag"),
-  [kFimidaraResourceType.AssignedItem]: padShortName("asgitem"),
   [kFimidaraResourceType.UsageRecord]: padShortName("urecord"),
-  [kFimidaraResourceType.EndpointRequest]: padShortName("endrqst"),
   [kFimidaraResourceType.Job]: padShortName("job"),
   [kFimidaraResourceType.PresignedPath]: padShortName("presgnd"),
-  [kFimidaraResourceType.App]: padShortName("app"),
   [kFimidaraResourceType.FileBackendConfig]: padShortName("bckconf"),
   [kFimidaraResourceType.FileBackendMount]: padShortName("mount"),
-  [kFimidaraResourceType.ResolvedMountEntry]: padShortName("rmtentr"),
 };
 
 export class InvalidResourceIdError extends Error {

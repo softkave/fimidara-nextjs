@@ -41,7 +41,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
           usageCost={item.usageCost}
           costPerUnit={usageCosts[item.category]}
           workspace={workspace}
-          fulfillmentStatus={item.fulfillmentStatus}
+          fulfillmentStatus={item.status}
         />
       );
     },
@@ -77,6 +77,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
 
 const categoryWeight: Record<UsageRecordCategory, number> = {
   ["storage"]: 1,
+  ["storageEver"]: 1,
   ["bin"]: 2,
   ["bout"]: 3,
   ["total"]: 4,

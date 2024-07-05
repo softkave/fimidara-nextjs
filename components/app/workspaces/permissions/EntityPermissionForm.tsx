@@ -1,5 +1,5 @@
 import { kDisabledPermissions } from "@/lib/definitions/system";
-import { AppActionType } from "fimidara";
+import { FimidaraPermissionAction } from "fimidara";
 import React from "react";
 import PermissionActionList from "./PermissionActionList";
 import { PermissionMapItemInfo, ResolvedPermissionsMap } from "./types";
@@ -9,11 +9,11 @@ export interface EntityPermissionFormProps<T extends { resourceId: string }> {
   disabled?: boolean;
   entity: T;
   permissionsMap: ResolvedPermissionsMap;
-  actions: AppActionType[];
-  everyAction: AppActionType[];
+  actions: FimidaraPermissionAction[];
+  everyAction: FimidaraPermissionAction[];
   onChange(
     entity: T,
-    action: AppActionType,
+    action: FimidaraPermissionAction,
     permitted: PermissionMapItemInfo
   ): void;
 }
@@ -25,14 +25,14 @@ function EntityPermissionForm<T extends { resourceId: string }>(
     props;
 
   const handleChange = React.useCallback(
-    (action: AppActionType, permitted: PermissionMapItemInfo) => {
+    (action: FimidaraPermissionAction, permitted: PermissionMapItemInfo) => {
       onChange(entity, action, permitted);
     },
     [entity, onChange]
   );
 
   const getActionPermission = React.useCallback(
-    (action: AppActionType) => {
+    (action: FimidaraPermissionAction) => {
       const key = getResolvedPermissionToKey({
         action,
         entityId: entity.resourceId,

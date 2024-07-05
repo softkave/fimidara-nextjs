@@ -62,7 +62,7 @@ const SummedUsageRecordListContainer: React.FC<
 
       if (usageRecords.resourceList) {
         usageRecords.resourceList.forEach((record) => {
-          if (record.fulfillmentStatus === "fulfilled") {
+          if (record.status === "fulfilled") {
             const yearRecords = fulfilledRecords[record.year] || {};
             const monthRecords = yearRecords[record.month] || [];
             monthRecords.push(record);
