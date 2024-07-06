@@ -1,4 +1,4 @@
-- download file is not working
+- not showing correct upload size for a file, and not advancing download progress
 - better usage records page
 - file upload is showing green though file upload failed
 - retrying failed/successful uploads does not show green status
