@@ -2,30 +2,33 @@
 // Reach out to @abayomi to suggest changes.
 
 import {
+  invokeEndpoint,
+  FimidaraEndpointsBase,
+  FimidaraEndpointResult,
+  FimidaraEndpointParamsRequired,
+  FimidaraEndpointParamsOptional,
+  FimidaraEndpointWithBinaryResponseParamsRequired,
+  FimidaraEndpointWithBinaryResponseParamsOptional,
+} from './utils.ts';
+import {
   ChangePasswordWithCurrentPasswordEndpointParams,
+  LoginResult,
   ChangePasswordWithTokenEndpointParams,
   ForgotPasswordEndpointParams,
-  GetCollaboratorsWithoutPermissionEndpointParams,
-  GetCollaboratorsWithoutPermissionEndpointResult,
-  GetUsersEndpointParams,
-  GetUsersEndpointResult,
-  GetWaitlistedUsersEndpointParams,
-  GetWaitlistedUsersEndpointResult,
-  GetWorkspacesEndpointParams,
-  GetWorkspacesEndpointResult,
   LoginParams,
-  LoginResult,
   SignupEndpointParams,
-  UpgradeWaitlistedUsersEndpointParams,
   UserExistsEndpointParams,
   UserExistsEndpointResult,
-} from "./privateTypes.ts";
-import {
-  FimidaraEndpointParamsOptional,
-  FimidaraEndpointParamsRequired,
-  FimidaraEndpointResult,
-  FimidaraEndpointsBase,
-} from "./utils.ts";
+  GetCollaboratorsWithoutPermissionEndpointParams,
+  GetCollaboratorsWithoutPermissionEndpointResult,
+  GetWaitlistedUsersEndpointParams,
+  GetWaitlistedUsersEndpointResult,
+  UpgradeWaitlistedUsersEndpointParams,
+  GetUsersEndpointParams,
+  GetUsersEndpointResult,
+  GetWorkspacesEndpointParams,
+  GetWorkspacesEndpointResult,
+} from './privateTypes.ts';
 
 export class UsersEndpoints extends FimidaraEndpointsBase {
   changePasswordWithCurrentPassword = async (
@@ -35,8 +38,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/users/changePasswordWithCurrentPassword",
-        method: "POST",
+        path: '/v1/users/changePasswordWithCurrentPassword',
+        method: 'POST',
       },
       props
     );
@@ -48,8 +51,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/users/changePasswordWithToken",
-        method: "POST",
+        path: '/v1/users/changePasswordWithToken',
+        method: 'POST',
       },
       props
     );
@@ -61,8 +64,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
 
-        path: "/v1/users/confirmEmailAddress",
-        method: "POST",
+        path: '/v1/users/confirmEmailAddress',
+        method: 'POST',
       },
       props
     );
@@ -74,8 +77,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/users/forgotPassword",
-        method: "POST",
+        path: '/v1/users/forgotPassword',
+        method: 'POST',
       },
       props
     );
@@ -87,8 +90,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/users/login",
-        method: "POST",
+        path: '/v1/users/login',
+        method: 'POST',
       },
       props
     );
@@ -100,8 +103,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
 
-        path: "/v1/users/sendEmailVerificationCode",
-        method: "POST",
+        path: '/v1/users/sendEmailVerificationCode',
+        method: 'POST',
       },
       props
     );
@@ -113,8 +116,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/users/signup",
-        method: "POST",
+        path: '/v1/users/signup',
+        method: 'POST',
       },
       props
     );
@@ -126,8 +129,8 @@ export class UsersEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/users/userExists",
-        method: "POST",
+        path: '/v1/users/userExists',
+        method: 'POST',
       },
       props
     );
@@ -143,8 +146,8 @@ export class CollaboratorsEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/collaborators/getCollaboratorsWithoutPermission",
-        method: "POST",
+        path: '/v1/collaborators/getCollaboratorsWithoutPermission',
+        method: 'POST',
       },
       props
     );
@@ -158,8 +161,8 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/internals/getWaitlistedUsers",
-        method: "POST",
+        path: '/v1/internals/getWaitlistedUsers',
+        method: 'POST',
       },
       props
     );
@@ -171,8 +174,8 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/internals/upgradeWaitlistedUsers",
-        method: "POST",
+        path: '/v1/internals/upgradeWaitlistedUsers',
+        method: 'POST',
       },
       props
     );
@@ -184,8 +187,8 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/internals/getUsers",
-        method: "POST",
+        path: '/v1/internals/getUsers',
+        method: 'POST',
       },
       props
     );
@@ -197,8 +200,8 @@ export class InternalsEndpoints extends FimidaraEndpointsBase {
       {
         ...props,
         data: props?.body,
-        path: "/v1/internals/getWorkspaces",
-        method: "POST",
+        path: '/v1/internals/getWorkspaces',
+        method: 'POST',
       },
       props
     );

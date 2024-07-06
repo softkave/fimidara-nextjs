@@ -1,3 +1,8 @@
+- download file is not working
+- better usage records page
+- file upload is showing green though file upload failed
+- retrying failed/successful uploads does not show green status
+- combine file and folder list into one component/loading experience
 - custom yup error messages
 - confirm file errors are showing in uploaded file list
 - files and folders multi-select
@@ -5,3 +10,5 @@
 - show status of long-running tasks
 - move lodash to lodash-es
 - soft refresh data on first load page (remove clear fetch state in folder form also)
+- prevent mutation actions if user is not email verified
+- auto-scroll back to top of page on error to surface error

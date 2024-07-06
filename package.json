@@ -35,7 +35,7 @@
     "axios": "^1.4.0",
     "core-js": "^3.21.1",
     "date-fns": "^2.28.0",
-    "fimidara": "^1.20.0",
+    "fimidara": "^1.21.0",
     "formik": "^2.2.9",
     "immer": "^10.0.3",
     "isomorphic-form-data": "^2.0.0",
