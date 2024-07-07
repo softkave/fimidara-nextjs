@@ -8,7 +8,7 @@ import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space } from "antd";
-import { Collaborator as CollaboratorComponent } from "fimidara";
+import { Collaborator } from "fimidara";
 import { useRouter } from "next/router";
 import React from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
@@ -40,7 +40,7 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
           <ComponentHeader title={resource.firstName + " " + resource.lastName}>
             <CollaboratorMenu
               workspaceId={workspaceId}
-              collaborator={resource as CollaboratorComponent}
+              collaborator={resource as Collaborator}
               onCompleteRemove={onCompeleteRemoveCollaborator}
             />
           </ComponentHeader>

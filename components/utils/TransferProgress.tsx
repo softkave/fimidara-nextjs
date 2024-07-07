@@ -2,7 +2,7 @@ import { KeyValueDynamicKeys } from "@/lib/hooks/storeHooks";
 import { useTransferProgress } from "@/lib/hooks/useTransferProgress";
 import { Progress, Space, Typography } from "antd";
 import { formatDistanceToNow } from "date-fns";
-import { identity, uniqBy } from "lodash";
+import { identity, uniqBy } from "lodash-es";
 import pb from "pretty-bytes";
 import FormError from "../form/FormError";
 import ItemList from "./list/ItemList";

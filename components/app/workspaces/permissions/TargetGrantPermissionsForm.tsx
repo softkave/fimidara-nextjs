@@ -17,7 +17,7 @@ import {
   PermissionGroup,
   PermissionItemInput,
 } from "fimidara";
-import { forEach, isBoolean, merge } from "lodash";
+import { forEach, isBoolean, merge } from "lodash-es";
 import React from "react";
 import AgentTokenListContainer from "../agentTokens/AgentTokenListContainer";
 import CollaboratorListContainer from "../collaborators/CollaboratorListContainer";

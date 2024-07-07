@@ -3,7 +3,7 @@ import { css, cx } from "@emotion/css";
 import { Typography, Upload, message } from "antd";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import { getFimidaraUploadFileURL } from "fimidara";
-import { defaultTo, first } from "lodash";
+import { defaultTo, first } from "lodash-es";
 import React from "react";
 import { systemConstants } from "../../lib/definitions/system";
 import { useUserNode } from "../hooks/useUserNode";

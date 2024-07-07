@@ -2,9 +2,9 @@ import { AppError, flattenErrorList } from "@/lib/utils/errors";
 import { AnyObject } from "@/lib/utils/types";
 import { message } from "antd";
 import { FormikTouched } from "formik";
-import { get } from "lodash";
-import isArray from "lodash/isArray";
-import isObject from "lodash/isObject";
+import { get } from "lodash-es";
+import isArray from "lodash-es/isArray";
+import isObject from "lodash-es/isObject";
 import { AnySchema, ValidationError } from "yup";
 import { IFormBag, IFormBagHelpers, IFormItem } from "./types";
 

@@ -7,7 +7,7 @@ import {
   isObject,
   isString,
   set,
-} from "lodash";
+} from "lodash-es";
 import { isFimidaraEndpointError } from "../api/localUtils";
 import OperationError from "./OperationError";
 import { AnyObject } from "./types";

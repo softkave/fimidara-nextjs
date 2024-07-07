@@ -2,7 +2,7 @@ import { AppError } from "@/lib/utils/errors";
 import { css, cx } from "@emotion/css";
 import { Button, ButtonProps, Space, Typography } from "antd";
 import { TextProps } from "antd/es/typography/Text";
-import isString from "lodash/isString";
+import isString from "lodash-es/isString";
 import React from "react";
 import { StyleableComponentProps } from "../styling/types";
 import EmptyMessage, { IEmptyMessageProps } from "./EmptyMessage";

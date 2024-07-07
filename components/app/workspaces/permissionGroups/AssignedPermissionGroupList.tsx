@@ -16,7 +16,7 @@ import { indexArray } from "@/lib/utils/indexArray";
 import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
 import { Space, Typography } from "antd";
-import { noop } from "lodash";
+import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import AssignPermissionGroupsForm from "./AssignPermissionGroupsForm";

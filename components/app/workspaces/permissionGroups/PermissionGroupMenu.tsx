@@ -10,7 +10,7 @@ import {
 } from "@/lib/hooks/mutationHooks";
 import { Dropdown, MenuProps, Modal, message } from "antd";
 import { PermissionGroup } from "fimidara";
-import { compact } from "lodash";
+import { compact } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";

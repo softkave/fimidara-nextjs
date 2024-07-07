@@ -4,7 +4,7 @@ import { useRequest } from "ahooks";
 import { Button, Image, ImageProps } from "antd";
 import assert from "assert";
 import { getFimidaraReadFileURL } from "fimidara";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import React from "react";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
 import { systemConstants } from "../../lib/definitions/system";

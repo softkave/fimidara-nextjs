@@ -1,7 +1,7 @@
 import { CloseOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Drawer, Menu, Typography } from "antd";
-import { compact, last } from "lodash";
+import { compact, last } from "lodash-es";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";

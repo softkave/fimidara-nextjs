@@ -1,4 +1,4 @@
-import { isFunction, pick } from "lodash";
+import { isFunction, pick } from "lodash-es";
 import { cast } from "./fns";
 
 export type ExtractFieldTransformer<

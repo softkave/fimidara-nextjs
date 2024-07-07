@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { Typography } from "antd";
-import { isString } from "lodash";
+import { isString } from "lodash-es";
 import React from "react";
 
 export interface IListHeaderProps {

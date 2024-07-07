@@ -1,5 +1,5 @@
 import { FimidaraPermissionAction, FimidaraResourceType } from "fimidara";
-import { defaultTo } from "lodash";
+import { defaultTo } from "lodash-es";
 
 if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
   throw new Error("NEXT_PUBLIC_WORKSPACE_ID is not set");

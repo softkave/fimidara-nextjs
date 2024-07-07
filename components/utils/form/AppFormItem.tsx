@@ -8,7 +8,7 @@ import {
   isFunction,
   isString,
   isUndefined,
-} from "lodash";
+} from "lodash-es";
 import React from "react";
 import { AnyObject } from "yup/lib/types";
 import { ElementError } from "../types";

@@ -1,5 +1,6 @@
 # fimidara
 
+- permissions
 - server error not shown in fields
 - not showing correct upload size for a file, and not advancing download progress
 - better usage records page

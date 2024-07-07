@@ -1,5 +1,5 @@
 import { Form, FormItemProps, Space } from "antd";
-import { defaultTo } from "lodash";
+import { defaultTo } from "lodash-es";
 import React from "react";
 import CancelButton from "../buttons/CancelButton";
 import EditButton from "../buttons/EditButton";

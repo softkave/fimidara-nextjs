@@ -1,5 +1,5 @@
 import { FimidaraEndpointProgressEvent } from "fimidara";
-import { merge, uniq } from "lodash";
+import { merge, uniq } from "lodash-es";
 import React from "react";
 import { KeyValueDynamicKeys, useKvStore } from "./storeHooks";
 

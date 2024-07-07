@@ -1,5 +1,5 @@
 import { useSessionHook, useUserLoggedIn } from "@/lib/hooks/sessionHook";
-import { isUndefined } from "lodash";
+import { isUndefined } from "lodash-es";
 import { useRouter } from "next/router";
 import React from "react";
 import { appAccountPaths } from "../../lib/definitions/system";

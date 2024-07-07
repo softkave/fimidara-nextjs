@@ -23,7 +23,7 @@ import {
   UsageRecord,
   Workspace,
 } from "fimidara";
-import { isEqual, omit } from "lodash";
+import { isEqual, omit } from "lodash-es";
 import {
   getPrivateFimidaraEndpointsUsingUserToken,
   getPublicFimidaraEndpointsUsingUserToken,

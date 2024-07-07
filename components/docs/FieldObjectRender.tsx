@@ -1,5 +1,5 @@
 import { Tabs, TabsProps } from "antd";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import React from "react";
 import FieldObjectAsJson from "./FieldObjectAsJson";
 import FieldObjectAsTable from "./FieldObjectAsTable";

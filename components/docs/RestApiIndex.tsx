@@ -1,6 +1,6 @@
 import { toCompactArray } from "@/lib/utils/fns";
 import { Typography } from "antd";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import {

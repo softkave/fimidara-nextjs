@@ -1,4 +1,4 @@
-import mergeWith from "lodash/mergeWith";
+import mergeWith from "lodash-es/mergeWith";
 import { IPaginationQuery } from "../api/types";
 import { systemConstants } from "../definitions/system";
 import { getDate } from "./dateFns";

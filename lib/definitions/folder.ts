@@ -1,4 +1,4 @@
-import { isArray, last } from "lodash";
+import { isArray, last } from "lodash-es";
 
 export const folderConstants = {
   minFolderNameLength: 1,

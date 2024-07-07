@@ -4,7 +4,7 @@ import { systemConstants } from "@/lib/definitions/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Space, Typography, Upload } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
-import { isArray, isObject, isString } from "lodash";
+import { isArray, isObject, isString } from "lodash-es";
 import prettyBytes from "pretty-bytes";
 import FormError from "../../../form/FormError";
 import { SingleFileFormValue } from "./types";

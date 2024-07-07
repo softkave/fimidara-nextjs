@@ -1,5 +1,5 @@
 import { MenuProps } from "antd";
-import { isBoolean } from "lodash";
+import { isBoolean } from "lodash-es";
 
 export const appComponentConstants = {
   messageDuration: 12, // secs

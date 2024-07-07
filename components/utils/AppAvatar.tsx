@@ -3,7 +3,7 @@ import { useRequest } from "ahooks";
 import { Avatar, AvatarProps } from "antd";
 import assert from "assert";
 import { getFimidaraReadFileURL } from "fimidara";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
 import { Omit1 } from "../../lib/utils/types";
 import { appDimensions } from "./theme";

@@ -52,7 +52,7 @@ function EntityPermissionForm<T extends { resourceId: string }>(
         access: p?.access ?? false,
       };
     },
-    [entity, permissionsMap]
+    [entity, permissionsMap, actions]
   );
 
   const pList = React.useMemo(() => {

@@ -14,7 +14,7 @@ import usePagination from "@/lib/hooks/usePagination";
 import { cast } from "@/lib/utils/fns";
 import { Space } from "antd";
 import { UsageRecord, Workspace } from "fimidara";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import React from "react";
 import SummedUsageRecordList from "./SummedUsageRecordList";
 import SummedUsageRecordListControls from "./SummedUsageRecordListControls";

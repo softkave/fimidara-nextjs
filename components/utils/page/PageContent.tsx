@@ -1,5 +1,5 @@
 import { cx } from "@emotion/css";
-import { defaultTo, isFunction } from "lodash";
+import { defaultTo, isFunction } from "lodash-es";
 import React from "react";
 import { GridHelpers, GridPortions, GridTemplateLayout } from "../styling/grid";
 import { StyleableComponentProps } from "../styling/types";

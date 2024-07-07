@@ -7,7 +7,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { Dropdown, MenuProps, Space, Typography } from "antd";
 import { Folder } from "fimidara";
-import { noop } from "lodash";
+import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import FolderMenu from "./FolderMenu";

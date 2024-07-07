@@ -13,7 +13,7 @@ import { yupObject } from "@/lib/validation/utils";
 import { css, cx } from "@emotion/css";
 import { Button, Form, Typography, message } from "antd";
 import { File as FimidaraFile } from "fimidara";
-import { isString } from "lodash";
+import { isString } from "lodash-es";
 import * as yup from "yup";
 import FormError from "../../../form/FormError";
 import { formClasses } from "../../../form/classNames";

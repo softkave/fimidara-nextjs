@@ -5,7 +5,7 @@ import { KeyValueKeys, useKvStore } from "@/lib/hooks/storeHooks";
 import { useToggle } from "ahooks";
 import { Badge } from "antd";
 import { FimidaraEndpointProgressEvent } from "fimidara";
-import { map } from "lodash";
+import { map } from "lodash-es";
 import React from "react";
 import { FiDownload } from "react-icons/fi";
 

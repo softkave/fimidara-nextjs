@@ -11,7 +11,7 @@ import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space, Typography } from "antd";
 import assert from "assert";
-import { noop } from "lodash";
+import { noop } from "lodash-es";
 import { useRouter } from "next/router";
 import React from "react";
 import AssignedPermissionGroupList from "./AssignedPermissionGroupList";

@@ -18,7 +18,7 @@ import {
   ResolveEntityPermissionsEndpointParams,
   ResolvedEntityPermissionItem,
 } from "fimidara";
-import { flatten, merge, set, uniq } from "lodash";
+import { flatten, merge, set, uniq } from "lodash-es";
 import React from "react";
 import EntityPermissionForm from "./EntityPermissionForm";
 import {
@@ -161,7 +161,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
       setUpdatedPermissionsMap(updated);
       onChange(updated, rpMap);
     },
-    [rpMap]
+    [rpMap, updatedPermissionsMap]
   );
 
   const collapseItems = entities.map((entity): CollapseItemType => {

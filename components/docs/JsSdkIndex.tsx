@@ -1,5 +1,5 @@
 import { Divider, Space, Typography } from "antd";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import JsSdkFunction from "./JsSdkFunction";

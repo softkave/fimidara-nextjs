@@ -1,4 +1,4 @@
-import { compact, flatten } from "lodash";
+import { compact, flatten } from "lodash-es";
 import moment from "moment";
 
 export function cast<ToType>(resource: any): ToType {

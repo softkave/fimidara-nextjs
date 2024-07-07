@@ -5,7 +5,7 @@ import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
 import { Typography } from "antd";
 import { PermissionGroup } from "fimidara";
-import { noop } from "lodash";
+import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import PermissionGroupMenu from "./PermissionGroupMenu";

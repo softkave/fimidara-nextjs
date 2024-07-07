@@ -1,4 +1,4 @@
-import { flatten, map } from "lodash";
+import { flatten, map } from "lodash-es";
 import React from "react";
 import { FieldObject } from "./types";
 import { extractContainedFieldObjects } from "./utils";

@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { Divider, Typography } from "antd";
-import { map } from "lodash";
+import { map } from "lodash-es";
 import prettyBytes from "pretty-bytes";
 import React from "react";
 import { StyleableComponentProps } from "../utils/styling/types";

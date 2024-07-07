@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { Checkbox, MenuProps } from "antd";
-import { defaultTo } from "lodash";
+import { defaultTo } from "lodash-es";
 import React from "react";
 import { useHandledEventTraker } from "../../hooks/useHandledEventTraker";
 import DropdownButton from "../buttons/DropdownButton";

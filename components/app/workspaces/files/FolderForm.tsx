@@ -18,7 +18,7 @@ import { css, cx } from "@emotion/css";
 import { Button, Form, Input, Space, Typography, Upload, message } from "antd";
 import { Folder } from "fimidara";
 import { FormikTouched } from "formik";
-import { compact, isString } from "lodash";
+import { compact, isString } from "lodash-es";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, ReactNode, useEffect, useMemo } from "react";
 import * as yup from "yup";

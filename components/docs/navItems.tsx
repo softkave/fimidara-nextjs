@@ -1,6 +1,6 @@
 import { ObjectValues } from "@/lib/api/utils";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
-import { compact, first, flatten, forEach, get, last, set } from "lodash";
+import { compact, first, flatten, forEach, get, last, set } from "lodash-es";
 import Link from "next/link";
 import { isObjectEmpty } from "../../lib/utils/fns";
 import { htmlCharacterCodes } from "../utils/utils";

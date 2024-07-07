@@ -5,7 +5,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { cx } from "@emotion/css";
 import { Button, Form, Space, Upload } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
-import { compact, isString } from "lodash";
+import { compact, isString } from "lodash-es";
 import FormError from "../../../form/FormError";
 import { SelectedFilesForm } from "./SelectedFilesForm";
 import { SingleFileFormValue } from "./types";

@@ -4,7 +4,7 @@ import type {
   Options as UseRequestOptions,
 } from "ahooks/lib/useRequest/src/types";
 import { FimidaraEndpointResult, LoginResult } from "fimidara";
-import { compact, isEqual, over, uniq } from "lodash";
+import { compact, isEqual, over, uniq } from "lodash-es";
 import React from "react";
 import {
   getPrivateFimidaraEndpointsUsingUserToken,

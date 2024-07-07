@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { isString } from "lodash";
+import { isString } from "lodash-es";
 import React from "react";
 import PageEmpty from "../page/PageEmpty";
 import { StyleableComponentProps } from "../styling/types";

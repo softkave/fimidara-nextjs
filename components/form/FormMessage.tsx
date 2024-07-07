@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { compact, isObject, isString } from "lodash";
+import { compact, isObject, isString } from "lodash-es";
 import React from "react";
 import { AppError } from "../../lib/utils/errors";
 

@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { set } from "lodash";
+import { set } from "lodash-es";
 import React from "react";
 import { AnyObject } from "yup/lib/types";
 import { FormSaving, IFormBag, IFormBagHelpers } from "../utils/form/types";
@@ -11,7 +11,9 @@ export interface IUseFormBagProps<T extends AnyObject> {
   onSubmit: (values: T, helpers: IFormBagHelpers<T>) => void;
 }
 
-export function useFormBag<T extends AnyObject>(props: IUseFormBagProps<T>): { bag: IFormBag<T> } {
+export function useFormBag<T extends AnyObject>(
+  props: IUseFormBagProps<T>
+): { bag: IFormBag<T> } {
   const { initialValues, validationSchema, errors, onSubmit } = props;
   const [savingState, setSaving] = React.useState({} as FormSaving<T>);
   const handleSubmit = (values: T, helpers: IFormBagHelpers<T>) => {

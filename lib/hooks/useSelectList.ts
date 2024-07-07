@@ -1,4 +1,4 @@
-import { isArray, isFunction } from "lodash";
+import { isArray, isFunction } from "lodash-es";
 import React from "react";
 import { indexArray } from "../utils/indexArray";
 

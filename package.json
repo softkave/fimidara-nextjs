@@ -39,7 +39,6 @@
     "formik": "^2.2.9",
     "immer": "^10.0.3",
     "isomorphic-form-data": "^2.0.0",
-    "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "moment": "^2.29.1",
     "next": "^14.1.3",

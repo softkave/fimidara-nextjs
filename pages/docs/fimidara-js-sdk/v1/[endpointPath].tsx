@@ -5,7 +5,7 @@ import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { systemConstants } from "@/lib/definitions/system";
 import { Typography } from "antd";
 import { promises } from "fs";
-import { last } from "lodash";
+import { last } from "lodash-es";
 import { GetServerSideProps, NextPage } from "next";
 
 interface FimidaraJsSdkEndpointDocPageProps {

@@ -1,5 +1,5 @@
 import { cx } from "@emotion/css";
-import { defaultTo } from "lodash";
+import { defaultTo } from "lodash-es";
 import React from "react";
 import { GridHelpers, GridPortions, GridTemplateLayout } from "../styling/grid";
 import { appClasses } from "../theme";

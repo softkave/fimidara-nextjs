@@ -1,5 +1,5 @@
 import { Select, Space } from "antd";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import React from "react";
 
 export interface ISummedUsageRecordListControlsProps {

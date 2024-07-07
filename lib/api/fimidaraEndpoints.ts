@@ -1,5 +1,5 @@
 import * as fimidara from "fimidara";
-import { first } from "lodash";
+import { first } from "lodash-es";
 import { systemConstants } from "../definitions/system";
 import { useUserSessionFetchStore } from "../hooks/singleResourceFetchStores";
 import UserSessionStorageFns from "../storage/userSession";

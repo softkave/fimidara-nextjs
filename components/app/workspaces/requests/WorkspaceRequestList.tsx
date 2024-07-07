@@ -8,7 +8,7 @@ import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/
 import { getResourceId } from "@/lib/utils/resource";
 import { message, Modal, Typography } from "antd";
 import { CollaborationRequestForWorkspace } from "fimidara";
-import { noop } from "lodash";
+import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";

@@ -5,7 +5,7 @@ import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Typography } from "antd";
 import { File } from "fimidara";
-import { noop } from "lodash";
+import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import { FiFile } from "react-icons/fi";

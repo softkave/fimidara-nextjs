@@ -1,6 +1,6 @@
 import type { DefaultOptionType } from "antd/lib/select";
 import { FormikErrors, FormikProps } from "formik";
-import { get, isObjectLike, set } from "lodash";
+import { get, isObjectLike, set } from "lodash-es";
 
 export function getFormError(errors: object = {}) {
   return (errors as any).error;

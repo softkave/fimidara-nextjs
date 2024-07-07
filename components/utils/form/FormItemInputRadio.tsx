@@ -1,5 +1,5 @@
 import { Radio, Space } from "antd";
-import { isObject } from "lodash";
+import { isObject } from "lodash-es";
 import React from "react";
 import { IFormFieldRenderFnProps } from "./FormField";
 import { IFormItemInputRadio } from "./types";

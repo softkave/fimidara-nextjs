@@ -1,4 +1,4 @@
-import { merge } from "lodash";
+import { merge } from "lodash-es";
 import React from "react";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";

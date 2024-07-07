@@ -12,7 +12,7 @@ import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { indexArray } from "@/lib/utils/indexArray";
 import { css, cx } from "@emotion/css";
 import { Form, Modal, message } from "antd";
-import { isString } from "lodash";
+import { isString } from "lodash-es";
 import React from "react";
 import * as yup from "yup";
 import PermissionGroupListContainer from "./PermissionGroupListContainer";

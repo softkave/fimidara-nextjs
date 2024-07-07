@@ -4,7 +4,7 @@ import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Typography } from "antd";
 import { Collaborator } from "fimidara";
-import { noop } from "lodash";
+import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
 import CollaboratorMenu from "./CollaboratorMenu";

@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { Space, Typography } from "antd";
-import { forEach, map } from "lodash";
+import { forEach, map } from "lodash-es";
 import React from "react";
 import { appClasses } from "../utils/theme";
 import { htmlCharacterCodes } from "../utils/utils";
