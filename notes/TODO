@@ -1,6 +1,8 @@
 # fimidara
 
-- permissions
+- test upload avatar for user and workspace
+- silently refresh data when user visits page if page already has data (files and folders)
+- opening permissions for a folder first shows no permission groups
 - server error not shown in fields
 - not showing correct upload size for a file, and not advancing download progress
 - better usage records page

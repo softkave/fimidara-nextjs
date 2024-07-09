@@ -16,7 +16,8 @@ import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { Button, Form, Input, Space, Typography, Upload, message } from "antd";
-import { Folder } from "fimidara";
+import assert from "assert";
+import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
 import { FormikTouched } from "formik";
 import { compact, isString } from "lodash-es";
 import { useRouter } from "next/router";
@@ -73,8 +74,15 @@ export interface FolderFormProps {
 }
 
 export default function FolderForm(props: FolderFormProps) {
-  const { folder, className, workspaceId, workspaceRootname, parentPath } =
-    props;
+  const { folder, className, workspaceId, workspaceRootname } = props;
+  const parentPath =
+    props.parentPath ||
+    (folder
+      ? stringifyFimidaraFoldernamepath({
+          namepath: folder.namepath.slice(0, -1),
+        })
+      : undefined);
+  assert(isString(parentPath));
 
   const router = useRouter();
   const updateHook = useWorkspaceFolderUpdateMutationHook({
