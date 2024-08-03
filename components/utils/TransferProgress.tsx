@@ -1,10 +1,13 @@
-import { KeyValueDynamicKeys } from "@/lib/hooks/storeHooks";
+"use client";
+
+import { KeyValueDynamicKeys } from "@/lib/hooks/kvStore.ts";
 import { useTransferProgress } from "@/lib/hooks/useTransferProgress";
-import { Progress, Space, Typography } from "antd";
+import { Progress, Space } from "antd";
+import Text from "antd/es/typography/Text";
 import { formatDistanceToNow } from "date-fns";
 import { identity, uniqBy } from "lodash-es";
 import pb from "pretty-bytes";
-import FormError from "../form/FormError";
+import FormError from "./form/FormError";
 import ItemList from "./list/ItemList";
 import { htmlCharacterCodes } from "./utils";
 
@@ -35,7 +38,7 @@ export function TransferProgress(props: ITransferProgressProps) {
   // depend on the progress event, or we can extend it to the progress event
   return (
     <Space direction="vertical" style={{ width: "100%" }} size={0}>
-      <Typography.Text type="secondary">{identifier}</Typography.Text>
+      <Text type="secondary">{identifier}</Text>
       <Progress
         percent={percent}
         status={loaded !== total ? "active" : undefined}
@@ -47,21 +50,17 @@ export function TransferProgress(props: ITransferProgressProps) {
         }}
       />
       <Space
-        split={
-          <Typography.Text type="secondary">
-            {htmlCharacterCodes.middleDot}
-          </Typography.Text>
-        }
+        split={<Text type="secondary">{htmlCharacterCodes.middleDot}</Text>}
       >
-        <Typography.Text type="secondary">
+        <Text type="secondary">
           {pb(loaded)} of {pb(total)}
-        </Typography.Text>
-        <Typography.Text type="secondary">{pb(rate)}/s</Typography.Text>
-        <Typography.Text type="secondary">
+        </Text>
+        <Text type="secondary">{pb(rate)}/s</Text>
+        <Text type="secondary">
           {estimatedTime
             ? formatDistanceToNow(estimatedTime)
             : "Estimated time unknown"}
-        </Typography.Text>
+        </Text>
       </Space>
       {progressHook.error ? (
         <FormError visible enrich error={progressHook.error as any} />

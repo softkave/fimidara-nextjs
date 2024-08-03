@@ -59,7 +59,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
       <ListHeader
         label="Collaboration Requests"
         buttons={
-          <Space>
+          <div className="flex align-center space-x-2">
             <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
               <IconButton icon={<PlusOutlined />} />
             </Link>
@@ -67,7 +67,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
               workspaceId={workspaceId}
               targetType={"collaborationRequest"}
             />
-          </Space>
+          </div>
         }
       />
       <PaginatedContent

@@ -1,3 +1,5 @@
+"use client";
+
 import IconButton from "@/components/utils/buttons/IconButton";
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
@@ -15,7 +17,8 @@ import { getBaseError } from "@/lib/utils/errors";
 import { indexArray } from "@/lib/utils/indexArray";
 import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Text from "antd/es/typography/Text";
 import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
@@ -86,13 +89,11 @@ const AssignedPermissionGroupList: React.FC<
                     {permissionGroup.name}
                   </Link>
                   {permissionGroup.description && (
-                    <Typography.Text type="secondary">
-                      {permissionGroup.description}
-                    </Typography.Text>
+                    <Text type="secondary">{permissionGroup.description}</Text>
                   )}
-                  <Typography.Text type="secondary">
+                  <Text type="secondary">
                     Assigned {formatDateTime(item.assignedAt)}
-                  </Typography.Text>
+                  </Text>
                 </div>
               }
               menu={

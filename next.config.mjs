@@ -1,16 +1,13 @@
-// import markdocNextJs from "@markdoc/next.js";
-// @ts-ignore
-// import withPlugins from "next-compose-plugins";
-
-import markdocNextJs from "@markdoc/next.js";
+import bundleAnalyzer from "@next/bundle-analyzer";
+import mdxNext from "@next/mdx";
 import withPlugins from "next-compose-plugins";
 
-const withMarkdoc = markdocNextJs();
+const withMDX = mdxNext();
 
-// const withBundleAnalyzer = require("@next/bundle-analyzer")({
-//   enabled: process.env.ANALYZE === "true",
-//   openAnalyzer: false,
-// });
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+  openAnalyzer: false,
+});
 
 /** @type {import('next').NextConfig} */
 const baseNextConfig = {
@@ -18,7 +15,7 @@ const baseNextConfig = {
     instrumentationHook: true,
   },
   reactStrictMode: true,
-  pageExtensions: ["md", "mdoc", "js", "jsx", "ts", "tsx"],
+  pageExtensions: ["md", "mdx", "mdoc", "js", "jsx", "ts", "tsx"],
   redirects() {
     return [
       {
@@ -63,11 +60,12 @@ const baseNextConfig = {
     "rc-tree",
     "rc-table",
   ],
+  swcMinify: true,
 };
 
 const nextConfig = withPlugins(
   [
-    [withMarkdoc],
+    [withMDX],
     // [withBundleAnalyzer],
     /* ...other plugins... */
   ],

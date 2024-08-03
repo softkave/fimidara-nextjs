@@ -16,7 +16,12 @@ export interface FieldObjectRenderProps {
 }
 
 const FieldObjectRender: React.FC<FieldObjectRenderProps> = (props) => {
-  const { fieldObject, modes, propName, isForJsSdk } = props;
+  const {
+    fieldObject,
+    propName,
+    isForJsSdk,
+    modes = [kJsonMode, kTableMode],
+  } = props;
   const items: TabsProps["items"] = [];
 
   if (modes?.includes(kJsonMode))
@@ -45,10 +50,6 @@ const FieldObjectRender: React.FC<FieldObjectRenderProps> = (props) => {
     });
 
   return <Tabs defaultActiveKey={first(modes)} items={items} />;
-};
-
-FieldObjectRender.defaultProps = {
-  modes: [kJsonMode, kTableMode],
 };
 
 export default FieldObjectRender;

@@ -1,6 +1,6 @@
-import FormError from "@/components/form/FormError";
-import { formClasses } from "@/components/form/classNames";
 import { FormAlert } from "@/components/utils/FormAlert";
+import FormError from "@/components/utils/form/FormError.tsx";
+import styles from "@/components/utils/form/form.module.css";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { permissionGroupPermissionsGroupConstants } from "@/lib/definitions/permissionGroups";
 import {
@@ -149,13 +149,13 @@ export default function AssignPermissionGroupsForm(
   );
 
   const mainNode = (
-    <div className={cx(formClasses.formBodyClassName, className)} style={style}>
-      <div className={formClasses.formContentWrapperClassName}>
+    <div className={cx(styles.formBody, className)} style={style}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           {/* <Form.Item>
-            <Typography.Title level={4}>
+            <Title level={4}>
               Assign Permission Group Form
-            </Typography.Title>
+            </Title>
           </Form.Item> */}
           <FormAlert error={mergedHook.error} />
           {permissionGroupsNode}

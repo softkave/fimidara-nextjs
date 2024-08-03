@@ -1,7 +1,7 @@
 import ImageAndUploadAvatar from "@/components/utils/ImageAndUploadAvatar";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { systemConstants } from "@/lib/definitions/system";
-import { KeyValueDynamicKeys, useKvStore } from "@/lib/hooks/storeHooks";
+import { KeyValueDynamicKeys, useKvStore } from "@/lib/hooks/kvStore.ts";
 import React from "react";
 
 export interface IUploadWorkspaceAvatarProps extends StyleableComponentProps {

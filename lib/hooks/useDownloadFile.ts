@@ -1,3 +1,5 @@
+"use client";
+
 import { useRequest } from "ahooks";
 import { message } from "antd";
 import { getFimidaraReadFileURL } from "fimidara";

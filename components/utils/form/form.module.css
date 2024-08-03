@@ -1,0 +1,17 @@
+.formBody {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.formContentWrapper {
+  width: 100%;
+  max-width: 520px;
+  padding: 16px 0px;
+  box-sizing: content-box;
+  overflow-y: auto;
+  flex-direction: column;
+  margin: auto;
+}

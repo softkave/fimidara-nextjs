@@ -1,0 +1,20 @@
+.root {
+  display: flex;
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.sideLinks {
+  display: flex;
+  flex: 1;
+  margin-left: 16px;
+  justify-content: flex-end;
+}
+
+.prefixBtnContainer {
+  margin-right: 16px;
+}
+
+.login {
+  text-decoration: underline;
+}

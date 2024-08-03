@@ -1,19 +1,22 @@
+import { errorMessageNotificatition } from "@/components/utils/errorHandling.tsx";
+import InlineLoading from "@/components/utils/page/InlineLoading.tsx";
+import PageError from "@/components/utils/page/PageError.tsx";
+import PageLoading from "@/components/utils/page/PageLoading.tsx";
+import PageNothingFound from "@/components/utils/page/PageNothingFound.tsx";
+import { appDimensions } from "@/components/utils/theme.ts";
+import { useUserCollaborationRequestFetchHook } from "@/lib/hooks/fetchHooks/userCollaborationRequest.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestResponseMutationHook } from "@/lib/hooks/mutationHooks";
-import { useUserCollaborationRequestFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
-import { Button, Space, Typography, message } from "antd";
+import { Button, Space, message } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
+import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
 import { formatRelative } from "date-fns";
-import { errorMessageNotificatition } from "../../utils/errorHandling";
-import InlineLoading from "../../utils/page/InlineLoading";
-import PageError from "../../utils/page/PageError";
-import PageLoading from "../../utils/page/PageLoading";
-import PageNothingFound from "../../utils/page/PageNothingFound";
-import { appDimensions } from "../../utils/theme";
 
 export interface IUserCollaborationRequestProps {
-  requestId: string;
+  params: { requestId: string };
 }
 
 const classes = {
@@ -25,7 +28,7 @@ const classes = {
 };
 
 function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
-  const { requestId } = props;
+  const { requestId } = props.params;
   const { fetchState, clearFetchState } = useUserCollaborationRequestFetchHook({
     requestId,
   });
@@ -99,34 +102,25 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
             </Space>
           )
         ) : (
-          <Typography.Text>
-            Collaboration request{" "}
-            <Typography.Text strong>{statusText}</Typography.Text> {statusDate}
-          </Typography.Text>
+          <Text>
+            Collaboration request <Text strong>{statusText}</Text> {statusDate}
+          </Text>
         );
 
       return (
         <div className={classes.main}>
           <Space direction="vertical" size={"large"}>
             <Space direction="vertical" size={2}>
-              <Typography.Title level={4} style={{ margin: 0 }}>
+              <Title level={4} style={{ margin: 0 }}>
                 Collaboration Request from {resource.workspaceName}
-              </Typography.Title>
-              <Typography.Text type="secondary">
-                Sent {createdDate}
-              </Typography.Text>
+              </Title>
+              <Text type="secondary">Sent {createdDate}</Text>
             </Space>
             {resource.message && expirationDate ? (
               <Space direction="vertical" size={2}>
-                {resource.message && (
-                  <Typography.Paragraph>
-                    {resource.message}
-                  </Typography.Paragraph>
-                )}
+                {resource.message && <Paragraph>{resource.message}</Paragraph>}
                 {expirationDate && (
-                  <Typography.Text type="secondary">
-                    Expires {expirationDate}
-                  </Typography.Text>
+                  <Text type="secondary">Expires {expirationDate}</Text>
                 )}
               </Space>
             ) : null}

@@ -1,8 +1,9 @@
+"use client";
+
 import { cx } from "@emotion/css";
 import Head from "next/head";
 import React, { useState } from "react";
 import useAppResponsive from "../../lib/hooks/useAppResponsive";
-import { DocsSideNav } from "./DocsSideNav";
 
 export interface IDocsMainProps {
   pageTitle: string;
@@ -30,13 +31,6 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
       </Head>
       <div className={cx("docsMain", className)}>
         <div className="docsMainInner">
-          {showMenu ? (
-            <div className="docsSideNav">
-              <DocsSideNav onClose={() => setShowMenu(false)} />
-            </div>
-          ) : (
-            <span />
-          )}
           <main>
             <div className={contentClassName}>{children}</div>
           </main>
@@ -51,7 +45,7 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
           }
           .docsMainInner {
             display: grid;
-            grid-template-columns: auto 1fr;
+            grid-template-columns: 1fr;
             width: 100%
             height: 100vh;
             overflow: hidden;

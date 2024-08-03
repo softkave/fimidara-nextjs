@@ -1,3 +1,5 @@
+import styles from "@/components/utils/form/form.module.css";
+import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
 import {
   INewPermissionGroupInput,
@@ -12,12 +14,11 @@ import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
 import { css, cx } from "@emotion/css";
-import { Button, Form, Input, Typography, message } from "antd";
+import { Button, Form, Input, message } from "antd";
+import Title from "antd/es/typography/Title";
 import { PermissionGroup } from "fimidara";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import * as yup from "yup";
-import FormError from "../../../form/FormError";
-import { formClasses } from "../../../form/classNames";
 
 const permissionGroupValidation = yup.object().shape({
   name: systemValidation.name.required(messages.fieldIsRequired),
@@ -150,11 +151,11 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   );
 
   return (
-    <div className={cx(formClasses.formBodyClassName, className)}>
-      <div className={formClasses.formContentWrapperClassName}>
+    <div className={cx(styles.formBody, className)}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>Permission Group Form</Typography.Title>
+            <Title level={4}>Permission Group Form</Title>
           </Form.Item>
           <FormAlert error={mergedHook.error} />
           {nameNode}

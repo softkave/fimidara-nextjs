@@ -1,5 +1,8 @@
+"use client";
+
 import ItemList from "@/components/utils/list/ItemList";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Title from "antd/es/typography/Title";
 import {
   UsageCosts,
   UsageRecord,
@@ -54,7 +57,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
   return (
     <Space direction="vertical" style={{ width: "100%" }} size="large">
       <Space direction="vertical" style={{ width: "100%" }} size="middle">
-        <Typography.Title level={5}>Fulfilled Requests</Typography.Title>
+        <Title level={5}>Fulfilled Requests</Title>
         <ItemList
           bordered
           items={fulfilledRecords}
@@ -63,7 +66,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
         />
       </Space>
       <Space direction="vertical" style={{ width: "100%" }} size="middle">
-        <Typography.Title level={5}>Dropped Requests</Typography.Title>
+        <Title level={5}>Dropped Requests</Title>
         <ItemList
           bordered
           items={droppedRecords}

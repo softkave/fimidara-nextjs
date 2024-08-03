@@ -1,3 +1,5 @@
+"use client";
+
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
 import { appWorkspacePaths } from "@/lib/definitions/system";
@@ -27,7 +29,7 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
       <ListHeader
         label="Collaborators"
         buttons={
-          <Space>
+          <div className="flex align-center space-x-2">
             <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
               <IconButton icon={<PlusOutlined />} />
             </Link>
@@ -36,7 +38,7 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
               targetType={"user"}
             />
             {menu}
-          </Space>
+          </div>
         }
       />
       <CollaboratorListContainer {...props} />

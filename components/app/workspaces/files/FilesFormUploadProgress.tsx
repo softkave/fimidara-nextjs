@@ -1,6 +1,8 @@
 import { TransferProgressList } from "@/components/utils/TransferProgress";
 import IconButton from "@/components/utils/buttons/IconButton";
-import { Form, Typography } from "antd";
+import { Form } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
+import Text from "antd/es/typography/Text";
 import { FiDownload } from "react-icons/fi";
 
 export interface FilesFormUploadProgressProps {
@@ -13,7 +15,7 @@ export function FilesFormUploadProgress(props: FilesFormUploadProgressProps) {
   if (identifiers.length > 0) {
     return (
       <Form.Item>
-        <Typography.Paragraph type="secondary">
+        <Paragraph type="secondary">
           You can navigate away from this page and track the upload progress
           using the{" "}
           <IconButton
@@ -21,9 +23,8 @@ export function FilesFormUploadProgress(props: FilesFormUploadProgressProps) {
             icon={<FiDownload />}
             title={`Uploading files progress button appearance`}
           />{" "}
-          <Typography.Text strong>Uploading files progress</Typography.Text>{" "}
-          button.
-        </Typography.Paragraph>
+          <Text strong>Uploading files progress</Text> button.
+        </Paragraph>
         <TransferProgressList identifiers={identifiers} />
       </Form.Item>
     );

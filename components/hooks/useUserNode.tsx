@@ -1,9 +1,9 @@
-import { useLogout } from "@/lib/hooks/sessionHook";
+import { useUserSessionFetchHook } from "@/lib/hooks/fetchHooks/session.ts";
+import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
 import assert from "assert";
 import { LoginResult } from "fimidara";
 import React from "react";
 import { useFetchSingleResourceFetchState } from "../../lib/hooks/fetchHookUtils";
-import { useUserSessionFetchHook } from "../../lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "../../lib/utils/errors";
 import PageError from "../utils/page/PageError";
 import PageLoading from "../utils/page/PageLoading";
@@ -23,7 +23,7 @@ export function useUserNode(): IUseUserNodeResult {
   const { fetchState } = useUserSessionFetchHook(undefined);
   const { isLoading, error, resource, other } =
     useFetchSingleResourceFetchState(fetchState);
-  const { logout } = useLogout();
+  const { requestLogout } = useRequestLogout();
   let renderedNode: React.ReactElement | null = null;
 
   if (error) {
@@ -31,7 +31,7 @@ export function useUserNode(): IUseUserNodeResult {
       <PageError
         message={getBaseError(error) || "Error fetching user"}
         actions={[
-          { children: "Logout", onClick: () => logout(), danger: true },
+          { children: "Logout", onClick: () => requestLogout(), danger: true },
         ]}
       />
     );

@@ -5,14 +5,15 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/fetchHooks/permissionGroup.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
-import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
 import assert from "assert";
 import { noop } from "lodash-es";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React from "react";
 import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
@@ -65,12 +66,12 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
               direction="vertical"
               label="Description"
               node={
-                <Typography.Paragraph
+                <Paragraph
                   ellipsis={{ rows: 2 }}
                   className={appClasses.muteMargin}
                 >
                   {resource.description}
-                </Typography.Paragraph>
+                </Paragraph>
               }
             />
           )}

@@ -68,7 +68,7 @@ function EntityPermissionForm<T extends { resourceId: string }>(
           return 0;
         }
       });
-  }, [everyAction, getActionPermission]);
+  }, [everyAction, getActionPermission, actions]);
 
   return (
     <PermissionActionList

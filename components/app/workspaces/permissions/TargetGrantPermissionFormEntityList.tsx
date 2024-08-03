@@ -125,7 +125,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
         };
       }),
     };
-  }, [entities, targetId, targetType, workspaceId, actions]);
+  }, [entities, targetId, workspaceId, actions]);
 
   const rpHook = useResolveEntityPermissionsFetchHook(params);
   const rpState = useFetchArbitraryFetchState(rpHook.fetchState);
@@ -161,7 +161,7 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
       setUpdatedPermissionsMap(updated);
       onChange(updated, rpMap);
     },
-    [rpMap, updatedPermissionsMap]
+    [rpMap, updatedPermissionsMap, onChange]
   );
 
   const collapseItems = entities.map((entity): CollapseItemType => {

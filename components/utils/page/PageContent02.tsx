@@ -37,9 +37,7 @@ function PageContent02<T>(props: IPageContent02Props<T>) {
         showMessageOnly={isDataFetched}
       />
     );
-  }
-
-  if (isLoading) {
+  } else if (isLoading) {
     contentNode = (
       <Space direction="vertical" size="middle" style={{ width: "100%" }}>
         {contentNode}
@@ -49,9 +47,7 @@ function PageContent02<T>(props: IPageContent02Props<T>) {
         />
       </Space>
     );
-  }
-
-  if (data) {
+  } else if (data) {
     const dataNode = render(data);
     contentNode = (
       <Space direction="vertical" size="middle" style={{ width: "100%" }}>

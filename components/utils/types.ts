@@ -1,4 +1,4 @@
-import { Menu } from "antd";
+import { Menu, MenuProps } from "antd";
 import { AppError } from "../../lib/utils/errors";
 
 export type SelectInfo = Parameters<
@@ -16,3 +16,6 @@ export type ElementError =
   | Error[]
   | AppError
   | AppError[];
+
+export type AntDMenuItem = Required<MenuProps>["items"][number];
+export type AntDMenuMode = Required<MenuProps>["mode"];

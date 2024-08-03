@@ -1,5 +1,7 @@
 import { css, cx } from "@emotion/css";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
 import { forEach, map } from "lodash-es";
 import React from "react";
 import { appClasses } from "../utils/theme";
@@ -33,16 +35,18 @@ const classes = {
     margin: "24px 0px",
   }),
   jsonEntry: css({
-    margin: "0px 24px",
+    margin: "0px 16px",
   }),
   jsonContent: css({
     padding: "16px",
     backgroundColor: "#f0f0f0",
     borderRadius: "4px",
+    fontFamily: `var(--font-code), monospace !important`,
 
     "& *": {
       fontSize: "13px !important",
-      fontFamily: `'Source Code Pro', monospace !important`,
+      fontFamily: `var(--font-code), monospace !important`,
+      fontWeight: "500 !important",
     },
   }),
   title: css({ fontSize: "14px !important" }),
@@ -53,12 +57,14 @@ const FieldObjectAsJson: React.FC<FieldObjectAsJsonProps> = (props) => {
   const objectsToProcess = useContainedFieldObjects({ fieldObject });
   const nodes = React.useMemo(() => {
     const nodes: React.ReactNode[] = [];
-    objectsToProcess.forEach((nextObject) => {
+    let counter = 0;
+    objectsToProcess.forEach((nextObject, index) => {
       nodes.push(
         renderFieldObjectAsJson(
           nextObject,
           isForJsSdk || false,
-          nextObject === fieldObject ? propName : undefined
+          nextObject === fieldObject ? propName : undefined,
+          nextObject.name || counter++
         )
       );
     });
@@ -113,17 +119,17 @@ export function renderJsonFieldType(
     if (isForJsSdk)
       return (
         <span>
-          <Typography.Text code={!isForJsSdk}>string</Typography.Text> |{" "}
+          <Text code={!isForJsSdk}>string</Text> |{" "}
           <a href="https://nodejs.org/api/stream.html#class-streamreadable">
-            <Typography.Text code={!isForJsSdk} style={{ color: "inherit" }}>
+            <Text code={!isForJsSdk} style={{ color: "inherit" }}>
               Readable
-            </Typography.Text>
+            </Text>
           </a>{" "}
           |{" "}
           <a href="https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream">
-            <Typography.Text code={!isForJsSdk} style={{ color: "inherit" }}>
+            <Text code={!isForJsSdk} style={{ color: "inherit" }}>
               ReadableStream
-            </Typography.Text>
+            </Text>
           </a>
         </span>
       );
@@ -142,14 +148,15 @@ export function renderJsonFieldType(
 function renderFieldObjectAsJson(
   nextObject: FieldObject,
   isForJsSdk: boolean,
-  propName?: string
+  propName: string | undefined,
+  key: string | number
 ) {
   const rows = map(nextObject.fields, (fieldbase, key) => {
     const keyNode = <span>{key}</span>;
     const typeNode = renderJsonFieldType(fieldbase.data, isForJsSdk);
     const separator = fieldbase.required ? ":" : "?:";
     return (
-      <div className={classes.jsonEntry}>
+      <div className={classes.jsonEntry} key={key}>
         {keyNode}
         {separator} {typeNode}
       </div>
@@ -157,22 +164,22 @@ function renderFieldObjectAsJson(
   });
 
   return (
-    <div className={classes.jsonRoot}>
+    <div className={classes.jsonRoot} key={key}>
       <Space split={htmlCharacterCodes.doubleDash}>
-        {propName && <Typography.Text code>{propName}</Typography.Text>}
+        {propName && <Text code>{propName}</Text>}
         {nextObject.name && (
-          <Typography.Title
+          <Title
             id={getTypeNameID(nextObject.name)}
             level={5}
             className={cx(classes.title, appClasses.muteMargin)}
           >
             {nextObject.name}
-          </Typography.Title>
+          </Title>
         )}
         {nextObject.required ? (
-          <Typography.Text code>Required</Typography.Text>
+          <Text code>Required</Text>
         ) : (
-          <Typography.Text code>Optional</Typography.Text>
+          <Text code>Optional</Text>
         )}
       </Space>
       <FieldDescription fieldbase={nextObject} type="secondary" />

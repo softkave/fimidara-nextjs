@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { Typography } from "antd";
+import Title from "antd/es/typography/Title";
 import React from "react";
 
 export interface IComponentHeaderProps {
@@ -28,9 +28,9 @@ const ComponentHeader: React.FC<IComponentHeaderProps> = (props) => {
   return (
     <div className={cx(classes.root, className)}>
       {prefixNode && <div className={classes.prefix}>{prefixNode}</div>}
-      <Typography.Title copyable={copyable} level={4} className={classes.title}>
+      <Title copyable={copyable} level={4} className={classes.title}>
         {title}
-      </Typography.Title>
+      </Title>
       {children}
     </div>
   );

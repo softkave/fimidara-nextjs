@@ -1,3 +1,5 @@
+import { cn } from "@/components/utils.ts";
+import styles from "@/components/utils/form/form.module.css";
 import { folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
@@ -8,13 +10,13 @@ import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
 import { workspaceValidationParts } from "@/lib/validation/workspace";
-import { css, cx } from "@emotion/css";
-import { Button, Form, Input, Space, Typography, message } from "antd";
+import { css } from "@emotion/css";
+import { Button, Form, Input, Space, message } from "antd";
+import Title from "antd/es/typography/Title";
 import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import * as yup from "yup";
-import FormError from "../../form/FormError";
-import { formClasses } from "../../form/classNames";
+import FormError from "../../utils/form/FormError";
 import { FormAlert } from "../../utils/FormAlert";
 import { getRootnameFromName } from "./utils";
 
@@ -181,11 +183,11 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
   );
 
   return (
-    <div className={cx(formClasses.formBodyClassName, className)}>
-      <div className={formClasses.formContentWrapperClassName}>
+    <div className={cn(styles.formBody, className)}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>Workspace Form</Typography.Title>
+            <Title level={4}>Workspace Form</Title>
           </Form.Item>
           <FormAlert error={stateHook.error} />
           {nameNode}

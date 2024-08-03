@@ -10,7 +10,7 @@ export type AppTabItem = {
 };
 
 export interface AppTabsProps extends StyleableComponentProps {
-  activeKey: string;
+  activeKey?: string;
   activeKeyClassName?: string;
   itemClassName?: string;
   items: Array<AppTabItem>;

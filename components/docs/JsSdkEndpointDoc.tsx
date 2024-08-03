@@ -1,5 +1,7 @@
+"use client";
+
 import assert from "assert";
-import React from "react";
+import React, { useMemo } from "react";
 import JsSdkFunction from "./JsSdkFunction";
 import {
   FieldBinary,
@@ -25,9 +27,16 @@ const JsSdkEndpointDoc: React.FC<JsSdkEndpointDocProps> = (props) => {
 
   const basePathname = endpoint.basePathname;
   assert(basePathname);
-  const methodName =
-    "FimidaraEndpoints" +
-    basePathname.replaceAll("/v1", "").replaceAll("/", ".");
+  const methodName = useMemo(
+    () =>
+      "FimidaraEndpoints" +
+      basePathname
+        .split("/")
+        .filter((p) => !p.startsWith(":") && p !== "v1")
+        .join("/")
+        .replaceAll("/", "."),
+    [basePathname]
+  );
 
   return (
     <JsSdkFunction

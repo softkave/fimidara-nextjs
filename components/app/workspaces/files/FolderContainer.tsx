@@ -1,8 +1,8 @@
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
+import { useWorkspaceFolderFetchHook } from "@/lib/hooks/fetchHooks/folder.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
-import { useWorkspaceFolderFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Folder } from "fimidara";
 import React from "react";

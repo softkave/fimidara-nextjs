@@ -1,14 +1,14 @@
 import { toCompactArray } from "@/lib/utils/fns";
-import { Typography } from "antd";
+import Title from "antd/es/typography/Title";
 import { first } from "lodash-es";
 import Link from "next/link";
 import React from "react";
+import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 import {
   fimidaraRestApiNavItems,
   getNavItemPath,
   restApiRawNavItems,
 } from "./navItems";
-import { IRawNavItem } from "./types";
 
 export interface RestApiIndexProps {}
 
@@ -46,9 +46,9 @@ function renderNavItemList(
 
   return (
     <div key={parentPath}>
-      <Typography.Title level={5} style={{ margin: "8px 0px" }}>
+      <Title level={5} style={{ margin: "8px 0px" }}>
         {parentLabel}
-      </Typography.Title>
+      </Title>
       <ul key={parentPath}>{nodes}</ul>
     </div>
   );

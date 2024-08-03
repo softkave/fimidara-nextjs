@@ -1,7 +1,9 @@
+"use client";
+
 import { FimidaraEndpointProgressEvent } from "fimidara";
 import { merge, uniq } from "lodash-es";
 import React from "react";
-import { KeyValueDynamicKeys, useKvStore } from "./storeHooks";
+import { KeyValueDynamicKeys, useKvStore } from "./kvStore";
 
 export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
   const [identifiers, setIdentifiers] = React.useState(inputIdentifiers);

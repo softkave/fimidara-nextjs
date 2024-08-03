@@ -1,82 +1,43 @@
-import { css, cx } from "@emotion/css";
-import { Space } from "antd";
-import { useRouter } from "next/router";
+import { appRootPaths } from "@/lib/definitions/system.ts";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import Title from "antd/es/typography/Title";
+import { usePathname } from "next/navigation";
 import React from "react";
-import { FiArrowLeft } from "react-icons/fi";
-import { appWorkspacePaths } from "../../lib/definitions/system";
-import { RESOURCE_TYPE_SHORT_NAMES } from "../../lib/utils/resource";
-import IconButton from "../utils/buttons/IconButton";
-import AppUserHeader from "./AppUserHeader";
-import AppWorkspaceHeader from "./AppWorkspaceHeader";
-import UserMenu from "./UserMenu";
-import { UploadingFilesProgressButton } from "./workspaces/files/UploadingFilesProgress";
+import { cn } from "../utils.ts";
+import IconButton from "../utils/buttons/IconButton.tsx";
+import styles from "./AppHeader.module.css";
+import { useAppMenu } from "./useAppMenu.tsx";
+import UserMenu from "./UserMenu.tsx";
+import { UploadingFilesProgressButton } from "./workspaces/files/UploadingFilesProgress.tsx";
 
 export interface IAppHeaderProps {
   className?: string;
   style?: React.CSSProperties;
 }
 
-const classes = {
-  root: css({
-    display: "flex",
-    padding: "0px 16px",
-    borderBottom: "2px solid #f0f0f0",
-    alignItems: "center",
-  }),
-  sideLinks: css({
-    display: "flex",
-    marginLeft: "16px",
-    justifyContent: "flex-end",
-  }),
-  headers: css({
-    flex: 1,
-    overflowX: "auto",
-    overflowY: "hidden",
-    whiteSpace: "nowrap",
-  }),
-  back: css({
-    paddingRight: "16px",
-    marginRight: "16px",
-    borderRight: "2px solid #f0f0f0",
-  }),
-};
-
 export default function AppHeader(props: IAppHeaderProps) {
   const { className, style } = props;
-  const router = useRouter();
-  const workspaceId = getWorkspaceId(router.asPath);
+  const { isOpen, toggleAppMenu } = useAppMenu();
+  const pathname = usePathname();
 
+  const isDocs = pathname.startsWith(appRootPaths.docs);
   return (
-    <div className={cx(classes.root, className)} style={style}>
-      {workspaceId && (
-        <div className={classes.back}>
-          <IconButton
-            icon={<FiArrowLeft />}
-            onClick={() => {
-              router.push(appWorkspacePaths.workspaces);
-            }}
-          />
-        </div>
-      )}
-      <div className={classes.headers}>
-        {workspaceId ? (
-          <AppWorkspaceHeader workspaceId={workspaceId} />
-        ) : (
-          <AppUserHeader />
-        )}
+    <div className={cn(styles.root, className)} style={style}>
+      <div className={styles.icon}>
+        <IconButton
+          icon={isOpen ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
+          onClick={toggleAppMenu}
+        />
       </div>
-      <Space className={classes.sideLinks} size="middle">
+      <div className={styles.headers}>
+        <Title level={1} className="my-2 text-xl">
+          {isDocs ? "fimidara docs" : "fimidara"}
+        </Title>
+      </div>
+      <div className="flex items-center space-x-2">
         <UploadingFilesProgressButton />
         <UserMenu />
-      </Space>
+      </div>
     </div>
   );
-}
-
-function getWorkspaceId(path: string) {
-  const [empty01, p01, workspaceId] = path.split("/");
-  const isWorkspace = workspaceId?.includes(
-    RESOURCE_TYPE_SHORT_NAMES["workspace"]
-  );
-  if (isWorkspace) return workspaceId;
 }

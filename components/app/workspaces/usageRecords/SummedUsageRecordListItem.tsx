@@ -1,5 +1,7 @@
 import { getUsageForCost } from "@/lib/definitions/usageRecord";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
 import {
   UsageRecordCategory,
   UsageRecordFulfillmentStatus,
@@ -66,10 +68,10 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
 
   return (
     <Space direction="vertical" size="small">
-      <Typography.Title level={5} type="secondary">
+      <Title level={5} type="secondary">
         {labelText}
-      </Typography.Title>
-      <Typography.Text>{usageText}</Typography.Text>
+      </Title>
+      <Text>{usageText}</Text>
     </Space>
   );
 };

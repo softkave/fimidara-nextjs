@@ -1,9 +1,11 @@
+"use client";
+
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
-import { Typography } from "antd";
+import Text from "antd/es/typography/Text";
 import { AgentToken } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -34,9 +36,7 @@ const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
               {item.name || item.resourceId}
             </Link>
             {item.description && (
-              <Typography.Text type="secondary">
-                {item.description}
-              </Typography.Text>
+              <Text type="secondary">{item.description}</Text>
             )}
           </div>
         }

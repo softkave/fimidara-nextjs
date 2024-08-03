@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { IPaginationQuery } from "../api/types";
 import { systemConstants } from "../definitions/system";

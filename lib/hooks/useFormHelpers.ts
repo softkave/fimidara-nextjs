@@ -1,3 +1,5 @@
+"use client";
+
 import { FormikConfig, FormikProps, useFormik } from "formik";
 import React from "react";
 import { flattenErrorList, toAppErrorList } from "../utils/errors";

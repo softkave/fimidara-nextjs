@@ -1,16 +1,17 @@
-import { message, Typography } from "antd";
+import { appUserPaths } from "@/lib/definitions/system.ts";
+import { messages } from "@/lib/messages/messages.ts";
+import { message } from "antd";
+import Text from "antd/es/typography/Text";
 import { ArgsProps } from "antd/lib/message";
 import Link from "next/link";
 import React from "react";
-import { appUserPaths } from "../../lib/definitions/system";
-import { messages } from "../../lib/messages/messages";
+import { appComponentConstants, htmlCharacterCodes } from "./utils";
 import {
-  EmailAddressNotVerifiedError,
   getBaseError,
   hasErrorTypes,
+  EmailAddressNotVerifiedError,
   toAppErrorList,
-} from "../../lib/utils/errors";
-import { appComponentConstants, htmlCharacterCodes } from "./utils";
+} from "@/lib/utils/errors.ts";
 
 export function enrichErrorMessage(error: any) {
   if (!error) {
@@ -24,13 +25,13 @@ export function enrichErrorMessage(error: any) {
 
   if (hasEmailNotVerifiedError) {
     errorMessage = (
-      <Typography.Text>
+      <Text>
         {errorMessage} {htmlCharacterCodes.doubleDash}{" "}
         <Link href={appUserPaths.settings}>
           <a>Goto Settings</a>
         </Link>{" "}
         to verify your email address.
-      </Typography.Text>
+      </Text>
     );
   }
 

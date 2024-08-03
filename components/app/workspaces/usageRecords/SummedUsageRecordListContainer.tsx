@@ -1,3 +1,5 @@
+"use client";
+
 import ListHeader from "@/components/utils/list/ListHeader";
 import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";

@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
-import { Col, Row, Space, Typography } from "antd";
+import { Col, Row, Space } from "antd";
+import Title from "antd/es/typography/Title";
 import AestheticDot from "./AestheticDot";
 import AestheticText from "./AestheticText";
 
@@ -38,7 +39,7 @@ const classes = {
 export default function Features() {
   return (
     <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
-      <Typography.Title level={4}>Features</Typography.Title>
+      <Title level={4}>Features</Title>
       <Row gutter={[16, 64]}>
         {features.map((feature, i) => (
           <Col key={i} sm={24} lg={12}>

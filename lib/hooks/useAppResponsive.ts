@@ -1,3 +1,5 @@
+"use client";
+
 import { useResponsive } from "ahooks/lib/useResponsive";
 import { IUseResponsiveResult } from "../definitions/types";
 import { useRerunHook } from "./useRerunHook";

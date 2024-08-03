@@ -1,3 +1,5 @@
+"use client";
+
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
 import { appWorkspacePaths } from "@/lib/definitions/system";
@@ -25,7 +27,7 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
       <ListHeader
         label="Agent Tokens"
         buttons={
-          <Space>
+          <div className="flex align-center space-x-2">
             <Link href={appWorkspacePaths.createAgentTokenForm(workspaceId)}>
               <IconButton icon={<PlusOutlined />} />
             </Link>
@@ -34,7 +36,7 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
               targetType={"agentToken"}
             />
             {menu}
-          </Space>
+          </div>
         }
       />
       <AgentTokenListContainer {...props} />

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AgentToken,
   CollaborationRequestForUser,
@@ -49,7 +51,6 @@ import {
   makeFetchResourceHook,
   makeFetchResourceListFetchFn,
   makeFetchResourceListGetFn,
-  makeFetchResourceStoreHook,
   paginatedResourceListShouldFetchFn,
   subscribeAndRemoveIdOnDeleteResources,
 } from "./fetchHookUtils";
@@ -67,6 +68,7 @@ import {
   useWorkspaceUsageRecordsStore,
   useWorkspacesStore,
 } from "./resourceListStores";
+import { makeFetchResourceStoreHook } from "./fetchHooks/makeFetchResourceStoreHook.ts";
 
 async function userWorkspacesInputFetchFn(
   params: GetUserWorkspacesEndpointParams

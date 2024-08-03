@@ -1,3 +1,4 @@
+import { cn } from "@/components/utils.ts";
 import { css, cx } from "@emotion/css";
 import { isString } from "lodash-es";
 import React from "react";
@@ -58,8 +59,8 @@ function ItemList<T>(props: IItemListProps<T>) {
     return (
       <div
         key={getId ? getId(item, index) : index}
-        className={cx(
-          classes.item,
+        className={cn(
+          "py-2",
           bordered && index !== items.length - 1 && classes.bordered,
           itemClassName
         )}

@@ -2,7 +2,8 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
 import { Folder } from "fimidara";
 import path from "path";
 import FolderChildren from "./FolderChildren";
@@ -47,12 +48,12 @@ function FolderComponent(props: FolderProps) {
             direction="vertical"
             label="Description"
             node={
-              <Typography.Paragraph
+              <Paragraph
                 ellipsis={{ rows: 2 }}
                 className={appClasses.muteMargin}
               >
                 {folder.description}
-              </Typography.Paragraph>
+              </Paragraph>
             }
           />
         )}

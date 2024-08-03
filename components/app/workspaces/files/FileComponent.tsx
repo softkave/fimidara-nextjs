@@ -5,9 +5,10 @@ import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
 import { File } from "fimidara";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import FileMenu from "./FileMenu";
 import FolderParentLink from "./FolderParentLink";
 
@@ -74,12 +75,12 @@ function FileComponent(props: FileComponentProps) {
             direction="vertical"
             label="Description"
             node={
-              <Typography.Paragraph
+              <Paragraph
                 ellipsis={{ rows: 2 }}
                 className={appClasses.muteMargin}
               >
                 {file.description}
-              </Typography.Paragraph>
+              </Paragraph>
             }
           />
         )}

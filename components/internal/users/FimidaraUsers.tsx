@@ -1,3 +1,5 @@
+"use client";
+
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
 import PageError from "@/components/utils/page/PageError";
@@ -8,7 +10,8 @@ import { appClasses } from "@/components/utils/theme";
 import { useFetchArbitraryFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useInternalUsersFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space, Tag, Typography } from "antd";
+import { Space, Tag } from "antd";
+import Text from "antd/es/typography/Text";
 import React from "react";
 
 const FimidaraUsers: React.FC<{}> = (props) => {
@@ -32,12 +35,10 @@ const FimidaraUsers: React.FC<{}> = (props) => {
               key={item.resourceId}
               main={
                 <div className={appClasses.thumbnailMain} style={{ rowGap: 4 }}>
-                  <Typography.Text>
+                  <Text>
                     {item.firstName} {item.lastName}
-                  </Typography.Text>
-                  <Typography.Text type="secondary">
-                    {item.email}
-                  </Typography.Text>
+                  </Text>
+                  <Text type="secondary">{item.email}</Text>
                   <div>
                     <Tag>
                       {item.isEmailVerified

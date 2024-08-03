@@ -1,6 +1,9 @@
 import { css } from "@emotion/css";
-import { Divider, Space, Typography } from "antd";
+import { Divider, Space } from "antd";
+import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
 import React from "react";
+import { cn } from "../utils.ts";
 import { htmlCharacterCodes } from "../utils/utils";
 import FieldDescription from "./FieldDescription";
 import { renderJsonFieldType } from "./FieldObjectAsJson";
@@ -36,52 +39,46 @@ const JsSdkFunction: React.FC<JsSdkFunctionProps> = (props) => {
   const paramsNode: React.ReactNode[] = [];
   params?.map((nextParam, index) => {
     if (index) {
-      paramsNode.push(<Divider />);
+      paramsNode.push(<Divider key={`divider-${index}`} />);
     }
 
     paramsNode.push(renderFieldType(nextParam.type, nextParam.name));
   });
 
   return (
-    <Space
-      direction="vertical"
-      style={{ width: "100%" }}
-      size={"large"}
-      className={classes.root}
-    >
-      <div>
-        <Typography.Title
-          level={5}
-          className={classes.fnDeclaration}
-          id={functionName}
-          style={{ margin: 0 }}
-        >
-          <code>{functionName}</code>
-        </Typography.Title>
-      </div>
-      <div>
-        <Typography.Title level={5} className={classes.header}>
+    <div className={cn(classes.root, "space-y-4")}>
+      <Title
+        level={5}
+        className={classes.fnDeclaration}
+        id={functionName}
+        style={{ margin: 0 }}
+        key="title"
+      >
+        <code>{functionName}</code>
+      </Title>
+      <div key="parameters">
+        <Title level={5} className={classes.header}>
           Parameters
-        </Typography.Title>
+        </Title>
         {paramsNode}
       </div>
       {result && (
-        <div>
-          <Typography.Title level={5} className={classes.header}>
+        <div key="result">
+          <Title level={5} className={classes.header}>
             Result
-          </Typography.Title>
+          </Title>
           {renderFieldType(result)}
         </div>
       )}
       {throws && (
-        <div>
-          <Typography.Title level={5} className={classes.header}>
+        <div key="throws">
+          <Title level={5} className={classes.header}>
             Throws
-          </Typography.Title>
+          </Title>
           {renderFieldType(throws)}
         </div>
       )}
-    </Space>
+    </div>
   );
 };
 
@@ -90,7 +87,12 @@ export default JsSdkFunction;
 function renderFieldType(nextParam: any, name?: string) {
   if (isFieldObject(nextParam)) {
     return (
-      <FieldObjectRender isForJsSdk fieldObject={nextParam} propName={name} />
+      <FieldObjectRender
+        isForJsSdk
+        fieldObject={nextParam}
+        propName={name}
+        key={name}
+      />
     );
   } else if (isHttpEndpointMultipartFormdata(nextParam) && nextParam.items) {
     return (
@@ -98,19 +100,20 @@ function renderFieldType(nextParam: any, name?: string) {
         isForJsSdk
         fieldObject={nextParam.items}
         propName={name}
+        key={name}
       />
     );
   } else if (nextParam) {
     const node = renderJsonFieldType(nextParam, true);
     return (
-      <div>
+      <div key={name}>
         <Space split={htmlCharacterCodes.doubleDash}>
-          {name && <Typography.Text code>{name}</Typography.Text>}
-          <Typography.Text code>{node}</Typography.Text>
+          {name && <Text code>{name}</Text>}
+          <Text code>{node}</Text>
           {nextParam.required ? (
-            <Typography.Text code>Required</Typography.Text>
+            <Text code>Required</Text>
           ) : (
-            <Typography.Text code>Optional</Typography.Text>
+            <Text code>Optional</Text>
           )}
         </Space>
         <FieldDescription fieldbase={nextParam} />

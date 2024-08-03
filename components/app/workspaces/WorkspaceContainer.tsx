@@ -1,11 +1,13 @@
+"use client";
+
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
-import { useUserWorkspaceFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Workspace } from "fimidara";
 import React from "react";
 import PageError from "../../utils/page/PageError";
 import PageLoading from "../../utils/page/PageLoading";
 import PageNothingFound from "../../utils/page/PageNothingFound";
+import { useUserWorkspaceFetchHook } from "@/lib/hooks/fetchHooks/workspace.ts";
 
 export interface WorkspaceContainerProps {
   workspaceId: string;

@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { FiGitPullRequest, FiSettings } from "react-icons/fi";
 import { MdOutlineWorkOutline } from "react-icons/md";
 import { appUserPaths, appWorkspacePaths } from "../../lib/definitions/system";
@@ -24,6 +24,8 @@ const classes = {
 export default function AppUserHeader(props: IAppUserHeaderProps) {
   const { className, style } = props;
   const router = useRouter();
+  const p = usePathname();
+
   const onChange = (key: string) => {
     router.push(key);
   };
@@ -45,7 +47,7 @@ export default function AppUserHeader(props: IAppUserHeaderProps) {
       icon: <FiSettings />,
     },
   ];
-  const activeKey = getTabActiveKeyUsingBasePath(router.asPath);
+  const activeKey = getTabActiveKeyUsingBasePath(p);
 
   return (
     <AppTabs
@@ -60,7 +62,7 @@ export default function AppUserHeader(props: IAppUserHeaderProps) {
   );
 }
 
-function getTabActiveKeyUsingBasePath(pathname: string) {
-  const i = pathname.indexOf("/", 1);
-  return i === -1 ? pathname.slice(0) : pathname.slice(0, i);
+function getTabActiveKeyUsingBasePath(pathname?: string | null) {
+  const i = pathname?.indexOf("/", 1);
+  return i === -1 ? pathname?.slice(0) : pathname?.slice(0, i);
 }

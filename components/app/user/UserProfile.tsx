@@ -1,9 +1,8 @@
-import FormError from "@/components/form/FormError";
-import {
-  formBodyClassName,
-  formContentWrapperClassName,
-} from "@/components/form/classNames";
-import { preSubmitCheck } from "@/components/form/formUtils";
+"use client";
+
+import styles from "@/components/utils/form/form.module.css";
+import FormError from "@/components/utils/form/FormError";
+import { preSubmitCheck } from "@/components/utils/form/formUtils";
 import { userConstants } from "@/lib/definitions/user";
 import { useUserUpdateMutationHook } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
@@ -150,8 +149,8 @@ export default function UserProfile(props: IUserProfileProps) {
   );
 
   return (
-    <div className={formBodyClassName}>
-      <div className={formContentWrapperClassName}>
+    <div className={styles.formBody}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           <FormAlert error={updateUserHook.error} />
           {firstNameNode}

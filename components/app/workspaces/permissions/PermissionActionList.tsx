@@ -1,3 +1,5 @@
+"use client";
+
 import ItemList from "@/components/utils/list/ItemList";
 import { kActionLabel } from "@/lib/definitions/system";
 import { FimidaraPermissionAction } from "fimidara";

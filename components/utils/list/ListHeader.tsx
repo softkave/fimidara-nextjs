@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { Typography } from "antd";
+import Title from "antd/es/typography/Title";
 import { isString } from "lodash-es";
 import React from "react";
 
@@ -28,9 +28,9 @@ const ListHeader: React.FC<IListHeaderProps> = (props) => {
       <div className={cx(classes.header, className)} style={style}>
         <div className={classes.label}>
           {isString(label) ? (
-            <Typography.Title level={5} className={classes.title}>
+            <Title level={5} className={classes.title}>
               {label}
-            </Typography.Title>
+            </Title>
           ) : (
             label
           )}

@@ -1,3 +1,5 @@
+"use client";
+
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
 import PageError from "@/components/utils/page/PageError";
@@ -9,7 +11,8 @@ import { useFetchArbitraryFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useInternalWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Text from "antd/es/typography/Text";
 import React from "react";
 
 const FimidaraWorkspaces: React.FC<{}> = (props) => {
@@ -33,10 +36,10 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
               key={item.resourceId}
               main={
                 <div className={appClasses.thumbnailMain} style={{ rowGap: 4 }}>
-                  <Typography.Text>{item.name}</Typography.Text>
-                  <Typography.Text type="secondary">
+                  <Text>{item.name}</Text>
+                  <Text type="secondary">
                     Created {formatDateTime(item.createdAt)}
-                  </Typography.Text>
+                  </Text>
                 </div>
               }
             />

@@ -1,6 +1,9 @@
+"use client";
+
 import { css } from "@emotion/css";
-import { Space, Typography } from "antd";
+import { Typography } from "antd";
 import React from "react";
+import { cn } from "../utils.ts";
 import PageMessage from "../utils/page/PageMessage";
 import { htmlCharacterCodes } from "../utils/utils";
 import FieldObjectAsTable from "./FieldObjectAsTable";
@@ -11,6 +14,8 @@ import {
   isFieldObject,
   isHttpEndpointMultipartFormdata,
 } from "./utils";
+
+const { Title, Text } = Typography;
 
 export interface HttpEndpointDocProps {
   endpoint: HttpEndpointDefinition;
@@ -38,34 +43,25 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
   );
 
   return (
-    <Space
-      direction="vertical"
-      style={{ width: "100%" }}
-      size={48}
-      className={classes.root}
-    >
+    <div style={{ width: "100%" }} className={cn(classes.root, "space-y-4")}>
       <div>
-        <Typography.Title
+        <Title
           copyable
           level={5}
           className={classes.inline}
           style={{ margin: 0 }}
         >
           <code>{endpoint.basePathname}</code>
-        </Typography.Title>{" "}
+        </Title>{" "}
         {htmlCharacterCodes.doubleDash}{" "}
-        <Typography.Title
-          level={5}
-          className={classes.inline}
-          style={{ margin: 0 }}
-        >
+        <Title level={5} className={classes.inline} style={{ margin: 0 }}>
           <code>{endpoint.method}</code>
-        </Typography.Title>
+        </Title>
       </div>
       <div>
-        <Typography.Title level={5} className={classes.header}>
+        <Title level={5} className={classes.header}>
           Path Parameters
-        </Typography.Title>
+        </Title>
         {endpoint.pathParamaters ? (
           <FieldObjectAsTable hideTitle fieldObject={endpoint.pathParamaters} />
         ) : (
@@ -73,9 +69,9 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
         )}
       </div>
       <div>
-        <Typography.Title className={classes.header} level={5}>
+        <Title className={classes.header} level={5}>
           Request Headers
-        </Typography.Title>
+        </Title>
         {endpoint.requestHeaders ? (
           <FieldObjectAsTable hideTitle fieldObject={endpoint.requestHeaders} />
         ) : (
@@ -83,9 +79,9 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
         )}
       </div>
       <div>
-        <Typography.Title className={classes.header} level={5}>
+        <Title className={classes.header} level={5}>
           Request Query
-        </Typography.Title>
+        </Title>
         {endpoint.query ? (
           <FieldObjectAsTable hideTitle fieldObject={endpoint.query} />
         ) : (
@@ -93,9 +89,9 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
         )}
       </div>
       <div>
-        <Typography.Title className={classes.header} level={5}>
+        <Title className={classes.header} level={5}>
           Request Body
-        </Typography.Title>
+        </Title>
         {isFieldObject(endpoint.requestBody) ? (
           <FieldObjectRender fieldObject={endpoint.requestBody} />
         ) : isHttpEndpointMultipartFormdata(endpoint.requestBody) &&
@@ -106,9 +102,9 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
         )}
       </div>
       <div>
-        <Typography.Title className={classes.header} level={5}>
+        <Title className={classes.header} level={5}>
           200 {htmlCharacterCodes.doubleDash} Response Headers
-        </Typography.Title>
+        </Title>
         {endpoint.responseHeaders ? (
           <FieldObjectAsTable
             hideTitle
@@ -119,21 +115,21 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
         )}
       </div>
       <div>
-        <Typography.Title className={classes.header} level={5}>
+        <Title className={classes.header} level={5}>
           200 {htmlCharacterCodes.doubleDash} Response Body
-        </Typography.Title>
+        </Title>
         {isFieldObject(endpoint.responseBody) ? (
           <FieldObjectRender fieldObject={endpoint.responseBody} />
         ) : isFieldBinary(endpoint.responseBody) ? (
-          <Typography.Text code>binary</Typography.Text>
+          <Text code>binary</Text>
         ) : (
           notApplicableNode
         )}
       </div>
       <div>
-        <Typography.Title className={classes.header} level={5}>
+        <Title className={classes.header} level={5}>
           4XX or 5XX {htmlCharacterCodes.doubleDash} Response Headers
-        </Typography.Title>
+        </Title>
         {endpoint.errorResponseHeaders ? (
           <FieldObjectAsTable
             hideTitle
@@ -144,16 +140,16 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
         )}
       </div>
       <div>
-        <Typography.Title className={classes.header} level={5}>
+        <Title className={classes.header} level={5}>
           4XX or 5XX {htmlCharacterCodes.doubleDash} Response Body
-        </Typography.Title>
+        </Title>
         {endpoint.errorResponseBody ? (
           <FieldObjectRender fieldObject={endpoint.errorResponseBody} />
         ) : (
           notApplicableNode
         )}
       </div>
-    </Space>
+    </div>
   );
 };
 

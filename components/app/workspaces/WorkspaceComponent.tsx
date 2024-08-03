@@ -1,13 +1,14 @@
+import ComponentHeader from "@/components/utils/ComponentHeader.tsx";
+import LabeledNode from "@/components/utils/LabeledNode.tsx";
+import { appClasses } from "@/components/utils/theme.ts";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
 import { Workspace } from "fimidara";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React from "react";
-import ComponentHeader from "../../utils/ComponentHeader";
-import LabeledNode from "../../utils/LabeledNode";
-import { appClasses } from "../../utils/theme";
-import WorkspaceMenu from "./WorkspaceMenu";
+import WorkspaceMenu from "./WorkspaceMenu.tsx";
 
 export interface WorkspaceComponentProps {
   workspace: Workspace;
@@ -48,12 +49,12 @@ function WorkspaceComponent(props: WorkspaceComponentProps) {
             direction="vertical"
             label="Description"
             node={
-              <Typography.Paragraph
+              <Paragraph
                 ellipsis={{ rows: 2 }}
                 className={appClasses.muteMargin}
               >
                 {resource.description}
-              </Typography.Paragraph>
+              </Paragraph>
             }
           />
         )}

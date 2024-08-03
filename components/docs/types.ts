@@ -139,10 +139,3 @@ export type HttpEndpointDefinition = {
   errorResponseHeaders?: FieldObject;
   errorResponseBody?: FieldObject;
 };
-
-export interface IRawNavItem {
-  key: string;
-  label: React.ReactNode;
-  withLink?: boolean;
-  children?: IRawNavItem[];
-}

@@ -1,6 +1,7 @@
 import { CloudUploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Typography, Upload, message } from "antd";
+import { Upload, message } from "antd";
+import Text from "antd/es/typography/Text";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import { getFimidaraUploadFileURL } from "fimidara";
 import { defaultTo, first } from "lodash-es";
@@ -63,13 +64,13 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
     } else if (info.file.status === "done") {
       message.success({
         content: (
-          <Typography.Text>
+          <Text>
             {customMessages.successful}.{" "}
-            <Typography.Text strong>
+            <Text strong>
               Please reload the page if your change doesn&apos;t take effect
               soon.
-            </Typography.Text>
-          </Typography.Text>
+            </Text>
+          </Text>
         ),
         key: messageKey,
         // duration: SUCCESS_MESSAGE_DURATION,

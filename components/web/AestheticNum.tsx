@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Typography } from "antd";
+import Text from "antd/es/typography/Text";
 
 const classes = {
   num: css({
@@ -23,8 +23,8 @@ export interface AestheticNumProps {
 export default function AestheticNum(props: AestheticNumProps) {
   const { children } = props;
   return (
-    <Typography.Text type="secondary" className={classes.num}>
+    <Text type="secondary" className={classes.num}>
       {children}
-    </Typography.Text>
+    </Text>
   );
 }

@@ -1,13 +1,19 @@
-import { useLogout } from "@/lib/hooks/sessionHook";
+import { appRootPaths, appUserPaths } from "@/lib/definitions/system.ts";
+import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
 import { Badge, Button, Dropdown, MenuProps, Popover } from "antd";
+import Link from "next/link";
 import { useUserNode } from "../hooks/useUserNode";
 import { insertAntdMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
 
-const LOGOUT_MENU_KEY = "logout";
+const kMenuKeys = {
+  logout: "logout",
+  docs: "docs",
+  app: "app",
+};
 
 export default function UserMenu() {
-  const { logout } = useLogout();
+  const { requestLogout } = useRequestLogout();
   const userNode = useUserNode();
 
   const renderBtnNode = (userId: string, withError?: boolean) => {
@@ -37,14 +43,23 @@ export default function UserMenu() {
 
   const items: MenuProps["items"] = insertAntdMenuDivider([
     {
+      label: <Link href={appUserPaths.workspaces}>App</Link>,
+      key: kMenuKeys.app,
+    },
+    {
+      label: <Link href={appRootPaths.docs}>Docs</Link>,
+      key: kMenuKeys.docs,
+    },
+    {
+      // TODO: use a /logout page
       label: "Logout",
-      key: LOGOUT_MENU_KEY,
+      key: kMenuKeys.logout,
     },
   ]);
 
   const onClick: MenuProps["onClick"] = async (info) => {
-    if (info.key === LOGOUT_MENU_KEY) {
-      logout();
+    if (info.key === kMenuKeys.logout) {
+      requestLogout();
     }
   };
 

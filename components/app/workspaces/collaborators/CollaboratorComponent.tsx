@@ -5,14 +5,14 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
-import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/singleResourceFetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { Space } from "antd";
 import { Collaborator } from "fimidara";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import CollaboratorMenu from "./CollaboratorMenu";
+import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/fetchHooks/workspaceCollaborator.ts";
 
 export interface CollaboratorComponentProps {
   workspaceId: string;

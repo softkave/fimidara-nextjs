@@ -1,6 +1,9 @@
+"use client";
+
 import { ApiOutlined, FileTextOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { List, Space, Typography } from "antd";
+import { List, Space } from "antd";
+import Title from "antd/es/typography/Title";
 import AestheticDot from "./AestheticDot";
 
 interface IDoc {
@@ -37,7 +40,7 @@ const classes = {
 export default function Docs() {
   return (
     <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
-      <Typography.Title level={4}>Docs</Typography.Title>
+      <Title level={4}>Docs</Title>
       <List
         dataSource={docs}
         renderItem={(item) => (

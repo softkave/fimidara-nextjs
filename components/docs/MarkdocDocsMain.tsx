@@ -1,3 +1,5 @@
+"use client";
+
 import { css } from "@emotion/css";
 import { MarkdocNextJsPageProps } from "@markdoc/next.js";
 import React from "react";

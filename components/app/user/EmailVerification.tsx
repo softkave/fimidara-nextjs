@@ -1,11 +1,11 @@
+"use client";
+
+import styles from "@/components/utils/form/form.module.css";
 import { useUserSendEmailVerificationCodeMutationHook } from "@/lib/hooks/mutationHooks";
-import { Button, message, Space, Typography } from "antd";
+import { Button, message, Space } from "antd";
+import Text from "antd/es/typography/Text";
 import { LoginResult } from "fimidara";
 import React from "react";
-import {
-  formBodyClassName,
-  formContentWrapperClassName,
-} from "../../form/classNames";
 import useCooldown from "../../hooks/useCooldown";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
 
@@ -31,17 +31,11 @@ export default function EmailVerification(props: EmailVerificationProps) {
   let rootNode: React.ReactNode = null;
 
   if (session.user.isEmailVerified) {
-    rootNode = (
-      <Typography.Text type="success">
-        Your email address is verified.
-      </Typography.Text>
-    );
+    rootNode = <Text type="success">Your email address is verified.</Text>;
   } else {
     rootNode = (
       <Space direction="vertical">
-        <Typography.Text type="danger">
-          Your email address is not verified.
-        </Typography.Text>
+        <Text type="danger">Your email address is not verified.</Text>
         <Button
           onClick={() => sendEmailVerificationHook.run()}
           loading={sendEmailVerificationHook.loading}
@@ -54,8 +48,8 @@ export default function EmailVerification(props: EmailVerificationProps) {
   }
 
   return (
-    <div className={formBodyClassName}>
-      <div className={formContentWrapperClassName}>{rootNode}</div>
+    <div className={styles.formBody}>
+      <div className={styles.formContentWrapper}>{rootNode}</div>
     </div>
   );
 }

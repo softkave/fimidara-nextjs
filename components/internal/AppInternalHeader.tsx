@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { FiUserPlus, FiUsers } from "react-icons/fi";
 import { MdOutlineWorkOutline } from "react-icons/md";
 import { appInternalPaths } from "../../lib/definitions/system";
@@ -24,6 +24,8 @@ const classes = {
 export default function AppInternalHeader(props: IAppInternalHeaderProps) {
   const { className, style } = props;
   const router = useRouter();
+  const p = usePathname();
+
   const onChange = (key: string) => {
     router.push(key);
   };
@@ -45,7 +47,7 @@ export default function AppInternalHeader(props: IAppInternalHeaderProps) {
       icon: <MdOutlineWorkOutline />,
     },
   ];
-  const activeKey = getTabActiveKeyUsingBasePath(router.asPath);
+  const activeKey = getTabActiveKeyUsingBasePath(p);
   return (
     <AppTabs
       activeKey={activeKey}
@@ -59,7 +61,11 @@ export default function AppInternalHeader(props: IAppInternalHeaderProps) {
   );
 }
 
-function getTabActiveKeyUsingBasePath(pathname: string) {
+function getTabActiveKeyUsingBasePath(pathname?: string | null) {
+  if (!pathname) {
+    return undefined;
+  }
+
   const i = pathname.indexOf("/", 1);
   return i === -1 ? pathname.slice(0) : pathname.slice(0, i);
 }

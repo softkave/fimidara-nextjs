@@ -1,3 +1,5 @@
+"use client";
+
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
@@ -6,7 +8,8 @@ import { SelectInfo } from "@/components/utils/types";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { getResourceId } from "@/lib/utils/resource";
-import { message, Modal, Typography } from "antd";
+import { message, Modal } from "antd";
+import Text from "antd/es/typography/Text";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -72,13 +75,9 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
                 {item.recipientEmail}
               </Link>
               {item.status && (
-                <Typography.Text
-                  code
-                  type="secondary"
-                  style={{ marginTop: "6px" }}
-                >
+                <Text code type="secondary" style={{ marginTop: "6px" }}>
                   {item.status}
-                </Typography.Text>
+                </Text>
               )}
             </div>
           }

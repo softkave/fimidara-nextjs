@@ -1,5 +1,6 @@
 import { FormAlert } from "@/components/utils/FormAlert";
 import CustomIcon from "@/components/utils/buttons/CustomIcon";
+import styles from "@/components/utils/form/form.module.css";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import { useWorkspaceFoldersFetchHook } from "@/lib/hooks/fetchHooks";
@@ -15,16 +16,17 @@ import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Button, Form, Input, Space, Typography, Upload, message } from "antd";
+import { Button, Form, Input, Space, Upload, message } from "antd";
+import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
 import assert from "assert";
 import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
 import { FormikTouched } from "formik";
 import { compact, isString } from "lodash-es";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { ChangeEventHandler, ReactNode, useEffect, useMemo } from "react";
 import * as yup from "yup";
-import FormError from "../../../form/FormError";
-import { formClasses } from "../../../form/classNames";
+import FormError from "../../../utils/form/FormError";
 import { FilesFormUploadProgress } from "./FilesFormUploadProgress";
 import { SelectedFilesForm } from "./SelectedFilesForm";
 import { SingleFileFormValue } from "./types";
@@ -132,7 +134,7 @@ export default function FolderForm(props: FolderFormProps) {
     // TODO: should we have scheduled refresh or refresh on page load instead?
     // Refetch folder children after leaving form
     return () => clearFetchState();
-  }, []);
+  }, [clearFetchState]);
 
   const hookLoading =
     uploadHook.loading || createHook.loading || updateHook.loading;
@@ -269,12 +271,10 @@ export default function FolderForm(props: FolderFormProps) {
           onClick={onAutofillName}
           style={{ paddingLeft: 0, paddingRight: 0 }}
         >
-          <Typography.Text
-            style={{ textDecoration: "underline", color: "inherit" }}
-          >
-            Use <Typography.Text strong>{autofillName}</Typography.Text> from
-            selected {formik.values.files?.length === 1 ? "file" : "files"}
-          </Typography.Text>
+          <Text style={{ textDecoration: "underline", color: "inherit" }}>
+            Use <Text strong>{autofillName}</Text> from selected{" "}
+            {formik.values.files?.length === 1 ? "file" : "files"}
+          </Text>
         </Button>
       )}
     </Form.Item>
@@ -386,11 +386,11 @@ export default function FolderForm(props: FolderFormProps) {
   }
 
   return (
-    <div className={cx(formClasses.formBodyClassName, className)}>
-      <div className={formClasses.formContentWrapperClassName}>
+    <div className={cx(styles.formBody, className)}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>Folder Form</Typography.Title>
+            <Title level={4}>Folder Form</Title>
           </Form.Item>
           <FormAlert error={hookError} />
           {selectedFilesNode}

@@ -1,3 +1,5 @@
+"use client";
+
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
 import { appWorkspacePaths } from "@/lib/definitions/system";
@@ -28,7 +30,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
         <ListHeader
           label="Permission Groups"
           buttons={
-            <Space>
+            <div className="flex align-center space-x-2">
               <Link
                 href={appWorkspacePaths.createPermissionGroupForm(workspaceId)}
               >
@@ -39,7 +41,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
                 targetType="permissionGroup"
               />
               {menu}
-            </Space>
+            </div>
           }
         />
         <PermissionGroupListContainer {...props} />

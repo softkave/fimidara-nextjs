@@ -1,5 +1,7 @@
 import { css } from "@emotion/css";
-import { Space, Table, TableColumnType, Typography } from "antd";
+import { Space, Table, TableColumnType } from "antd";
+import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
 import { forEach, map } from "lodash-es";
 import React from "react";
 import { appClasses } from "../utils/theme";
@@ -82,34 +84,34 @@ export function renderTableFieldType(
 ): React.ReactNode {
   if (isFieldString(data)) {
     return (
-      <Typography.Text code ellipsis>
+      <Text code ellipsis>
         string
-      </Typography.Text>
+      </Text>
     );
   } else if (isFieldNumber(data)) {
-    return <Typography.Text code>number</Typography.Text>;
+    return <Text code>number</Text>;
   } else if (isFieldBoolean(data)) {
-    return <Typography.Text code>boolean</Typography.Text>;
+    return <Text code>boolean</Text>;
   } else if (isFieldNull(data)) {
-    return <Typography.Text code>null</Typography.Text>;
+    return <Text code>null</Text>;
   } else if (isFieldUndefined(data)) {
-    return <Typography.Text code>undefined</Typography.Text>;
+    return <Text code>undefined</Text>;
   } else if (isFieldDate(data)) {
-    return <Typography.Text code>number</Typography.Text>;
+    return <Text code>number</Text>;
   } else if (isFieldArray(data)) {
     if (!data.type) return "";
     const containedTypeNode = renderTableFieldType(data.type, isForJsSdk);
     return (
       <span>
-        <Typography.Text code>array</Typography.Text> of {containedTypeNode}
+        <Text code>array</Text> of {containedTypeNode}
       </span>
     );
   } else if (isFieldObject(data)) {
     return data.name ? (
       <a href={`#${getTypeNameID(data.name)}`}>
-        <Typography.Text code ellipsis style={{ color: "inherit" }}>
+        <Text code ellipsis style={{ color: "inherit" }}>
           {data.name}
-        </Typography.Text>
+        </Text>
       </a>
     ) : null;
   } else if (isFieldOrCombination(data)) {
@@ -126,17 +128,17 @@ export function renderTableFieldType(
   } else if (isFieldBinary(data)) {
     return (
       <span>
-        <Typography.Text code>string</Typography.Text> |<br />
+        <Text code>string</Text> |<br />
         <a href="https://nodejs.org/api/stream.html#class-streamreadable">
-          <Typography.Text code ellipsis style={{ color: "inherit" }}>
+          <Text code ellipsis style={{ color: "inherit" }}>
             Node.js Readable
-          </Typography.Text>
+          </Text>
         </a>{" "}
         |<br />
         <a href="https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream">
-          <Typography.Text code ellipsis style={{ color: "inherit" }}>
+          <Text code ellipsis style={{ color: "inherit" }}>
             Browser ReadableStream
-          </Typography.Text>
+          </Text>
         </a>{" "}
       </span>
     );
@@ -144,21 +146,21 @@ export function renderTableFieldType(
     if (data.descriptionLink) {
       return (
         <a href={data.descriptionLink}>
-          <Typography.Text code style={{ color: "inherit" }}>
+          <Text code style={{ color: "inherit" }}>
             {data.name}
-          </Typography.Text>
+          </Text>
         </a>
       );
     } else {
       return (
-        <Typography.Text code ellipsis>
+        <Text code ellipsis>
           {data.name}
-        </Typography.Text>
+        </Text>
       );
     }
   }
 
-  return <Typography.Text code>unknown</Typography.Text>;
+  return <Text code>unknown</Text>;
 }
 
 function renderFieldObjectAsTable(
@@ -186,9 +188,9 @@ function renderFieldObjectAsTable(
       key: "field",
       width: "150px",
       render: (value) => (
-        <Typography.Text code ellipsis>
+        <Text code ellipsis>
           {value}
-        </Typography.Text>
+        </Text>
       ),
     },
     {
@@ -227,21 +229,21 @@ function renderFieldObjectAsTable(
   return (
     <div>
       <Space split={htmlCharacterCodes.doubleDash}>
-        {propName && <Typography.Text code>{propName}</Typography.Text>}
+        {propName && <Text code>{propName}</Text>}
         {nextObject.name && !hideTitle && (
-          <Typography.Title
+          <Title
             id={getTypeNameID(nextObject.name)}
             level={5}
             type="secondary"
             className={appClasses.muteMargin}
           >
             {nextObject.name}
-          </Typography.Title>
+          </Title>
         )}
         {nextObject.required ? (
-          <Typography.Text code>Required</Typography.Text>
+          <Text code>Required</Text>
         ) : (
-          <Typography.Text code>Optional</Typography.Text>
+          <Text code>Optional</Text>
         )}
       </Space>
       <FieldDescription fieldbase={nextObject} style={{ margin: 0 }} />

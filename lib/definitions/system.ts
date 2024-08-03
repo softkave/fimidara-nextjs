@@ -262,6 +262,7 @@ export const kDisabledPermissions: FimidaraPermissionAction[] = [
 export const appRootPaths = {
   home: "/",
   internal: "/internal",
+  docs: "/docs",
 };
 
 export const appWorkspacePaths = {

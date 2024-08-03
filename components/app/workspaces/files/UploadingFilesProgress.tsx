@@ -1,7 +1,7 @@
 import { TransferProgressList } from "@/components/utils/TransferProgress";
 import IconButton from "@/components/utils/buttons/IconButton";
 import PageDrawer from "@/components/utils/page/PageDrawer";
-import { KeyValueKeys, useKvStore } from "@/lib/hooks/storeHooks";
+import { useKvStore, KeyValueKeys } from "@/lib/hooks/kvStore.ts";
 import { useToggle } from "ahooks";
 import { Badge } from "antd";
 import { FimidaraEndpointProgressEvent } from "fimidara";

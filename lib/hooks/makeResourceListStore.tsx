@@ -1,3 +1,5 @@
+"use client";
+
 import { compact, isArray } from "lodash-es";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";

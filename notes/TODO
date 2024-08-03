@@ -1,5 +1,16 @@
 # fimidara
 
+- scroll
+- display public errors only
+- loading and nothing found rendering together
+- logout
+- docs
+- inline is rendered first
+- color scheme for icons and text
+
+- docs not working properly and go through docs to make sure they're rendered correctly
+- move docs to mdx
+- internal
 - test upload avatar for user and workspace
 - silently refresh data when user visits page if page already has data (files and folders)
 - opening permissions for a folder first shows no permission groups

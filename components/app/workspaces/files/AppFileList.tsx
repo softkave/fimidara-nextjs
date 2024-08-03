@@ -1,9 +1,11 @@
+"use client";
+
 import ItemList from "@/components/utils/list/ItemList";
 import AppIcon from "@/components/utils/page/AppIcon";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { Typography } from "antd";
+import Text from "antd/es/typography/Text";
 import { File } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -37,9 +39,7 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
                 {item.name + extension}
               </Link>
               {item.description && (
-                <Typography.Text type="secondary">
-                  {item.description}
-                </Typography.Text>
+                <Text type="secondary">{item.description}</Text>
               )}
             </div>
           }

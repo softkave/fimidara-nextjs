@@ -1,17 +1,17 @@
 // This file is copied over from server-generated js sdk.
 // Do not modify directly. For util code, use localUtils.ts file instead.
 
-import assert from "assert";
+import assert from 'assert';
 import axios, {
   AxiosProgressEvent,
   AxiosResponse,
   Method,
   toFormData,
-} from "axios";
-import { compact, isArray, isObject, isString, last, map } from "lodash-es";
-import path from "path-browserify";
+} from 'axios';
+import {compact, isArray, isObject, isString, last, map} from 'lodash-es';
+import path from 'path-browserify';
 
-const kDefaultServerURL = "https://api.fimidara.com";
+const kDefaultServerURL = 'https://api.fimidara.com';
 
 export type EndpointHeaders = {
   [key: string]: string | string[] | number | boolean | null;
@@ -24,11 +24,11 @@ type FimidaraEndpointErrorItem = {
 
   // TODO: find a way to include in generated doc for when we add new
   // recommended actions
-  action?: "logout" | "loginAgain" | "requestChangePassword";
+  action?: 'logout' | 'loginAgain' | 'requestChangePassword';
 };
 
 export class FimidaraEndpointError extends Error {
-  name = "FimidaraEndpointError";
+  name = 'FimidaraEndpointError';
   isFimidaraEndpointError = true;
 
   constructor(
@@ -38,7 +38,7 @@ export class FimidaraEndpointError extends Error {
     public headers?: EndpointHeaders
   ) {
     super(
-      errors.map((item) => item.message).join("\n") || "Fimidara endpoint error"
+      errors.map(item => item.message).join('\n') || 'Fimidara endpoint error'
     );
   }
 }
@@ -59,11 +59,11 @@ export class FimidaraJsConfig {
   }
 
   setSdkAuthToken(token: string) {
-    this.setSdkConfig({ authToken: token });
+    this.setSdkConfig({authToken: token});
   }
 
   setSdkConfig(update: Partial<FimidaraJsConfigOptions>) {
-    this.config = { ...this.config, ...update };
+    this.config = {...this.config, ...update};
     this.fanoutSdkConfigUpdate(update);
   }
 
@@ -76,22 +76,22 @@ export class FimidaraJsConfig {
   }
 
   protected fanoutSdkConfigUpdate(update: Partial<FimidaraJsConfigOptions>) {
-    this.inheritors.forEach((inheritor) => inheritor.setSdkConfig(update));
+    this.inheritors.forEach(inheritor => inheritor.setSdkConfig(update));
   }
 }
 
 function isNodeEnv() {
-  return typeof window === "undefined" && typeof process === "object";
+  return typeof window === 'undefined' && typeof process === 'object';
 }
 
 // function isBrowserEnv() {
 //   return !isNodeEnv();
 // }
 
-const HTTP_HEADER_CONTENT_TYPE = "content-type";
-const HTTP_HEADER_CONTENT_LENGTH = "Content-Length";
-const HTTP_HEADER_AUTHORIZATION = "authorization";
-const CONTENT_TYPE_APPLICATION_JSON = "application/json";
+const HTTP_HEADER_CONTENT_TYPE = 'content-type';
+const HTTP_HEADER_CONTENT_LENGTH = 'Content-Length';
+const HTTP_HEADER_AUTHORIZATION = 'authorization';
+const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
 
 export interface InvokeEndpointParams {
   serverURL?: string;
@@ -103,7 +103,7 @@ export interface InvokeEndpointParams {
   headers?: EndpointHeaders;
   query?: AnyObject;
   method: Method;
-  responseType: "blob" | "json" | "stream";
+  responseType: 'blob' | 'json' | 'stream';
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
   onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
 }
@@ -123,7 +123,7 @@ export async function invokeEndpoint(props: InvokeEndpointParams) {
     onUploadProgress,
     endpointURL: propsEndpointURL,
   } = props;
-  const outgoingHeaders = { ...headers };
+  const outgoingHeaders = {...headers};
   let contentBody = undefined;
 
   if (formdata) {
@@ -226,18 +226,18 @@ export async function invokeEndpoint(props: InvokeEndpointParams) {
   }
 }
 
-export type AnyObject = { [k: string | number | symbol]: any };
+export type AnyObject = {[k: string | number | symbol]: any};
 export type Mapping = Record<
   string,
-  readonly ["header" | "path" | "query" | "body", string]
+  readonly ['header' | 'path' | 'query' | 'body', string]
 >;
 
 export class FimidaraEndpointsBase extends FimidaraJsConfig {
-  protected getAuthToken(params?: { authToken?: string }) {
+  protected getAuthToken(params?: {authToken?: string}) {
     return params?.authToken || this.config.authToken;
   }
 
-  protected getServerURL(params?: { serverURL?: string }) {
+  protected getServerURL(params?: {serverURL?: string}) {
     return params?.serverURL || this.config.serverURL;
   }
 
@@ -251,22 +251,22 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
     let body: AnyObject = {};
 
     if (mapping && data) {
-      Object.keys(data).forEach((key) => {
+      Object.keys(data).forEach(key => {
         const value = data[key];
         const [mapTo, field] = mapping[key] ?? [];
 
         switch (mapTo) {
-          case "header": {
+          case 'header': {
             headers[field] = value;
             break;
           }
 
-          case "query": {
+          case 'query': {
             query[field] = value;
             break;
           }
 
-          case "path": {
+          case 'path': {
             endpointPath = endpointPath.replace(
               `:${field}`,
               encodeURIComponent(value)
@@ -274,7 +274,7 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
             break;
           }
 
-          case "body":
+          case 'body':
           default:
             body[field || key] = value;
         }
@@ -283,24 +283,24 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
       body = data;
     }
 
-    return { headers, query, endpointPath, data: body };
+    return {headers, query, endpointPath, data: body};
   }
 
   protected async executeRaw(
     p01: InvokeEndpointParams,
-    p02?: Pick<FimidaraEndpointParamsOptional<any>, "authToken" | "serverURL">,
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>,
     mapping?: Mapping
   ): Promise<FimidaraEndpointResult<any>> {
-    assert(p01.path, "Endpoint path not provided");
-    const { headers, query, data, endpointPath } = this.applyMapping(
+    assert(p01.path, 'Endpoint path not provided');
+    const {headers, query, data, endpointPath} = this.applyMapping(
       p01.path,
       p01.data || p01.formdata,
       mapping
     );
 
-    if (endpointPath.includes("/:")) {
+    if (endpointPath.includes('/:')) {
       console.log(`invalid path ${endpointPath}, params not injected`);
-      throw new Error("SDK error");
+      throw new Error('SDK error');
     }
 
     const response = await invokeEndpoint({
@@ -325,15 +325,11 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
   }
 
   protected async executeJson(
-    p01: Pick<InvokeEndpointParams, "data" | "formdata" | "path" | "method">,
-    p02?: Pick<FimidaraEndpointParamsOptional<any>, "authToken" | "serverURL">,
+    p01: Pick<InvokeEndpointParams, 'data' | 'formdata' | 'path' | 'method'>,
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>,
     mapping?: Mapping
   ) {
-    return await this.executeRaw(
-      { ...p01, responseType: "json" },
-      p02,
-      mapping
-    );
+    return await this.executeRaw({...p01, responseType: 'json'}, p02, mapping);
   }
 }
 
@@ -355,14 +351,14 @@ export type FimidaraEndpointParamsRequired<T> = {
 };
 export type FimidaraEndpointWithBinaryResponseParamsRequired<T> =
   FimidaraEndpointParamsRequired<T> & {
-    responseType: "blob" | "stream";
+    responseType: 'blob' | 'stream';
   };
 export type FimidaraEndpointParamsOptional<T> = Partial<
   FimidaraEndpointParamsRequired<T>
 >;
 export type FimidaraEndpointWithBinaryResponseParamsOptional<T> =
   FimidaraEndpointParamsOptional<T> & {
-    responseType: "blob" | "stream";
+    responseType: 'blob' | 'stream';
   };
 
 export function fimidaraAddRootnameToPath<
@@ -396,43 +392,43 @@ function getFilepath(props: {
       )
     : undefined;
 
-  if (!filepath) throw new Error("Filepath not provided");
+  if (!filepath) throw new Error('Filepath not provided');
   return filepath;
 }
 
 export type ObjectValues<T> = T[keyof T];
 export const ImageResizeFitEnumMap = {
-  contain: "contain",
-  cover: "cover",
-  fill: "fill",
-  inside: "inside",
-  outside: "outside",
+  contain: 'contain',
+  cover: 'cover',
+  fill: 'fill',
+  inside: 'inside',
+  outside: 'outside',
 } as const;
 export const ImageResizePositionEnumMap = {
-  top: "top",
-  rightTop: "right top",
-  right: "right",
-  rightBottom: "right bottom",
-  bottom: "bottom",
-  leftBottom: "left bottom",
-  left: "left",
-  leftTop: "left top",
-  north: "north",
-  northeast: "northeast",
-  east: "east",
-  southeast: "southeast",
-  south: "south",
-  southwest: "southwest",
-  west: "west",
-  northwest: "northwest",
-  centre: "centre",
+  top: 'top',
+  rightTop: 'right top',
+  right: 'right',
+  rightBottom: 'right bottom',
+  bottom: 'bottom',
+  leftBottom: 'left bottom',
+  left: 'left',
+  leftTop: 'left top',
+  north: 'north',
+  northeast: 'northeast',
+  east: 'east',
+  southeast: 'southeast',
+  south: 'south',
+  southwest: 'southwest',
+  west: 'west',
+  northwest: 'northwest',
+  centre: 'centre',
 
   /** focus on the region with the highest Shannon entropy. */
-  entropy: "entropy",
+  entropy: 'entropy',
 
   /** focus on the region with the highest luminance frequency, colour
    * saturation and presence of skin tones. */
-  attention: "attention",
+  attention: 'attention',
 } as const;
 export type ImageResizeFitEnum = ObjectValues<typeof ImageResizeFitEnumMap>;
 export type ImageResizePositionEnum = ObjectValues<
@@ -461,11 +457,11 @@ export type ImageResizeParams = {
 };
 
 export const ImageFormatEnumMap = {
-  jpeg: "jpeg",
-  png: "png",
-  webp: "webp",
-  tiff: "tiff",
-  raw: "raw",
+  jpeg: 'jpeg',
+  png: 'png',
+  webp: 'webp',
+  tiff: 'tiff',
+  raw: 'raw',
 
   // TODO: support gif
 } as const;
@@ -527,17 +523,17 @@ export type GetFimidaraReadFileURLProps = {
 const kReadFileQueryMap: Partial<
   Record<keyof GetFimidaraReadFileURLProps, string>
 > = {
-  width: "w",
-  height: "h",
-  fit: "fit",
-  position: "pos",
-  background: "bg",
-  withoutEnlargement: "withoutEnlargement",
-  download: "download",
+  width: 'w',
+  height: 'h',
+  fit: 'fit',
+  position: 'pos',
+  background: 'bg',
+  withoutEnlargement: 'withoutEnlargement',
+  download: 'download',
 };
 
 export function getFimidaraReadFileURL(props: GetFimidaraReadFileURLProps) {
-  let query = "";
+  let query = '';
   const filepath = getFilepath(props);
   const queryList = compact(
     map(props, (v, k) => {
@@ -548,14 +544,14 @@ export function getFimidaraReadFileURL(props: GetFimidaraReadFileURLProps) {
   );
 
   if (queryList.length) {
-    query = `?${queryList.join("&")}`;
+    query = `?${queryList.join('&')}`;
   }
 
   return (
     (props.serverURL || kDefaultServerURL) +
-    "/v1/files/readFile/" +
+    '/v1/files/readFile/' +
     encodeURIComponent(
-      filepath.startsWith("/") ? filepath.slice(1) : filepath
+      filepath.startsWith('/') ? filepath.slice(1) : filepath
     ) +
     query
   );
@@ -579,23 +575,23 @@ export function getFimidaraUploadFileURL(props: {
   const filepath = getFilepath(props);
   return (
     (props.serverURL || kDefaultServerURL) +
-    "/v1/files/uploadFile/" +
-    encodeURIComponent(filepath.startsWith("/") ? filepath.slice(1) : filepath)
+    '/v1/files/uploadFile/' +
+    encodeURIComponent(filepath.startsWith('/') ? filepath.slice(1) : filepath)
   );
 }
 
 export function stringifyFimidaraFilenamepath(
-  file: { namepath: string[]; ext?: string },
+  file: {namepath: string[]; ext?: string},
   rootname?: string
 ) {
-  const name = file.namepath.join("/") + (file.ext ? `.${file.ext}` : "");
+  const name = file.namepath.join('/') + (file.ext ? `.${file.ext}` : '');
   return rootname ? fimidaraAddRootnameToPath(name, rootname) : name;
 }
 
 export function stringifyFimidaraFoldernamepath(
-  file: { namepath: string[]; ext?: string },
+  file: {namepath: string[]; ext?: string},
   rootname?: string
 ) {
-  const name = file.namepath.join("/");
+  const name = file.namepath.join('/');
   return rootname ? fimidaraAddRootnameToPath(name, rootname) : name;
 }

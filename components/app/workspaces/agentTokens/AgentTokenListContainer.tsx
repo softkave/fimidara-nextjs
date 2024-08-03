@@ -1,3 +1,5 @@
+"use client";
+
 import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";

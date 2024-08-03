@@ -3,9 +3,10 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
 import { AgentToken } from "fimidara";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import AgentTokenMenu from "./AgentTokenMenu";
@@ -85,12 +86,12 @@ function AgentTokenComponent(props: IAgentTokenProps) {
             direction="vertical"
             label="Description"
             node={
-              <Typography.Paragraph
+              <Paragraph
                 ellipsis={{ rows: 2 }}
                 className={appClasses.muteMargin}
               >
                 {resource.description}
-              </Typography.Paragraph>
+              </Paragraph>
             }
           />
         )}

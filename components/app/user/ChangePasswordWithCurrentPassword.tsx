@@ -1,11 +1,13 @@
+"use client";
+
+import FormError from "@/components/utils/form/FormError.tsx";
+import styles from "@/components/utils/form/form.module.css";
 import { userConstants } from "@/lib/definitions/user";
 import { useUserChangePasswordWithCurrentPasswordMutationHook } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { css } from "@emotion/css";
 import { Button, Form, Input, message } from "antd";
 import * as yup from "yup";
-import FormError from "../../form/FormError";
-import { formClasses } from "../../form/classNames";
 import { FormAlert } from "../../utils/FormAlert";
 
 const validationSchema = yup.object().shape({
@@ -90,8 +92,8 @@ export default function ChangePasswordWithCurrentPassword() {
   );
 
   return (
-    <div className={formClasses.formBodyClassName}>
-      <div className={formClasses.formContentWrapperClassName}>
+    <div className={styles.formBody}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           <FormAlert error={changePasswordHook.error} />
           {currentPasswordNode}

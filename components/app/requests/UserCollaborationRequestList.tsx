@@ -1,16 +1,19 @@
+"use client";
+
+import ItemList from "@/components/utils/list/ItemList.tsx";
+import ListHeader from "@/components/utils/list/ListHeader.tsx";
 import PageContent02 from "@/components/utils/page/PageContent02";
+import PaginatedContent from "@/components/utils/page/PaginatedContent.tsx";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
+import { appClasses } from "@/components/utils/theme.ts";
 import { appUserPaths } from "@/lib/definitions/system";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space, Typography } from "antd";
+import { Space } from "antd";
+import Text from "antd/es/typography/Text";
 import Link from "next/link";
-import ItemList from "../../utils/list/ItemList";
-import ListHeader from "../../utils/list/ListHeader";
-import PaginatedContent from "../../utils/page/PaginatedContent";
-import ThumbnailContent from "../../utils/page/ThumbnailContent";
-import { appClasses } from "../../utils/theme";
 
 export default function UserCollaborationRequestList() {
   const pagination = usePagination();
@@ -39,20 +42,20 @@ export default function UserCollaborationRequestList() {
               main={
                 <div className={appClasses.thumbnailMain}>
                   <Link href={`${appUserPaths.request(item.resourceId)}`}>
-                    <Typography.Text style={{ color: "inherit" }}>
+                    <Text style={{ color: "inherit" }}>
                       Request from{" "}
-                      <Typography.Text strong style={{ color: "inherit" }}>
+                      <Text strong style={{ color: "inherit" }}>
                         {item.workspaceName}
-                      </Typography.Text>
-                    </Typography.Text>
+                      </Text>
+                    </Text>
                   </Link>
-                  <Typography.Text type="secondary">
+                  <Text type="secondary">
                     Sent {formatDateTime(item.createdAt)}
-                  </Typography.Text>
+                  </Text>
                   {item.expiresAt && (
-                    <Typography.Text type="secondary">
+                    <Text type="secondary">
                       Expires on {formatDateTime(item.expiresAt)}
-                    </Typography.Text>
+                    </Text>
                   )}
                 </div>
               }

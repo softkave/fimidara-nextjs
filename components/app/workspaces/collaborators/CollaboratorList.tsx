@@ -1,8 +1,10 @@
+"use client";
+
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { Typography } from "antd";
+import Text from "antd/es/typography/Text";
 import { Collaborator } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -32,9 +34,7 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
             >
               {item.firstName + " " + item.lastName}
             </Link>
-            {item.email && (
-              <Typography.Text type="secondary">{item.email}</Typography.Text>
-            )}
+            {item.email && <Text type="secondary">{item.email}</Text>}
           </div>
         }
         menu={

@@ -1,5 +1,4 @@
-import { css } from "@emotion/css";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import {
   FiFile,
   FiKey,
@@ -11,6 +10,7 @@ import {
 import { TbLockAccess } from "react-icons/tb";
 import { appWorkspacePaths } from "../../lib/definitions/system";
 import AppTabs, { AppTabItem } from "../utils/page/AppTabs";
+import styles from "./AppWorkspaceHeader.module.css";
 
 export interface IAppWorkspaceHeaderProps {
   workspaceId: string;
@@ -18,20 +18,11 @@ export interface IAppWorkspaceHeaderProps {
   style?: React.CSSProperties;
 }
 
-const classes = {
-  item: css({
-    position: "relative",
-    top: "2px",
-    borderBottom: "2px solid #f0f0f0",
-  }),
-  active: css({
-    borderBottom: "2px solid #1677ff",
-  }),
-};
-
 export default function AppWorkspaceHeader(props: IAppWorkspaceHeaderProps) {
   const { className, style, workspaceId } = props;
   const router = useRouter();
+  const p = usePathname();
+
   const onChange = (key: string) => {
     router.push(key);
   };
@@ -73,7 +64,7 @@ export default function AppWorkspaceHeader(props: IAppWorkspaceHeaderProps) {
       icon: <FiSettings />,
     },
   ];
-  const activeKey = getTabActiveKeyUsingBasePath(router.asPath, items);
+  const activeKey = getTabActiveKeyUsingBasePath(p, items);
 
   return (
     <AppTabs
@@ -82,15 +73,22 @@ export default function AppWorkspaceHeader(props: IAppWorkspaceHeaderProps) {
       onChange={onChange}
       style={style}
       className={className}
-      activeKeyClassName={classes.active}
-      itemClassName={classes.item}
+      activeKeyClassName={styles.active}
+      itemClassName={styles.item}
     />
   );
 }
 
-function getTabActiveKeyUsingBasePath(pathname: string, items: AppTabItem[]) {
+function getTabActiveKeyUsingBasePath(
+  pathname: string | null,
+  items: AppTabItem[]
+) {
+  if (!pathname) {
+    return null;
+  }
+
   const item = items.find((item) => {
-    return pathname.startsWith(item.key);
+    return pathname?.startsWith(item.key);
   });
   return item?.key;
 }

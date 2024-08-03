@@ -1,4 +1,4 @@
-import { Select, Space } from "antd";
+import { Select } from "antd";
 import { first } from "lodash-es";
 import React from "react";
 
@@ -37,7 +37,7 @@ const SummedUsageRecordListControls: React.FC<
   const yearOption = options[year] ?? [];
 
   return (
-    <Space align="end" style={{ width: "100%" }}>
+    <div className="flex align-center space-x-2">
       <Select
         value={year}
         onChange={(value) => onChange(value, first(yearOption))}
@@ -58,7 +58,7 @@ const SummedUsageRecordListControls: React.FC<
           value: monthLabels[month],
         }))}
       />
-    </Space>
+    </div>
   );
 };
 

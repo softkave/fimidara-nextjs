@@ -1,136 +1,22 @@
-import { isEqual, isFunction, uniq } from "lodash-es";
+"use client";
+
+import { uniq } from "lodash-es";
 import React from "react";
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
 import { systemConstants } from "../definitions/system";
-import { AppError, toAppErrorList } from "../utils/errors";
+import { toAppErrorList } from "../utils/errors";
 import { calculatePageSize } from "../utils/fns";
 import { AnyFn } from "../utils/types";
+import { FetchResourceZustandStore } from "./fetchHooks/makeFetchResourceStoreHook.ts";
+import {
+  FetchReturnedState,
+  FetchSingleResourceData,
+  FetchSingleResourceFetchFnData,
+  FetchSingleResourceReturnedData,
+  FetchState,
+  GetFetchSingleResourceFetchFnOther,
+} from "./fetchHooks/types.ts";
 import { ResourceZustandStore } from "./makeResourceListStore";
 import { useHandleServerRecommendedActions } from "./useHandleServerRecommendedActions";
-
-/** Fetch resource store for storing fetch state. */
-export type FetchState<TData> = {
-  loading: boolean;
-  data: TData | undefined;
-  error: AppError[] | undefined;
-};
-
-export type FetchReturnedState<TData> = {
-  loading: boolean;
-  data: TData;
-  error: AppError[] | undefined;
-};
-
-export type FetchResourceStore<TData, TReturnedData, TKeyParams> = {
-  states: Array<[TKeyParams, FetchState<TData>]>;
-  clear(params?: TKeyParams): void;
-  getFetchState(
-    params: TKeyParams
-  ): FetchReturnedState<TReturnedData> | undefined;
-  setFetchState(
-    params: TKeyParams,
-    state: (state: FetchState<TData> | undefined) => FetchState<TData>,
-    initialize?: boolean
-  ): void;
-  findFetchState(
-    fn: AnyFn<[TKeyParams, FetchState<TData>], boolean>
-  ): [TKeyParams, FetchState<TData>] | undefined;
-  mapFetchState(
-    fn: AnyFn<[TKeyParams, FetchState<TData>], FetchState<TData>>
-  ): void;
-};
-
-export function makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>(
-  storeName: string,
-  getFn: AnyFn<[TKeyParams, FetchState<TData>], TReturnedData>,
-  comparisonFn: AnyFn<[TKeyParams, TKeyParams], boolean> = isEqual
-) {
-  return create<
-    FetchResourceStore<TData, TReturnedData, TKeyParams>,
-    [["zustand/devtools", {}]]
-  >(
-    devtools(
-      (set, get) => ({
-        states: [] as Array<[TKeyParams, FetchState<TData>]>,
-        getFetchState(params) {
-          const store = get();
-          const entry = store.states.find(([entryParams]) =>
-            comparisonFn(params, entryParams)
-          );
-
-          if (entry) {
-            const fetchState = entry[1];
-            const data = getFn(params, fetchState);
-
-            return {
-              data,
-              error: fetchState.error,
-              loading: fetchState.loading,
-            };
-          }
-
-          return undefined;
-        },
-
-        clear(params) {
-          set((store) => {
-            if (params) {
-              const states = store.states.filter(([entryParams]) => {
-                const matched = comparisonFn(params, entryParams);
-                return !matched;
-              });
-              return { states };
-            } else {
-              return { states: [] };
-            }
-          });
-        },
-
-        setFetchState(params, update, initialize = true) {
-          set((store) => {
-            const index = store.states.findIndex(([entryParams]) =>
-              comparisonFn(params, entryParams)
-            );
-            let states = [...store.states];
-            const entryData = isFunction(update)
-              ? update(index >= 0 ? states[index][1] : undefined)
-              : update;
-
-            if (index !== -1) {
-              states[index] = [params, entryData];
-            } else if (initialize) {
-              states.push([params, entryData]);
-            }
-
-            return { states };
-          });
-        },
-
-        findFetchState(fn) {
-          return this.states.find(([params, state]) => fn(params, state));
-        },
-
-        mapFetchState(fn) {
-          set((store) => {
-            const states: Array<[TKeyParams, FetchState<TData>]> =
-              store.states.map(([params, fetchState]) => [
-                params,
-                fn(params, fetchState),
-              ]);
-            return { states };
-          });
-        },
-      }),
-      { name: storeName }
-    )
-  );
-}
-
-type MakeFetchResourceStoreHookFn<TData, TReturnedData, TKeyParams> =
-  typeof makeFetchResourceStoreHook<TData, TReturnedData, TKeyParams>;
-export type FetchResourceZustandStore<TData, TReturnedData, TKeyParams> =
-  ReturnType<MakeFetchResourceStoreHookFn<TData, TReturnedData, TKeyParams>>;
 
 /** Fetch hook defining general purpose fetch behaviour. */
 export function makeFetchResourceHook<
@@ -191,7 +77,7 @@ export function makeFetchResourceHook<
           handleServerRecommendedActions(error);
         }
       },
-      []
+      [handleServerRecommendedActions]
     );
 
     const clearFetchState = React.useCallback(() => {
@@ -271,7 +157,7 @@ export function makeManualFetchResourceHook<
           handleServerRecommendedActions(error);
         }
       },
-      []
+      [handleServerRecommendedActions]
     );
 
     const getFetchStateFn = React.useCallback(
@@ -293,49 +179,6 @@ export function fetchHookDefaultSetFn(
   data: any
 ) {
   return data;
-}
-
-/** fetch hook defining behaviour for fetching a single resource. */
-export type FetchSingleResourceData<TOther = any> = {
-  id: string;
-  other?: TOther;
-};
-export type FetchSingleResourceReturnedData<
-  T extends { resourceId: string },
-  TOther = any
-> = { resource?: T; other?: TOther };
-export type FetchSingleResourceFetchFnData<
-  T extends { resourceId: string },
-  TOther = any
-> = {
-  resource: T;
-  other?: TOther;
-};
-export type GetFetchSingleResourceFetchFnOther<TFn> = TFn extends AnyFn<
-  any,
-  Promise<FetchSingleResourceFetchFnData<any, infer TOther>>
->
-  ? TOther
-  : any;
-
-export function makeFetchSingleResourceGetFn<
-  T extends { resourceId: string },
-  TOther = any,
-  TKeyParams = any
->(useResourceListStore: ResourceZustandStore<T>) {
-  const getFn = (
-    params: TKeyParams,
-    state: FetchState<FetchSingleResourceData> | undefined
-  ): FetchSingleResourceReturnedData<T, TOther> => {
-    if (!state?.data) {
-      return { resource: undefined, other: undefined };
-    }
-
-    const resource = useResourceListStore.getState().get(state.data.id);
-    return { resource, other: state?.data?.other };
-  };
-
-  return getFn;
 }
 
 export function makeFetchSingleResourceFetchFn<

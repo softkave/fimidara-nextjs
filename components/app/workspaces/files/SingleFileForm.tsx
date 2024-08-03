@@ -2,13 +2,14 @@ import IconButton from "@/components/utils/buttons/IconButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { systemConstants } from "@/lib/definitions/system";
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Space, Typography, Upload } from "antd";
+import { Button, Form, Input, Space, Upload } from "antd";
+import Text from "antd/es/typography/Text";
 import { FormikErrors, FormikTouched } from "formik";
 import { isArray, isObject, isString } from "lodash-es";
 import prettyBytes from "pretty-bytes";
-import FormError from "../../../form/FormError";
 import { SingleFileFormValue } from "./types";
 import { getFirstFoldername, replaceBaseFoldername } from "./utils";
+import FormError from "@/components/utils/form/FormError.tsx";
 
 export interface SingleFileFormProps extends StyleableComponentProps {
   disabled?: boolean;
@@ -28,9 +29,9 @@ const kFileMessages = {
   existingFileButtonTitle: "Replace File",
   newFileButtonTitle: "Select File",
   autofillText: (name: string) => (
-    <Typography.Text style={{ textDecoration: "underline", color: "inherit" }}>
-      Use <Typography.Text strong>{name}</Typography.Text> from selected file
-    </Typography.Text>
+    <Text style={{ textDecoration: "underline", color: "inherit" }}>
+      Use <Text strong>{name}</Text> from selected file
+    </Text>
   ),
 } as const;
 
@@ -80,11 +81,9 @@ export function SingleFileForm(props: SingleFileFormProps) {
             onClick={() => onChange({ name: values.file?.name })}
             style={{ paddingLeft: 0, paddingRight: 0 }}
           >
-            <Typography.Text
-              style={{ textDecoration: "underline", color: "inherit" }}
-            >
+            <Text style={{ textDecoration: "underline", color: "inherit" }}>
               {messages.autofillText(values.file.name)}
-            </Typography.Text>
+            </Text>
           </Button>
         )}
       </Space>
@@ -166,9 +165,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
             }
           />
           {values?.file ? (
-            <Typography.Text type="secondary">
-              {prettyBytes(values.file.size)}
-            </Typography.Text>
+            <Text type="secondary">{prettyBytes(values.file.size)}</Text>
           ) : null}
         </Space>
       </Upload>

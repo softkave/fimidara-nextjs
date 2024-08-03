@@ -1,3 +1,5 @@
+"use client";
+
 import { useRequest } from "ahooks";
 import type {
   Result,
@@ -12,7 +14,6 @@ import {
 } from "../api/fimidaraEndpoints";
 import UserSessionStorageFns from "../storage/userSession";
 import { AnyFn } from "../utils/types";
-import { FetchResourceZustandStore } from "./fetchHookUtils";
 import {
   useResolveEntityPermissionsFetchStore,
   useUserWorkspacesFetchStore,
@@ -22,6 +23,8 @@ import {
   useWorkspaceFoldersFetchStore,
   useWorkspacePermissionGroupsFetchStore,
 } from "./fetchHooks";
+import { FetchResourceZustandStore } from "./fetchHooks/makeFetchResourceStoreHook.ts";
+import { useUserSessionFetchStore } from "./fetchStores/session.ts";
 import { ResourceZustandStore } from "./makeResourceListStore";
 import {
   getCollaboratorStoreKey,
@@ -37,7 +40,6 @@ import {
   useWorkspaceUsageRecordsStore,
   useWorkspacesStore,
 } from "./resourceListStores";
-import { useUserSessionFetchStore } from "./singleResourceFetchStores";
 import { useHandleServerRecommendedActions } from "./useHandleServerRecommendedActions";
 
 type GetEndpointFn<TEndpoints, TFn> = TFn extends AnyFn<

@@ -8,7 +8,7 @@ import { first } from "lodash-es";
 import React from "react";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
 import { systemConstants } from "../../lib/definitions/system";
-import { useKvStore } from "../../lib/hooks/storeHooks";
+import { useKvStore } from "../../lib/hooks/kvStore";
 import { errorMessageNotificatition } from "./errorHandling";
 import { appDataImages, appDimensions } from "./theme";
 

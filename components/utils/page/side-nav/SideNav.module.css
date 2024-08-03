@@ -1,0 +1,67 @@
+.sideNavMenu :global(.ant-menu-submenu-title) {
+  padding-left: 16px !important;
+}
+
+.sideNavMenu :global(.ant-menu-item) {
+  padding-left: 16px !important;
+}
+
+.sideNavMenu :global(.ant-menu-sub) {
+  padding-left: 16px !important;
+}
+
+.sideNavMenu :global(.ant-menu-item-divider) {
+  margin: 0;
+}
+
+.sideNavDesktopRoot {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.sideNavDesktopRoot :global(.ant-menu-inline) {
+  height: 100%;
+}
+
+.sideNavDesktopRoot :global(.ant-menu-item) {
+  height: 38px !important;
+  padding-left: 16px !important;
+  margin-bottom: 0px !important;
+  margin-top: 0px !important;
+}
+
+.sideNavDesktopRoot :global(.ant-menu-submenu-title) {
+  height: 32px !important;
+}
+
+.sideNavMobileRoot :global(.ant-menu-inline) {
+  border-right: none !important;
+}
+
+.sideNavMobileRoot :global(.ant-menu-item) {
+  padding-left: 16px !important;
+}
+
+.sideNavMobileRoot :global(.ant-drawer-body) {
+  padding: 0px !important;
+}
+
+.sideNavMobileRoot02 {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+}
+
+.sideNavMobileHeader {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.sideNavMobileHeader :global(h4) {
+  flex: 1;
+  margin-right: 16px;
+  margin-bottom: 0px;
+}

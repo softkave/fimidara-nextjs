@@ -1,24 +1,26 @@
-import withPageAuthRequiredHOC from "@/components/hoc/withPageAuthRequired";
+"use client";
+
 import IconButton from "@/components/utils/buttons/IconButton";
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
 import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
+import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Space, Typography } from "antd";
+import { Button } from "antd";
+import Text from "antd/es/typography/Text";
 import { User, Workspace } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
-import ThumbnailContent from "../../utils/page/ThumbnailContent";
-import WorkspaceAvatar from "./WorkspaceAvatar";
-import WorkspaceMenu from "./WorkspaceMenu";
+import WorkspaceAvatar from "./WorkspaceAvatar.tsx";
+import WorkspaceMenu from "./WorkspaceMenu.tsx";
 
 export interface IWorkspaceListProps {
   user: User;
@@ -59,12 +61,10 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
               main={
                 <div className={appClasses.thumbnailMain}>
                   <Link href={appWorkspacePaths.folderList(item.resourceId)}>
-                    <Typography.Text strong>{item.name}</Typography.Text>
+                    <Text strong>{item.name}</Text>
                   </Link>
                   {item.description && (
-                    <Typography.Text type="secondary">
-                      {item.description}
-                    </Typography.Text>
+                    <Text type="secondary">{item.description}</Text>
                   )}
                 </div>
               }
@@ -94,7 +94,7 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
   );
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-4">
       <ListHeader
         label="Workspaces"
         buttons={
@@ -111,8 +111,8 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
         content={contentNode}
         pagination={count ? { ...pagination, count } : undefined}
       />
-    </Space>
+    </div>
   );
 };
 
-export default withPageAuthRequiredHOC(WorkspaceList);
+export default WorkspaceList;

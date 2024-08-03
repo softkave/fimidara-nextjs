@@ -1,15 +1,17 @@
+"use client";
+
 import { message, notification } from "antd";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { isFimidaraEndpointError } from "../api/localUtils";
 import { appAccountPaths } from "../definitions/system";
 import { AnyFn } from "../utils/types";
-import { useLogout } from "./sessionHook";
+import { useRequestLogout } from "./session/useRequestLogout.ts";
 
 const kTimeout = 3000; // 3 seconds
 const kMessageDuration = 10; // seconds
 
 export function useHandleRequiresPasswordChange() {
-  const { logout } = useLogout();
+  const { requestLogout } = useRequestLogout();
 
   const handleRequiresPasswordChange = () => {
     const closeMessageFn: AnyFn = message.loading({
@@ -29,7 +31,7 @@ export function useHandleRequiresPasswordChange() {
           "Please change your password to continue, thank you",
         duration: kMessageDuration,
       });
-      logout(appAccountPaths.forgotPassword);
+      requestLogout(appAccountPaths.forgotPassword);
     }, kTimeout);
   };
 
@@ -37,8 +39,8 @@ export function useHandleRequiresPasswordChange() {
 }
 
 export function useHandleLoginAgain() {
-  const { logout } = useLogout();
-  const router = useRouter();
+  const { requestLogout } = useRequestLogout();
+  const pathname = usePathname();
 
   const handleLoginAgain = () => {
     let closeMessageFn: AnyFn = message.loading({
@@ -61,7 +63,7 @@ export function useHandleLoginAgain() {
           "An error occurred involving your session, please login again, thank you",
         duration: kMessageDuration,
       });
-      logout(appAccountPaths.loginWithReturnPath(router.asPath));
+      requestLogout(appAccountPaths.loginWithReturnPath(pathname));
     }, kTimeout);
   };
 

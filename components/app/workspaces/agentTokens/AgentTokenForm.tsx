@@ -1,5 +1,6 @@
-import { formClasses } from "@/components/form/classNames";
-import FormError from "@/components/form/FormError";
+import { cn } from "@/components/utils.ts";
+import styles from "@/components/utils/form/form.module.css";
+import FormError from "@/components/utils/form/FormError";
 import { FormAlert } from "@/components/utils/FormAlert";
 import { agentTokenConstants } from "@/lib/definitions/agentToken";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
@@ -8,11 +9,12 @@ import {
   useWorkspaceAgentTokenUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import { css, cx } from "@emotion/css";
-import { Button, DatePicker, Form, Input, message, Typography } from "antd";
+import { css } from "@emotion/css";
+import { Button, DatePicker, Form, Input, message } from "antd";
+import Title from "antd/es/typography/Title";
 import dayjs from "dayjs";
 import { AgentToken, NewAgentTokenInput } from "fimidara";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import * as yup from "yup";
 
 const agentTokenValidation = yup.object().shape({
@@ -194,13 +196,11 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
   );
 
   return (
-    <div className={cx(formClasses.formBodyClassName, className)}>
-      <div className={formClasses.formContentWrapperClassName}>
+    <div className={cn(styles.formBody, className)}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>
-              Agent Assigned Token Form
-            </Typography.Title>
+            <Title level={4}>Agent Assigned Token Form</Title>
           </Form.Item>
           <FormAlert error={mergedHook.error} />
           {nameNode}

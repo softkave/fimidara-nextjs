@@ -1,3 +1,5 @@
+"use client";
+
 import { LoginResult } from "fimidara";
 import React from "react";
 import { useUserNode } from "../../hooks/useUserNode";

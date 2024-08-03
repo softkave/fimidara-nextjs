@@ -16,6 +16,8 @@ import {
   isFieldString,
 } from "./utils";
 
+const { Text, Paragraph } = Typography;
+
 export interface FieldDescriptionProps extends StyleableComponentProps {
   fieldbase: any;
   type?: "secondary";
@@ -35,178 +37,149 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
   const nodes: React.ReactNode[] = [];
   if (fieldbase && (fieldbase as Pick<FieldBase, "description">)) {
     nodes.push(
-      <Typography.Paragraph key="description" type={type}>
+      <Paragraph key="description" type={type}>
         {fieldbase.description}
-      </Typography.Paragraph>
+      </Paragraph>
     );
   }
 
   if (isFieldString(fieldbase)) {
     if (fieldbase.valid) {
       nodes.push(
-        <Typography.Paragraph key="string-enum">
-          <Typography.Text className={classes.underline}>Enum</Typography.Text>:{" "}
+        <Paragraph key="string-enum">
+          <Text className={classes.underline}>Enum</Text>:{" "}
           {map(fieldbase.valid, (enumString) => (
-            <Typography.Text code>{enumString}</Typography.Text>
+            <Text code>{enumString}</Text>
           ))}
-        </Typography.Paragraph>
+        </Paragraph>
       );
     }
     if (fieldbase.min) {
       nodes.push(
-        <Typography.Paragraph key="string-min">
-          <Typography.Text className={classes.underline}>
-            Min characters
-          </Typography.Text>
-          : {fieldbase.min}
-        </Typography.Paragraph>
+        <Paragraph key="string-min">
+          <Text className={classes.underline}>Min characters</Text>:{" "}
+          {fieldbase.min}
+        </Paragraph>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Typography.Paragraph key="string-max">
-          <Typography.Text className={classes.underline}>
-            Max characters
-          </Typography.Text>
-          : {fieldbase.max}
-        </Typography.Paragraph>
+        <Paragraph key="string-max">
+          <Text className={classes.underline}>Max characters</Text>:{" "}
+          {fieldbase.max}
+        </Paragraph>
       );
     }
     if (fieldbase.example) {
       nodes.push(
-        <Typography.Paragraph key="string-example">
-          <Typography.Text className={classes.underline}>
-            Example
-          </Typography.Text>
-          : {fieldbase.example}
-        </Typography.Paragraph>
+        <Paragraph key="string-example">
+          <Text className={classes.underline}>Example</Text>:{" "}
+          {fieldbase.example}
+        </Paragraph>
       );
     }
   } else if (isFieldNumber(fieldbase)) {
     if (fieldbase.integer) {
       nodes.push(
-        <Typography.Paragraph key="number-subset">
-          <Typography.Text className={classes.underline}>
-            Number subset
-          </Typography.Text>
-          : <Typography.Text code>integer</Typography.Text> only
-        </Typography.Paragraph>
+        <Paragraph key="number-subset">
+          <Text className={classes.underline}>Number subset</Text>:{" "}
+          <Text code>integer</Text> only
+        </Paragraph>
       );
     } else {
       nodes.push(
-        <Typography.Paragraph key="number-subset">
-          <Typography.Text className={classes.underline}>
-            Number subset
-          </Typography.Text>
-          : <Typography.Text code>floating point</Typography.Text> or{" "}
-          <Typography.Text code>integer</Typography.Text>
-        </Typography.Paragraph>
+        <Paragraph key="number-subset">
+          <Text className={classes.underline}>Number subset</Text>:{" "}
+          <Text code>floating point</Text> or <Text code>integer</Text>
+        </Paragraph>
       );
     }
 
     if (fieldbase.min) {
       nodes.push(
-        <Typography.Paragraph key="number-min">
-          <Typography.Text className={classes.underline}>Min</Typography.Text>:{" "}
-          {fieldbase.min}
-        </Typography.Paragraph>
+        <Paragraph key="number-min">
+          <Text className={classes.underline}>Min</Text>: {fieldbase.min}
+        </Paragraph>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Typography.Paragraph key="number-max">
-          <Typography.Text className={classes.underline}>Max</Typography.Text>:{" "}
-          {fieldbase.max}
-        </Typography.Paragraph>
+        <Paragraph key="number-max">
+          <Text className={classes.underline}>Max</Text>: {fieldbase.max}
+        </Paragraph>
       );
     }
     if (fieldbase.example) {
       nodes.push(
-        <Typography.Paragraph key="number-example">
-          <Typography.Text className={classes.underline}>
-            Example
-          </Typography.Text>
-          : {fieldbase.example}
-        </Typography.Paragraph>
+        <Paragraph key="number-example">
+          <Text className={classes.underline}>Example</Text>:{" "}
+          {fieldbase.example}
+        </Paragraph>
       );
     }
   } else if (isFieldBoolean(fieldbase)) {
     if (fieldbase.example) {
       nodes.push(
-        <Typography.Paragraph key="boolean-example">
-          <Typography.Text className={classes.underline}>
-            Example
-          </Typography.Text>
-          : {fieldbase.example}
-        </Typography.Paragraph>
+        <Paragraph key="boolean-example">
+          <Text className={classes.underline}>Example</Text>:{" "}
+          {fieldbase.example}
+        </Paragraph>
       );
     }
   } else if (isFieldDate(fieldbase)) {
     nodes.push(
-      <Typography.Paragraph key="date-fieldbase-type">
-        <Typography.Text code>unix milliseconds timestamp</Typography.Text>
-      </Typography.Paragraph>
+      <Paragraph key="date-fieldbase-type">
+        <Text code>unix milliseconds timestamp</Text>
+      </Paragraph>
     );
 
     if (fieldbase.example) {
       nodes.push(
-        <Typography.Paragraph key="date-example">
-          <Typography.Text className={classes.underline}>
-            Example
-          </Typography.Text>
-          : {fieldbase.example}
-        </Typography.Paragraph>
+        <Paragraph key="date-example">
+          <Text className={classes.underline}>Example</Text>:{" "}
+          {fieldbase.example}
+        </Paragraph>
       );
     }
   } else if (isFieldArray(fieldbase)) {
     if (fieldbase.min) {
       nodes.push(
-        <Typography.Paragraph key="array-min">
-          <Typography.Text className={classes.underline}>
-            Min items
-          </Typography.Text>
-          : {fieldbase.min}
-        </Typography.Paragraph>
+        <Paragraph key="array-min">
+          <Text className={classes.underline}>Min items</Text>: {fieldbase.min}
+        </Paragraph>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Typography.Paragraph key="array-max">
-          <Typography.Text className={classes.underline}>
-            Max items
-          </Typography.Text>
-          : {fieldbase.max}
-        </Typography.Paragraph>
+        <Paragraph key="array-max">
+          <Text className={classes.underline}>Max items</Text>: {fieldbase.max}
+        </Paragraph>
       );
     }
   } else if (isFieldBinary(fieldbase)) {
     if (fieldbase.min) {
       nodes.push(
-        <Typography.Paragraph key="binary-min">
-          <Typography.Text className={classes.underline}>
-            Min bytes
-          </Typography.Text>
-          : {prettyBytes(fieldbase.min)}
-        </Typography.Paragraph>
+        <Paragraph key="binary-min">
+          <Text className={classes.underline}>Min bytes</Text>:{" "}
+          {prettyBytes(fieldbase.min)}
+        </Paragraph>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Typography.Paragraph key="binary-max">
-          <Typography.Text className={classes.underline}>
-            Max bytes
-          </Typography.Text>
-          : {prettyBytes(fieldbase.max)}
-        </Typography.Paragraph>
+        <Paragraph key="binary-max">
+          <Text className={classes.underline}>Max bytes</Text>:{" "}
+          {prettyBytes(fieldbase.max)}
+        </Paragraph>
       );
     }
   } else if (isFieldCustomType(fieldbase)) {
     if (fieldbase.descriptionLink) {
       nodes.push(
-        <Typography.Paragraph key="custom-type-description-link">
-          <Typography.Text className={classes.underline}>Link</Typography.Text>:{" "}
+        <Paragraph key="custom-type-description-link">
+          <Text className={classes.underline}>Link</Text>:{" "}
           <a href={fieldbase.descriptionLink}>{fieldbase.descriptionLink}</a>
-        </Typography.Paragraph>
+        </Paragraph>
       );
     }
   } else if (isFieldOrCombination(fieldbase)) {

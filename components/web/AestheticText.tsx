@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import Text from "antd/es/typography/Text";
 import { StyleableComponentProps } from "../utils/styling/types";
 
 export interface AestheticTextProps extends StyleableComponentProps {
@@ -9,8 +9,8 @@ export interface AestheticTextProps extends StyleableComponentProps {
 export default function AestheticText(props: AestheticTextProps) {
   const { focusText, children, style, className } = props;
   return (
-    <Typography.Text className={className} style={style}>
-      <Typography.Text strong>{focusText}</Typography.Text> {children}
-    </Typography.Text>
+    <Text className={className} style={style}>
+      <Text strong>{focusText}</Text> {children}
+    </Text>
   );
 }

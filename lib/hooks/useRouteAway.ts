@@ -1,5 +1,5 @@
 import { isFunction } from "lodash-es";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function useRouteAway(

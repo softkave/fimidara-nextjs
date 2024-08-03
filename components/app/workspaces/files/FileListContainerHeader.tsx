@@ -1,11 +1,12 @@
+import { cn } from "@/components/utils.ts";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { appClasses } from "@/components/utils/theme";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { PlusOutlined } from "@ant-design/icons";
-import { css, cx } from "@emotion/css";
-import { Dropdown, MenuProps, Space, Typography } from "antd";
+import { Dropdown, MenuProps } from "antd";
+import Title from "antd/es/typography/Title";
 import { Folder } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -23,19 +24,6 @@ enum CreateMenuKeys {
   CreateFolder = "create-folder",
   CreateFile = "create-file",
 }
-
-const classes = {
-  sideLinks: css({
-    display: "flex",
-    justifyContent: "flex-end",
-  }),
-  root: css({
-    display: "flex",
-  }),
-  title: css({
-    flex: 1,
-  }),
-};
 
 const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
   props
@@ -71,14 +59,11 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
   ]);
 
   return (
-    <div className={cx(classes.root, className)} style={style}>
-      <Typography.Title
-        level={5}
-        className={cx(classes.title, appClasses.muteMargin)}
-      >
+    <div className={cn(className, "flex")} style={style}>
+      <Title level={5} className={cn(appClasses.muteMargin, "flex-1")}>
         {folder?.name || "Files"}
-      </Typography.Title>
-      <Space className={classes.sideLinks}>
+      </Title>
+      <div className="flex items-center space-x-2">
         <Dropdown
           trigger={["click"]}
           menu={{ items, style: { minWidth: "150px" } }}
@@ -95,7 +80,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
         ) : (
           <RootFilesMenu workspaceId={workspaceId} />
         )}
-      </Space>
+      </div>
     </div>
   );
 };

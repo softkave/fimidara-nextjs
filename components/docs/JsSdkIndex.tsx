@@ -1,63 +1,69 @@
 import { Divider, Space, Typography } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
+import Title from "antd/es/typography/Title";
 import { first } from "lodash-es";
 import Link from "next/link";
 import React from "react";
+import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 import JsSdkFunction from "./JsSdkFunction";
 import {
   fimidaraJsSdkNavItems,
   getNavItemPath,
   restApiRawNavItems,
 } from "./navItems";
-import { FieldObject, FieldString, IRawNavItem } from "./types";
+import { FieldObject, FieldString } from "./types";
+
+const { Text } = Typography;
 
 export interface JsSdkIndexProps {}
 
 const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
   const fimidaraJsDescriptionNode = (
     <Space direction="vertical" size={"middle"}>
-      <Typography.Text>
+      <Text>
         Run{" "}
-        <Typography.Text code copyable>
+        <Text code copyable>
           npm i fimidara
-        </Typography.Text>
+        </Text>
         &nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
-        <Typography.Text code copyable>
+        <Text code copyable>
           yarn add fimidara
-        </Typography.Text>{" "}
+        </Text>{" "}
         to install.
-      </Typography.Text>
+      </Text>
       <div>
-        <Typography.Paragraph>
+        <Paragraph>
           <b>fimidara</b> exports 3 main utilities listed below. fimidara also
           exports param and result types for the endpoints listed below, and
-          other utility code like{" "}
-          <Typography.Text code>FimidaraEndpointError</Typography.Text>.
-        </Typography.Paragraph>
-        <Typography.Text code>
+          other utility code like <Text code>FimidaraEndpointError</Text>.
+        </Paragraph>
+        <Text code>
           import {"{"}FimidaraEndpoints, getFimidaraReadFileURL,
-          getUploadFileURL{"}"} from &quotfimidara&quot
-        </Typography.Text>
+          getUploadFileURL{"}"} from {'"'}fimidara{'"'}
+        </Text>
       </div>
       <div>
-        <Typography.Paragraph>
-          You can setup{" "}
-          <Typography.Text code>FimidaraEndpoints</Typography.Text> like so.
-        </Typography.Paragraph>
-        <Typography.Text code>
+        <Paragraph>
+          You can setup <Text code>FimidaraEndpoints</Text> like so.
+        </Paragraph>
+        <Text code>
           const fimidaraEndpoints = new FimidaraEndpoints({"{"}authToken:
-          &quotagent token JWT token&quot{"}"});
-        </Typography.Text>
+          {'"'}agent token JWT token{'"'}
+          {"}"});
+        </Text>
       </div>
     </Space>
   );
   const endpointsNode = renderNavItemList(
     restApiRawNavItems,
     first(fimidaraJsSdkNavItems)!,
-    "FimidaraEndpoints"
+    "FimidaraEndpoints",
+    /** descriptionNode */ undefined,
+    "endpoints"
   );
   const othersNode = (
     <div>
-      <Typography.Title level={5}>Others</Typography.Title>
+      <Title level={5}>Others</Title>
       <div>
         <JsSdkFunction
           functionName="getFimidaraReadFileURL"
@@ -78,9 +84,9 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
 
   return (
     <React.Fragment>
-      <Typography.Title level={5} style={{ margin: "0px 0px 24px 0px" }}>
+      <Title level={5} style={{ margin: "0px 0px 24px 0px" }}>
         Fimidara JS SDK
-      </Typography.Title>
+      </Title>
       {fimidaraJsDescriptionNode}
       <Divider />
       {endpointsNode}
@@ -96,7 +102,8 @@ function renderNavItemList(
   items: IRawNavItem[],
   rootItem: IRawNavItem,
   label: React.ReactNode,
-  descriptionNode?: React.ReactNode
+  descriptionNode: React.ReactNode | undefined,
+  key: string | number
 ) {
   const nodes = items.map((item) => {
     const itemPath = getNavItemPath(item, [rootItem]);
@@ -108,13 +115,19 @@ function renderNavItemList(
         </li>
       );
     } else if (item.children) {
-      return renderNavItemList(item.children, rootItem, item.label);
+      return renderNavItemList(
+        item.children,
+        rootItem,
+        item.label,
+        /** descriptionNode */ undefined,
+        item.key
+      );
     }
   });
 
   return (
-    <div>
-      <Typography.Title level={5}>{label}</Typography.Title>
+    <div key={key}>
+      <Title level={5}>{label}</Title>
       {descriptionNode}
       <ul>{nodes}</ul>
     </div>

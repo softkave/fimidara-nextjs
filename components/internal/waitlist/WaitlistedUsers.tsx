@@ -1,3 +1,5 @@
+"use client";
+
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
@@ -11,7 +13,8 @@ import { useWaitlistedUsersFetchHook } from "@/lib/hooks/fetchHooks";
 import { useWaitlistedUsersUpgradeMutationHook } from "@/lib/hooks/mutationHooks";
 import { useSelectList } from "@/lib/hooks/useSelectList";
 import { getBaseError } from "@/lib/utils/errors";
-import { Button, Space, Tag, Typography, message } from "antd";
+import { Button, Space, Tag, message } from "antd";
+import Text from "antd/es/typography/Text";
 import React from "react";
 
 // TODO: add bulk remove, and add bulk actions to other lists
@@ -56,12 +59,10 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
               onSelect={(checked) => selectedHook.set(item.resourceId, checked)}
               main={
                 <div className={appClasses.thumbnailMain} style={{ rowGap: 4 }}>
-                  <Typography.Text>
+                  <Text>
                     {item.firstName} {item.lastName}
-                  </Typography.Text>
-                  <Typography.Text type="secondary">
-                    {item.email}
-                  </Typography.Text>
+                  </Text>
+                  <Text type="secondary">{item.email}</Text>
                   <div>
                     <Tag>
                       {item.isEmailVerified

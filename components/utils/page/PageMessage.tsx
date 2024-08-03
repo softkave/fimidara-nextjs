@@ -1,7 +1,8 @@
+import { cn } from "@/components/utils.ts";
 import { AppError } from "@/lib/utils/errors";
-import { css, cx } from "@emotion/css";
-import { Button, ButtonProps, Space, Typography } from "antd";
-import { TextProps } from "antd/es/typography/Text";
+import { css } from "@emotion/css";
+import { Button, ButtonProps } from "antd";
+import Text, { TextProps } from "antd/es/typography/Text";
 import isString from "lodash-es/isString";
 import React from "react";
 import { StyleableComponentProps } from "../styling/types";
@@ -48,7 +49,7 @@ export const PageMessageActions: React.FC<PageMessageActionsProps> = (
   const { actions, style, className } = props;
   if (actions?.length === 0) return null;
   return (
-    <Space style={style} className={className}>
+    <div style={style} className={cn("space-x-2", className)}>
       {actions?.map((action, i) => {
         if (isPageAction(action)) {
           return <Button key={i} {...action} />;
@@ -56,7 +57,7 @@ export const PageMessageActions: React.FC<PageMessageActionsProps> = (
           return action;
         }
       })}
-    </Space>
+    </div>
   );
 };
 
@@ -90,34 +91,38 @@ const PageMessage: React.FC<IPageMessageProps> = (props) => {
   }
 
   if (isString(messageNode)) {
-    messageNode = (
-      <Typography.Text type={type || "secondary"}>
-        {messageNode}
-      </Typography.Text>
-    );
+    messageNode = <Text type={type || "secondary"}>{messageNode}</Text>;
   }
 
   if (showMessageOnly) {
     return (
-      <Space
-        direction="vertical"
-        style={{ width: "100%", ...style }}
-        className={cx(classes.rootMessageOnly, className)}
+      <div
+        style={style}
+        className={cn(classes.rootMessageOnly, "space-y-4", className)}
       >
         {messageNode}
         <PageMessageActions actions={actions} />
         {children}
-      </Space>
+      </div>
     );
   }
 
   return (
-    <EmptyMessage {...props} className={cx(classes.root, className)}>
-      <Space direction="vertical" style={{ width: "100%" }}>
-        {messageNode}
-        <PageMessageActions actions={actions} />
-        {children}
-      </Space>
+    <EmptyMessage
+      {...props}
+      className={cn(
+        classes.root,
+        "space-y-4",
+        "flex",
+        "flex-col",
+        "justify-center",
+        "h-full",
+        className
+      )}
+    >
+      {messageNode}
+      <PageMessageActions actions={actions} />
+      {children}
     </EmptyMessage>
   );
 };

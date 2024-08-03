@@ -1,10 +1,9 @@
-import { Typography } from "antd";
-import { TextProps } from "antd/es/typography/Text";
+import Text, { TextProps } from "antd/es/typography/Text";
 
 const Middledot: React.FC<Pick<TextProps, "type">> = (props) => {
   const { type } = props;
   return (
-    <Typography.Text
+    <Text
       type={type}
       style={{
         fontSize: "24px",
@@ -14,7 +13,7 @@ const Middledot: React.FC<Pick<TextProps, "type">> = (props) => {
       }}
     >
       &#xB7;
-    </Typography.Text>
+    </Text>
   );
 };
 

@@ -1,3 +1,4 @@
+import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import {
@@ -11,18 +12,18 @@ import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { yupObject } from "@/lib/validation/utils";
 import { css, cx } from "@emotion/css";
-import { Button, Form, Typography, message } from "antd";
+import { Button, Form, message } from "antd";
+import Title from "antd/es/typography/Title";
 import { File as FimidaraFile } from "fimidara";
 import { isString } from "lodash-es";
 import * as yup from "yup";
-import FormError from "../../../form/FormError";
-import { formClasses } from "../../../form/classNames";
 import { FilesFormUploadProgress } from "./FilesFormUploadProgress";
 import { MultipleFilesForm } from "./MultipleFilesForm";
 import { SingleFileForm } from "./SingleFileForm";
 import { SingleFileFormValue } from "./types";
 import { getNewFileLocalId } from "./utils";
 import { newFileValidationSchema } from "./validation";
+import FormError from "@/components/utils/form/FormError.tsx";
 
 export interface FileFormValue {
   files: Array<SingleFileFormValue>;
@@ -211,11 +212,11 @@ export default function FileForm(props: FileFormProps) {
   // TODO: should "uploading files progress" below open the progress drawer on
   // click?
   return (
-    <div className={cx(formClasses.formBodyClassName, className)}>
-      <div className={formClasses.formContentWrapperClassName}>
+    <div className={cx(styles.formBody, className)}>
+      <div className={styles.formContentWrapper}>
         <form onSubmit={formik.handleSubmit}>
           <Form.Item>
-            <Typography.Title level={4}>File Form</Typography.Title>
+            <Title level={4}>File Form</Title>
           </Form.Item>
           <FormAlert error={mergedHook.error} />
           {contentNode}

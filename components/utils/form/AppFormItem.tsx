@@ -1,6 +1,6 @@
 import { flattenErrorList, getErrorMessage } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
-import { Typography } from "antd";
+import Text from "antd/es/typography/Text";
 import {
   defaultTo,
   get,
@@ -130,9 +130,9 @@ function AppFormItem<T extends AnyObject = AnyObject>(
             ""
           ).length;
           extraNode = (
-            <Typography.Text type="secondary" className={classes.textCount}>
+            <Text type="secondary" className={classes.textCount}>
               {currentLength} of {item.input.maxLength} characters
-            </Typography.Text>
+            </Text>
           );
         }
         break;

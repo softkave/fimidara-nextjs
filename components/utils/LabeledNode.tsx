@@ -1,5 +1,6 @@
 import { cx } from "@emotion/css";
-import { Col, Row, Space, Typography } from "antd";
+import { Col, Row, Space } from "antd";
+import Text from "antd/es/typography/Text";
 import React from "react";
 
 export interface ILabeledNodeProps {
@@ -42,13 +43,13 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
 
   if (node) {
     internalNodeContent = nodeIsText ? (
-      <Typography.Text
+      <Text
         code={code}
         copyable={copyable}
         style={{ fontSize: contentFontSize }}
       >
         {node}
-      </Typography.Text>
+      </Text>
     ) : (
       node
     );
@@ -56,14 +57,9 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
 
   const internalLabel = label && colon ? `${label}: ` : label;
   const labelNode = label && (
-    <Typography.Text
-      strong
-      ellipsis
-      style={{ fontSize: labelFontSize }}
-      type="secondary"
-    >
+    <Text strong ellipsis style={{ fontSize: labelFontSize }} type="secondary">
       {internalLabel}
-    </Typography.Text>
+    </Text>
   );
 
   if (direction === "horizontal") {
