@@ -38,7 +38,7 @@ const classes = {
     },
   }),
   active: css({
-    color: "#1677ff",
+    color: "var(--primary-hex)",
     fontWeight: "bold",
   }),
   icon: css({

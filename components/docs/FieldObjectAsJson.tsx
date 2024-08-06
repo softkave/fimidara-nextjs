@@ -39,7 +39,7 @@ const classes = {
   }),
   jsonContent: css({
     padding: "16px",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "var(--border-hex)",
     borderRadius: "4px",
     fontFamily: `var(--font-code), monospace !important`,
 

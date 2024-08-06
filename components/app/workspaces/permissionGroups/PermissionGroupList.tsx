@@ -78,6 +78,7 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
       renderItem={renderItem || internalRenderItem}
       getId={getResourceId}
       emptyMessage="No permission groups yet. Click the plus button to add one"
+      space="md"
     />
   );
 };

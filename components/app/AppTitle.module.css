@@ -1,0 +1,6 @@
+.headers {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}

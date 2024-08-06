@@ -3,26 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --text-secondary-rgb: 51, 65, 85;
-  --text-code-rgb: 30, 41, 59;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --text-color-hex: #000;
+  --text-disabled-color-hex: #475569;
+  --text-secondary-color-hex: #475569;
+  --text-code-color-hex: #1e293b;
+  --background-hex: #fff;
+  --border-hex: #e5e7eb;
+  --primary-hex: #60a5fa;
+  --background-active-hex: #eff6ff;
+  --selected-bg: #eff6ff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --text-secondary-rgb: 148, 163, 184;
-    --text-code-rgb: 226, 232, 240;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --text-color-hex: #fff;
+    --text-disabled-color-hex: #94a3b8;
+    --text-secondary-color-hex: #e2e8f0;
+    --text-code-color-hex: #f1f5f9;
+    --background-hex: #475569;
+    --border-hex: #334155;
+    --primary-hex: #60a5fa;
+    --background-active-hex: #eff6ff;
+    --selected-bg: rgba(0, 0, 0, 0.06);
   }
 }
 
+::placeholder {
+  color: var(--text-disabled-color-hex) !important;
+}
+
 body {
-  color: rgb(var(--foreground-rgb));
-  background-color: rgb(var(--background-end-rgb));
+  color: var(--text-color-hex);
+  background-color: var(--background-hex);
   font-family: var(--font-default), -apple-system, BlinkMacSystemFont,
     "Work Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
@@ -33,11 +45,12 @@ body {
 
 body * {
   box-sizing: border-box;
+  /* color: var(--text-color-hex); */
 }
 
 body code {
   font-family: var(--font-code), monospace;
-  color: rgb(var(--text-code-rgb));
+  color: var(--text-code-color-hex);
   font-size: 14px;
 }
 
@@ -47,6 +60,18 @@ h3,
 h4,
 h5 {
   font-weight: 500;
+}
+
+ol {
+  list-style: decimal;
+  /* margin: 16px; */
+  padding: 16px;
+}
+
+ul {
+  list-style: disc;
+  /* margin: 16px; */
+  padding: 16px;
 }
 
 @layer utilities {
@@ -74,20 +99,20 @@ code {
 .icon-btn.ant-btn,
 .ant-notification-notice-close {
   line-height: 16px;
-  background-color: #e2e8f0;
-  border: 1px solid #cbd5e1;
+  background-color: var(--background-hex);
+  border: 1px solid var(--border-hex);
   height: 24px;
   width: 24px;
   padding: 0px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #595959 !important;
+  color: var(--text-color-hex) !important;
 }
 
 .icon-btn.ant-btn:hover,
 .ant-notification-notice-close:hover {
-  background-color: #ddd;
+  background-color: var(--background-hex);
 }
 
 .ant-notification-close-x {
@@ -100,7 +125,7 @@ code {
 }
 
 .icon-btn.ant-btn[disabled] svg {
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--text-color-hex);
 }
 
 .anticon {
@@ -127,12 +152,11 @@ code {
 }
 
 .ant-avatar {
-  background-color: #94a3b8;
-  /* border: 1px solid #cbd5e1; */
+  background-color: var(--background-hex);
+  color: var(--text-color-hex);
 }
 
 .ant-menu-inline-collapsed .ant-menu-item {
-  /* padding: 0 16px; */
   width: unset;
 }
 
@@ -147,12 +171,9 @@ code {
 }
 
 .ant-menu {
-  border-right: 2px solid #f0f0f0 !important;
+  /* border-right: 1px solid var(--border-hex) !important; */
+  border-right: 0 !important;
 }
-
-/* .ant-menu-item-divider {
-  border-top-width: 2px !important;
-} */
 
 .ant-menu-item-icon {
   width: 16px;
@@ -163,4 +184,12 @@ code {
   display: flex !important;
   align-items: center;
   height: 36px !important;
+}
+
+.ant-menu-item-selected {
+  font-weight: 600;
+}
+
+.ant-menu-submenu-selected > .ant-menu-submenu-title {
+  font-weight: 600;
 }

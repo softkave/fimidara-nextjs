@@ -20,10 +20,6 @@ export const appDataImages = {
 };
 
 const appTheme = {
-  colors: {
-    avatar: "#aaa",
-    select: "#e6f7ff",
-  },
   dimensions: {
     menuWidth: 200,
   },
@@ -98,11 +94,11 @@ export const appClasses = {
       cursor: "pointer",
     },
     ":hover": {
-      backgroundColor: appTheme.colors.select,
+      backgroundColor: "var(--background-hex)",
     },
   }),
   selected: css({
-    backgroundColor: appTheme.colors.select,
+    backgroundColor: "var(--background-hex)",
   }),
 
   // dimension

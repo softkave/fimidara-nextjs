@@ -38,7 +38,7 @@ const PermissionAction: React.FC<PermissionActionProps> = (props) => {
       <Space>
         {(permitted.disabledReason || info) && (
           <Tooltip title={permitted.disabledReason || info}>
-            <QuestionCircleOutlined style={{ color: "#bfbfbf" }} />
+            <QuestionCircleOutlined />
           </Tooltip>
         )}
         <Switch

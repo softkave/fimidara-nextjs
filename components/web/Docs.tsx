@@ -33,7 +33,7 @@ const docs: IDoc[] = [
 const classes = {
   link: css({
     textDecoration: "underline",
-    color: "#1677ff !important",
+    color: "var(--primary-hex) !important",
   }),
 };
 

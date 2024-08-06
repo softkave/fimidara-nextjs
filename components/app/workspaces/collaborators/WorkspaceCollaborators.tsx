@@ -29,7 +29,7 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
       <ListHeader
         label="Collaborators"
         buttons={
-          <div className="flex align-center space-x-2">
+          <div className="flex items-center space-x-2">
             <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
               <IconButton icon={<PlusOutlined />} />
             </Link>

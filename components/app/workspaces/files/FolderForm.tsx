@@ -16,7 +16,8 @@ import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Button, Form, Input, Space, Upload, message } from "antd";
+import { useMount } from "ahooks";
+import { Button, Form, Input, Upload, message } from "antd";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import assert from "assert";
@@ -24,7 +25,7 @@ import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
 import { FormikTouched } from "formik";
 import { compact, isString } from "lodash-es";
 import { useRouter } from "next/navigation";
-import { ChangeEventHandler, ReactNode, useEffect, useMemo } from "react";
+import { ChangeEventHandler, ReactNode, useMemo } from "react";
 import * as yup from "yup";
 import FormError from "../../../utils/form/FormError";
 import { FilesFormUploadProgress } from "./FilesFormUploadProgress";
@@ -130,11 +131,11 @@ export default function FolderForm(props: FolderFormProps) {
       : workspaceRootname,
   });
 
-  useEffect(() => {
+  useMount(() => {
     // TODO: should we have scheduled refresh or refresh on page load instead?
     // Refetch folder children after leaving form
     return () => clearFetchState();
-  }, [clearFetchState]);
+  });
 
   const hookLoading =
     uploadHook.loading || createHook.loading || updateHook.loading;
@@ -349,10 +350,10 @@ export default function FolderForm(props: FolderFormProps) {
         }}
       >
         <Button title="Select Folder">
-          <Space>
+          <div className="space-x-2">
             <CustomIcon icon={<UploadOutlined />} />
-            Select Folder
-          </Space>
+            <span>Select Folder</span>
+          </div>
         </Button>
       </Upload>
     </Form.Item>

@@ -53,7 +53,7 @@ const classes = {
     },
     "& .ant-tabs-nav-wrap": {
       marginBottom: "16px",
-      borderBottom: "1px solid #f0f0f0",
+      borderBottom: "1px solid var(--border-hex)",
     },
   }),
   targetTypeRoot: css({

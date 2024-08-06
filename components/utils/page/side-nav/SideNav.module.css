@@ -18,6 +18,7 @@
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  border-right: 1px solid var(--border-hex);
 }
 
 .sideNavDesktopRoot :global(.ant-menu-inline) {
@@ -25,7 +26,7 @@
 }
 
 .sideNavDesktopRoot :global(.ant-menu-item) {
-  height: 38px !important;
+  height: 32px !important;
   padding-left: 16px !important;
   margin-bottom: 0px !important;
   margin-top: 0px !important;
@@ -57,7 +58,7 @@
   display: flex;
   padding: 16px;
   align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--border-hex);
 }
 
 .sideNavMobileHeader :global(h4) {

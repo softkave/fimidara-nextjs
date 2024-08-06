@@ -1,11 +1,6 @@
-import { appRootPaths } from "@/lib/definitions/system.ts";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import Title from "antd/es/typography/Title";
-import { usePathname } from "next/navigation";
 import React from "react";
 import { cn } from "../utils.ts";
-import IconButton from "../utils/buttons/IconButton.tsx";
-import styles from "./AppHeader.module.css";
+import AppTitle from "./AppTitle.tsx";
 import { useAppMenu } from "./useAppMenu.tsx";
 import UserMenu from "./UserMenu.tsx";
 import { UploadingFilesProgressButton } from "./workspaces/files/UploadingFilesProgress.tsx";
@@ -17,24 +12,22 @@ export interface IAppHeaderProps {
 
 export default function AppHeader(props: IAppHeaderProps) {
   const { className, style } = props;
-  const { isOpen, toggleAppMenu } = useAppMenu();
-  const pathname = usePathname();
+  const { isOpen } = useAppMenu();
 
-  const isDocs = pathname.startsWith(appRootPaths.docs);
   return (
-    <div className={cn(styles.root, className)} style={style}>
-      <div className={styles.icon}>
-        <IconButton
-          icon={isOpen ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
-          onClick={toggleAppMenu}
-        />
-      </div>
-      <div className={styles.headers}>
-        <Title level={1} className="my-2 text-xl">
-          {isDocs ? "fimidara docs" : "fimidara"}
-        </Title>
-      </div>
-      <div className="flex items-center space-x-2">
+    <div
+      className={cn(
+        "flex",
+        "items-center",
+        "space-x-4",
+        "py-3",
+        "px-4",
+        className
+      )}
+      style={style}
+    >
+      {!isOpen ? <AppTitle className="flex-1" /> : <div className="flex-1" />}
+      <div className="flex items-center space-x-3">
         <UploadingFilesProgressButton />
         <UserMenu />
       </div>

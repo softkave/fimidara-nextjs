@@ -58,11 +58,6 @@ export const fimidaraNavItems: IRawNavItem[] = [
         label: "Workspace",
         key: "workspace",
       },
-      {
-        withLink: true,
-        label: "Permissions and Access Control",
-        key: "permissions-and-access-control",
-      },
     ],
   },
 ];

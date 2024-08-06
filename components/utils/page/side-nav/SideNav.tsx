@@ -1,13 +1,13 @@
+import AppTitle from "@/components/app/AppTitle.tsx";
 import { cn } from "@/components/utils.ts";
 import useAppResponsive from "@/lib/hooks/useAppResponsive.ts";
 import { CloseOutlined } from "@ant-design/icons";
 import { Drawer, Menu, MenuProps } from "antd";
 import Title from "antd/es/typography/Title";
-import { last } from "lodash-es";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import IconButton from "../../buttons/IconButton.tsx";
 import { AntDMenuItem, SelectInfo } from "../../types.ts";
 import styles from "./SideNav.module.css";
-import IconButton from "../../buttons/IconButton.tsx";
 
 export type SideNavOnSelect = MenuProps["onSelect"];
 
@@ -29,15 +29,13 @@ export function SideNav(props: ISideNavProps) {
     selectedKeys,
     openKeys,
     items,
-    hideOnClose,
     onClose,
     onSelect,
+    hideOnClose = true,
   } = props;
   const responsive = useAppResponsive();
   const isLg = responsive?.lg;
   const defaultOpenKeys = isLg && !isOpen ? undefined : openKeys;
-  const activeKey = last(defaultOpenKeys);
-  const sKey = selectedKeys?.length ? [last(selectedKeys)!] : undefined;
   const [isLgLocal, setLgLocal] = useState(isLg);
 
   useEffect(() => {
@@ -66,26 +64,32 @@ export function SideNav(props: ISideNavProps) {
     [defaultOpenKeys]
   );
 
-  const menuNode =
-    !isOpen && hideOnClose ? null : (
-      <Menu
-        key={key}
-        items={items}
-        mode="inline"
-        style={{ minWidth: isOpen ? "275px" : undefined }}
-        className={cn(styles.sideNavMenu, "h-full", "py-2")}
-        selectedKeys={selectedKeys}
-        defaultOpenKeys={defaultOpenKeys}
-        // activeKey={activeKey}
-        inlineCollapsed={!isOpen}
-        onSelect={handleSelect}
-        // inlineIndent={16}
-        inlineIndent={undefined}
-      />
-    );
+  const menuNode = (
+    <Menu
+      key={key}
+      items={items}
+      mode="inline"
+      style={{ minWidth: isOpen ? "300px" : undefined }}
+      className={cn(styles.sideNavMenu, "h-full", "py-2")}
+      selectedKeys={selectedKeys}
+      defaultOpenKeys={defaultOpenKeys}
+      inlineCollapsed={!isOpen}
+      onSelect={handleSelect}
+      inlineIndent={undefined}
+    />
+  );
 
   if (isLg) {
-    return <div className={styles.sideNavDesktopRoot}>{menuNode}</div>;
+    if (!isOpen && hideOnClose) {
+      return null;
+    }
+
+    return (
+      <div className={styles.sideNavDesktopRoot}>
+        <AppTitle className={cn("py-4", "px-4", "items-center", "flex")} />
+        {menuNode}
+      </div>
+    );
   } else {
     return (
       <Drawer

@@ -1,6 +1,6 @@
 import { Select } from "antd";
-import { first } from "lodash-es";
-import React from "react";
+import { first, uniq } from "lodash-es";
+import React, { useMemo } from "react";
 
 export interface ISummedUsageRecordListControlsProps {
   year: number;
@@ -34,29 +34,41 @@ const SummedUsageRecordListControls: React.FC<
   ISummedUsageRecordListControlsProps
 > = (props) => {
   const { year, month, options, disabled, onChange } = props;
-  const yearOption = options[year] ?? [];
+
+  const { monthOptions, monthList } = useMemo(() => {
+    const monthList = uniq((options[year] ?? []).concat(month).map(Number));
+    const monthOptions = monthList.map((iMonth) => ({
+      label: monthLabels[iMonth],
+      value: monthLabels[iMonth],
+    }));
+
+    return { monthOptions, monthList };
+  }, [options, year, month]);
+
+  const { yearOptions } = useMemo(() => {
+    const yearOptions = uniq(Object.keys(options).map(Number).concat(year)).map(
+      (iYear) => ({
+        label: iYear,
+        value: iYear,
+      })
+    );
+
+    return { yearOptions };
+  }, [options, year]);
 
   return (
-    <div className="flex align-center space-x-2">
+    <div className="flex items-center space-x-2">
       <Select
-        value={year}
-        onChange={(value) => onChange(value, first(yearOption))}
+        value={year.toString()}
+        onChange={(value) => onChange(Number(value), first(monthList))}
         disabled={disabled}
-      >
-        {Object.keys(options).map((year) => (
-          <Select.Option key={year} value={year}>
-            {year}
-          </Select.Option>
-        ))}
-      </Select>
+        options={yearOptions}
+      />
       <Select
         disabled={disabled}
-        value={monthLabels[month]}
+        value={monthLabels[month]?.toString()}
         onChange={(value) => onChange(year, monthLabelsMap[value])}
-        options={yearOption.map((month) => ({
-          label: monthLabels[month],
-          value: monthLabels[month],
-        }))}
+        options={monthOptions}
       />
     </div>
   );

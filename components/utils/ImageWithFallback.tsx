@@ -59,10 +59,10 @@ const classes = {
     },
   }),
   image: css({
-    border: "1px solid #f0f0f0",
+    border: "1px solid var(--border-hex)",
   }),
   imagePlaceholder: css({
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "var(--background-hex)",
   }),
 };
 

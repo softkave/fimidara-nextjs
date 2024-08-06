@@ -14,10 +14,10 @@ const classes = {
   item: css({
     position: "relative",
     top: "2px",
-    borderBottom: "2px solid #f0f0f0",
+    borderBottom: "1px solid var(--border-hex)",
   }),
   active: css({
-    borderBottom: "2px solid #1677ff",
+    borderBottom: "1px solid var(--primary-hex)",
   }),
 };
 

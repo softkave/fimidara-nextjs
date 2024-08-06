@@ -26,12 +26,12 @@ export interface PageMessageActionsProps extends StyleableComponentProps {
 
 const classes = {
   root: css({
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "var(--background-hex)",
     borderRadius: "4px",
     padding: "32px",
   }),
   rootMessageOnly: css({
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "var(--background-hex)",
     borderRadius: "4px",
     padding: "16px",
   }),

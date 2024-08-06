@@ -57,7 +57,9 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
       <div style={{ display: "flex", alignItems: "center" }}>
         <Link href={appRootPaths.home}>
           <Title level={5} style={{ margin: 0, cursor: "pointer" }}>
-            {isDocs ? "fimidara docs" : "fimidara"}
+            <Link href={isDocs ? appRootPaths.docs : appRootPaths.home}>
+              {isDocs ? "fimidara docs" : "fimidara"}
+            </Link>
           </Title>
         </Link>
       </div>

@@ -27,7 +27,7 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
       <ListHeader
         label="Agent Tokens"
         buttons={
-          <div className="flex align-center space-x-2">
+          <div className="flex items-center space-x-2">
             <Link href={appWorkspacePaths.createAgentTokenForm(workspaceId)}>
               <IconButton icon={<PlusOutlined />} />
             </Link>

@@ -1,5 +1,16 @@
 # fimidara
 
+- start script
+
+- mobile docs and look through all pages for mobile
+- dark mode styling for 404 and other pages
+- center all "loading..."/"nothing found..." divs
+- shows not logged in home page on first load when logged in
+- only show errors not merked internal, but log in console
+- full page loading
+- overview docs
+- revise docs one-by-one
+- docs open keys
 - scroll
 - display public errors only
 - loading and nothing found rendering together
@@ -7,7 +18,6 @@
 - docs
 - inline is rendered first
 - color scheme for icons and text
-
 - docs not working properly and go through docs to make sure they're rendered correctly
 - move docs to mdx
 - internal

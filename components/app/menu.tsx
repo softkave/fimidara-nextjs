@@ -1,4 +1,5 @@
 import {
+  FiBriefcase,
   FiFile,
   FiGitPullRequest,
   FiKey,
@@ -16,48 +17,6 @@ import {
 } from "../../lib/definitions/system";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 import { AntDMenuItem } from "../utils/types.ts";
-
-export function getWorkspaceMenu(workspaceId: string) {
-  const menuItems: AntDMenuItem[] = [
-    {
-      key: appWorkspacePaths.folderList(workspaceId),
-      label: "Files",
-      icon: <FiFile />,
-    },
-    {
-      key: appWorkspacePaths.agentTokenList(workspaceId),
-      label: "Agent Tokens",
-      icon: <FiKey />,
-    },
-    {
-      key: appWorkspacePaths.permissionGroupList(workspaceId),
-      label: "Permission Groups",
-      icon: <TbLockAccess />,
-    },
-    {
-      key: appWorkspacePaths.collaboratorList(workspaceId),
-      label: "Collaborators",
-      icon: <FiUsers />,
-    },
-    {
-      key: appWorkspacePaths.requestList(workspaceId),
-      label: "Requests",
-      icon: <FiUserPlus />,
-    },
-    {
-      key: appWorkspacePaths.usage(workspaceId),
-      label: "Usage",
-      icon: <FiVoicemail />,
-    },
-    {
-      key: appWorkspacePaths.updateWorkspaceForm(workspaceId),
-      label: "Workspace Settings",
-      icon: <FiSettings />,
-    },
-  ];
-
-  return menuItems;
-}
 
 export function getWorkspaceNavItems(workspaceId: string) {
   const menuItems: IRawNavItem[] = [
@@ -108,36 +67,13 @@ export function getWorkspaceNavItems(workspaceId: string) {
   return menuItems;
 }
 
-export function getUserMenu(workspaceId?: string) {
-  const items: AntDMenuItem[] = [
-    {
-      key: appWorkspacePaths.workspaces,
-      label: "Workspaces",
-      icon: <MdOutlineWorkOutline />,
-      children: workspaceId ? getWorkspaceMenu(workspaceId) : undefined,
-    },
-    {
-      key: appUserPaths.requests,
-      label: "Collaboration Requests",
-      icon: <FiGitPullRequest />,
-    },
-    {
-      key: appUserPaths.settings,
-      label: "User Settings",
-      icon: <FiSettings />,
-    },
-  ];
-
-  return items;
-}
-
 export function getUserNavItems(workspaceId?: string) {
   const items: IRawNavItem[] = [
     {
       key: appWorkspacePaths.workspaces,
       href: appWorkspacePaths.workspaces,
       label: "Workspaces",
-      icon: <MdOutlineWorkOutline />,
+      icon: <FiBriefcase />,
       children: workspaceId ? getWorkspaceNavItems(workspaceId) : undefined,
     },
     {

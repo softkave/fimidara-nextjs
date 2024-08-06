@@ -67,7 +67,6 @@ const DocsMain: React.FC<IDocsMainProps> = (props) => {
           }
           main * {
             font-size: 14px;
-            color: rgba(38, 38, 38, 0.88);
           }
         `}
       </style>

@@ -34,10 +34,10 @@ export const InitApp = (props: IInitAppProps) => {
 
   return (
     <>
-      <FimidaraHeader />
       <div className="flex flex-1">
         <FimidaraSideNav />
         <div className="flex-1 flex flex-col">
+          <FimidaraHeader />
           <div
             style={{ maxWidth: "700px" }}
             className="mx-auto p-4 flex-1 w-full"

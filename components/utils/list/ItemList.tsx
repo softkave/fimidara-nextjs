@@ -18,12 +18,13 @@ export interface IItemListProps<T = any> extends IItemListExportedProps {
   items: T[];
   renderItem: (item: T, index: number) => React.ReactNode;
   getId?: (item: T, index: number) => string;
+  space?: "sm" | "md";
 }
 
 const classes = {
   root: css({}),
   bordered: css({
-    borderBottom: "1px solid #f0f0f0",
+    borderBottom: "1px solid var(--border-hex)",
   }),
   item: css({
     padding: "12px 0px",
@@ -47,6 +48,7 @@ function ItemList<T>(props: IItemListProps<T>) {
     itemStyle,
     renderItem,
     getId,
+    space = "sm",
   } = props;
 
   const handleRenderItem = (item: T, index: number) => {
@@ -60,7 +62,7 @@ function ItemList<T>(props: IItemListProps<T>) {
       <div
         key={getId ? getId(item, index) : index}
         className={cn(
-          "py-2",
+          space === "sm" ? "py-2" : "py-4",
           bordered && index !== items.length - 1 && classes.bordered,
           itemClassName
         )}
