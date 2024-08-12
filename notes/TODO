@@ -2,6 +2,9 @@
 
 - start script
 
+- message dark mode
+- switch away from antd
+- loading and error background
 - mobile docs and look through all pages for mobile
 - dark mode styling for 404 and other pages
 - center all "loading..."/"nothing found..." divs
