@@ -1,8 +1,21 @@
 # fimidara
 
 - start script
+- integrate sentry
 
 - message dark mode
+- files and folders not refreshed after upload (testing in root)
+- link to go back to file or folder from form
+  - open in drawer/sidebar
+- highlight in buttons particularly signup form
+  - maybe move off antd gradually to shadcn
+  - Tag not showing correctly, waitlist page
+- waitlisted user message not centered
+  - make sure all content are horizontally and vertically centered
+- little lag where dashboard shows sidebar and login/signup form
+- workspace name not centered in list
+- spacing nav bar
+- disable mutation actions if not email verified
 - switch away from antd
 - loading and error background
 - mobile docs and look through all pages for mobile

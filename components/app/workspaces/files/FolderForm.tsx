@@ -20,7 +20,6 @@ import { useMount } from "ahooks";
 import { Button, Form, Input, Upload, message } from "antd";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
-import assert from "assert";
 import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
 import { FormikTouched } from "formik";
 import { compact, isString } from "lodash-es";
@@ -84,8 +83,7 @@ export default function FolderForm(props: FolderFormProps) {
       ? stringifyFimidaraFoldernamepath({
           namepath: folder.namepath.slice(0, -1),
         })
-      : undefined);
-  assert(isString(parentPath));
+      : "");
 
   const router = useRouter();
   const updateHook = useWorkspaceFolderUpdateMutationHook({
