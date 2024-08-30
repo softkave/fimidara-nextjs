@@ -1,5 +1,4 @@
 import { AppError, getBaseError } from "@/lib/utils/errors";
-import { Space } from "antd";
 import React from "react";
 import { StyleableComponentProps } from "../styling/types";
 import PageError from "./PageError";
@@ -39,21 +38,21 @@ function PageContent02<T>(props: IPageContent02Props<T>) {
     );
   } else if (isLoading) {
     contentNode = (
-      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+      <div className="space-y-4">
         {contentNode}
         <PageLoading
           message={defaultLoadingMessage}
           showMessageOnly={isDataFetched}
         />
-      </Space>
+      </div>
     );
   } else if (data) {
     const dataNode = render(data);
     contentNode = (
-      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+      <div className="space-y-4">
         {contentNode}
         {dataNode}
-      </Space>
+      </div>
     );
   }
 

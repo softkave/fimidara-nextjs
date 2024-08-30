@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button.tsx";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling.tsx";
 import InlineLoading from "@/components/utils/page/InlineLoading.tsx";
 import PageError from "@/components/utils/page/PageError.tsx";
@@ -9,7 +10,7 @@ import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestResponseMutationHook } from "@/lib/hooks/mutationHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
-import { Button, Space, message } from "antd";
+import { message } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
@@ -71,9 +72,9 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
           respondHook.loading ? (
             <InlineLoading />
           ) : (
-            <Space size={"middle"}>
+            <div className="space-x-4">
               <Button
-                danger
+                variant="destructive"
                 loading={respondHook.loading}
                 onClick={() =>
                   respondHook.run({
@@ -99,7 +100,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
               >
                 Accept Request
               </Button>
-            </Space>
+            </div>
           )
         ) : (
           <Text>
@@ -109,23 +110,23 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
 
       return (
         <div className={classes.main}>
-          <Space direction="vertical" size={"large"}>
-            <Space direction="vertical" size={2}>
+          <div className="space-y-8">
+            <div className="space-y-0.5">
               <Title level={4} style={{ margin: 0 }}>
                 Collaboration Request from {resource.workspaceName}
               </Title>
               <Text type="secondary">Sent {createdDate}</Text>
-            </Space>
+            </div>
             {resource.message && expirationDate ? (
-              <Space direction="vertical" size={2}>
+              <div className="space-y-0.5">
                 {resource.message && <Paragraph>{resource.message}</Paragraph>}
                 {expirationDate && (
                   <Text type="secondary">Expires {expirationDate}</Text>
                 )}
-              </Space>
+              </div>
             ) : null}
             {actions}
-          </Space>
+          </div>
         </div>
       );
     }

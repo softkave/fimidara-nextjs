@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
@@ -11,7 +13,7 @@ import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserChangePasswordWithTokenMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import useFormHelpers from "@/lib/hooks/useFormHelpers.ts";
 import { css } from "@emotion/css";
-import { Button, Form, Input, notification } from "antd";
+import { Form, notification } from "antd";
 import Title from "antd/es/typography/Title";
 import { useRouter } from "next/navigation";
 import * as yup from "yup";
@@ -90,8 +92,8 @@ export default function ChangePasswordWithToken(
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.Password
-        visibilityToggle
+      <Input
+        type="password"
         autoComplete="new-password"
         name="password"
         onBlur={formik.handleBlur}
@@ -114,12 +116,7 @@ export default function ChangePasswordWithToken(
           <FormAlert error={changePasswordHook.error} />
           {passwordNode}
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={changePasswordHook.loading}
-            >
+            <Button type="submit" loading={changePasswordHook.loading}>
               {changePasswordHook.loading
                 ? "Changing Password"
                 : "Change Password"}

@@ -1,4 +1,4 @@
-import { Radio, Space } from "antd";
+import { Radio } from "antd";
 import { isObject } from "lodash-es";
 import React from "react";
 import { IFormFieldRenderFnProps } from "./FormField";
@@ -35,7 +35,7 @@ const FormItemInputRadio: React.FC<IFormItemInputRadioProps> = (props) => {
         className={className}
         onChange={(evt) => onChange(evt.target.value)}
       >
-        <Space direction="vertical">
+        <div className="space-y-2">
           {options?.map((item) => {
             const { label, value } = isObject(item)
               ? item
@@ -46,7 +46,7 @@ const FormItemInputRadio: React.FC<IFormItemInputRadioProps> = (props) => {
               <Radio value={value}>{label}</Radio>
             );
           })}
-        </Space>
+        </div>
       </Radio.Group>
     );
   }

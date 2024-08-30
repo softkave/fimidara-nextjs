@@ -3,7 +3,6 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import { AgentToken } from "fimidara";
 import { useRouter } from "next/navigation";
@@ -35,7 +34,7 @@ function AgentTokenComponent(props: IAgentTokenProps) {
 
   return (
     <div>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+      <div className="space-x-8">
         <ComponentHeader title={resource.name || resource.resourceId}>
           <AgentTokenMenu
             token={resource}
@@ -99,7 +98,7 @@ function AgentTokenComponent(props: IAgentTokenProps) {
           entityId={resource.resourceId}
           workspaceId={resource.workspaceId}
         />
-      </Space>
+      </div>
     </div>
   );
 }

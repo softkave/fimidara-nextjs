@@ -4,6 +4,7 @@
 - integrate sentry
 
 - message dark mode
+- no separate folders/files loading and error
 - files and folders not refreshed after upload (testing in root)
 - link to go back to file or folder from form
   - open in drawer/sidebar

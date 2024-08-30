@@ -2,7 +2,6 @@ import { htmlCharacterCodes } from "@/components/utils/utils";
 import AestheticNum from "@/components/web/AestheticNum";
 import AestheticText from "@/components/web/AestheticText";
 import { css } from "@emotion/css";
-import { Space } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
@@ -42,7 +41,7 @@ export async function generateMetadata(
 
 const Home: NextPage = () => {
   return (
-    <Space direction="vertical" size={128} style={{ width: "100%" }}>
+    <div className="space-y-32">
       <div className={classes.intro}>
         <Title level={1}>fimidara</Title>
         <Paragraph className={classes.introParagraph}>
@@ -74,7 +73,7 @@ const Home: NextPage = () => {
         &copy; {htmlCharacterCodes.doubleDash} Softkave{" "}
         {htmlCharacterCodes.doubleDash} {new Date().getFullYear()}
       </Paragraph>
-    </Space>
+    </div>
   );
 };
 

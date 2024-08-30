@@ -2,7 +2,7 @@
 
 import { KeyValueDynamicKeys } from "@/lib/hooks/kvStore.ts";
 import { useTransferProgress } from "@/lib/hooks/useTransferProgress";
-import { Progress, Space } from "antd";
+import { Progress } from "antd";
 import Text from "antd/es/typography/Text";
 import { formatDistanceToNow } from "date-fns";
 import { identity, uniqBy } from "lodash-es";
@@ -37,7 +37,7 @@ export function TransferProgress(props: ITransferProgressProps) {
   // TODO: have an internal way for calculating estimated time that doesnt
   // depend on the progress event, or we can extend it to the progress event
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size={0}>
+    <div>
       <Text type="secondary">{identifier}</Text>
       <Progress
         percent={percent}
@@ -49,23 +49,23 @@ export function TransferProgress(props: ITransferProgressProps) {
           width: "calc(100% - 8px)",
         }}
       />
-      <Space
-        split={<Text type="secondary">{htmlCharacterCodes.middleDot}</Text>}
-      >
+      <div className="space-x-2">
         <Text type="secondary">
           {pb(loaded)} of {pb(total)}
         </Text>
+        <Text type="secondary">{htmlCharacterCodes.middleDot}</Text>
         <Text type="secondary">{pb(rate)}/s</Text>
+        <Text type="secondary">{htmlCharacterCodes.middleDot}</Text>
         <Text type="secondary">
           {estimatedTime
             ? formatDistanceToNow(estimatedTime)
             : "Estimated time unknown"}
         </Text>
-      </Space>
+      </div>
       {progressHook.error ? (
         <FormError visible enrich error={progressHook.error as any} />
       ) : null}
-    </Space>
+    </div>
   );
 }
 

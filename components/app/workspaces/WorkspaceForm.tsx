@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { folderConstants } from "@/lib/definitions/folder";
@@ -11,7 +14,7 @@ import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
 import { workspaceValidationParts } from "@/lib/validation/workspace";
 import { css } from "@emotion/css";
-import { Button, Form, Input, Space, message } from "antd";
+import { Form, message } from "antd";
 import Title from "antd/es/typography/Title";
 import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
 import { useRouter } from "next/navigation";
@@ -125,7 +128,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Space direction="vertical" style={{ width: "100%" }}>
+      <div className="space-y-4">
         <Input
           name="rootname"
           value={formik.values.rootname}
@@ -138,7 +141,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         />
         {formik.values.name && !workspace && (
           <Button
-            type="link"
+            variant="link"
             onClick={() => {
               formik.setFieldValue(
                 "rootname",
@@ -150,7 +153,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
             Auto-fill from workspace name
           </Button>
         )}
-      </Space>
+      </div>
     </Form.Item>
   );
 
@@ -169,7 +172,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.TextArea
+      <Textarea
         name="description"
         value={formik.values.description}
         onBlur={formik.handleBlur}
@@ -177,7 +180,6 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         placeholder="Enter workspace description"
         disabled={stateHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
       />
     </Form.Item>
   );
@@ -194,12 +196,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
           {rootnameNode}
           {descriptionNode}
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={stateHook.loading}
-            >
+            <Button type="submit" loading={stateHook.loading}>
               {workspace ? "Update Workspace" : "Create Workspace"}
             </Button>
           </Form.Item>

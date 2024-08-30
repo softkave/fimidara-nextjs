@@ -12,12 +12,12 @@ import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchNonPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useEntityAssignedPermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
+import { cn } from "@/lib/utils.ts";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
 import { indexArray } from "@/lib/utils/indexArray";
 import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
-import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -134,25 +134,20 @@ const AssignedPermissionGroupList: React.FC<
 
   return (
     <React.Fragment>
-      <Space
-        direction="vertical"
-        style={{ width: "100%", ...style }}
-        className={className}
-        size="large"
-      >
+      <div className={cn(className, "space-y-8")} style={style}>
         <ListHeader
           label="Assigned Permission Groups"
           buttons={
-            <Space>
+            <div className="space-x-2">
               <IconButton
                 icon={<PlusOutlined />}
                 onClick={() => toggleHook.toggle()}
               />
-            </Space>
+            </div>
           }
         />
         <PaginatedContent content={content} />
-      </Space>
+      </div>
       {assignFormNode}
     </React.Fragment>
   );

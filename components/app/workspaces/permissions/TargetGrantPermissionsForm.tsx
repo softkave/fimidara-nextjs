@@ -7,7 +7,7 @@ import {
 } from "@/lib/hooks/mutationHooks";
 import { RightOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Modal, Space, Tabs, message } from "antd";
+import { Modal, Tabs, message } from "antd";
 import {
   AgentToken,
   Collaborator,
@@ -220,11 +220,11 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
       cancelText="Close"
       className={classes.root}
     >
-      <Space direction="vertical" style={{ width: "100%" }}>
+      <div className="space-x-2">
         {errorNode}
         {targetTypeNode}
         {tabsNode}
-      </Space>
+      </div>
     </Modal>
   );
 };

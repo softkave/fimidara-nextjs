@@ -1,12 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import FormError from "@/components/utils/form/FormError.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { userConstants } from "@/lib/definitions/user";
 import { useUserChangePasswordWithCurrentPasswordMutationHook } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { css } from "@emotion/css";
-import { Button, Form, Input, message } from "antd";
+import { Form, message } from "antd";
 import * as yup from "yup";
 import { FormAlert } from "../../utils/FormAlert";
 
@@ -49,8 +51,8 @@ export default function ChangePasswordWithCurrentPassword() {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.Password
-        visibilityToggle
+      <Input
+        type="password"
         autoComplete="new-password"
         name="password"
         onBlur={formik.handleBlur}
@@ -77,8 +79,8 @@ export default function ChangePasswordWithCurrentPassword() {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.Password
-        visibilityToggle
+      <Input
+        type="password"
         autoComplete="current-password"
         name="password"
         onBlur={formik.handleBlur}
@@ -99,12 +101,7 @@ export default function ChangePasswordWithCurrentPassword() {
           {currentPasswordNode}
           {newPasswordNode}
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={changePasswordHook.loading}
-            >
+            <Button type="submit" loading={changePasswordHook.loading}>
               {changePasswordHook.loading
                 ? "Changing Password"
                 : "Change Password"}

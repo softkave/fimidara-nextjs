@@ -4,15 +4,14 @@ import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/fetchHooks/workspaceCollaborator.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space } from "antd";
 import { Collaborator } from "fimidara";
 import { useRouter } from "next/navigation";
 import React from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import CollaboratorMenu from "./CollaboratorMenu";
-import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/fetchHooks/workspaceCollaborator.ts";
 
 export interface CollaboratorComponentProps {
   workspaceId: string;
@@ -36,7 +35,7 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
   if (resource) {
     return (
       <div>
-        <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <div className="space-y-8">
           <ComponentHeader title={resource.firstName + " " + resource.lastName}>
             <CollaboratorMenu
               workspaceId={workspaceId}
@@ -67,7 +66,7 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
             entityId={resource.resourceId}
             workspaceId={resource.workspaceId}
           />
-        </Space>
+        </div>
       </div>
     );
   } else if (error) {

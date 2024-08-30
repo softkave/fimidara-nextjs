@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
@@ -14,7 +17,7 @@ import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
 import { css, cx } from "@emotion/css";
-import { Button, Form, Input, message } from "antd";
+import { Form, message } from "antd";
 import Title from "antd/es/typography/Title";
 import { PermissionGroup } from "fimidara";
 import { useRouter } from "next/navigation";
@@ -137,7 +140,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.TextArea
+      <Textarea
         name="description"
         value={formik.values.description}
         onBlur={formik.handleBlur}
@@ -145,7 +148,6 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
         placeholder="Enter permission group description"
         disabled={mergedHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
       />
     </Form.Item>
   );
@@ -161,12 +163,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
           {nameNode}
           {descriptionNode}
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={mergedHook.loading}
-            >
+            <Button type="submit" loading={mergedHook.loading}>
               {permissionGroup
                 ? "Update Permission Group"
                 : "Create Permission Group"}

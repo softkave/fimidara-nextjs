@@ -6,7 +6,7 @@ import WorkspaceContainer from "@/components/app/workspaces/WorkspaceContainer.t
 import WorkspaceForm from "@/components/app/workspaces/WorkspaceForm";
 import { IWorkspaceComponentProps } from "@/components/app/workspaces/utils";
 import { usePageAuthRequired } from "@/components/hooks/usePageAuthRequired.tsx";
-import { Divider, Space } from "antd";
+import { Divider } from "antd";
 import { NextPage } from "next";
 
 interface IEditWorkspacePageProps extends IWorkspaceComponentProps {}
@@ -18,13 +18,13 @@ const EditWorkspacePage: NextPage<IEditWorkspacePageProps> = (props) => {
       <WorkspaceContainer
         workspaceId={workspaceId}
         render={(workspace) => (
-          <Space direction="vertical" style={{ width: "100%" }} size={"large"}>
+          <div className="space-y-8">
             <UploadWorkspaceAvatar workspaceId={workspace.resourceId} />
             <Divider orientation="left">Workspace Details</Divider>
             <WorkspaceComponent workspace={workspace} />
             <Divider orientation="left">Workspace Form</Divider>
             <WorkspaceForm workspace={workspace} />
-          </Space>
+          </div>
         )}
       />
     ),

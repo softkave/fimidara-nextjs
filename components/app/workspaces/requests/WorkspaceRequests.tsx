@@ -8,7 +8,6 @@ import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUt
 import { useWorkspaceCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { PlusOutlined } from "@ant-design/icons";
-import { Space } from "antd";
 import Link from "next/link";
 import React from "react";
 import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
@@ -55,7 +54,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
   );
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader
         label="Collaboration Requests"
         buttons={
@@ -74,7 +73,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
         pagination={count ? { ...pagination, count } : undefined}
         content={contentNode}
       />
-    </Space>
+    </div>
   );
 };
 

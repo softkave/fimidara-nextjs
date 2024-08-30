@@ -3,7 +3,6 @@ import LabeledNode from "@/components/utils/LabeledNode.tsx";
 import { appClasses } from "@/components/utils/theme.ts";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import { Workspace } from "fimidara";
 import { useRouter } from "next/navigation";
@@ -23,7 +22,7 @@ function WorkspaceComponent(props: WorkspaceComponentProps) {
 
   return (
     <div>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+      <div className="space-y-8">
         <ComponentHeader title={resource.name || resource.resourceId}>
           <WorkspaceMenu
             workspace={resource}
@@ -58,7 +57,7 @@ function WorkspaceComponent(props: WorkspaceComponentProps) {
             }
           />
         )}
-      </Space>
+      </div>
     </div>
   );
 }

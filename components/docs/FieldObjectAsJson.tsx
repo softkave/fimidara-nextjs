@@ -1,5 +1,4 @@
 import { css, cx } from "@emotion/css";
-import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import { forEach, map } from "lodash-es";
@@ -165,23 +164,32 @@ function renderFieldObjectAsJson(
 
   return (
     <div className={classes.jsonRoot} key={key}>
-      <Space split={htmlCharacterCodes.doubleDash}>
+      <div className="space-x-2">
         {propName && <Text code>{propName}</Text>}
         {nextObject.name && (
-          <Title
-            id={getTypeNameID(nextObject.name)}
-            level={5}
-            className={cx(classes.title, appClasses.muteMargin)}
-          >
-            {nextObject.name}
-          </Title>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <Title
+              id={getTypeNameID(nextObject.name)}
+              level={5}
+              className={cx(classes.title, appClasses.muteMargin)}
+            >
+              {nextObject.name}
+            </Title>
+          </>
         )}
         {nextObject.required ? (
-          <Text code>Required</Text>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <Text code>Required</Text>
+          </>
         ) : (
-          <Text code>Optional</Text>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <Text code>Optional</Text>
+          </>
         )}
-      </Space>
+      </div>
       <FieldDescription fieldbase={nextObject} type="secondary" />
       <div className={classes.jsonContent}>
         &#123;

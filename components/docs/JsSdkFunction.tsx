@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Divider, Space } from "antd";
+import { Divider } from "antd";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import React from "react";
@@ -107,15 +107,26 @@ function renderFieldType(nextParam: any, name?: string) {
     const node = renderJsonFieldType(nextParam, true);
     return (
       <div key={name}>
-        <Space split={htmlCharacterCodes.doubleDash}>
-          {name && <Text code>{name}</Text>}
+        <div className="space-x-2">
+          {name && (
+            <>
+              <Text code>{name}</Text>
+              <span>{htmlCharacterCodes.doubleDash}</span>
+            </>
+          )}
           <Text code>{node}</Text>
           {nextParam.required ? (
-            <Text code>Required</Text>
+            <>
+              <span>{htmlCharacterCodes.doubleDash}</span>
+              <Text code>Required</Text>
+            </>
           ) : (
-            <Text code>Optional</Text>
+            <>
+              <span>{htmlCharacterCodes.doubleDash}</span>
+              <Text code>Optional</Text>
+            </>
           )}
-        </Space>
+        </div>
         <FieldDescription fieldbase={nextParam} />
       </div>
     );

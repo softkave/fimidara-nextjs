@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Input } from "@/components/ui/input.tsx";
 import React from "react";
 import { IFormFieldRenderFnProps } from "./FormField";
 import { IFormItemInputText } from "./types";
@@ -27,9 +27,9 @@ const FormItemInputText: React.FC<IFormItemInputTextProps> = (props) => {
     onChange,
   } = props;
 
-  const InputElement = isPassword ? Input.Password : Input;
   return (
-    <InputElement
+    <Input
+      {...(isPassword ? { type: "password" } : {})}
       autoFocus={autoFocus}
       value={value}
       disabled={disabled || !isEditing}

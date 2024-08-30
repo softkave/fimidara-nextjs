@@ -1,10 +1,11 @@
-import { Dropdown, MenuProps, Space } from "antd";
+import { Dropdown, MenuProps } from "antd";
 import Title from "antd/es/typography/Title";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
+import { Button } from "../ui/button.tsx";
 import { cn } from "../utils.ts";
 import IconButton from "../utils/buttons/IconButton";
 import { appClasses } from "../utils/theme";
@@ -41,14 +42,14 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
   ]);
 
   sideLinksNode = (
-    <Space size={"middle"}>
-      <Link href={appAccountPaths.login} className={styles.login}>
-        Login
+    <div className="space-x-2 flex items-center">
+      <Link href={appAccountPaths.login}>
+        <Button variant="link">Login</Button>
       </Link>
       <Dropdown trigger={["click"]} menu={{ items }} placement="bottomRight">
         <IconButton icon={<BsThreeDots />} className={appClasses.iconBtn} />
       </Dropdown>
-    </Space>
+    </div>
   );
 
   const isDocs = pathname.startsWith(appRootPaths.docs);

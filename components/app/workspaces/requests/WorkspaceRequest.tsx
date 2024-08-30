@@ -3,7 +3,6 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import assert from "assert";
 import { CollaborationRequestForWorkspace } from "fimidara";
@@ -26,7 +25,7 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
 
   return (
     <div>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+      <div className="space-y-8">
         <ComponentHeader title={resource.recipientEmail}>
           <WorkspaceRequestMenu
             request={resource}
@@ -76,7 +75,7 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
           label="Last Updated"
           node={formatDateTime(resource.lastUpdatedAt)}
         />
-      </Space>
+      </div>
     </div>
   );
 }

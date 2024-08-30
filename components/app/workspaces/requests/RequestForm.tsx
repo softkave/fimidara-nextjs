@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
@@ -12,7 +15,7 @@ import { messages } from "@/lib/messages/messages";
 import { systemValidation } from "@/lib/validation/system";
 import { signupValidationParts } from "@/lib/validation/user";
 import { css, cx } from "@emotion/css";
-import { Button, DatePicker, Form, Input, message } from "antd";
+import { DatePicker, Form, message } from "antd";
 import Title from "antd/es/typography/Title";
 import dayjs from "dayjs";
 import { CollaborationRequestForWorkspace } from "fimidara";
@@ -145,7 +148,7 @@ export default function RequestForm(props: IRequestFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.TextArea
+      <Textarea
         name="message"
         value={formik.values.message}
         onBlur={formik.handleBlur}
@@ -153,7 +156,6 @@ export default function RequestForm(props: IRequestFormProps) {
         placeholder="Enter request message"
         disabled={mergedHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
       />
     </Form.Item>
   );
@@ -196,12 +198,7 @@ export default function RequestForm(props: IRequestFormProps) {
           {messageNode}
           {expiresNode}
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={mergedHook.loading}
-            >
+            <Button type="submit" loading={mergedHook.loading}>
               {request ? "Update Request" : "Create Request"}
             </Button>
           </Form.Item>

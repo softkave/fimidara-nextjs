@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import React from "react";
 import { IFormFieldRenderFnProps } from "./FormField";
 import { IFormItemInputTextArea } from "./types";
@@ -20,7 +20,6 @@ const FormItemInputTextArea: React.FC<IFormItemInputTextAreaProps> = (
     disabled,
     maxLength,
     isEditing,
-    autoSize,
     placeholder,
     style,
     className,
@@ -29,7 +28,7 @@ const FormItemInputTextArea: React.FC<IFormItemInputTextAreaProps> = (
   } = props;
 
   return (
-    <Input.TextArea
+    <Textarea
       autoFocus={autoFocus}
       value={value}
       disabled={disabled || !isEditing}
@@ -38,7 +37,6 @@ const FormItemInputTextArea: React.FC<IFormItemInputTextAreaProps> = (
       onClick={() => {
         if (!isEditing) setEditing(true);
       }}
-      autoSize={autoSize}
       placeholder={placeholder}
       style={style}
       className={className}

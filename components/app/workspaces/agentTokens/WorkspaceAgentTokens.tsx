@@ -4,7 +4,6 @@ import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { PlusOutlined } from "@ant-design/icons";
-import { Space } from "antd";
 import { AgentToken } from "fimidara";
 import Link from "next/link";
 import React from "react";
@@ -23,7 +22,7 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
   const { workspaceId, menu } = props;
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader
         label="Agent Tokens"
         buttons={
@@ -40,7 +39,7 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
         }
       />
       <AgentTokenListContainer {...props} />
-    </Space>
+    </div>
   );
 };
 

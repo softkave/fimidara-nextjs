@@ -1,6 +1,5 @@
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { appClasses } from "@/components/utils/theme";
-import { Space } from "antd";
 import { Folder } from "fimidara";
 import FileListContainer from "./FileListContainer";
 import FileListContainerHeader from "./FileListContainerHeader";
@@ -24,7 +23,7 @@ function FolderChildren(props: FolderChildrenProps) {
         workspaceRootname={workspaceRootname}
         className={appClasses.mb16}
       />
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+      <div className="space-y-8">
         <FolderParentLink workspaceId={workspaceId} folder={folder}>
           <span style={{ fontSize: "24px" }}>..</span>
         </FolderParentLink>
@@ -38,7 +37,7 @@ function FolderChildren(props: FolderChildrenProps) {
           workspaceRootname={workspaceRootname}
           folder={folder}
         />
-      </Space>
+      </div>
     </div>
   );
 }

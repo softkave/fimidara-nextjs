@@ -1,4 +1,4 @@
-import { Divider, Space, Typography } from "antd";
+import { Divider, Typography } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import Title from "antd/es/typography/Title";
 import { first } from "lodash-es";
@@ -19,7 +19,7 @@ export interface JsSdkIndexProps {}
 
 const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
   const fimidaraJsDescriptionNode = (
-    <Space direction="vertical" size={"middle"}>
+    <div className="space-y-4">
       <Text>
         Run{" "}
         <Text code copyable>
@@ -52,7 +52,7 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
           {"}"});
         </Text>
       </div>
-    </Space>
+    </div>
   );
   const endpointsNode = renderNavItemList(
     restApiRawNavItems,

@@ -1,9 +1,10 @@
+import { Button } from "@/components/ui/button.tsx";
 import CustomIcon from "@/components/utils/buttons/CustomIcon";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { indexArray } from "@/lib/utils/indexArray";
 import { UploadOutlined } from "@ant-design/icons";
 import { cx } from "@emotion/css";
-import { Button, Form, Space, Upload } from "antd";
+import { Form, Upload } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import { compact, isString } from "lodash-es";
 import FormError from "../../../utils/form/FormError";
@@ -66,10 +67,10 @@ export function MultipleFilesForm(props: MultipleFilesFormProps) {
         }}
       >
         <Button title="Select Files">
-          <Space>
+          <div className="space-x-2">
             <CustomIcon icon={<UploadOutlined />} />
             Select Files
-          </Space>
+          </div>
         </Button>
       </Upload>
     </Form.Item>

@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import FormError from "@/components/utils/form/FormError";
@@ -10,7 +13,8 @@ import {
 } from "@/lib/hooks/mutationHooks";
 import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { css } from "@emotion/css";
-import { Button, DatePicker, Form, Input, message } from "antd";
+import { DatePicker, Form, message } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import Title from "antd/es/typography/Title";
 import dayjs from "dayjs";
 import { AgentToken, NewAgentTokenInput } from "fimidara";
@@ -126,7 +130,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.TextArea
+      <Textarea
         name="description"
         value={formik.values.description}
         onBlur={formik.handleBlur}
@@ -134,7 +138,6 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         placeholder="Enter token description"
         disabled={mergedHook.loading}
         maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
       />
     </Form.Item>
   );
@@ -182,7 +185,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.TextArea
+      <TextArea
         name="providedResourceId"
         value={formik.values.providedResourceId}
         onBlur={formik.handleBlur}
@@ -208,12 +211,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
           {expiresNode}
           {providedResourceIdNode}
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={mergedHook.loading}
-            >
+            <Button type="submit" loading={mergedHook.loading}>
               {agentToken ? "Update Token" : "Create Token"}
             </Button>
           </Form.Item>

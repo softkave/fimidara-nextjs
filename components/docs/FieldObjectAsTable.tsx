@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Space, Table, TableColumnType } from "antd";
+import { Table, TableColumnType } from "antd";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import { forEach, map } from "lodash-es";
@@ -58,15 +58,7 @@ const FieldObjectAsTable: React.FC<FieldObjectAsTableProps> = (props) => {
     return nodes;
   }, [objectsToProcess, fieldObject, isForJsSdk, hideTitle, propName]);
 
-  return (
-    <Space
-      direction="vertical"
-      style={{ width: "100%", marginTop: "16px" }}
-      size={"large"}
-    >
-      {nodes}
-    </Space>
-  );
+  return <div className="space-y-8 ml-4">{nodes}</div>;
 };
 
 export default FieldObjectAsTable;
@@ -228,24 +220,33 @@ function renderFieldObjectAsTable(
 
   return (
     <div>
-      <Space split={htmlCharacterCodes.doubleDash}>
+      <div className="space-x-2">
         {propName && <Text code>{propName}</Text>}
         {nextObject.name && !hideTitle && (
-          <Title
-            id={getTypeNameID(nextObject.name)}
-            level={5}
-            type="secondary"
-            className={appClasses.muteMargin}
-          >
-            {nextObject.name}
-          </Title>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <Title
+              id={getTypeNameID(nextObject.name)}
+              level={5}
+              type="secondary"
+              className={appClasses.muteMargin}
+            >
+              {nextObject.name}
+            </Title>
+          </>
         )}
         {nextObject.required ? (
-          <Text code>Required</Text>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <Text code>Required</Text>
+          </>
         ) : (
-          <Text code>Optional</Text>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <Text code>Optional</Text>
+          </>
         )}
-      </Space>
+      </div>
       <FieldDescription fieldbase={nextObject} style={{ margin: 0 }} />
       <Table
         bordered

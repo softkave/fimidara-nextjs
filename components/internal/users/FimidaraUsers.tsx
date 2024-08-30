@@ -10,7 +10,7 @@ import { appClasses } from "@/components/utils/theme";
 import { useFetchArbitraryFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useInternalUsersFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space, Tag } from "antd";
+import { Tag } from "antd";
 import Text from "antd/es/typography/Text";
 import React from "react";
 
@@ -58,10 +58,10 @@ const FimidaraUsers: React.FC<{}> = (props) => {
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader label="Fimidara Users" />
       <PaginatedContent content={content} />
-    </Space>
+    </div>
   );
 };
 

@@ -2,7 +2,7 @@
 
 import { ApiOutlined, FileTextOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { List, Space } from "antd";
+import { List } from "antd";
 import Title from "antd/es/typography/Title";
 import AestheticDot from "./AestheticDot";
 
@@ -39,7 +39,7 @@ const classes = {
 
 export default function Docs() {
   return (
-    <Space direction="vertical" size={"middle"} style={{ width: "100%" }}>
+    <div className="space-y-4">
       <Title level={4}>Docs</Title>
       <List
         dataSource={docs}
@@ -56,6 +56,6 @@ export default function Docs() {
           </List.Item>
         )}
       />
-    </Space>
+    </div>
   );
 }

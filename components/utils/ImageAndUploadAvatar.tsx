@@ -1,4 +1,3 @@
-import { Space } from "antd";
 import React from "react";
 import ImageWithFallback, {
   IImageWithFallbackProps,
@@ -14,10 +13,10 @@ export interface IImageAndUploadAvatarProps
 const ImageAndUploadAvatar: React.FC<IImageAndUploadAvatarProps> = (props) => {
   const { className } = props;
   return (
-    <Space direction="vertical" size="middle" className={className}>
+    <div className="space-y-4">
       <ImageWithFallback {...props} />
       <UploadAvatar {...props} />
-    </Space>
+    </div>
   );
 };
 

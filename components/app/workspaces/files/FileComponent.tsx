@@ -5,7 +5,6 @@ import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import { File } from "fimidara";
 import { useRouter } from "next/navigation";
@@ -24,7 +23,7 @@ function FileComponent(props: FileComponentProps) {
 
   return (
     <div>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+      <div className="space-y-8">
         <ComponentHeader
           title={file.name + extension}
           prefixNode={
@@ -84,7 +83,7 @@ function FileComponent(props: FileComponentProps) {
             }
           />
         )}
-      </Space>
+      </div>
     </div>
   );
 }

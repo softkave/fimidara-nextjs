@@ -11,7 +11,6 @@ import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUt
 import { useUserCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 import Link from "next/link";
 
@@ -68,12 +67,12 @@ export default function UserCollaborationRequestList() {
   );
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader label="Your Collaboration Requests" />
       <PaginatedContent
         content={contentNode}
         pagination={{ ...pagination, count }}
       />
-    </Space>
+    </div>
   );
 }

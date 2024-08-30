@@ -1,8 +1,9 @@
 import { appRootPaths, appUserPaths } from "@/lib/definitions/system.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
-import { Badge, Button, Dropdown, MenuProps, Popover } from "antd";
+import { Badge, Dropdown, MenuProps, Popover } from "antd";
 import Link from "next/link";
 import { useUserNode } from "../hooks/useUserNode";
+import { Button } from "../ui/button.tsx";
 import { insertAntdMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
 
@@ -21,13 +22,7 @@ export default function UserMenu() {
       <UserAvatar userId={userId} alt="Your profile picture" />
     );
     return (
-      <Button
-        style={{
-          padding: 0,
-          border: "none",
-          boxShadow: "none",
-        }}
-      >
+      <Button>
         {withError ? <Badge dot>{userAvatarNode}</Badge> : userAvatarNode}
       </Button>
     );

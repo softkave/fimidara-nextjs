@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
 import CustomIcon from "@/components/utils/buttons/CustomIcon";
 import styles from "@/components/utils/form/form.module.css";
@@ -17,7 +20,7 @@ import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { useMount } from "ahooks";
-import { Button, Form, Input, Upload, message } from "antd";
+import { Form, Upload, message } from "antd";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
@@ -266,7 +269,7 @@ export default function FolderForm(props: FolderFormProps) {
       />
       {autofillName && !folder && (
         <Button
-          type="link"
+          variant="link"
           onClick={onAutofillName}
           style={{ paddingLeft: 0, paddingRight: 0 }}
         >
@@ -294,7 +297,7 @@ export default function FolderForm(props: FolderFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.TextArea
+      <Textarea
         name="description"
         value={formik.values.description}
         onBlur={formik.handleBlur}
@@ -302,7 +305,6 @@ export default function FolderForm(props: FolderFormProps) {
         placeholder="Enter folder description"
         disabled={hookLoading}
         maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
       />
     </Form.Item>
   );
@@ -400,12 +402,7 @@ export default function FolderForm(props: FolderFormProps) {
             identifiers={progressHandlerHook.identifiers}
           />
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={hookLoading}
-            >
+            <Button type="submit" loading={hookLoading}>
               Submit
             </Button>
           </Form.Item>

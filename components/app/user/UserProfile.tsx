@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import FormError from "@/components/utils/form/FormError";
 import { preSubmitCheck } from "@/components/utils/form/formUtils";
@@ -9,7 +11,7 @@ import useFormHelpers from "@/lib/hooks/useFormHelpers";
 import { messages } from "@/lib/messages/messages";
 import { signupValidationParts } from "@/lib/validation/user";
 import { css } from "@emotion/css";
-import { Button, Form, Input, message } from "antd";
+import { Form, message } from "antd";
 import { LoginResult, User } from "fimidara";
 import * as yup from "yup";
 import { FormAlert } from "../../utils/FormAlert";
@@ -158,9 +160,7 @@ export default function UserProfile(props: IUserProfileProps) {
           {emailNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
-              block
-              type="primary"
-              htmlType="submit"
+              type="submit"
               loading={updateUserHook.loading}
               onClick={() => preSubmitCheck(formik)}
             >

@@ -1,7 +1,7 @@
 import DeleteButton from "@/components/utils/buttons/DeleteButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { css, cx } from "@emotion/css";
-import { Collapse, Form, Space } from "antd";
+import { Collapse, Form } from "antd";
 import Text from "antd/es/typography/Text";
 import { FormikErrors, FormikTouched } from "formik";
 import prettyBytes from "pretty-bytes";
@@ -53,22 +53,18 @@ export function SelectedFilesForm(props: SelectedFilesFormProps) {
       key={value.__localId}
       header={
         <div className={classes.multi.panelHeader}>
-          <Space
-            direction="vertical"
-            className={classes.multi.panelLabel}
-            size={0}
-          >
+          <div className={classes.multi.panelLabel}>
             <Text>{value.name}</Text>
             {errors && errors[index] ? (
               <Text type="danger">Entry contains error</Text>
             ) : null}
-          </Space>
-          <Space size="middle" style={{ marginLeft: "16px" }}>
+          </div>
+          <div className="space-x-4 ml-4">
             {value?.file ? (
               <Text type="secondary">{prettyBytes(value.file.size)}</Text>
             ) : null}
             <DeleteButton onClick={() => handleRemoveFile(index)} />
-          </Space>
+          </div>
         </div>
       }
     >

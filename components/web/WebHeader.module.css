@@ -1,6 +1,6 @@
 .root {
   display: flex;
-  padding: 16px;
+  padding: 8px 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -13,8 +13,4 @@
 
 .prefixBtnContainer {
   margin-right: 16px;
-}
-
-.login {
-  text-decoration: underline;
 }

@@ -14,7 +14,6 @@ import {
 } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { cast } from "@/lib/utils/fns";
-import { Space } from "antd";
 import { UsageRecord, Workspace } from "fimidara";
 import { first } from "lodash-es";
 import React from "react";
@@ -151,13 +150,13 @@ const SummedUsageRecordListContainer: React.FC<
   );
 
   return (
-    <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div className="space-y-8">
       <ListHeader label="Usage Records" buttons={controls} />
       <PaginatedContent
         content={contentNode}
         pagination={{ ...pagination, count: usageRecords.count }}
       />
-    </Space>
+    </div>
   );
 };
 

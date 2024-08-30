@@ -1,14 +1,14 @@
+import { Button } from "@/components/ui/button.tsx";
 import { cn } from "@/components/utils.ts";
 import { AppError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
-import { Button, ButtonProps } from "antd";
 import Text, { TextProps } from "antd/es/typography/Text";
 import isString from "lodash-es/isString";
-import React from "react";
+import React, { ComponentProps } from "react";
 import { StyleableComponentProps } from "../styling/types";
 import EmptyMessage, { IEmptyMessageProps } from "./EmptyMessage";
 
-export type IPageMessageAction = ButtonProps;
+export type IPageMessageAction = ComponentProps<typeof Button>;
 
 export interface IPageMessageProps
   extends IEmptyMessageProps,

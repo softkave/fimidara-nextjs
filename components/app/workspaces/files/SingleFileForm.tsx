@@ -1,15 +1,18 @@
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
+import FormError from "@/components/utils/form/FormError.tsx";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { systemConstants } from "@/lib/definitions/system";
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Space, Upload } from "antd";
+import { Form, Upload } from "antd";
 import Text from "antd/es/typography/Text";
 import { FormikErrors, FormikTouched } from "formik";
 import { isArray, isObject, isString } from "lodash-es";
 import prettyBytes from "pretty-bytes";
 import { SingleFileFormValue } from "./types";
 import { getFirstFoldername, replaceBaseFoldername } from "./utils";
-import FormError from "@/components/utils/form/FormError.tsx";
 
 export interface SingleFileFormProps extends StyleableComponentProps {
   disabled?: boolean;
@@ -66,7 +69,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Space direction="vertical" style={{ width: "100%" }} size={0}>
+      <div>
         <Input
           value={values?.name}
           onChange={(evt) => onChange({ name: evt.target.value })}
@@ -77,7 +80,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
         />
         {values?.file && (
           <Button
-            type="link"
+            variant="link"
             onClick={() => onChange({ name: values.file?.name })}
             style={{ paddingLeft: 0, paddingRight: 0 }}
           >
@@ -86,7 +89,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
             </Text>
           </Button>
         )}
-      </Space>
+      </div>
     </Form.Item>
   );
 
@@ -104,14 +107,13 @@ export function SingleFileForm(props: SingleFileFormProps) {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
     >
-      <Input.TextArea
+      <Textarea
         name="description"
         value={values?.description}
         onChange={(evt) => onChange({ description: evt.target.value })}
         placeholder={messages.descriptionPlaceholder}
         disabled={disabled}
         maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 2 }}
       />
     </Form.Item>
   );
@@ -155,7 +157,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
           return false;
         }}
       >
-        <Space size="middle">
+        <div className="space-x-4">
           <IconButton
             icon={<UploadOutlined />}
             title={
@@ -167,7 +169,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
           {values?.file ? (
             <Text type="secondary">{prettyBytes(values.file.size)}</Text>
           ) : null}
-        </Space>
+        </div>
       </Upload>
     </Form.Item>
   );

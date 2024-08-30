@@ -1,7 +1,6 @@
 "use client";
 
 import ItemList from "@/components/utils/list/ItemList";
-import { Space } from "antd";
 import Title from "antd/es/typography/Title";
 import {
   UsageCosts,
@@ -55,8 +54,8 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
   sortRecords(droppedRecords);
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
-      <Space direction="vertical" style={{ width: "100%" }} size="middle">
+    <div className="space-y-8">
+      <div className="space-y-4">
         <Title level={5}>Fulfilled Requests</Title>
         <ItemList
           bordered
@@ -64,8 +63,8 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
           renderItem={internalRenderItem}
           emptyMessage="No fulfilled usage records yet"
         />
-      </Space>
-      <Space direction="vertical" style={{ width: "100%" }} size="middle">
+      </div>
+      <div className="space-y-4">
         <Title level={5}>Dropped Requests</Title>
         <ItemList
           bordered
@@ -73,8 +72,8 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
           renderItem={internalRenderItem}
           emptyMessage="No dropped usage records"
         />
-      </Space>
-    </Space>
+      </div>
+    </div>
   );
 };
 

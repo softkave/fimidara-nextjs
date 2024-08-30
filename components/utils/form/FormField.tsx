@@ -1,4 +1,4 @@
-import { Form, FormItemProps, Space } from "antd";
+import { Form, FormItemProps } from "antd";
 import { defaultTo } from "lodash-es";
 import React from "react";
 import CancelButton from "../buttons/CancelButton";
@@ -7,7 +7,6 @@ import RetryButton from "../buttons/RetryButton";
 import SaveButton from "../buttons/SaveButton";
 import Middledot from "../Middledot";
 import InlineLoading from "../page/InlineLoading";
-import { appStyles } from "../theme";
 import { ElementError } from "../types";
 import FormFieldError from "./FormFieldError";
 
@@ -66,27 +65,27 @@ const FormField: React.FC<IFormFieldProps> = (props) => {
   };
 
   const editingNode = isEditing && !excludeButtons && !isSaving && (
-    <Space>
+    <div className="space-x-2">
       <SaveButton disabled={disabled || !!error} onClick={handleSave} />
       <CancelButton disabled={disabled} onClick={handleCancelEditing} />
-    </Space>
+    </div>
   );
 
   let startEditingNode: React.ReactNode = null;
   if (!isEditing && !excludeButtons && !isSaving) {
     startEditingNode = (
-      <Space>
+      <div className="space-x-2">
         <EditButton disabled={disabled} onClick={() => handleEditing(true)} />
-      </Space>
+      </div>
     );
   }
 
   const savingNode = isSaving && <InlineLoading />;
   const errorNode = error && (
-    <Space>
+    <div className="space-x-2">
       <FormFieldError error={saveError || error} />
       {saveError && <RetryButton disabled={isSaving} onClick={handleSave} />}
-    </Space>
+    </div>
   );
 
   const hasButtonNodes = !!(editingNode || startEditingNode || savingNode);
@@ -97,22 +96,23 @@ const FormField: React.FC<IFormFieldProps> = (props) => {
       labelCol={{ span: 24 }}
       {...defaultTo(formItemProps, {})}
     >
-      <Space direction="vertical" style={appStyles.p100} size={4}>
+      <div className="space-x-1">
         {render({ isEditing, setEditing: handleEditing })}
         {errorNode}
         {hasExtraNodes && (
-          <Space split={<Middledot type="secondary" />}>
+          <div>
             {hasButtonNodes ? (
               <React.Fragment>
                 {editingNode}
                 {startEditingNode}
                 {savingNode}
+                <Middledot type="secondary" />
               </React.Fragment>
             ) : null}
             {extraNode}
-          </Space>
+          </div>
         )}
-      </Space>
+      </div>
     </Form.Item>
   );
 };

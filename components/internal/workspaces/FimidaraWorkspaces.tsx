@@ -11,7 +11,6 @@ import { useFetchArbitraryFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useInternalWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 import React from "react";
 
@@ -52,10 +51,10 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader label="Fimidara Workspaces" />
       <PaginatedContent content={content} />
-    </Space>
+    </div>
   );
 };
 

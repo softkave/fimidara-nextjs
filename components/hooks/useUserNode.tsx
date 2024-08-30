@@ -31,7 +31,11 @@ export function useUserNode(): IUseUserNodeResult {
       <PageError
         message={getBaseError(error) || "Error fetching user"}
         actions={[
-          { children: "Logout", onClick: () => requestLogout(), danger: true },
+          {
+            children: "Logout",
+            onClick: () => requestLogout(),
+            variant: "destructive",
+          },
         ]}
       />
     );

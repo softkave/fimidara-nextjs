@@ -1,8 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { useUserSendEmailVerificationCodeMutationHook } from "@/lib/hooks/mutationHooks";
-import { Button, message, Space } from "antd";
+import { message } from "antd";
 import Text from "antd/es/typography/Text";
 import { LoginResult } from "fimidara";
 import React from "react";
@@ -34,7 +35,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
     rootNode = <Text type="success">Your email address is verified.</Text>;
   } else {
     rootNode = (
-      <Space direction="vertical">
+      <div className="space-y-4">
         <Text type="danger">Your email address is not verified.</Text>
         <Button
           onClick={() => sendEmailVerificationHook.run()}
@@ -43,7 +44,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
         >
           Send Email Verification Link to {session.user.email}
         </Button>
-      </Space>
+      </div>
     );
   }
 

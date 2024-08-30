@@ -1,5 +1,4 @@
 import { getUsageForCost } from "@/lib/definitions/usageRecord";
-import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import {
@@ -67,12 +66,12 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
   }
 
   return (
-    <Space direction="vertical" size="small">
+    <div className="space-y-2">
       <Title level={5} type="secondary">
         {labelText}
       </Title>
       <Text>{usageText}</Text>
-    </Space>
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Alert, Space } from "antd";
+import { Alert } from "antd";
 import React from "react";
 import { StyleableComponentProps } from "../styling/types";
 
@@ -20,10 +20,10 @@ const InlineLoading: React.FC<IInlineLoadingProps> = (props) => {
     <Alert
       type="warning"
       message={
-        <Space>
+        <div className="space-x-2">
           <LoadingOutlined className={classes.spinner} />{" "}
           {messageText || "Loading..."}
-        </Space>
+        </div>
       }
       className={className}
       style={style}

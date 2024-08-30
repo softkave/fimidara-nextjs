@@ -9,7 +9,6 @@ import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/fetchHooks/per
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import assert from "assert";
 import { noop } from "lodash-es";
@@ -39,7 +38,7 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
   if (resource) {
     return (
       <div>
-        <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <div className="space-y-8">
           <ComponentHeader title={resource.name}>
             <PermissionGroupMenu
               permissionGroup={resource}
@@ -79,7 +78,7 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
             entityId={permissionGroupId}
             workspaceId={resource.workspaceId}
           />
-        </Space>
+        </div>
       </div>
     );
   } else if (error) {

@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
 import styles from "@/components/utils/form/form.module.css";
+import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import {
@@ -12,7 +14,7 @@ import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { yupObject } from "@/lib/validation/utils";
 import { css, cx } from "@emotion/css";
-import { Button, Form, message } from "antd";
+import { Form, message } from "antd";
 import Title from "antd/es/typography/Title";
 import { File as FimidaraFile } from "fimidara";
 import { isString } from "lodash-es";
@@ -23,7 +25,6 @@ import { SingleFileForm } from "./SingleFileForm";
 import { SingleFileFormValue } from "./types";
 import { getNewFileLocalId } from "./utils";
 import { newFileValidationSchema } from "./validation";
-import FormError from "@/components/utils/form/FormError.tsx";
 
 export interface FileFormValue {
   files: Array<SingleFileFormValue>;
@@ -224,12 +225,7 @@ export default function FileForm(props: FileFormProps) {
             identifiers={progressHandlerHook.identifiers}
           />
           <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={mergedHook.loading}
-            >
+            <Button type="submit" loading={mergedHook.loading}>
               {file ? "Update File" : "Upload File"}
             </Button>
           </Form.Item>

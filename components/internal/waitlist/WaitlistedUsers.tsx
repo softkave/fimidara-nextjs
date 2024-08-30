@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
@@ -13,7 +14,7 @@ import { useWaitlistedUsersFetchHook } from "@/lib/hooks/fetchHooks";
 import { useWaitlistedUsersUpgradeMutationHook } from "@/lib/hooks/mutationHooks";
 import { useSelectList } from "@/lib/hooks/useSelectList";
 import { getBaseError } from "@/lib/utils/errors";
-import { Button, Space, Tag, message } from "antd";
+import { Tag, message } from "antd";
 import Text from "antd/es/typography/Text";
 import React from "react";
 
@@ -96,10 +97,10 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
   );
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader label="Waitlisted Users" secondaryControls={controlsNode} />
       <PaginatedContent content={content} />
-    </Space>
+    </div>
   );
 };
 

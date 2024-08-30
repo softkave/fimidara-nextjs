@@ -1,12 +1,12 @@
 import { cx } from "@emotion/css";
-import { Col, Row, Space } from "antd";
+import { Col, Row } from "antd";
 import Text from "antd/es/typography/Text";
 import React from "react";
 
 export interface ILabeledNodeProps {
   label?: string;
   node: React.ReactNode;
-  direction?: React.ComponentProps<typeof Space>["direction"];
+  direction?: "horizontal" | "vertical";
   nodeIsText?: boolean;
   labelFontSize?: number;
   contentFontSize?: number;

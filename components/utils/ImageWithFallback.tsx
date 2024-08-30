@@ -1,7 +1,7 @@
 import { DeleteFilled, LoadingOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Image, ImageProps } from "antd";
+import { Image, ImageProps } from "antd";
 import assert from "assert";
 import { getFimidaraReadFileURL } from "fimidara";
 import { first } from "lodash-es";
@@ -9,6 +9,7 @@ import React from "react";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
 import { systemConstants } from "../../lib/definitions/system";
 import { useKvStore } from "../../lib/hooks/kvStore";
+import { Button } from "../ui/button.tsx";
 import { errorMessageNotificatition } from "./errorHandling";
 import { appDataImages, appDimensions } from "./theme";
 
@@ -176,13 +177,20 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
         >
           <Button
             disabled={isDeleting}
-            icon={isDeleting ? <LoadingOutlined /> : <DeleteFilled />}
             data-skipeventfortag={skipEventForTag}
             onClick={(evt) => {
               evt.stopPropagation();
               internalOnDelete();
             }}
-          />
+            variant="outline"
+            size="icon"
+          >
+            {isDeleting ? (
+              <LoadingOutlined className="h-4 w-4" />
+            ) : (
+              <DeleteFilled className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       )}
     </div>

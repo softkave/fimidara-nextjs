@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
@@ -13,7 +14,6 @@ import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUt
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button } from "antd";
 import Text from "antd/es/typography/Text";
 import { User, Workspace } from "fimidara";
 import { noop } from "lodash-es";
@@ -99,7 +99,9 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
         label="Workspaces"
         buttons={
           user.isOnWaitlist ? (
-            <Button disabled icon={<PlusOutlined />} />
+            <Button disabled variant="outline" size="icon">
+              <PlusOutlined className="h-4 w-4" />
+            </Button>
           ) : (
             <Link href={appWorkspacePaths.createWorkspaceForm}>
               <IconButton icon={<PlusOutlined />} />

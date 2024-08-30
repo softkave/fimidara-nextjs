@@ -1,6 +1,7 @@
+import { Button } from "@/components/ui/button.tsx";
 import { getErrorMessage } from "@/lib/utils/errors";
 import { css, cx } from "@emotion/css";
-import { Alert, Button, Form } from "antd";
+import { Alert, Form } from "antd";
 import React from "react";
 import { AnyObject } from "yup/lib/types";
 import AppFormItem from "./AppFormItem";
@@ -48,7 +49,7 @@ function AppForm<T extends AnyObject>(props: IAppFormProps<T>) {
   if (includeSaveBtn) {
     controlsNode = (
       <Form.Item>
-        <Button type="primary" htmlType="submit" loading={isSubmitting}>
+        <Button type="submit" loading={isSubmitting}>
           {saveText || "Save"}
         </Button>
       </Form.Item>

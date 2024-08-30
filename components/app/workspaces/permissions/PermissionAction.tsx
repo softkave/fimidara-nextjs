@@ -1,6 +1,6 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Space, Switch, Tooltip } from "antd";
+import { Switch, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
 import React from "react";
 import { PermissionMapItemInfo } from "./types";
@@ -35,7 +35,7 @@ const PermissionAction: React.FC<PermissionActionProps> = (props) => {
       >
         {label}
       </Text>
-      <Space>
+      <div className="space-x-2">
         {(permitted.disabledReason || info) && (
           <Tooltip title={permitted.disabledReason || info}>
             <QuestionCircleOutlined />
@@ -49,7 +49,7 @@ const PermissionAction: React.FC<PermissionActionProps> = (props) => {
             onChange({ ...permitted, access: checked });
           }}
         />
-      </Space>
+      </div>
     </div>
   );
 };

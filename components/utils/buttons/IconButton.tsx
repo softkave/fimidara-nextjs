@@ -1,7 +1,7 @@
+import { Button } from "@/components/ui/button.tsx";
 import { Omit1 } from "@/lib/utils/types";
-import { cx } from "@emotion/css";
-import { Button, ButtonProps, Tooltip } from "antd";
-import React from "react";
+import { Tooltip } from "antd";
+import React, { ComponentProps } from "react";
 
 export interface IIconButtonProps {
   style?: React.CSSProperties;
@@ -10,7 +10,7 @@ export interface IIconButtonProps {
   title?: string;
   icon: React.ReactNode;
   onClick?: () => void;
-  buttonProps?: Partial<ButtonProps>;
+  buttonProps?: Partial<ComponentProps<typeof Button>>;
 }
 
 export type IExtendsIconButtonProps = Omit1<IIconButtonProps, "icon">;
@@ -23,8 +23,10 @@ const IconButton: React.FC<IIconButtonProps> = (props) => {
       {...buttonProps}
       disabled={disabled}
       onClick={onClick}
-      className={cx("icon-btn", className)}
+      className={className}
       style={style}
+      variant="outline"
+      size="icon"
     >
       {icon}
     </Button>

@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import FormError from "@/components/utils/form/FormError.tsx";
 import { preSubmitCheck } from "@/components/utils/form/formUtils";
@@ -8,7 +10,7 @@ import { appComponentConstants } from "@/components/utils/utils.ts";
 import { useUserForgotPasswordMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import useFormHelpers from "@/lib/hooks/useFormHelpers.ts";
 import { css } from "@emotion/css";
-import { Button, Form, Input, notification } from "antd";
+import { Form, notification } from "antd";
 import Title from "antd/es/typography/Title";
 import * as yup from "yup";
 
@@ -87,9 +89,7 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
           {emailNode}
           <Form.Item className={css({ marginTop: "16px" })}>
             <Button
-              block
-              type="primary"
-              htmlType="submit"
+              type="submit"
               loading={forgotHook.loading}
               onClick={() => preSubmitCheck(formik)}
             >

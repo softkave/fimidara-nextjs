@@ -1,20 +1,29 @@
 "use client";
+
+import { Button } from "@/components/ui/button.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { SignupEndpointParams } from "@/lib/api/privateTypes.ts";
 import { appWorkspacePaths } from "@/lib/definitions/system.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserSignupMutationHook } from "@/lib/hooks/mutationHooks.ts";
-import useFormHelpers from "@/lib/hooks/useFormHelpers.ts";
+import { useNewForm } from "@/lib/hooks/useFormHelpers.ts";
 import { messages } from "@/lib/messages/messages.ts";
-import { signupValidationParts } from "@/lib/validation/user.ts";
-import { css } from "@emotion/css";
-import { Button, Form, Input } from "antd";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import { useRouter } from "next/navigation";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface ISignupFormValues extends Required<SignupEndpointParams> {
   // confirmEmail: string;
@@ -23,23 +32,12 @@ interface ISignupFormValues extends Required<SignupEndpointParams> {
 
 export interface ISignupProps {}
 
-const signupValidation = yup.object().shape({
-  firstName: signupValidationParts.name.required(messages.firstNameRequired),
-  lastName: signupValidationParts.name.required(messages.lastNameRequired),
-  email: signupValidationParts.email.required(messages.emailRequired),
-  // confirmEmail: signupValidationParts.confirmEmail.required(),
-  password: signupValidationParts.password.required(messages.passwordRequired),
-  // confirmPassword: signupValidationParts.confirmPassword.required(),
+const formSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  password: z.string().max(userConstants.maxPasswordLength),
 });
-
-const initialValues: ISignupFormValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-  // confirmEmail: "",
-  // confirmPassword: "",
-};
 
 export default function Signup(props: ISignupProps) {
   const router = useRouter();
@@ -48,169 +46,131 @@ export default function Signup(props: ISignupProps) {
       router.push(appWorkspacePaths.workspaces);
     },
   });
-
-  const { formik } = useFormHelpers({
-    errors: signupHook.error,
-    formikProps: {
-      validationSchema: signupValidation,
-      initialValues: initialValues,
-      onSubmit: (body) => signupHook.runAsync({ body }),
+  const onSubmit = (body: z.infer<typeof formSchema>) =>
+    signupHook.runAsync({ body });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
     },
   });
+  useNewForm(form, { errors: signupHook.error });
 
   const firstNameNode = (
-    <Form.Item
-      required
-      label="First Name"
-      help={
-        formik.touched?.firstName &&
-        formik.errors?.firstName && (
-          <FormError
-            visible={formik.touched.firstName}
-            error={formik.errors.firstName}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="given-name"
-        name="firstName"
-        value={formik.values.firstName}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter your first name"
-        disabled={signupHook.loading}
-        maxLength={userConstants.maxNameLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="firstName"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>First Name</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              autoComplete="given-name"
+              name="firstName"
+              placeholder="Enter your first name"
+              maxLength={userConstants.maxNameLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const lastNameNode = (
-    <Form.Item
-      required
-      label="Last Name"
-      help={
-        formik.touched?.lastName &&
-        formik.errors?.lastName && (
-          <FormError
-            visible={formik.touched.lastName}
-            error={formik.errors.lastName}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="family-name"
-        name="lastName"
-        value={formik.values.lastName}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter your last name"
-        disabled={signupHook.loading}
-        maxLength={userConstants.maxNameLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="lastName"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Last Name</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              autoComplete="family-name"
+              name="lastName"
+              placeholder="Enter your last name"
+              maxLength={userConstants.maxNameLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const emailNode = (
-    <Form.Item
-      required
-      label="Email Address"
-      help={
-        formik.touched?.email &&
-        formik.errors?.email && (
-          <FormError
-            visible={formik.touched.email}
-            error={formik.errors.email}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="email"
-        name="email"
-        value={formik.values.email}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        disabled={signupHook.loading}
-        placeholder="Enter your email address"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="email"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Email Address</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              autoComplete="email"
+              placeholder="Enter your email address"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const passwordNode = (
-    <Form.Item
-      required
-      label="Password"
-      help={
-        formik.touched?.password && formik.errors?.password ? (
-          <FormError
-            visible={formik.touched.password}
-            error={formik.errors?.password}
-          />
-        ) : (
-          messages.passwordMinChars
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input.Password
-        visibilityToggle
-        autoComplete="new-password"
-        name="password"
-        value={formik.values.password}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        disabled={signupHook.loading}
-        placeholder="Enter new password"
-        maxLength={userConstants.maxPasswordLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="password"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Password</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              type="password"
+              autoComplete="new-password"
+              placeholder="Enter new password"
+              maxLength={userConstants.maxPasswordLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const consentNode = (
-    <Form.Item
-      className={css({
-        marginTop: "16px",
-      })}
-    >
+    <div className="my-4">
       <Text type="secondary">{messages.signupEmailConsent}</Text>
-    </Form.Item>
+    </div>
   );
 
   return (
     <div className={styles.formBody}>
-      <form
-        onSubmit={formik.handleSubmit}
-        className={styles.formContentWrapper}
-      >
-        <Form.Item>
-          <Title level={4}>Signup</Title>
-        </Form.Item>
-        <FormAlert error={signupHook.error} />
-        {firstNameNode}
-        {lastNameNode}
-        {emailNode}
-        {passwordNode}
-        {consentNode}
-        <Form.Item className={css({ marginTop: "16px" })}>
-          <Button
-            block
-            type="primary"
-            htmlType="submit"
-            loading={signupHook.loading}
-          >
-            {signupHook.loading ? "Creating Account" : "Create Account"}
-          </Button>
-        </Form.Item>
-      </form>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="mb-4">
+            <Title level={4}>Signup</Title>
+          </div>
+          <FormAlert error={signupHook.error} />
+          {firstNameNode}
+          {lastNameNode}
+          {emailNode}
+          {passwordNode}
+          {consentNode}
+          <div className="my-4">
+            <Button type="submit" loading={signupHook.loading}>
+              {signupHook.loading ? "Creating Account" : "Create Account"}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }
