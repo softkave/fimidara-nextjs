@@ -1,12 +1,12 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
-import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { AgentToken } from "fimidara";
 import { useRouter } from "next/navigation";
-import React from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import AgentTokenMenu from "./AgentTokenMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { useCallback } from "react";
 
 export interface IAgentTokenProps {
   token: AgentToken;
@@ -19,7 +19,7 @@ export interface IAgentTokenProps {
 function AgentTokenComponent(props: IAgentTokenProps) {
   const { token: resource } = props;
   const router = useRouter();
-  const onCompeleteDeleteToken = React.useCallback(async () => {
+  const onCompeleteDeleteToken = useCallback(async () => {
     router.push(
       resource
         ? kAppWorkspacePaths.agentTokenList(resource.workspaceId)

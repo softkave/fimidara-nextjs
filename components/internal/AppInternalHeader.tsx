@@ -2,8 +2,8 @@ import { css } from "@emotion/css";
 import { usePathname, useRouter } from "next/navigation";
 import { FiUserPlus, FiUsers } from "react-icons/fi";
 import { MdOutlineWorkOutline } from "react-icons/md";
-import { kAppInternalPaths } from "../../lib/definitions/system";
 import AppTabs, { AppTabItem } from "../utils/page/AppTabs";
+import { kAppInternalPaths } from "@/lib/definitions/paths/internal.ts";
 
 export interface IAppInternalHeaderProps {
   className?: string;

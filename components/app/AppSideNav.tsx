@@ -1,5 +1,6 @@
 "use client";
 
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
@@ -11,7 +12,6 @@ import {
 import { getInternalNavItems, getUserNavItems } from "./menu.tsx";
 import { useAppMenu } from "./useAppMenu.tsx";
 import { getWorkspaceId } from "./utils.ts";
-import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 
 export interface IAppSideNavProps {}
 
@@ -32,7 +32,7 @@ export default function AppSideNav(props: IAppSideNavProps) {
     );
 
     return { navItems, appMenuItems };
-  }, [workspaceId]);
+  }, [workspaceId, pathname]);
 
   const selectedKeys = useMemo(() => {
     if (!pathname) {

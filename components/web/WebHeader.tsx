@@ -3,26 +3,26 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
-import { kAppAccountPaths } from "../../lib/definitions/system";
 import { useAppMenu } from "../app/useAppMenu.tsx";
 import { DropdownItems } from "../ui/dropdown-items.tsx";
 import { cn } from "../utils.ts";
 import IconButton from "../utils/buttons/IconButton";
 import { insertAntdMenuDivider } from "../utils/utils";
 import styles from "./WebHeader.module.css";
+import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
+import { CSSProperties, FC, ReactNode } from "react";
 
 export interface IWebHeaderProps {
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
-const WebHeader: React.FC<IWebHeaderProps> = (props) => {
+const WebHeader: FC<IWebHeaderProps> = (props) => {
   const { className, style } = props;
   const pathname = usePathname();
   const { isOpen, toggleAppMenu } = useAppMenu();
 
-  let sideLinksNode: React.ReactNode = null;
+  let sideLinksNode: ReactNode = null;
   const items = insertAntdMenuDivider([
     {
       key: kAppAccountPaths.signup,

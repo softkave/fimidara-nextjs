@@ -5,7 +5,7 @@ import ListHeader from "@/components/utils/list/ListHeader.tsx";
 import PageContent02 from "@/components/utils/page/PageContent02";
 import PaginatedContent from "@/components/utils/page/PaginatedContent.tsx";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
-import { kAppUserPaths } from "@/lib/definitions/system";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";

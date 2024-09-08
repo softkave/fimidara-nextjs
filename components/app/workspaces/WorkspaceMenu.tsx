@@ -4,13 +4,13 @@ import IconButton from "@/components/utils/buttons/IconButton";
 import { appClasses } from "@/components/utils/theme";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
-import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { Workspace } from "fimidara";
 import { compact, noop } from "lodash-es";
 import { Ellipsis } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import useTargetGrantPermissionModal from "../../hooks/useTargetGrantPermissionModal";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { FC, Fragment } from "react";
 
 export interface WorkspaceMenuProps {
   workspace: Workspace;
@@ -24,7 +24,7 @@ enum MenuKeys {
   GrantPermission = "grant-permission",
 }
 
-const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
+const WorkspaceMenu: FC<WorkspaceMenuProps> = (props) => {
   const { workspace, includeDeleteMenuOption, onCompleteDelete } = props;
   const { toast } = useToast();
   const permissionsHook = useTargetGrantPermissionModal({
@@ -69,7 +69,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
   );
 
   return (
-    <React.Fragment>
+    <Fragment>
       <DropdownItems items={items} onSelect={onSelectMenuItem}>
         <IconButton
           className={appClasses.iconBtn}
@@ -77,7 +77,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
         />
       </DropdownItems>{" "}
       {permissionsHook.node}
-    </React.Fragment>
+    </Fragment>
   );
 };
 

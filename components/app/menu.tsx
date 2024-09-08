@@ -1,3 +1,5 @@
+import { kAppInternalPaths } from "@/lib/definitions/paths/internal.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Computer, GitPullRequestArrow, UserCog } from "lucide-react";
 import {
   FiFile,
@@ -9,12 +11,8 @@ import {
 } from "react-icons/fi";
 import { MdOutlineWorkOutline } from "react-icons/md";
 import { TbLockAccess } from "react-icons/tb";
-import {
-  kAppInternalPaths,
-  kAppUserPaths,
-  kAppWorkspacePaths,
-} from "../../lib/definitions/system";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 
 export function getWorkspaceNavItems(workspaceId: string) {
   const menuItems: IRawNavItem[] = [

@@ -3,15 +3,15 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
-import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/fetchHooks/workspaceCollaborator.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { getBaseError } from "@/lib/utils/errors";
 import { Collaborator } from "fimidara";
 import { useRouter } from "next/navigation";
-import React from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import CollaboratorMenu from "./CollaboratorMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { useCallback } from "react";
 
 export interface CollaboratorComponentProps {
   workspaceId: string;
@@ -28,7 +28,7 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
   const { isLoading, error, resource } =
     useFetchSingleResourceFetchState(fetchState);
 
-  const onCompeleteRemoveCollaborator = React.useCallback(async () => {
+  const onCompeleteRemoveCollaborator = useCallback(async () => {
     router.push(kAppWorkspacePaths.collaboratorList(workspaceId));
   }, [workspaceId, router]);
 

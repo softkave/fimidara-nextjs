@@ -2,12 +2,12 @@ import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import BackButton from "@/components/utils/buttons/BackButton";
 import { addRootnameToPath } from "@/lib/definitions/folder";
-import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { File } from "fimidara";
 import { useRouter } from "next/navigation";
 import FileMenu from "./FileMenu";
 import FolderParentLink from "./FolderParentLink";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 export interface FileComponentProps {
   file: File;

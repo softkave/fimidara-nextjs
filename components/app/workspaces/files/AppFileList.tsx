@@ -2,23 +2,23 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { File } from "fimidara";
 import { noop } from "lodash-es";
 import { FileIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import FileMenu from "./FileMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { ReactNode, FC, useCallback } from "react";
 
 export interface IAppFileListProps {
   files: File[];
   workspaceRootname: string;
-  renderFileItem?: (item: File, workspaceRootname: string) => React.ReactNode;
+  renderFileItem?: (item: File, workspaceRootname: string) => ReactNode;
 }
 
-const AppFileList: React.FC<IAppFileListProps> = (props) => {
+const AppFileList: FC<IAppFileListProps> = (props) => {
   const { files, workspaceRootname, renderFileItem } = props;
-  const internalRenderItem = React.useCallback(
+  const internalRenderItem = useCallback(
     (item: File) => {
       if (renderFileItem) {
         return renderFileItem(item, workspaceRootname);

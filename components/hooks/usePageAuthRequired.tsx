@@ -1,19 +1,19 @@
 "use client";
 
-import { kAppAccountPaths } from "@/lib/definitions/system.ts";
+import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
 import { useLogout } from "@/lib/hooks/session/useLogout.ts";
 import { useSessionHook } from "@/lib/hooks/session/useSessionHook.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { isUndefined } from "lodash-es";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { ReactElement, useEffect } from "react";
 
-const defaultOnRedirecting = (): React.ReactElement => <></>;
+const defaultOnRedirecting = (): ReactElement => <></>;
 
 export interface WithPageAuthRequiredOptions {
   returnTo?: string;
-  renderRedirecting?: () => React.ReactElement;
-  render: () => React.ReactElement;
+  renderRedirecting?: () => ReactElement;
+  render: () => ReactElement;
 }
 
 export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {

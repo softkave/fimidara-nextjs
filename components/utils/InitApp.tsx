@@ -1,6 +1,6 @@
 "use client";
 
-import { kAppUserPaths } from "@/lib/definitions/system";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import UserSessionStorageFns from "@/lib/storage/userSession";
 import { isRouteToAppOnInitPath } from "@/lib/utils/routes";

@@ -1,8 +1,6 @@
-import {
-  kAppAccountPaths,
-  kAppInternalPaths,
-  kAppRootPaths,
-} from "../definitions/system";
+import { kAppAccountPaths } from "../definitions/paths/account.ts";
+import { kAppInternalPaths } from "../definitions/paths/internal.ts";
+import { kAppRootPaths } from "../definitions/paths/root.ts";
 
 // Render WebHeader for these routes starting with these paths
 const webRoutes = [

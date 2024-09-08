@@ -1,5 +1,4 @@
 import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
-import { kAppUserPaths } from "@/lib/definitions/system.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
 import Link from "next/link";
 import { useUserNode } from "../hooks/useUserNode";
@@ -7,6 +6,7 @@ import { DropdownItems, IDropdownItem } from "../ui/dropdown-items.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover.tsx";
 import { insertAntdMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 
 const kMenuKeys = {
   logout: "logout",

@@ -1,6 +1,5 @@
 import { FimidaraPermissionAction, FimidaraResourceType } from "fimidara";
 import { defaultTo } from "lodash-es";
-import { kAppRootPaths } from "./paths/root.ts";
 
 if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
   throw new Error("NEXT_PUBLIC_WORKSPACE_ID is not set");
@@ -259,30 +258,3 @@ export const kDisabledPermissions: FimidaraPermissionAction[] = [
   // triggered in the server for now
   "ingestFileBackendMount",
 ];
-
-export const kAppAccountPaths = {
-  signup: "/signup",
-  login: "/login",
-  loginWithReturnPath(returnTo: string) {
-    return `${this.login}?returnTo=${encodeURIComponent(returnTo)}`;
-  },
-
-  verifyEmail: "/verify-email",
-  forgotPassword: "/forgot-password",
-  changePassword: "/change-password",
-};
-
-export const kAppInternalPaths = {
-  waitlist: `${kAppRootPaths.internal}/waitlist`,
-  users: `${kAppRootPaths.internal}/users`,
-  workspaces: `${kAppRootPaths.internal}/workspaces`,
-};
-
-export const kAppUserPaths = {
-  settings: "/settings",
-  requests: "/collaboration-requests",
-  request(id: string) {
-    return `${this.requests}/${id}`;
-  },
-  workspaces: "/workspaces",
-};
