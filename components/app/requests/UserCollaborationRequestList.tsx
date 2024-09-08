@@ -5,7 +5,7 @@ import ListHeader from "@/components/utils/list/ListHeader.tsx";
 import PageContent02 from "@/components/utils/page/PageContent02";
 import PaginatedContent from "@/components/utils/page/PaginatedContent.tsx";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
-import { appUserPaths } from "@/lib/definitions/system";
+import { kAppUserPaths } from "@/lib/definitions/system";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
@@ -38,7 +38,7 @@ export default function UserCollaborationRequestList() {
               key={item.resourceId}
               main={
                 <div className="flex flex-col justify-center">
-                  <Link href={`${appUserPaths.request(item.resourceId)}`}>
+                  <Link href={`${kAppUserPaths.request(item.resourceId)}`}>
                     <span>
                       Request from <strong>{item.workspaceName}</strong>
                     </span>

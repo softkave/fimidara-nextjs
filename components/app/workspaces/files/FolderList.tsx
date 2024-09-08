@@ -4,26 +4,23 @@ import ItemList from "@/components/utils/list/ItemList";
 import AppIcon from "@/components/utils/page/AppIcon";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Folder } from "fimidara";
 import { noop } from "lodash-es";
 import { FolderIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import FolderMenu from "./FolderMenu";
+import { ReactNode, FC, useCallback } from "react";
 
 export interface FolderListProps {
   folders: Folder[];
   workspaceRootname: string;
-  renderFolderItem?: (
-    item: Folder,
-    workspaceRootname: string
-  ) => React.ReactNode;
+  renderFolderItem?: (item: Folder, workspaceRootname: string) => ReactNode;
 }
 
-const FolderList: React.FC<FolderListProps> = (props) => {
+const FolderList: FC<FolderListProps> = (props) => {
   const { folders, workspaceRootname, renderFolderItem } = props;
-  const internalRenderItem = React.useCallback(
+  const internalRenderItem = useCallback(
     (item: Folder) => {
       if (renderFolderItem) {
         return renderFolderItem(item, workspaceRootname);
@@ -35,7 +32,7 @@ const FolderList: React.FC<FolderListProps> = (props) => {
           main={
             <div className="flex flex-col justify-center">
               <Link
-                href={appWorkspacePaths.folder(
+                href={kAppWorkspacePaths.folder(
                   item.workspaceId,
                   item.resourceId
                 )}

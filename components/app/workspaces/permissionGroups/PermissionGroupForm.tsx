@@ -10,11 +10,11 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
-import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert";
 import { useToast } from "@/hooks/use-toast.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { INewPermissionGroupInput } from "@/lib/definitions/permissionGroups";
-import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspacePermissionGroupAddMutationHook,
   useWorkspacePermissionGroupUpdateMutationHook,
@@ -55,7 +55,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
     onSuccess(data, params) {
       toast({ title: "Permission group updated" });
       router.push(
-        appWorkspacePaths.permissionGroup(
+        kAppWorkspacePaths.permissionGroup(
           data.body.permissionGroup.workspaceId,
           data.body.permissionGroup.resourceId
         )
@@ -66,7 +66,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
     onSuccess(data, params) {
       toast({ title: "Permission group created" });
       router.push(
-        appWorkspacePaths.permissionGroup(
+        kAppWorkspacePaths.permissionGroup(
           data.body.permissionGroup.workspaceId,
           data.body.permissionGroup.resourceId
         )
@@ -139,26 +139,25 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   );
 
   return (
-    <div className={cn(styles.formBody, className)}>
-      <div className={styles.formContentWrapper}>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="mb-4">
-              <h4>Permission Group Form</h4>
-            </div>
-            <FormAlert error={mergedHook.error} />
-            {nameNode}
-            {descriptionNode}
-            <div className="my-4">
-              <Button type="submit" loading={mergedHook.loading}>
-                {permissionGroup
-                  ? "Update Permission Group"
-                  : "Create Permission Group"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-8", className)}
+      >
+        <div className="mb-4">
+          <h4>Permission Group Form</h4>
+        </div>
+        <FormAlert error={mergedHook.error} />
+        {nameNode}
+        {descriptionNode}
+        <div className="my-4">
+          <Button type="submit" loading={mergedHook.loading}>
+            {permissionGroup
+              ? "Update Permission Group"
+              : "Create Permission Group"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

@@ -2,7 +2,7 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { File } from "fimidara";
 import { noop } from "lodash-es";
 import { FileIcon } from "lucide-react";
@@ -31,7 +31,10 @@ const AppFileList: React.FC<IAppFileListProps> = (props) => {
           main={
             <div className="flex flex-col justify-center">
               <Link
-                href={appWorkspacePaths.file(item.workspaceId, item.resourceId)}
+                href={kAppWorkspacePaths.file(
+                  item.workspaceId,
+                  item.resourceId
+                )}
               >
                 {item.name + extension}
               </Link>

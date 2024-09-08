@@ -1,6 +1,6 @@
 import ComponentHeader from "@/components/utils/ComponentHeader.tsx";
 import LabeledNode from "@/components/utils/LabeledNode.tsx";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { Workspace } from "fimidara";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ function WorkspaceComponent(props: WorkspaceComponentProps) {
   const { workspace: resource } = props;
   const router = useRouter();
   const onCompeleteDeleteWorkspace = React.useCallback(async () => {
-    router.push(appWorkspacePaths.workspaces);
+    router.push(kAppWorkspacePaths.workspaces);
   }, [router]);
 
   return (

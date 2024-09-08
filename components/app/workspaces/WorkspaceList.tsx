@@ -8,7 +8,6 @@ import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
-import { appWorkspacePaths } from "@/lib/definitions/system.ts";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
@@ -16,16 +15,17 @@ import { PlusOutlined } from "@ant-design/icons";
 import { User, Workspace } from "fimidara";
 import { isBoolean, noop } from "lodash-es";
 import Link from "next/link";
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import WorkspaceAvatar from "./WorkspaceAvatar.tsx";
 import WorkspaceForm from "./WorkspaceForm.tsx";
 import WorkspaceMenu from "./WorkspaceMenu.tsx";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 export interface IWorkspaceListProps {
   user: User;
 }
 
-const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
+const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
   const { user } = props;
   const pagination = usePagination();
   const { fetchState } = useUserWorkspacesFetchHook({
@@ -62,7 +62,7 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
               }
               main={
                 <div className="flex flex-col justify-center">
-                  <Link href={appWorkspacePaths.folderList(item.resourceId)}>
+                  <Link href={kAppWorkspacePaths.folderList(item.resourceId)}>
                     <div>{item.name}</div>
                   </Link>
                   {item.description && (

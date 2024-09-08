@@ -10,53 +10,53 @@ import {
 import { MdOutlineWorkOutline } from "react-icons/md";
 import { TbLockAccess } from "react-icons/tb";
 import {
-  appInternalPaths,
-  appUserPaths,
-  appWorkspacePaths,
+  kAppInternalPaths,
+  kAppUserPaths,
+  kAppWorkspacePaths,
 } from "../../lib/definitions/system";
-import { IRawNavItem, ISomeNavItem } from "../utils/page/side-nav/types.ts";
+import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 
 export function getWorkspaceNavItems(workspaceId: string) {
   const menuItems: IRawNavItem[] = [
     {
-      key: appWorkspacePaths.folderList(workspaceId),
-      href: appWorkspacePaths.folderList(workspaceId),
+      key: kAppWorkspacePaths.folderList(workspaceId),
+      href: kAppWorkspacePaths.folderList(workspaceId),
       label: "Files",
       icon: <FiFile />,
     },
     {
-      key: appWorkspacePaths.agentTokenList(workspaceId),
-      href: appWorkspacePaths.agentTokenList(workspaceId),
+      key: kAppWorkspacePaths.agentTokenList(workspaceId),
+      href: kAppWorkspacePaths.agentTokenList(workspaceId),
       label: "Agent Tokens",
       icon: <FiKey />,
     },
     {
-      key: appWorkspacePaths.permissionGroupList(workspaceId),
-      href: appWorkspacePaths.permissionGroupList(workspaceId),
+      key: kAppWorkspacePaths.permissionGroupList(workspaceId),
+      href: kAppWorkspacePaths.permissionGroupList(workspaceId),
       label: "Permission Groups",
       icon: <TbLockAccess />,
     },
     {
-      key: appWorkspacePaths.collaboratorList(workspaceId),
-      href: appWorkspacePaths.collaboratorList(workspaceId),
+      key: kAppWorkspacePaths.collaboratorList(workspaceId),
+      href: kAppWorkspacePaths.collaboratorList(workspaceId),
       label: "Collaborators",
       icon: <FiUsers />,
     },
     {
-      key: appWorkspacePaths.requestList(workspaceId),
-      href: appWorkspacePaths.requestList(workspaceId),
+      key: kAppWorkspacePaths.requestList(workspaceId),
+      href: kAppWorkspacePaths.requestList(workspaceId),
       label: "Requests",
       icon: <FiUserPlus />,
     },
     {
-      key: appWorkspacePaths.usage(workspaceId),
-      href: appWorkspacePaths.usage(workspaceId),
+      key: kAppWorkspacePaths.usage(workspaceId),
+      href: kAppWorkspacePaths.usage(workspaceId),
       label: "Usage",
       icon: <FiVoicemail />,
     },
     {
-      key: appWorkspacePaths.updateWorkspaceForm(workspaceId),
-      href: appWorkspacePaths.updateWorkspaceForm(workspaceId),
+      key: kAppWorkspacePaths.updateWorkspaceForm(workspaceId),
+      href: kAppWorkspacePaths.updateWorkspaceForm(workspaceId),
       label: "Workspace Settings",
       icon: <FiSettings />,
     },
@@ -68,45 +68,23 @@ export function getWorkspaceNavItems(workspaceId: string) {
 export function getUserNavItems(workspaceId?: string) {
   const items: IRawNavItem[] = [
     {
-      key: appWorkspacePaths.workspaces,
-      href: appWorkspacePaths.workspaces,
+      key: kAppWorkspacePaths.workspaces,
+      href: kAppWorkspacePaths.workspaces,
       label: "Workspaces",
       icon: <Computer className="w-4 h-4" />,
       children: workspaceId ? getWorkspaceNavItems(workspaceId) : undefined,
     },
     {
-      key: appUserPaths.requests,
-      href: appUserPaths.requests,
+      key: kAppUserPaths.requests,
+      href: kAppUserPaths.requests,
       label: "Collaboration Requests",
       icon: <GitPullRequestArrow className="w-4 h-4" />,
     },
     {
-      key: appUserPaths.settings,
-      href: appUserPaths.settings,
+      key: kAppUserPaths.settings,
+      href: kAppUserPaths.settings,
       label: "User Settings",
       icon: <UserCog className="w-4 h-4" />,
-    },
-  ];
-
-  return items;
-}
-
-export function getInternalMenu() {
-  const items: ISomeNavItem[] = [
-    {
-      key: appInternalPaths.waitlist,
-      label: "Waitlist",
-      icon: <FiUserPlus />,
-    },
-    {
-      key: appInternalPaths.users,
-      label: "Users",
-      icon: <FiUsers />,
-    },
-    {
-      key: appInternalPaths.workspaces,
-      label: "Workspaces",
-      icon: <MdOutlineWorkOutline />,
     },
   ];
 
@@ -116,20 +94,20 @@ export function getInternalMenu() {
 export function getInternalNavItems() {
   const items: IRawNavItem[] = [
     {
-      key: appInternalPaths.waitlist,
-      href: appInternalPaths.waitlist,
+      key: kAppInternalPaths.waitlist,
+      href: kAppInternalPaths.waitlist,
       label: "Waitlist",
       icon: <FiUserPlus />,
     },
     {
-      key: appInternalPaths.users,
-      href: appInternalPaths.users,
+      key: kAppInternalPaths.users,
+      href: kAppInternalPaths.users,
       label: "Users",
       icon: <FiUsers />,
     },
     {
-      key: appInternalPaths.workspaces,
-      href: appInternalPaths.workspaces,
+      key: kAppInternalPaths.workspaces,
+      href: kAppInternalPaths.workspaces,
       label: "Workspaces",
       icon: <MdOutlineWorkOutline />,
     },

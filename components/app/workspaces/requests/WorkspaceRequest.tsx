@@ -1,12 +1,12 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import assert from "assert";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { useRouter } from "next/navigation";
-import React from "react";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
+import { useCallback } from "react";
 
 export interface IWorkspaceRequestProps {
   request: CollaborationRequestForWorkspace;
@@ -16,9 +16,9 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
   const { request: resource } = props;
   const router = useRouter();
 
-  const onCompleteDeleteRequest = React.useCallback(async () => {
+  const onCompleteDeleteRequest = useCallback(async () => {
     assert(resource, new Error("Collaboration request not found"));
-    router.push(appWorkspacePaths.requestList(resource.workspaceId));
+    router.push(kAppWorkspacePaths.requestList(resource.workspaceId));
   }, [resource, router]);
 
   return (

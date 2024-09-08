@@ -8,9 +8,10 @@ import {
   getMenuSelectedKeys,
   renderToSideNavMenuItemList,
 } from "../utils/page/side-nav/utils.tsx";
-import { getUserNavItems } from "./menu.tsx";
+import { getInternalNavItems, getUserNavItems } from "./menu.tsx";
 import { useAppMenu } from "./useAppMenu.tsx";
 import { getWorkspaceId } from "./utils.ts";
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 
 export interface IAppSideNavProps {}
 
@@ -23,7 +24,12 @@ export default function AppSideNav(props: IAppSideNavProps) {
 
   const { appMenuItems, navItems } = useMemo(() => {
     const navItems = getUserNavItems(workspaceId);
-    const appMenuItems = renderToSideNavMenuItemList(navItems);
+    const internalItems = pathname.includes(kAppRootPaths.internal)
+      ? getInternalNavItems()
+      : [];
+    const appMenuItems = renderToSideNavMenuItemList(
+      navItems.concat(internalItems)
+    );
 
     return { navItems, appMenuItems };
   }, [workspaceId]);

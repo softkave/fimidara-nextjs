@@ -3,11 +3,9 @@
 import { errorMessageNotificatition } from "@/components/utils/errorHandling.tsx";
 import { appComponentConstants } from "@/components/utils/utils.ts";
 import { useToast } from "@/hooks/use-toast.ts";
-import {
-  appRootPaths,
-  appWorkspacePaths,
-  systemConstants,
-} from "@/lib/definitions/system.ts";
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { systemConstants } from "@/lib/definitions/system.ts";
 import { useUserConfirmEmailMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import { useMount } from "ahooks";
 import { useRouter } from "next/navigation";
@@ -19,11 +17,11 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
   const router = useRouter();
   const verifyEmailHook = useUserConfirmEmailMutationHook({
     onSuccess(data, params) {
-      router.push(appWorkspacePaths.workspaces);
+      router.push(kAppWorkspacePaths.workspaces);
     },
     onError(e, params) {
       errorMessageNotificatition(e, "Error verifying email address", toast);
-      router.push(appRootPaths.home);
+      router.push(kAppRootPaths.home);
     },
   });
 

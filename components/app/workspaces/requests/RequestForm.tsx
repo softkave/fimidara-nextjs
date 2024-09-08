@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
-import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert";
 import { useToast } from "@/hooks/use-toast.ts";
 import { ICollaborationRequestInput } from "@/lib/definitions/collaborationRequest";
-import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceCollaborationRequestAddMutationHook,
   useWorkspaceCollaborationRequestUpdateMutationHook,
@@ -60,7 +60,7 @@ export default function RequestForm(props: IRequestFormProps) {
     onSuccess(data, params) {
       toast({ title: "Collaboration request updated" });
       router.push(
-        appWorkspacePaths.request(
+        kAppWorkspacePaths.request(
           data.body.request.workspaceId,
           data.body.request.resourceId
         )
@@ -71,7 +71,7 @@ export default function RequestForm(props: IRequestFormProps) {
     onSuccess(data, params) {
       toast({ title: "Collaboration request created" });
       router.push(
-        appWorkspacePaths.request(
+        kAppWorkspacePaths.request(
           data.body.request.workspaceId,
           data.body.request.resourceId
         )
@@ -169,25 +169,24 @@ export default function RequestForm(props: IRequestFormProps) {
   );
 
   return (
-    <div className={cn(styles.formBody, className)}>
-      <div className={styles.formContentWrapper}>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="mb-4">
-              <h4>Collaboration Request Form</h4>
-            </div>
-            <FormAlert error={mergedHook.error} />
-            {recipientEmailNode}
-            {messageNode}
-            {expiresNode}
-            <div className="my-4">
-              <Button type="submit" loading={mergedHook.loading}>
-                {request ? "Update Request" : "Create Request"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-8", className)}
+      >
+        <div className="mb-4">
+          <h4>Collaboration Request Form</h4>
+        </div>
+        <FormAlert error={mergedHook.error} />
+        {recipientEmailNode}
+        {messageNode}
+        {expiresNode}
+        <div className="my-4">
+          <Button type="submit" loading={mergedHook.loading}>
+            {request ? "Update Request" : "Create Request"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

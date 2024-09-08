@@ -3,7 +3,7 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/fetchHooks/workspaceCollaborator.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { getBaseError } from "@/lib/utils/errors";
@@ -29,7 +29,7 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
     useFetchSingleResourceFetchState(fetchState);
 
   const onCompeleteRemoveCollaborator = React.useCallback(async () => {
-    router.push(appWorkspacePaths.collaboratorList(workspaceId));
+    router.push(kAppWorkspacePaths.collaboratorList(workspaceId));
   }, [workspaceId, router]);
 
   if (resource) {

@@ -1,5 +1,5 @@
 import { useToast } from "@/hooks/use-toast.ts";
-import { appUserPaths } from "@/lib/definitions/system.ts";
+import { kAppUserPaths } from "@/lib/definitions/system.ts";
 import { messages } from "@/lib/messages/messages.ts";
 import {
   EmailAddressNotVerifiedError,
@@ -25,7 +25,7 @@ export function enrichErrorMessage(error: any): React.ReactNode {
     errorMessage = (
       <span>
         {errorMessage} {htmlCharacterCodes.doubleDash}{" "}
-        <Link href={appUserPaths.settings}>
+        <Link href={kAppUserPaths.settings}>
           <a>Goto Settings</a>
         </Link>{" "}
         to verify your email address.

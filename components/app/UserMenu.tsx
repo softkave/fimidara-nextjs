@@ -1,4 +1,5 @@
-import { appRootPaths, appUserPaths } from "@/lib/definitions/system.ts";
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
+import { kAppUserPaths } from "@/lib/definitions/system.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
 import Link from "next/link";
 import { useUserNode } from "../hooks/useUserNode";
@@ -35,7 +36,7 @@ export default function UserMenu() {
   const items: Array<IDropdownItem> = insertAntdMenuDivider([
     {
       label: (
-        <Link href={appUserPaths.workspaces} className="w-full inline-block">
+        <Link href={kAppUserPaths.workspaces} className="w-full inline-block">
           App
         </Link>
       ),
@@ -43,7 +44,7 @@ export default function UserMenu() {
     },
     {
       label: (
-        <Link href={appRootPaths.docs} className="w-full inline-block">
+        <Link href={kAppRootPaths.docs} className="w-full inline-block">
           Docs
         </Link>
       ),

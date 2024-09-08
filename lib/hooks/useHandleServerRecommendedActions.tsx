@@ -3,7 +3,7 @@
 import { useToast } from "@/hooks/use-toast.ts";
 import { usePathname } from "next/navigation";
 import { isFimidaraEndpointError } from "../api/localUtils";
-import { appAccountPaths } from "../definitions/system";
+import { kAppAccountPaths } from "../definitions/system";
 import { useRequestLogout } from "./session/useRequestLogout.ts";
 
 const kTimeout = 3_000; // 3 seconds
@@ -24,7 +24,7 @@ export function useHandleRequiresPasswordChange() {
           "Please change your password to continue, thank you",
         duration: kMessageDuration,
       });
-      requestLogout(appAccountPaths.forgotPassword);
+      requestLogout(kAppAccountPaths.forgotPassword);
     }, kTimeout);
   };
 
@@ -44,7 +44,7 @@ export function useHandleLoginAgain() {
           "An error occurred involving your session, please login again, thank you",
         duration: kMessageDuration,
       });
-      requestLogout(appAccountPaths.loginWithReturnPath(pathname));
+      requestLogout(kAppAccountPaths.loginWithReturnPath(pathname));
     }, kTimeout);
   };
 

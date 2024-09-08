@@ -12,10 +12,10 @@ import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
 import { FormAlert } from "@/components/utils/FormAlert";
 import CustomIcon from "@/components/utils/buttons/CustomIcon";
-import styles from "@/components/utils/form/form.module.css";
 import { useToast } from "@/hooks/use-toast.ts";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
-import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { systemConstants } from "@/lib/definitions/system";
 import { useWorkspaceFoldersFetchHook } from "@/lib/hooks/fetchHooks";
 import {
   useWorkspaceFileUploadMutationHook,
@@ -92,7 +92,7 @@ export default function FolderForm(props: FolderFormProps) {
     onSuccess(data, params) {
       toast({ title: "Folder updated" });
       router.push(
-        appWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
+        kAppWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
       );
     },
   });
@@ -101,7 +101,7 @@ export default function FolderForm(props: FolderFormProps) {
     onSuccess(data, params) {
       toast({ title: "Folder created" });
       router.push(
-        appWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
+        kAppWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
       );
     },
   });
@@ -378,29 +378,28 @@ export default function FolderForm(props: FolderFormProps) {
   }
 
   return (
-    <div className={cn(styles.formBody, className)}>
-      <div className={styles.formContentWrapper}>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="mb-4">
-              <h4>Folder Form</h4>
-            </div>
-            <FormAlert error={hookError} />
-            {selectedFilesNode}
-            {nameNode}
-            {descriptionNode}
-            {selectFolderNode}
-            <FilesFormUploadProgress
-              identifiers={progressHandlerHook.identifiers}
-            />
-            <div className="my-4">
-              <Button type="submit" loading={hookLoading}>
-                Submit
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-8", className)}
+      >
+        <div className="mb-4">
+          <h4>Folder Form</h4>
+        </div>
+        <FormAlert error={hookError} />
+        {selectedFilesNode}
+        {nameNode}
+        {descriptionNode}
+        {selectFolderNode}
+        <FilesFormUploadProgress
+          identifiers={progressHandlerHook.identifiers}
+        />
+        <div className="my-4">
+          <Button type="submit" loading={hookLoading}>
+            Submit
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

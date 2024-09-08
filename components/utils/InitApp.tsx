@@ -1,6 +1,6 @@
 "use client";
 
-import { appUserPaths } from "@/lib/definitions/system";
+import { kAppUserPaths } from "@/lib/definitions/system";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import UserSessionStorageFns from "@/lib/storage/userSession";
 import { isRouteToAppOnInitPath } from "@/lib/utils/routes";
@@ -23,7 +23,7 @@ export const InitApp = (props: IInitAppProps) => {
     const isLoggedIn = !!savedToken;
     const shouldRouteToApp = isLoggedIn && p && isRouteToAppOnInitPath(p);
 
-    if (shouldRouteToApp) router.push(appUserPaths.workspaces);
+    if (shouldRouteToApp) router.push(kAppUserPaths.workspaces);
   });
 
   if (isLoggedIn === undefined) {

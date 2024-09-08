@@ -1,15 +1,16 @@
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
+import { kAppAccountPaths } from "../../lib/definitions/system";
 import { useAppMenu } from "../app/useAppMenu.tsx";
 import { DropdownItems } from "../ui/dropdown-items.tsx";
 import { cn } from "../utils.ts";
 import IconButton from "../utils/buttons/IconButton";
 import { insertAntdMenuDivider } from "../utils/utils";
 import styles from "./WebHeader.module.css";
-import { Ellipsis } from "lucide-react";
 
 export interface IWebHeaderProps {
   className?: string;
@@ -24,26 +25,26 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
   let sideLinksNode: React.ReactNode = null;
   const items = insertAntdMenuDivider([
     {
-      key: appAccountPaths.signup,
+      key: kAppAccountPaths.signup,
       label: (
-        <Link href={appAccountPaths.signup} className="w-full inline-block">
+        <Link href={kAppAccountPaths.signup} className="w-full inline-block">
           Signup
         </Link>
       ),
     },
     {
-      key: appAccountPaths.login,
+      key: kAppAccountPaths.login,
       label: (
-        <Link href={appAccountPaths.login} className="w-full inline-block">
+        <Link href={kAppAccountPaths.login} className="w-full inline-block">
           Login
         </Link>
       ),
     },
     {
-      key: appAccountPaths.forgotPassword,
+      key: kAppAccountPaths.forgotPassword,
       label: (
         <Link
-          href={appAccountPaths.forgotPassword}
+          href={kAppAccountPaths.forgotPassword}
           className="w-full inline-block"
         >
           Forgot Password
@@ -51,9 +52,9 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
       ),
     },
     {
-      key: appRootPaths.docs,
+      key: kAppRootPaths.docs,
       label: (
-        <Link href={appRootPaths.docs} className="w-full inline-block">
+        <Link href={kAppRootPaths.docs} className="w-full inline-block">
           Docs
         </Link>
       ),
@@ -63,7 +64,7 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
   sideLinksNode = (
     <div className="space-x-4 flex items-center">
       <Link
-        href={appAccountPaths.login}
+        href={kAppAccountPaths.login}
         className="underline decoration-sky-500"
       >
         Login
@@ -74,7 +75,7 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
     </div>
   );
 
-  const isDocs = pathname.startsWith(appRootPaths.docs);
+  const isDocs = pathname.startsWith(kAppRootPaths.docs);
   return (
     <div className={cn(styles.root, "space-x-4", className)} style={style}>
       {isDocs && !isOpen && (
@@ -85,7 +86,7 @@ const WebHeader: React.FC<IWebHeaderProps> = (props) => {
       )}
       <div style={{ display: "flex", alignItems: "center" }}>
         <h5 className="text-xl underline decoration-sky-500">
-          {isDocs ? null : <Link href={appRootPaths.home}>fimidara</Link>}
+          {isDocs ? null : <Link href={kAppRootPaths.home}>fimidara</Link>}
         </h5>
       </div>
       <div className={styles.sideLinks}>{sideLinksNode}</div>

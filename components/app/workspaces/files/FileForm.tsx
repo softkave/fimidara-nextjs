@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button.tsx";
 import { Form } from "@/components/ui/form.tsx";
 import { cn } from "@/components/utils.ts";
-import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert";
 import { useToast } from "@/hooks/use-toast.ts";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
@@ -168,26 +167,25 @@ export default function FileForm(props: FileFormProps) {
   // TODO: should "uploading files progress" below open the progress drawer on
   // click?
   return (
-    <div className={cn(styles.formBody, className)}>
-      <div className={styles.formContentWrapper}>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="mb-4">
-              <h4>File Form</h4>
-            </div>
-            <FormAlert error={mergedHook.error} />
-            {contentNode}
-            <FilesFormUploadProgress
-              identifiers={progressHandlerHook.identifiers}
-            />
-            <div className="my-4">
-              <Button type="submit" loading={mergedHook.loading}>
-                {file ? "Update File" : "Upload File"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-8", className)}
+      >
+        <div className="mb-4">
+          <h4>File Form</h4>
+        </div>
+        <FormAlert error={mergedHook.error} />
+        {contentNode}
+        <FilesFormUploadProgress
+          identifiers={progressHandlerHook.identifiers}
+        />
+        <div className="my-4">
+          <Button type="submit" loading={mergedHook.loading}>
+            {file ? "Update File" : "Upload File"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

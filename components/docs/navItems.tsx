@@ -1,5 +1,5 @@
 import { ObjectValues } from "@/lib/api/utils";
-import { appDocPaths } from "@/lib/definitions/paths/docs.ts";
+import { kAppDocPaths } from "@/lib/definitions/paths/docs.ts";
 import assert from "assert";
 import { first, forEach, get, last, set } from "lodash-es";
 import { isObjectEmpty } from "../../lib/utils/fns";
@@ -53,12 +53,12 @@ export const fimidaraNavItems: IRawNavItem[] = [
       {
         label: "Introduction",
         key: "introduction",
-        href: appDocPaths.fimidaraDoc("introduction"),
+        href: kAppDocPaths.fimidaraDoc("introduction"),
       },
       {
         label: "Workspace",
         key: "workspace",
-        href: appDocPaths.fimidaraDoc("workspace"),
+        href: kAppDocPaths.fimidaraDoc("workspace"),
       },
     ],
   },
@@ -72,7 +72,7 @@ export const fimidaraRestApiNavItems: IRawNavItem[] = [
         {
           label: "overview",
           key: kDocNavRootKeysMap.restApi + "__" + "overview",
-          href: appDocPaths.fimidaraRestApiDoc("overview"),
+          href: kAppDocPaths.fimidaraRestApiDoc("overview"),
         },
       ] as IRawNavItem[]
     ).concat(restApiRawNavItems),
@@ -87,7 +87,7 @@ export const fimidaraJsSdkNavItems: IRawNavItem[] = [
         {
           label: "overview",
           key: kDocNavRootKeysMap.jsSdk + "__" + "overview",
-          href: appDocPaths.fimidaraJsSdkDoc("overview"),
+          href: kAppDocPaths.fimidaraJsSdkDoc("overview"),
         },
       ] as IRawNavItem[]
     ).concat(jsSdkRawNavItems),
@@ -118,9 +118,9 @@ function extractRestApiFromRawTableOfContent(
   const linksMap: Record<string, NavItemIntermediateRep> = {};
   const pFn =
     rootKey === kDocNavRootKeysMap.restApi
-      ? appDocPaths.fimidaraRestApiDoc
+      ? kAppDocPaths.fimidaraRestApiDoc
       : rootKey === kDocNavRootKeysMap.jsSdk
-      ? appDocPaths.fimidaraJsSdkDoc
+      ? kAppDocPaths.fimidaraJsSdkDoc
       : undefined;
   assert(pFn);
 

@@ -2,30 +2,30 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { Collaborator } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
 import CollaboratorMenu from "./CollaboratorMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { ReactNode, FC, useCallback } from "react";
 
 export interface CollaboratorListProps {
   workspaceId: string;
   collaborators: Collaborator[];
-  renderItem?: (item: Collaborator) => React.ReactNode;
+  renderItem?: (item: Collaborator) => ReactNode;
 }
 
-const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
+const CollaboratorList: FC<CollaboratorListProps> = (props) => {
   const { workspaceId, collaborators, renderItem } = props;
 
-  const internalRenderItem = React.useCallback(
+  const internalRenderItem = useCallback(
     (item: Collaborator) => (
       <ThumbnailContent
         key={item.resourceId}
         main={
           <div className="flex flex-col justify-center">
             <Link
-              href={appWorkspacePaths.collaborator(
+              href={kAppWorkspacePaths.collaborator(
                 workspaceId,
                 item.resourceId
               )}

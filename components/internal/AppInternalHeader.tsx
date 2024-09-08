@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { usePathname, useRouter } from "next/navigation";
 import { FiUserPlus, FiUsers } from "react-icons/fi";
 import { MdOutlineWorkOutline } from "react-icons/md";
-import { appInternalPaths } from "../../lib/definitions/system";
+import { kAppInternalPaths } from "../../lib/definitions/system";
 import AppTabs, { AppTabItem } from "../utils/page/AppTabs";
 
 export interface IAppInternalHeaderProps {
@@ -32,17 +32,17 @@ export default function AppInternalHeader(props: IAppInternalHeaderProps) {
 
   const items: AppTabItem[] = [
     {
-      key: appInternalPaths.waitlist,
+      key: kAppInternalPaths.waitlist,
       label: `Waitlist`,
       icon: <FiUserPlus />,
     },
     {
-      key: appInternalPaths.users,
+      key: kAppInternalPaths.users,
       label: `Users`,
       icon: <FiUsers />,
     },
     {
-      key: appInternalPaths.workspaces,
+      key: kAppInternalPaths.workspaces,
       label: `Workspaces`,
       icon: <MdOutlineWorkOutline />,
     },

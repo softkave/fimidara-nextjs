@@ -3,13 +3,13 @@
 import { useAgentTokenForm } from "@/components/hooks/useAgentTokenForm.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { AgentToken } from "fimidara";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { FC, ReactElement, ReactNode } from "react";
 import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
 import AgentTokenListContainer from "./AgentTokenListContainer";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 export interface IWorkspaceAgentTokensProps {
   workspaceId: string;
@@ -29,7 +29,7 @@ const WorkspaceAgentTokens: FC<IWorkspaceAgentTokensProps> = (props) => {
         label="Agent Tokens"
         buttons={
           <div className="flex items-center space-x-2">
-            <Link href={appWorkspacePaths.createAgentTokenForm(workspaceId)}>
+            <Link href={kAppWorkspacePaths.createAgentTokenForm(workspaceId)}>
               <IconButton
                 icon={<Plus className="h-4 w-4" />}
                 onClick={() => formHook.setFormOpen(true)}

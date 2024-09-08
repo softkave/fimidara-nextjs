@@ -4,13 +4,13 @@ import IconButton from "@/components/utils/buttons/IconButton";
 import { appClasses } from "@/components/utils/theme";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/system";
 import { Workspace } from "fimidara";
 import { compact, noop } from "lodash-es";
+import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import useTargetGrantPermissionModal from "../../hooks/useTargetGrantPermissionModal";
-import { Ellipsis } from "lucide-react";
 
 export interface WorkspaceMenuProps {
   workspace: Workspace;
@@ -55,7 +55,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = (props) => {
         key: MenuKeys.UpdateWorkspace,
         label: (
           <Link
-            href={appWorkspacePaths.updateWorkspaceForm(workspace.workspaceId)}
+            href={kAppWorkspacePaths.updateWorkspaceForm(workspace.workspaceId)}
           >
             Update Workspace
           </Link>

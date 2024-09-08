@@ -2,20 +2,20 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
 import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { FC } from "react";
 
 export interface IWorkspaceRequestListProps {
   workspaceId: string;
   requests: CollaborationRequestForWorkspace[];
 }
 
-const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
+const WorkspaceRequestList: FC<IWorkspaceRequestListProps> = (props) => {
   const { workspaceId, requests } = props;
 
   return (
@@ -28,7 +28,7 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
           main={
             <div className="flex flex-col justify-center">
               <Link
-                href={appWorkspacePaths.request(workspaceId, item.resourceId)}
+                href={kAppWorkspacePaths.request(workspaceId, item.resourceId)}
               >
                 {item.recipientEmail}
               </Link>

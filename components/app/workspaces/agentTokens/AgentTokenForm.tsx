@@ -14,7 +14,8 @@ import { cn } from "@/components/utils.ts";
 import { FormAlert } from "@/components/utils/FormAlert";
 import { useToast } from "@/hooks/use-toast.ts";
 import { agentTokenConstants } from "@/lib/definitions/agentToken";
-import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceAgentTokenAddMutationHook,
   useWorkspaceAgentTokenUpdateMutationHook,
@@ -61,7 +62,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
     onSuccess(data, params) {
       toast({ title: "Agent token updated" });
       router.push(
-        appWorkspacePaths.agentToken(
+        kAppWorkspacePaths.agentToken(
           data.body.token.workspaceId,
           data.body.token.resourceId
         )
@@ -72,7 +73,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
     onSuccess(data, params) {
       toast({ title: "Agent token created" });
       router.push(
-        appWorkspacePaths.agentToken(
+        kAppWorkspacePaths.agentToken(
           data.body.token.workspaceId,
           data.body.token.resourceId
         )

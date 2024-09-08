@@ -1,6 +1,6 @@
 "use client";
 
-import { appAccountPaths } from "@/lib/definitions/system.ts";
+import { kAppAccountPaths } from "@/lib/definitions/system.ts";
 import { useLogout } from "@/lib/hooks/session/useLogout.ts";
 import { useSessionHook } from "@/lib/hooks/session/useSessionHook.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
@@ -44,9 +44,9 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
       // TODO: should we include return to?
       router.push(routeToOnLogout);
     } else if (!returnTo) {
-      router.push(appAccountPaths.login);
+      router.push(kAppAccountPaths.login);
     } else {
-      router.push(appAccountPaths.loginWithReturnPath(returnTo || pathname));
+      router.push(kAppAccountPaths.loginWithReturnPath(returnTo || pathname));
     }
 
     set({ routeToOnLogout: undefined });

@@ -1,5 +1,5 @@
 import { StyleableComponentProps } from "@/components/utils/styling/types";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Folder } from "fimidara";
 import Link from "next/link";
 
@@ -18,8 +18,8 @@ function FolderParentLink(props: FolderParentLinkProps) {
     }
 
     return folder.parentId
-      ? appWorkspacePaths.folder(workspaceId, folder.parentId)
-      : appWorkspacePaths.folderList(workspaceId);
+      ? kAppWorkspacePaths.folder(workspaceId, folder.parentId)
+      : kAppWorkspacePaths.folderList(workspaceId);
   };
 
   return (

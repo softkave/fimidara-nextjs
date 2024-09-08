@@ -8,7 +8,6 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchNonPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useEntityAssignedPermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
 import { cn } from "@/lib/utils.ts";
@@ -19,9 +18,10 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
 import AssignPermissionGroupsForm from "./AssignPermissionGroupsForm";
 import PermissionGroupMenu from "./PermissionGroupMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { FC, useMemo, ReactNode, Fragment } from "react";
 
 export interface IAssignedPermissionGroupListProps
   extends StyleableComponentProps {
@@ -31,9 +31,9 @@ export interface IAssignedPermissionGroupListProps
 
 // TODO: add bulk remove, and add bulk actions to other lists
 
-const AssignedPermissionGroupList: React.FC<
-  IAssignedPermissionGroupListProps
-> = (props) => {
+const AssignedPermissionGroupList: FC<IAssignedPermissionGroupListProps> = (
+  props
+) => {
   const { workspaceId, entityId, className, style } = props;
   const { fetchState, clearFetchState } =
     useEntityAssignedPermissionGroupsFetchHook({
@@ -45,12 +45,12 @@ const AssignedPermissionGroupList: React.FC<
 
   const [isAssignFormVisible, toggleHook] = useToggle();
 
-  const permissionGroupsMap = React.useMemo(
+  const permissionGroupsMap = useMemo(
     () => indexArray(resourceList, { path: "resourceId" }),
     [resourceList]
   );
 
-  let content: React.ReactNode = null;
+  let content: ReactNode = null;
 
   if (error) {
     content = (
@@ -79,7 +79,7 @@ const AssignedPermissionGroupList: React.FC<
               main={
                 <div className="flex flex-col justify-center">
                   <Link
-                    href={appWorkspacePaths.permissionGroup(
+                    href={kAppWorkspacePaths.permissionGroup(
                       workspaceId,
                       item.permissionGroupId
                     )}
@@ -116,7 +116,7 @@ const AssignedPermissionGroupList: React.FC<
     );
   }
 
-  let assignFormNode: React.ReactNode = null;
+  let assignFormNode: ReactNode = null;
 
   if (other && isAssignFormVisible) {
     assignFormNode = (
@@ -135,7 +135,7 @@ const AssignedPermissionGroupList: React.FC<
   }
 
   return (
-    <React.Fragment>
+    <Fragment>
       <div className={cn(className, "space-y-8")} style={style}>
         <ListHeader
           label="Assigned Permission Groups"
@@ -151,7 +151,7 @@ const AssignedPermissionGroupList: React.FC<
         <PaginatedContent content={content} />
       </div>
       {assignFormNode}
-    </React.Fragment>
+    </Fragment>
   );
 };
 

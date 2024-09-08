@@ -3,7 +3,6 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/fetchHooks/permissionGroup.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { formatDateTime } from "@/lib/utils/dateFns";
@@ -11,9 +10,10 @@ import { getBaseError } from "@/lib/utils/errors";
 import assert from "assert";
 import { noop } from "lodash-es";
 import { useRouter } from "next/navigation";
-import React from "react";
 import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { useCallback } from "react";
 
 export interface PermissionGroupComponentProps {
   permissionGroupId: string;
@@ -28,9 +28,9 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
   const { isLoading, error, resource } =
     useFetchSingleResourceFetchState(fetchState);
 
-  const onCompleteDeletePermissionGroup = React.useCallback(async () => {
+  const onCompleteDeletePermissionGroup = useCallback(async () => {
     assert(resource, new Error("Permission group not found"));
-    router.push(appWorkspacePaths.collaboratorList(resource.workspaceId));
+    router.push(kAppWorkspacePaths.collaboratorList(resource.workspaceId));
   }, [router, resource]);
 
   if (resource) {

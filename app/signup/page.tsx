@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { SignupEndpointParams } from "@/lib/api/privateTypes.ts";
-import { appWorkspacePaths } from "@/lib/definitions/system.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserSignupMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
@@ -41,7 +41,7 @@ export default function Signup(props: ISignupProps) {
   const router = useRouter();
   const signupHook = useUserSignupMutationHook({
     onSuccess(data, params) {
-      router.push(appWorkspacePaths.workspaces);
+      router.push(kAppWorkspacePaths.workspaces);
     },
   });
   const onSubmit = (body: z.infer<typeof formSchema>) =>

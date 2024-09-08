@@ -14,7 +14,7 @@ import { cn } from "@/components/utils.ts";
 import { StyleableComponentProps } from "@/components/utils/styling/types.ts";
 import { useToast } from "@/hooks/use-toast.ts";
 import { folderConstants } from "@/lib/definitions/folder";
-import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceAddMutationHook,
   useWorkspaceUpdateMutationHook,
@@ -30,6 +30,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormAlert } from "../../utils/FormAlert";
 import { getRootnameFromName } from "./utils";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 const formSchema = z.object({
   name: systemValidation.name,
@@ -63,7 +64,9 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
   const createHook = useWorkspaceAddMutationHook({
     onSuccess(data, params) {
       toast({ title: "Workspace created" });
-      router.push(appWorkspacePaths.folderList(data.body.workspace.resourceId));
+      router.push(
+        kAppWorkspacePaths.folderList(data.body.workspace.resourceId)
+      );
     },
   });
   const stateHook = workspace ? updateHook : createHook;

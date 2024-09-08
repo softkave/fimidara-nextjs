@@ -1,5 +1,6 @@
 import { FimidaraPermissionAction, FimidaraResourceType } from "fimidara";
 import { defaultTo } from "lodash-es";
+import { kAppRootPaths } from "./paths/root.ts";
 
 if (!process.env.NEXT_PUBLIC_WORKSPACE_ID) {
   throw new Error("NEXT_PUBLIC_WORKSPACE_ID is not set");
@@ -259,116 +260,7 @@ export const kDisabledPermissions: FimidaraPermissionAction[] = [
   "ingestFileBackendMount",
 ];
 
-export const appRootPaths = {
-  home: "/",
-  internal: "/internal",
-  docs: "/docs",
-};
-
-export const appWorkspacePaths = {
-  workspaces: "/workspaces",
-  createWorkspaceForm: "/workspaces/new",
-  workspace: (workspaceId: string) => `/workspaces/${workspaceId}`,
-  updateWorkspaceForm(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/update`;
-  },
-
-  // File
-  fileList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/files`;
-  },
-  file(workspaceId: string, fileId: string) {
-    return `${this.fileList(workspaceId)}/${fileId}`;
-  },
-  fileForm(workspaceId: string, fileId: string) {
-    return `${this.file(workspaceId, fileId)}/update`;
-  },
-  createFileForm(workspaceId: string, folderId?: string) {
-    if (folderId) {
-      return `${this.fileList(workspaceId)}/new/${folderId}`;
-    } else {
-      return `${this.fileList(workspaceId)}/new`;
-    }
-  },
-
-  // Folder
-  folderList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/folders`;
-  },
-  folder(workspaceId: string, folderId: string) {
-    return `${this.folderList(workspaceId)}/${folderId}`;
-  },
-  folderForm(workspaceId: string, folderId: string) {
-    return `${this.folder(workspaceId, folderId)}/update`;
-  },
-  createFolderForm(workspaceId: string, folderId?: string) {
-    if (folderId) {
-      return `${this.folderList(workspaceId)}/new/${folderId}`;
-    } else {
-      return `${this.folderList(workspaceId)}/new`;
-    }
-  },
-
-  // Collaborator
-  collaboratorList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/collaborators`;
-  },
-  collaborator(workspaceId: string, collaboratorId: string) {
-    return `${this.collaboratorList(workspaceId)}/${collaboratorId}`;
-  },
-  collaboratorForm(workspaceId: string, collaboratorId: string) {
-    return `${this.collaborator(workspaceId, collaboratorId)}/new`;
-  },
-
-  // Request
-  requestList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/collaboration-requests`;
-  },
-  createRequestForm(workspaceId: string) {
-    return `${this.requestList(workspaceId)}/new`;
-  },
-  request(workspaceId: string, requestId: string) {
-    return `${this.requestList(workspaceId)}/${requestId}`;
-  },
-  requestForm(workspaceId: string, requestId: string) {
-    return `${this.request(workspaceId, requestId)}/update`;
-  },
-
-  // Agent token
-  agentTokenList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/agent-tokens`;
-  },
-  createAgentTokenForm(workspaceId: string) {
-    return `${this.agentTokenList(workspaceId)}/new`;
-  },
-  agentToken(workspaceId: string, tokenId: string) {
-    return `${this.agentTokenList(workspaceId)}/${tokenId}`;
-  },
-  agentTokenForm(workspaceId: string, tokenId: string) {
-    return `${this.agentToken(workspaceId, tokenId)}/update`;
-  },
-
-  // permission group
-  permissionGroupList(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/permission-groups`;
-  },
-  createPermissionGroupForm(workspaceId: string) {
-    return `${this.permissionGroupList(workspaceId)}/new`;
-  },
-  permissionGroup(workspaceId: string, permissiongroupId: string) {
-    return `${this.permissionGroupList(workspaceId)}/${permissiongroupId}`;
-  },
-  permissionGroupForm(workspaceId: string, permissiongroupId: string) {
-    return `${this.permissionGroup(workspaceId, permissiongroupId)}/update`;
-  },
-
-  // usage records
-  usage(workspaceId: string) {
-    return `${this.workspace(workspaceId)}/usage`;
-  },
-};
-
-export const appAccountPaths = {
+export const kAppAccountPaths = {
   signup: "/signup",
   login: "/login",
   loginWithReturnPath(returnTo: string) {
@@ -380,13 +272,13 @@ export const appAccountPaths = {
   changePassword: "/change-password",
 };
 
-export const appInternalPaths = {
-  waitlist: `${appRootPaths.internal}/waitlist`,
-  users: `${appRootPaths.internal}/users`,
-  workspaces: `${appRootPaths.internal}/workspaces`,
+export const kAppInternalPaths = {
+  waitlist: `${kAppRootPaths.internal}/waitlist`,
+  users: `${kAppRootPaths.internal}/users`,
+  workspaces: `${kAppRootPaths.internal}/workspaces`,
 };
 
-export const appUserPaths = {
+export const kAppUserPaths = {
   settings: "/settings",
   requests: "/collaboration-requests",
   request(id: string) {
