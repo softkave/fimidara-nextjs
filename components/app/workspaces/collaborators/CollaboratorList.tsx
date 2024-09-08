@@ -2,9 +2,7 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import Text from "antd/es/typography/Text";
 import { Collaborator } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -25,7 +23,7 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div className={appClasses.thumbnailMain}>
+          <div className="flex flex-col justify-center">
             <Link
               href={appWorkspacePaths.collaborator(
                 workspaceId,
@@ -34,16 +32,17 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
             >
               {item.firstName + " " + item.lastName}
             </Link>
-            {item.email && <Text type="secondary">{item.email}</Text>}
+            {item.email && <span className="text-secondary">{item.email}</span>}
           </div>
         }
         menu={
-          <CollaboratorMenu
-            key="menu"
-            collaborator={item}
-            workspaceId={workspaceId}
-            onCompleteRemove={noop}
-          />
+          <div className="flex flex-col justify-center h-full">
+            <CollaboratorMenu
+              collaborator={item}
+              workspaceId={workspaceId}
+              onCompleteRemove={noop}
+            />
+          </div>
         }
       />
     ),

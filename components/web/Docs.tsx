@@ -1,10 +1,6 @@
 "use client";
 
 import { ApiOutlined, FileTextOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { List } from "antd";
-import Title from "antd/es/typography/Title";
-import AestheticDot from "./AestheticDot";
 
 interface IDoc {
   title: string;
@@ -30,32 +26,19 @@ const docs: IDoc[] = [
   },
 ];
 
-const classes = {
-  link: css({
-    textDecoration: "underline",
-    color: "var(--primary-hex) !important",
-  }),
-};
-
 export default function Docs() {
   return (
     <div className="space-y-4">
-      <Title level={4}>Docs</Title>
-      <List
-        dataSource={docs}
-        renderItem={(item) => (
-          <List.Item>
-            <List.Item.Meta
-              title={
-                <a href={item.link} className={classes.link}>
-                  {item.title}
-                </a>
-              }
-              avatar={<AestheticDot />}
-            />
-          </List.Item>
-        )}
-      />
+      <h4 className="text-2xl">Docs</h4>
+      <ul>
+        {docs.map((item) => (
+          <li key={item.link}>
+            <a href={item.link} className="underline decoration-sky-500">
+              {item.title}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

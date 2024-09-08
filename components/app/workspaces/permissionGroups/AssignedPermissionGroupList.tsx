@@ -8,7 +8,6 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchNonPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useEntityAssignedPermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
@@ -18,7 +17,6 @@ import { getBaseError } from "@/lib/utils/errors";
 import { indexArray } from "@/lib/utils/indexArray";
 import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
-import Text from "antd/es/typography/Text";
 import { noop } from "lodash-es";
 import Link from "next/link";
 import React from "react";
@@ -79,7 +77,7 @@ const AssignedPermissionGroupList: React.FC<
             <ThumbnailContent
               key={item.permissionGroupId}
               main={
-                <div className={appClasses.thumbnailMain}>
+                <div className="flex flex-col justify-center">
                   <Link
                     href={appWorkspacePaths.permissionGroup(
                       workspaceId,
@@ -89,21 +87,25 @@ const AssignedPermissionGroupList: React.FC<
                     {permissionGroup.name}
                   </Link>
                   {permissionGroup.description && (
-                    <Text type="secondary">{permissionGroup.description}</Text>
+                    <span className="text-secondary">
+                      {permissionGroup.description}
+                    </span>
                   )}
-                  <Text type="secondary">
+                  <span className="text-secondary">
                     Assigned {formatDateTime(item.assignedAt)}
-                  </Text>
+                  </span>
                 </div>
               }
               menu={
-                <PermissionGroupMenu
-                  key="menu"
-                  permissionGroup={permissionGroup}
-                  unassignParams={{ entityId }}
-                  onCompleteDelete={noop}
-                  onCompleteUnassignPermissionGroup={noop}
-                />
+                <div className="flex flex-col justify-center h-full">
+                  <PermissionGroupMenu
+                    key="menu"
+                    permissionGroup={permissionGroup}
+                    unassignParams={{ entityId }}
+                    onCompleteDelete={noop}
+                    onCompleteUnassignPermissionGroup={noop}
+                  />
+                </div>
               }
             />
           );

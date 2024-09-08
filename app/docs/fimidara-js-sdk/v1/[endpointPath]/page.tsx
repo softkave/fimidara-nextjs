@@ -5,7 +5,6 @@ import { kDocNavRootKeysList } from "@/components/docs/navItems.tsx";
 import { HttpEndpointDefinition } from "@/components/docs/types";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import { systemConstants } from "@/lib/definitions/system";
-import Text from "antd/es/typography/Text";
 import { promises } from "fs";
 import { last } from "lodash-es";
 
@@ -26,7 +25,7 @@ const FimidaraJsSdkEndpointDocPage = async (
       <PageNothingFound
         message={
           <p>
-            Method <Text code>{endpointPath}</Text> not found.
+            Method <code>{endpointPath}</code> not found.
           </p>
         }
       />

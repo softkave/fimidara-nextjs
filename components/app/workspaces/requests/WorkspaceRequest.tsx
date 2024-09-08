@@ -1,9 +1,7 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import Paragraph from "antd/es/typography/Paragraph";
 import assert from "assert";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { useRouter } from "next/navigation";
@@ -44,14 +42,7 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
           <LabeledNode
             direction="vertical"
             label="Message"
-            node={
-              <Paragraph
-                ellipsis={{ rows: 2 }}
-                className={appClasses.muteMargin}
-              >
-                {resource.message}
-              </Paragraph>
-            }
+            node={<p className="line-clamp-2">{resource.message}</p>}
           />
         )}
         {resource.expiresAt && (

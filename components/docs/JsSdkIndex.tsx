@@ -1,69 +1,73 @@
-import { Divider, Typography } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
-import Title from "antd/es/typography/Title";
-import { first } from "lodash-es";
+import { css } from "@emotion/css";
 import Link from "next/link";
 import React from "react";
+import { Separator } from "../ui/separator.tsx";
+import { cn } from "../utils.ts";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 import JsSdkFunction from "./JsSdkFunction";
-import {
-  fimidaraJsSdkNavItems,
-  getNavItemPath,
-  restApiRawNavItems,
-} from "./navItems";
 import { FieldObject, FieldString } from "./types";
-
-const { Text } = Typography;
+import { jsSdkRawNavItems } from "./navItems.tsx";
 
 export interface JsSdkIndexProps {}
+
+const classes = {
+  root: css({
+    "& table": {
+      fontFamily: `var(--font-default), -apple-system, BlinkMacSystemFont,
+        "Work Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+        sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji" !important`,
+    },
+  }),
+};
 
 const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
   const fimidaraJsDescriptionNode = (
     <div className="space-y-4">
-      <Text>
-        Run{" "}
-        <Text code copyable>
-          npm i fimidara
-        </Text>
+      <span>
+        Run <code>npm i fimidara</code>
         &nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
-        <Text code copyable>
-          yarn add fimidara
-        </Text>{" "}
-        to install.
-      </Text>
-      <div>
-        <Paragraph>
+        <code>yarn add fimidara</code> to install.
+      </span>
+      <div className="space-y-4">
+        <p>
           <b>fimidara</b> exports 3 main utilities listed below. fimidara also
           exports param and result types for the endpoints listed below, and
-          other utility code like <Text code>FimidaraEndpointError</Text>.
-        </Paragraph>
-        <Text code>
-          import {"{"}FimidaraEndpoints, getFimidaraReadFileURL,
-          getUploadFileURL{"}"} from {'"'}fimidara{'"'}
-        </Text>
+          other utility code like <code>FimidaraEndpointError</code>.
+        </p>
+        <code className="w-full inline-block">
+          import {"{"}
+          <br />
+          &nbsp;&nbsp; FimidaraEndpoints, <br />
+          &nbsp;&nbsp; getFimidaraReadFileURL, <br />
+          &nbsp;&nbsp; getUploadFileURL
+          <br />
+          {"}"} from {'"'}fimidara{'"'}
+        </code>
       </div>
-      <div>
-        <Paragraph>
-          You can setup <Text code>FimidaraEndpoints</Text> like so.
-        </Paragraph>
-        <Text code>
-          const fimidaraEndpoints = new FimidaraEndpoints({"{"}authToken:
-          {'"'}agent token JWT token{'"'}
+      <div className="space-y-4">
+        <p>
+          You can setup <code>FimidaraEndpoints</code> like so.
+        </p>
+        <code>
+          const fimidaraEndpoints = new FimidaraEndpoints({"{"}
+          <br />
+          &nbsp;&nbsp;authToken: &nbsp;{'"'}agent token JWT token{'"'}
+          <br />
           {"}"});
-        </Text>
+        </code>
       </div>
     </div>
   );
   const endpointsNode = renderNavItemList(
-    restApiRawNavItems,
-    first(fimidaraJsSdkNavItems)!,
+    jsSdkRawNavItems,
     "FimidaraEndpoints",
     /** descriptionNode */ undefined,
     "endpoints"
   );
   const othersNode = (
-    <div>
-      <Title level={5}>Others</Title>
+    <div className="space-y-4">
+      <h5>Others</h5>
       <div>
         <JsSdkFunction
           functionName="getFimidaraReadFileURL"
@@ -71,7 +75,7 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
           result={getFimidaraReadFileURLResult()}
         />
       </div>
-      <Divider />
+      <Separator />
       <div>
         <JsSdkFunction
           functionName="getFimidaraUploadFileURL"
@@ -83,16 +87,14 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
   );
 
   return (
-    <React.Fragment>
-      <Title level={5} style={{ margin: "0px 0px 24px 0px" }}>
-        Fimidara JS SDK
-      </Title>
+    <div className={cn("space-y-6", classes.root)}>
+      <h5 style={{ margin: "0px 0px 24px 0px" }}>Fimidara JS SDK</h5>
       {fimidaraJsDescriptionNode}
-      <Divider />
+      <Separator />
       {endpointsNode}
-      <Divider />
+      <Separator />
       {othersNode}
-    </React.Fragment>
+    </div>
   );
 };
 
@@ -100,34 +102,32 @@ export default JsSdkIndex;
 
 function renderNavItemList(
   items: IRawNavItem[],
-  rootItem: IRawNavItem,
   label: React.ReactNode,
   descriptionNode: React.ReactNode | undefined,
   key: string | number
 ) {
   const nodes = items.map((item) => {
-    const itemPath = getNavItemPath(item, [rootItem]);
-
-    if (item.withLink) {
-      return (
-        <li key={item.key}>
-          <Link href={itemPath}>{item.label}</Link>
-        </li>
-      );
-    } else if (item.children) {
-      return renderNavItemList(
-        item.children,
-        rootItem,
-        item.label,
-        /** descriptionNode */ undefined,
-        item.key
-      );
-    }
+    return (
+      <li key={item.key}>
+        {item.href && !item.children && (
+          <Link href={item.href} className="underline decoration-sky-500">
+            {item.label}
+          </Link>
+        )}
+        {item.children &&
+          renderNavItemList(
+            item.children,
+            item.label,
+            /** descriptionNode */ undefined,
+            item.key
+          )}
+      </li>
+    );
   });
 
   return (
     <div key={key}>
-      <Title level={5}>{label}</Title>
+      <h5>{label}</h5>
       {descriptionNode}
       <ul>{nodes}</ul>
     </div>

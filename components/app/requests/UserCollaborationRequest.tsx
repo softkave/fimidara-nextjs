@@ -5,15 +5,12 @@ import PageError from "@/components/utils/page/PageError.tsx";
 import PageLoading from "@/components/utils/page/PageLoading.tsx";
 import PageNothingFound from "@/components/utils/page/PageNothingFound.tsx";
 import { appDimensions } from "@/components/utils/theme.ts";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useUserCollaborationRequestFetchHook } from "@/lib/hooks/fetchHooks/userCollaborationRequest.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestResponseMutationHook } from "@/lib/hooks/mutationHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
-import { message } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
 import { formatRelative } from "date-fns";
 
 export interface IUserCollaborationRequestProps {
@@ -29,6 +26,7 @@ const classes = {
 };
 
 function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
+  const { toast } = useToast();
   const { requestId } = props.params;
   const { fetchState, clearFetchState } = useUserCollaborationRequestFetchHook({
     requestId,
@@ -37,11 +35,11 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
     useFetchSingleResourceFetchState(fetchState);
   const respondHook = useUserCollaborationRequestResponseMutationHook({
     onSuccess(data, params) {
-      message.success("Response submitted");
+      toast({ title: "Response submitted" });
       clearFetchState();
     },
     onError(e, params) {
-      errorMessageNotificatition(e);
+      errorMessageNotificatition(e, /** defaultMessage */ undefined, toast);
     },
   });
 
@@ -103,25 +101,25 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
             </div>
           )
         ) : (
-          <Text>
-            Collaboration request <Text strong>{statusText}</Text> {statusDate}
-          </Text>
+          <span>
+            Collaboration request <strong>{statusText}</strong> {statusDate}
+          </span>
         );
 
       return (
         <div className={classes.main}>
           <div className="space-y-8">
             <div className="space-y-0.5">
-              <Title level={4} style={{ margin: 0 }}>
-                Collaboration Request from {resource.workspaceName}
-              </Title>
-              <Text type="secondary">Sent {createdDate}</Text>
+              <h4>Collaboration Request from {resource.workspaceName}</h4>
+              <span className="text-secondary">Sent {createdDate}</span>
             </div>
             {resource.message && expirationDate ? (
               <div className="space-y-0.5">
-                {resource.message && <Paragraph>{resource.message}</Paragraph>}
+                {resource.message && <p>{resource.message}</p>}
                 {expirationDate && (
-                  <Text type="secondary">Expires {expirationDate}</Text>
+                  <span className="text-secondary">
+                    Expires {expirationDate}
+                  </span>
                 )}
               </div>
             ) : null}

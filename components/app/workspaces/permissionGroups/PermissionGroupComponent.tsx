@@ -3,13 +3,11 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/fetchHooks/permissionGroup.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import Paragraph from "antd/es/typography/Paragraph";
 import assert from "assert";
 import { noop } from "lodash-es";
 import { useRouter } from "next/navigation";
@@ -64,14 +62,7 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
             <LabeledNode
               direction="vertical"
               label="Description"
-              node={
-                <Paragraph
-                  ellipsis={{ rows: 2 }}
-                  className={appClasses.muteMargin}
-                >
-                  {resource.description}
-                </Paragraph>
-              }
+              node={<p className="line-clamp-2">{resource.description}</p>}
             />
           )}
           <AssignedPermissionGroupList

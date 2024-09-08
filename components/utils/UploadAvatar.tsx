@@ -1,7 +1,7 @@
+import { useToast } from "@/hooks/use-toast.ts";
 import { CloudUploadOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Upload, message } from "antd";
-import Text from "antd/es/typography/Text";
+import { Upload } from "antd";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import { getFimidaraUploadFileURL } from "fimidara";
 import { defaultTo, first } from "lodash-es";
@@ -31,9 +31,16 @@ const DEFAULT_MESSAGES: IImageUploadMessages = {
   failed: "Error uploading image",
 };
 
-function beforeUpload(file: RcFile) {
+function beforeUpload(
+  file: RcFile,
+  toast: ReturnType<typeof useToast>["toast"]
+) {
   if (first(file.type.split("/")) !== "image") {
-    errorMessageNotificatition("Invalid image type");
+    errorMessageNotificatition(
+      "Invalid image type",
+      /** defaultMessage */ undefined,
+      toast
+    );
   }
 
   return true;
@@ -48,6 +55,7 @@ const classes = {
 
 const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
   const { filepath, className, onCompleteUpload } = props;
+  const { toast } = useToast();
   const u0 = useUserNode();
   const customMessages = {
     ...DEFAULT_MESSAGES,
@@ -55,25 +63,21 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
   };
 
   const [loading, setLoading] = React.useState(false);
-  const [messageKey] = React.useState(() => Math.random().toString());
 
   const onChange = (info: UploadChangeParam) => {
     if (info.file.status === "uploading") {
-      message.loading({ content: customMessages.uploading, key: messageKey });
       setLoading(true);
     } else if (info.file.status === "done") {
-      message.success({
-        content: (
-          <Text>
+      toast({
+        title: (
+          <span>
             {customMessages.successful}.{" "}
-            <Text strong>
+            <strong>
               Please reload the page if your change doesn&apos;t take effect
               soon.
-            </Text>
-          </Text>
-        ),
-        key: messageKey,
-        // duration: SUCCESS_MESSAGE_DURATION,
+            </strong>
+          </span>
+        ) as any,
       });
 
       setLoading(false);
@@ -81,10 +85,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
         onCompleteUpload();
       }, 3000);
     } else if (info.file.status === "error") {
-      errorMessageNotificatition(null, customMessages.failed, {
-        key: messageKey,
-      });
-
+      errorMessageNotificatition(null, customMessages.failed, toast);
       setLoading(false);
     }
   };
@@ -112,7 +113,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
       name="data"
       action={uploadURL}
       headers={{ Authorization: `Bearer ${clientAssignedToken}` }}
-      beforeUpload={beforeUpload}
+      beforeUpload={(args) => beforeUpload(args, toast)}
       onChange={onChange}
       disabled={loading}
       className={cx(classes.root, className)}

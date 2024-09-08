@@ -1,9 +1,9 @@
 "use client";
 
+import { appComponentConstants } from "@/components/utils/utils.ts";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useRequest } from "ahooks";
-import { message } from "antd";
 import { getFimidaraReadFileURL } from "fimidara";
-import React from "react";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../api/fimidaraEndpoints";
 import { systemConstants } from "../definitions/system";
 import { flattenErrorList, toAppErrorList } from "../utils/errors";
@@ -19,14 +19,11 @@ function downloadFile(filename: string, url: string) {
 }
 
 export function useDownloadFile(fileId: string, filename: string) {
-  const [messageApi, contextHolder] = message.useMessage();
-  const [messageKey] = React.useState(() => Math.random().toString());
+  const toastHook = useToast();
 
   const downloadFn = async () => {
-    messageApi.open({
-      key: messageKey,
-      type: "loading",
-      content: `Prepping file ${filename}...`,
+    toastHook.toast({
+      description: `Prepping file ${filename}...`,
     });
 
     const fimidara = getPublicFimidaraEndpointsUsingUserToken();
@@ -45,24 +42,23 @@ export function useDownloadFile(fileId: string, filename: string) {
   const downloadHook = useRequest(downloadFn, {
     manual: true,
     onSuccess() {
-      messageApi.open({
-        key: messageKey,
-        type: "success",
-        content: `Downloading file ${filename}...`,
-        duration: 5, // 5 seconds
+      toastHook.dismiss();
+      toastHook.toast({
+        description: `Downloading file ${filename}...`,
+        duration: appComponentConstants.messageDuration,
       });
     },
     onError(error) {
       const errorArr = toAppErrorList(error);
       const fErrors = flattenErrorList(errorArr);
-      messageApi.open({
-        key: messageKey,
-        type: "error",
-        content: `Error downloading file ${filename}. ${fErrors.error}`,
-        duration: 7, // 7 seconds
+
+      toastHook.dismiss();
+      toastHook.toast({
+        description: `Error downloading file ${filename}. ${fErrors.error}`,
+        variant: "destructive",
       });
     },
   });
 
-  return { downloadHook, messageContextHolder: contextHolder };
+  return { downloadHook };
 }

@@ -1,13 +1,19 @@
+import { Button } from "@/components/ui/button.tsx";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet.tsx";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs.tsx";
 import { FormAlertList } from "@/components/utils/FormAlertList";
+import { useToast } from "@/hooks/use-toast.ts";
 import {
   clearOutResolvedPermissionFetchStore,
   useMergeMutationHookStates,
   usePermissionsAddMutationHook,
   usePermissionsDeleteMutationHook,
 } from "@/lib/hooks/mutationHooks";
-import { RightOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { Modal, Tabs, message } from "antd";
 import {
   AgentToken,
   Collaborator,
@@ -18,7 +24,6 @@ import {
   PermissionItemInput,
 } from "fimidara";
 import { forEach, isBoolean, merge } from "lodash-es";
-import React from "react";
 import AgentTokenListContainer from "../agentTokens/AgentTokenListContainer";
 import CollaboratorListContainer from "../collaborators/CollaboratorListContainer";
 import PermissionGroupListContainer from "../permissionGroups/PermissionGroupListContainer";
@@ -26,6 +31,7 @@ import TargetGrantPermissionFormEntityList, {
   splitKey,
 } from "./TargetGrantPermissionFormEntityList";
 import { ResolvedPermissionsMap, TargetIdPermissions } from "./types";
+import { FC, useState } from "react";
 
 export interface TargetGrantPermissionFormProps {
   workspaceId: string;
@@ -40,46 +46,15 @@ enum TabKey {
   PermissionGroup = "permission-group",
 }
 
-const classes = {
-  root: css({
-    "& .ant-modal-body": {
-      padding: 0,
-    },
-    "& .ant-tabs-nav": {
-      marginBottom: 0,
-    },
-    "& .ant-tabs-nav::before": {
-      border: 0,
-    },
-    "& .ant-tabs-nav-wrap": {
-      marginBottom: "16px",
-      borderBottom: "1px solid var(--border-hex)",
-    },
-  }),
-  targetTypeRoot: css({
-    display: "flex",
-    "@media (max-width: 600px)": {
-      display: "block",
-    },
-  }),
-  targetTypeToggle: css({
-    flex: 1,
-    display: "flex",
-    alignItems: "center",
-    "@media (max-width: 600px)": {
-      marginBottom: "16px",
-    },
-  }),
-};
-
-const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
+const TargetGrantPermissionForm: FC<TargetGrantPermissionFormProps> = (
   props
 ) => {
   const { workspaceId, targetId, targetType, onClose } = props;
+  const { toast } = useToast();
 
-  const [activeKey] = React.useState(TabKey.PermissionGroup);
+  const [activeKey] = useState(TabKey.PermissionGroup);
   const [targetPermissions, setTargetPermissions] =
-    React.useState<TargetIdPermissions>({ original: {}, updated: {} });
+    useState<TargetIdPermissions>({ original: {}, updated: {} });
 
   const handleTargetPermissionsOnChange = (
     updated: ResolvedPermissionsMap,
@@ -110,7 +85,7 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
     ]);
 
     if (addItems.length || deleteItems.length) {
-      message.success(`Permissions updated`);
+      toast({ title: "Permissions updated" });
     }
 
     // Close first, to prevent a refetch of resolved permissions in this
@@ -174,58 +149,59 @@ const TargetGrantPermissionForm: React.FC<TargetGrantPermissionFormProps> = (
   };
 
   const tabsNode = (
-    <Tabs defaultActiveKey={activeKey} moreIcon={<RightOutlined />}>
-      <Tabs.TabPane tab={"Permission Group"} key={TabKey.PermissionGroup}>
+    <Tabs defaultValue={activeKey} className="w-full">
+      <TabsList>
+        <TabsTrigger
+          value={TabKey.PermissionGroup}
+          key={TabKey.PermissionGroup}
+        >
+          Permission Group
+        </TabsTrigger>
+        <TabsTrigger value={TabKey.Collaborator} key={TabKey.Collaborator}>
+          Collaborator
+        </TabsTrigger>
+        <TabsTrigger value={TabKey.AgentToken} key={TabKey.AgentToken}>
+          Agent Token
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value={TabKey.PermissionGroup}>
         <PermissionGroupListContainer
           workspaceId={workspaceId}
           renderList={renderPermissionGroupList}
         />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab={"Collaborator"} key={TabKey.Collaborator}>
+      </TabsContent>
+      <TabsContent value={TabKey.Collaborator}>
         <CollaboratorListContainer
           workspaceId={workspaceId}
           renderList={renderCollaboratorList}
         />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab={"Agent Token"} key={TabKey.AgentToken}>
+      </TabsContent>
+      <TabsContent value={TabKey.AgentToken}>
         <AgentTokenListContainer
           workspaceId={workspaceId}
           renderList={renderAgentTokenList}
         />
-      </Tabs.TabPane>
+      </TabsContent>
     </Tabs>
   );
 
-  let targetTypeNode: React.ReactNode = null;
   const errorNode = error.length ? <FormAlertList error={error} /> : null;
-  const windowWidth = window ? window.document.body.clientWidth : undefined;
-  const maxWidth = 520;
-  const modalWidth = windowWidth
-    ? windowWidth < maxWidth
-      ? windowWidth
-      : maxWidth
-    : maxWidth;
 
   return (
-    <Modal
-      open
-      destroyOnClose
-      closable={false}
-      width={modalWidth}
-      onOk={handleOnSave}
-      onCancel={onClose}
-      okButtonProps={{ disabled: loading }}
-      cancelButtonProps={{ danger: true, disabled: loading }}
-      okText="Save Permissions"
-      cancelText="Close"
-      className={classes.root}
-    >
-      <div className="space-x-2">
-        {errorNode}
-        {targetTypeNode}
-        {tabsNode}
-      </div>
-    </Modal>
+    <Sheet open onOpenChange={onClose}>
+      <SheetTitle>Update Permissions</SheetTitle>
+      <SheetContent className="w-full sm:w-[500px]">
+        <div className="pt-6 w-full space-y-8">
+          {errorNode}
+          {tabsNode}
+          <div>
+            <Button loading={loading} onClick={() => handleOnSave()}>
+              Save Permissions
+            </Button>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 

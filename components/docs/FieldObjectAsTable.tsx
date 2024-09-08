@@ -1,10 +1,7 @@
 import { css } from "@emotion/css";
 import { Table, TableColumnType } from "antd";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
 import { forEach, map } from "lodash-es";
 import React from "react";
-import { appClasses } from "../utils/theme";
 import { htmlCharacterCodes } from "../utils/utils";
 import FieldDescription from "./FieldDescription";
 import { useContainedFieldObjects } from "./hooks";
@@ -27,7 +24,6 @@ import {
 export interface FieldObjectAsTableProps {
   propName?: string;
   isForJsSdk?: boolean;
-  hideTitle?: boolean;
   fieldObject: FieldObject;
 }
 
@@ -40,7 +36,7 @@ const classes = {
 };
 
 const FieldObjectAsTable: React.FC<FieldObjectAsTableProps> = (props) => {
-  const { propName, fieldObject, isForJsSdk, hideTitle } = props;
+  const { propName, fieldObject, isForJsSdk } = props;
   const objectsToProcess = useContainedFieldObjects({ fieldObject });
   const nodes = React.useMemo(() => {
     const nodes: React.ReactNode[] = [];
@@ -49,16 +45,15 @@ const FieldObjectAsTable: React.FC<FieldObjectAsTableProps> = (props) => {
         renderFieldObjectAsTable(
           nextObject,
           isForJsSdk ?? false,
-          nextObject === fieldObject ? propName : undefined,
-          hideTitle
+          nextObject === fieldObject ? propName : undefined
         )
       );
     });
 
     return nodes;
-  }, [objectsToProcess, fieldObject, isForJsSdk, hideTitle, propName]);
+  }, [objectsToProcess, fieldObject, isForJsSdk, propName]);
 
-  return <div className="space-y-8 ml-4">{nodes}</div>;
+  return <div className="space-y-8">{nodes}</div>;
 };
 
 export default FieldObjectAsTable;
@@ -75,35 +70,29 @@ export function renderTableFieldType(
   isForJsSdk: boolean
 ): React.ReactNode {
   if (isFieldString(data)) {
-    return (
-      <Text code ellipsis>
-        string
-      </Text>
-    );
+    return <code>string</code>;
   } else if (isFieldNumber(data)) {
-    return <Text code>number</Text>;
+    return <code>number</code>;
   } else if (isFieldBoolean(data)) {
-    return <Text code>boolean</Text>;
+    return <code>boolean</code>;
   } else if (isFieldNull(data)) {
-    return <Text code>null</Text>;
+    return <code>null</code>;
   } else if (isFieldUndefined(data)) {
-    return <Text code>undefined</Text>;
+    return <code>undefined</code>;
   } else if (isFieldDate(data)) {
-    return <Text code>number</Text>;
+    return <code>number</code>;
   } else if (isFieldArray(data)) {
     if (!data.type) return "";
     const containedTypeNode = renderTableFieldType(data.type, isForJsSdk);
     return (
       <span>
-        <Text code>array</Text> of {containedTypeNode}
+        <code>array</code> of {containedTypeNode}
       </span>
     );
   } else if (isFieldObject(data)) {
     return data.name ? (
       <a href={`#${getTypeNameID(data.name)}`}>
-        <Text code ellipsis style={{ color: "inherit" }}>
-          {data.name}
-        </Text>
+        <code className="line-clamp-1">{data.name}</code>
       </a>
     ) : null;
   } else if (isFieldOrCombination(data)) {
@@ -120,17 +109,13 @@ export function renderTableFieldType(
   } else if (isFieldBinary(data)) {
     return (
       <span>
-        <Text code>string</Text> |<br />
+        <code>string</code> |<br />
         <a href="https://nodejs.org/api/stream.html#class-streamreadable">
-          <Text code ellipsis style={{ color: "inherit" }}>
-            Node.js Readable
-          </Text>
+          <code className="line-clamp-1">Node.js Readable</code>
         </a>{" "}
         |<br />
         <a href="https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream">
-          <Text code ellipsis style={{ color: "inherit" }}>
-            Browser ReadableStream
-          </Text>
+          <code className="line-clamp-1">Browser ReadableStream</code>
         </a>{" "}
       </span>
     );
@@ -138,28 +123,21 @@ export function renderTableFieldType(
     if (data.descriptionLink) {
       return (
         <a href={data.descriptionLink}>
-          <Text code style={{ color: "inherit" }}>
-            {data.name}
-          </Text>
+          <code>{data.name}</code>
         </a>
       );
     } else {
-      return (
-        <Text code ellipsis>
-          {data.name}
-        </Text>
-      );
+      return <code className="line-clamp-1">{data.name}</code>;
     }
   }
 
-  return <Text code>unknown</Text>;
+  return <code>unknown</code>;
 }
 
 function renderFieldObjectAsTable(
   nextObject: FieldObject,
   isForJsSdk: boolean,
-  propName?: string,
-  hideTitle?: boolean
+  propName?: string
 ) {
   const rows = map(
     nextObject.fields,
@@ -179,11 +157,7 @@ function renderFieldObjectAsTable(
       dataIndex: "field",
       key: "field",
       width: "150px",
-      render: (value) => (
-        <Text code ellipsis>
-          {value}
-        </Text>
-      ),
+      render: (value) => <code>{value}</code>,
     },
     {
       title: "Type",
@@ -220,30 +194,22 @@ function renderFieldObjectAsTable(
 
   return (
     <div>
-      <div className="space-x-2">
-        {propName && <Text code>{propName}</Text>}
-        {nextObject.name && !hideTitle && (
-          <>
-            <span>{htmlCharacterCodes.doubleDash}</span>
-            <Title
-              id={getTypeNameID(nextObject.name)}
-              level={5}
-              type="secondary"
-              className={appClasses.muteMargin}
-            >
-              {nextObject.name}
-            </Title>
-          </>
+      <div className="space-x-2 flex mb-4">
+        {propName && <code>{propName}</code>}
+        {nextObject.name && (
+          <h5 id={getTypeNameID(nextObject.name)} className="text-secondary">
+            {nextObject.name}
+          </h5>
         )}
         {nextObject.required ? (
           <>
             <span>{htmlCharacterCodes.doubleDash}</span>
-            <Text code>Required</Text>
+            <code>Required</code>
           </>
         ) : (
           <>
             <span>{htmlCharacterCodes.doubleDash}</span>
-            <Text code>Optional</Text>
+            <code>Optional</code>
           </>
         )}
       </div>

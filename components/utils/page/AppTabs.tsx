@@ -38,7 +38,6 @@ const classes = {
     },
   }),
   active: css({
-    color: "var(--primary-hex)",
     fontWeight: "bold",
   }),
   icon: css({

@@ -1,5 +1,5 @@
 import { systemConstants } from "@/lib/definitions/system";
-import { AppstoreOutlined } from "@ant-design/icons";
+import { Computer } from "lucide-react";
 import AppAvatar from "../../utils/AppAvatar";
 
 export interface IWorkspaceAvatarProps {
@@ -10,7 +10,7 @@ export interface IWorkspaceAvatarProps {
 export default function WorkspaceAvatar(props: IWorkspaceAvatarProps) {
   return (
     <AppAvatar
-      icon={<AppstoreOutlined />}
+      fallback={<Computer className="h-4 w-4" />}
       filepath={systemConstants.workspaceImagesFolder + "/" + props.workspaceId}
       alt={props.alt}
     />

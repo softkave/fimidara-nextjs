@@ -23,6 +23,7 @@ const PermissionActionList: React.FC<PermissionActionListProps> = (props) => {
     <ItemList
       bordered
       items={items}
+      space="sm"
       renderItem={(p) => {
         return (
           <PermissionAction

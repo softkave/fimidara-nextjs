@@ -1,47 +1,29 @@
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { AppError, isError } from "@/lib/utils/errors";
-import { css, cx } from "@emotion/css";
-import { Alert, AlertProps } from "antd";
+import { Terminal } from "lucide-react";
 import React from "react";
 import { StyleableComponentProps } from "../styling/types";
 
-export interface IAlertGroupProps
-  extends Pick<AlertProps, "closable" | "type">,
-    StyleableComponentProps {
+export interface IAlertGroupProps extends StyleableComponentProps {
+  type?: "destructive";
   messages: string[] | AppError[];
 }
 
-const classes = {
-  root: css({
-    "& .ant-alert": {
-      borderRadius: "0px !important",
-      textAlign: "left",
-    },
-    "& .ant-alert:not(:first-type)": {
-      borderTop: 0,
-    },
-    "& .ant-alert:first-of-type": {
-      borderTopLeftRadius: "4px !important",
-      borderTopRightRadius: "4px !important",
-    },
-    "& .ant-alert:last-of-type": {
-      borderBottomLeftRadius: "4px !important",
-      borderBottomRightRadius: "4px !important",
-    },
-  }),
-};
-
 export const AlertGroup: React.FC<IAlertGroupProps> = (props) => {
-  const { type, closable, messages, className, style } = props;
+  const { type, messages, className, style } = props;
+
   const nodes = messages.map((message, index) => (
-    <Alert
-      key={index}
-      type={type}
-      closable={closable}
-      message={isError(message) ? message.message : message}
-    />
+    <Alert variant={type} key={index}>
+      <Terminal className="h-4 w-4" />
+      <AlertTitle>Heads up!</AlertTitle>
+      <AlertDescription>
+        {isError(message) ? message.message : message}
+      </AlertDescription>
+    </Alert>
   ));
+
   return (
-    <div className={cx(className, classes.root)} style={style}>
+    <div className={className} style={style}>
       {nodes}
     </div>
   );

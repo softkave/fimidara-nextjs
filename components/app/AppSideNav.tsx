@@ -6,7 +6,7 @@ import { useMemo } from "react";
 import { SideNav } from "../utils/page/side-nav/SideNav.tsx";
 import {
   getMenuSelectedKeys,
-  renderToAntDMenuItemList,
+  renderToSideNavMenuItemList,
 } from "../utils/page/side-nav/utils.tsx";
 import { getUserNavItems } from "./menu.tsx";
 import { useAppMenu } from "./useAppMenu.tsx";
@@ -21,15 +21,11 @@ export default function AppSideNav(props: IAppSideNavProps) {
   const pathname = usePathname();
   const workspaceId = getWorkspaceId(pathname);
 
-  const { antdMenuItems, navItems } = useMemo(() => {
+  const { appMenuItems, navItems } = useMemo(() => {
     const navItems = getUserNavItems(workspaceId);
-    const antdMenuItems = renderToAntDMenuItemList(
-      navItems,
-      /** parentItems */ [],
-      /** getNavItemPath */ () => ""
-    );
+    const appMenuItems = renderToSideNavMenuItemList(navItems);
 
-    return { navItems, antdMenuItems };
+    return { navItems, appMenuItems };
   }, [workspaceId]);
 
   const selectedKeys = useMemo(() => {
@@ -46,7 +42,7 @@ export default function AppSideNav(props: IAppSideNavProps) {
 
   return (
     <SideNav
-      items={antdMenuItems}
+      items={appMenuItems}
       onClose={toggleAppMenu}
       title="fimidara"
       selectedKeys={selectedKeys}

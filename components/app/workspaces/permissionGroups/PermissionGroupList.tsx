@@ -2,10 +2,8 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
-import Text from "antd/es/typography/Text";
 import { PermissionGroup } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -52,20 +50,22 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
         selected={selectedMap && selectedMap[item.resourceId]}
         onSelect={onSelect && (() => onSelect(item))}
         main={
-          <div className={appClasses.thumbnailMain}>
+          <div className="flex flex-col justify-center">
             {nameNode}
             {item.description && (
-              <Text type="secondary">{item.description}</Text>
+              <span className="text-secondary">{item.description}</span>
             )}
           </div>
         }
         menu={
-          <PermissionGroupMenu
-            key="menu"
-            permissionGroup={item}
-            onCompleteDelete={noop}
-            onCompleteUnassignPermissionGroup={noop}
-          />
+          <div className="flex flex-col justify-center h-full">
+            <PermissionGroupMenu
+              key="menu"
+              permissionGroup={item}
+              onCompleteDelete={noop}
+              onCompleteUnassignPermissionGroup={noop}
+            />
+          </div>
         }
       />
     );

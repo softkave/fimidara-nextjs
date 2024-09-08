@@ -1,9 +1,19 @@
 import { Button } from "@/components/ui/button.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
+import { cn } from "@/components/utils.ts";
 import { FormAlert } from "@/components/utils/FormAlert";
 import CustomIcon from "@/components/utils/buttons/CustomIcon";
 import styles from "@/components/utils/form/form.module.css";
+import { useToast } from "@/hooks/use-toast.ts";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import { useWorkspaceFoldersFetchHook } from "@/lib/hooks/fetchHooks";
@@ -12,26 +22,22 @@ import {
   useWorkspaceFolderAddMutationHook,
   useWorkspaceFolderUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
-import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
 import { useTransferProgressHandler } from "@/lib/hooks/useTransferProgress";
-import { messages } from "@/lib/messages/messages";
 import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
 import { UploadOutlined } from "@ant-design/icons";
-import { css, cx } from "@emotion/css";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMount } from "ahooks";
-import { Form, Upload, message } from "antd";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
+import { Upload } from "antd";
 import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
-import { FormikTouched } from "formik";
-import { compact, isString } from "lodash-es";
+import { compact } from "lodash-es";
 import { useRouter } from "next/navigation";
 import { ChangeEventHandler, ReactNode, useMemo } from "react";
-import * as yup from "yup";
-import FormError from "../../../utils/form/FormError";
+import { useForm, UseFormReturn } from "react-hook-form";
+import { z } from "zod";
 import { FilesFormUploadProgress } from "./FilesFormUploadProgress";
-import { SelectedFilesForm } from "./SelectedFilesForm";
+import { SelectedFilesForm, selectedFilesSchema } from "./SelectedFilesForm";
 import { SingleFileFormValue } from "./types";
 import {
   debouncedReplaceBaseFolderName,
@@ -41,25 +47,17 @@ import {
 } from "./utils";
 import { newFileValidationSchema } from "./validation";
 
-const folderValidation = yup.object().shape({
-  name: fileValidationParts.filename.required(messages.fieldIsRequired),
-  description: systemValidation.description.nullable(),
-  // maxFileSizeInBytes: yup
-  //   .number()
-  //   .max(fileConstants.maxFileSizeInBytes)
-  //   .nullable(),
-  files: yup.array().of(newFileValidationSchema),
+const folderValidation = z.object({
+  name: fileValidationParts.filename,
+  description: systemValidation.description.nullable().optional(),
+  files: z.array(newFileValidationSchema),
 });
 
 export interface FolderFormValues {
   name: string;
-  description?: string;
+  description?: string | null;
   files?: Array<SingleFileFormValue>;
 }
-
-const initialValues: FolderFormValues = {
-  name: "",
-};
 
 function getFolderFormInputFromFolder(item: Folder): FolderFormValues {
   return {
@@ -80,6 +78,7 @@ export interface FolderFormProps {
 
 export default function FolderForm(props: FolderFormProps) {
   const { folder, className, workspaceId, workspaceRootname } = props;
+  const { toast } = useToast();
   const parentPath =
     props.parentPath ||
     (folder
@@ -91,7 +90,7 @@ export default function FolderForm(props: FolderFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceFolderUpdateMutationHook({
     onSuccess(data, params) {
-      message.success("Folder updated");
+      toast({ title: "Folder updated" });
       router.push(
         appWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
       );
@@ -100,7 +99,7 @@ export default function FolderForm(props: FolderFormProps) {
 
   const createHook = useWorkspaceFolderAddMutationHook({
     onSuccess(data, params) {
-      message.success("Folder created");
+      toast({ title: "Folder created" });
       router.push(
         appWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
       );
@@ -110,7 +109,7 @@ export default function FolderForm(props: FolderFormProps) {
   const progressHandlerHook = useTransferProgressHandler();
   const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
-      message.success("File uploaded");
+      toast({ title: "File uploaded" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
       // );
@@ -157,7 +156,7 @@ export default function FolderForm(props: FolderFormProps) {
           // fileId: input.resourceId,
           data: input.file,
           size: input.file.size,
-          description: input.description,
+          description: input.description || undefined,
           mimetype: input.mimetype,
           encoding: input.encoding,
         },
@@ -176,7 +175,7 @@ export default function FolderForm(props: FolderFormProps) {
         body: {
           folder: {
             folderpath: addRootnameToPath(folderpath, workspaceRootname),
-            description: data.description,
+            description: data.description || undefined,
           },
         },
       });
@@ -195,218 +194,212 @@ export default function FolderForm(props: FolderFormProps) {
       body: {
         // folderId: folder.resourceId,
         folderpath,
-        folder: { description: data.description },
+        folder: { description: data.description || undefined },
       },
     });
   };
 
-  const { formik } = useFormHelpers({
-    errors: hookError,
-    formikProps: {
-      validationSchema: folderValidation,
-      initialValues: folder
-        ? getFolderFormInputFromFolder(folder)
-        : initialValues,
-      onSubmit: async (data) => {
-        if (data.files) {
-          await Promise.all(data.files.map(handleSubmitFile));
+  const onSubmit = async (data: z.infer<typeof folderValidation>) => {
+    if (data.files) {
+      await Promise.all(data.files.map(handleSubmitFile));
 
-          if (data.description) {
-            await handleUpdateFolder(data);
-          }
-        } else if (folder) {
-          await handleUpdateFolder(data);
-        } else {
-          await handleCreateFolder(data);
-        }
-      },
-    },
+      if (data.description) {
+        await handleUpdateFolder(data);
+      }
+    } else if (folder) {
+      await handleUpdateFolder(data);
+    } else {
+      await handleCreateFolder(data);
+    }
+  };
+
+  const form = useForm<z.infer<typeof folderValidation>>({
+    resolver: zodResolver(folderValidation),
+    defaultValues: folder ? getFolderFormInputFromFolder(folder) : {},
   });
+  useFormHelpers(form, { errors: hookError });
+
+  const wFiles = form.watch("files");
+  const wFoldername = form.watch("name");
 
   const autofillName = useMemo(() => {
-    return getFirstFoldername(formik.values.files || []);
-  }, [formik.values.files]);
+    return getFirstFoldername(wFiles || []);
+  }, [wFiles]);
 
   const onAutofillName = () => {
     if (!autofillName || folder) {
       return;
     }
 
-    formik.setValues({ ...formik.values, name: autofillName });
+    form.setValue("name", autofillName);
   };
 
   const onUpdateFolderName: ChangeEventHandler<HTMLInputElement> = (evt) => {
     const name = evt.target.value;
-    formik.setValues({ ...formik.values, name });
+    form.setValue("name", name);
 
     if (name) {
-      debouncedReplaceBaseFolderName(formik.values.files || [], name);
+      debouncedReplaceBaseFolderName(wFiles || [], name);
     }
   };
 
   const nameNode = (
-    <Form.Item
-      required
-      label="Folder Name"
-      help={
-        formik.touched?.name &&
-        formik.errors?.name && (
-          <FormError visible={formik.touched.name} error={formik.errors.name} />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        name="name"
-        value={formik.values.name}
-        onBlur={formik.handleBlur}
-        onChange={onUpdateFolderName}
-        placeholder="Enter folder name"
-        disabled={hookLoading || !!folder}
-        maxLength={systemConstants.maxNameLength}
-        autoComplete="off"
-      />
-      {autofillName && !folder && (
-        <Button
-          variant="link"
-          onClick={onAutofillName}
-          style={{ paddingLeft: 0, paddingRight: 0 }}
-        >
-          <Text style={{ textDecoration: "underline", color: "inherit" }}>
-            Use <Text strong>{autofillName}</Text> from selected{" "}
-            {formik.values.files?.length === 1 ? "file" : "files"}
-          </Text>
-        </Button>
-      )}
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="name"
+      render={({ field }) => {
+        return (
+          <FormItem>
+            <FormLabel required>Folder Name</FormLabel>
+            <FormControl>
+              <div>
+                <Input
+                  {...field}
+                  onChange={onUpdateFolderName}
+                  placeholder="Enter folder name"
+                  disabled={hookLoading || !!folder}
+                  maxLength={systemConstants.maxNameLength}
+                  autoComplete="off"
+                />
+                {autofillName && !folder && (
+                  <Button variant="link" onClick={onAutofillName}>
+                    <span className="underline">
+                      Use <strong>{autofillName}</strong> from selected files
+                    </span>
+                  </Button>
+                )}
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
+    />
   );
 
   const descriptionNode = (
-    <Form.Item
-      label="Description"
-      help={
-        formik.touched?.description &&
-        formik.errors?.description && (
-          <FormError
-            visible={formik.touched.description}
-            error={formik.errors.description}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Textarea
-        name="description"
-        value={formik.values.description}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter folder description"
-        disabled={hookLoading}
-        maxLength={systemConstants.maxDescriptionLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="description"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <Textarea
+              {...field}
+              value={field.value || ""}
+              placeholder="Enter folder description"
+              maxLength={systemConstants.maxDescriptionLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   // TODO: include max file size
   const selectFolderNode = (
-    <Form.Item
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-      help={
-        formik.touched.files &&
-        isString(formik.errors.files) && (
-          <FormError visible error={formik.errors.files} />
-        )
-      }
-    >
-      <Upload
-        directory
-        showUploadList={false}
-        multiple={false}
-        disabled={hookLoading}
-        fileList={compact(formik.values.files?.map((item) => item.file))}
-        beforeUpload={(file, fileList) => {
-          let files = fileList.map(
-            (file): SingleFileFormValue => ({
-              file,
-              mimetype: file.type,
-              resourceId: undefined,
-              name: file.webkitRelativePath,
-              __localId: getNewFileLocalId(),
-            })
-          );
-          let foldername = formik.values.name;
+    <FormField
+      control={form.control}
+      name="files"
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <Upload
+              directory
+              showUploadList={false}
+              multiple={false}
+              disabled={hookLoading}
+              fileList={compact(field.value?.map((item) => item.file))}
+              beforeUpload={(file, fileList) => {
+                let foldername = wFoldername;
+                let files = fileList.map(
+                  (file): SingleFileFormValue => ({
+                    file,
+                    mimetype: file.type,
+                    resourceId: undefined,
+                    name: file.webkitRelativePath,
+                    __localId: getNewFileLocalId(),
+                  })
+                );
 
-          if (folder) {
-            files = replaceBaseFoldername(files, foldername);
-          } else {
-            foldername = getFirstFoldername(files) || foldername;
-          }
+                if (folder) {
+                  files = replaceBaseFoldername(files, foldername);
+                  form.setValue("files", files);
+                } else {
+                  foldername = getFirstFoldername(files) || foldername;
+                  form.setValue("name", foldername);
+                }
 
-          formik.setValues({ ...formik.values, name: foldername, files });
-          return false;
-        }}
-      >
-        <Button title="Select Folder">
-          <div className="space-x-2">
-            <CustomIcon icon={<UploadOutlined />} />
-            <span>Select Folder</span>
-          </div>
-        </Button>
-      </Upload>
-    </Form.Item>
+                return false;
+              }}
+            >
+              <Button title="Select Folder">
+                <div className="space-x-2">
+                  <CustomIcon icon={<UploadOutlined />} />
+                  <span>Select Folder</span>
+                </div>
+              </Button>
+            </Upload>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   let selectedFilesNode: ReactNode = null;
 
-  if (formik.values.files?.length) {
+  if (wFiles?.length) {
     selectedFilesNode = (
-      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+      <div className="mb-4">
         <SelectedFilesForm
           isDirectory
-          values={formik.values.files}
-          disabled={hookLoading}
-          errors={formik.errors.files}
-          touched={
-            formik.touched.files as
-              | FormikTouched<SingleFileFormValue>[]
-              | undefined
+          form={
+            form as unknown as UseFormReturn<
+              z.infer<typeof selectedFilesSchema>
+            >
           }
-          onChange={(files) => {
-            if (formik.values.name) {
-              files = replaceBaseFoldername(files, formik.values.name);
+          beforeUpdateModifyName={(name) => {
+            if (wFoldername) {
+              const [{ name: updatedName }] = replaceBaseFoldername(
+                [{ name }],
+                wFoldername
+              );
+              return updatedName;
             }
 
-            formik.setValues({ ...formik.values, files });
+            return name;
           }}
         />
-      </Form.Item>
+      </div>
     );
   }
 
   return (
-    <div className={cx(styles.formBody, className)}>
+    <div className={cn(styles.formBody, className)}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>Folder Form</Title>
-          </Form.Item>
-          <FormAlert error={hookError} />
-          {selectedFilesNode}
-          {nameNode}
-          {descriptionNode}
-          {selectFolderNode}
-          <FilesFormUploadProgress
-            identifiers={progressHandlerHook.identifiers}
-          />
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button type="submit" loading={hookLoading}>
-              Submit
-            </Button>
-          </Form.Item>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="mb-4">
+              <h4>Folder Form</h4>
+            </div>
+            <FormAlert error={hookError} />
+            {selectedFilesNode}
+            {nameNode}
+            {descriptionNode}
+            {selectFolderNode}
+            <FilesFormUploadProgress
+              identifiers={progressHandlerHook.identifiers}
+            />
+            <div className="my-4">
+              <Button type="submit" loading={hookLoading}>
+                Submit
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import ItemList from "@/components/utils/list/ItemList";
-import Title from "antd/es/typography/Title";
 import {
   UsageCosts,
   UsageRecord,
@@ -56,7 +55,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <Title level={5}>Fulfilled Requests</Title>
+        <h5>Fulfilled Requests</h5>
         <ItemList
           bordered
           items={fulfilledRecords}
@@ -65,7 +64,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
         />
       </div>
       <div className="space-y-4">
-        <Title level={5}>Dropped Requests</Title>
+        <h5>Dropped Requests</h5>
         <ItemList
           bordered
           items={droppedRecords}

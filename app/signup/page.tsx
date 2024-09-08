@@ -16,11 +16,9 @@ import { SignupEndpointParams } from "@/lib/api/privateTypes.ts";
 import { appWorkspacePaths } from "@/lib/definitions/system.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserSignupMutationHook } from "@/lib/hooks/mutationHooks.ts";
-import { useNewForm } from "@/lib/hooks/useFormHelpers.ts";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { messages } from "@/lib/messages/messages.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,8 +31,8 @@ interface ISignupFormValues extends Required<SignupEndpointParams> {
 export interface ISignupProps {}
 
 const formSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string({ required_error: "first name is required" }),
+  lastName: z.string({ required_error: "last name is required" }),
   email: z.string().email(),
   password: z.string().max(userConstants.maxPasswordLength),
 });
@@ -50,14 +48,9 @@ export default function Signup(props: ISignupProps) {
     signupHook.runAsync({ body });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-    },
+    defaultValues: {},
   });
-  useNewForm(form, { errors: signupHook.error });
+  useFormHelpers(form, { errors: signupHook.error });
 
   const firstNameNode = (
     <FormField
@@ -65,7 +58,7 @@ export default function Signup(props: ISignupProps) {
       name="firstName"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>First Name</FormLabel>
+          <FormLabel required>First Name</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -87,7 +80,7 @@ export default function Signup(props: ISignupProps) {
       name="lastName"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Last Name</FormLabel>
+          <FormLabel required>Last Name</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -109,7 +102,7 @@ export default function Signup(props: ISignupProps) {
       name="email"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Email Address</FormLabel>
+          <FormLabel required>Email Address</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -129,7 +122,7 @@ export default function Signup(props: ISignupProps) {
       name="password"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Password</FormLabel>
+          <FormLabel required>Password</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -147,30 +140,32 @@ export default function Signup(props: ISignupProps) {
 
   const consentNode = (
     <div className="my-4">
-      <Text type="secondary">{messages.signupEmailConsent}</Text>
+      <span className="text-secondary">{messages.signupEmailConsent}</span>
     </div>
   );
 
   return (
     <div className={styles.formBody}>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="mb-4">
-            <Title level={4}>Signup</Title>
-          </div>
-          <FormAlert error={signupHook.error} />
-          {firstNameNode}
-          {lastNameNode}
-          {emailNode}
-          {passwordNode}
-          {consentNode}
-          <div className="my-4">
-            <Button type="submit" loading={signupHook.loading}>
-              {signupHook.loading ? "Creating Account" : "Create Account"}
-            </Button>
-          </div>
-        </form>
-      </Form>
+      <div className={styles.formContentWrapper}>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="mb-4">
+              <h2 className="text-xl">Signup</h2>
+            </div>
+            <FormAlert error={signupHook.error} />
+            {firstNameNode}
+            {lastNameNode}
+            {emailNode}
+            {passwordNode}
+            {consentNode}
+            <div className="my-4">
+              <Button type="submit" loading={signupHook.loading}>
+                Create Account
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }

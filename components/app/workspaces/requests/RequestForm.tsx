@@ -1,38 +1,40 @@
 import { Button } from "@/components/ui/button.tsx";
+import { DatePicker } from "@/components/ui/datepicker.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
+import { useToast } from "@/hooks/use-toast.ts";
 import { ICollaborationRequestInput } from "@/lib/definitions/collaborationRequest";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceCollaborationRequestAddMutationHook,
   useWorkspaceCollaborationRequestUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
-import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import { messages } from "@/lib/messages/messages";
-import { systemValidation } from "@/lib/validation/system";
-import { signupValidationParts } from "@/lib/validation/user";
-import { css, cx } from "@emotion/css";
-import { DatePicker, Form, message } from "antd";
-import Title from "antd/es/typography/Title";
-import dayjs from "dayjs";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
+import { cn } from "@/lib/utils.ts";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { useRouter } from "next/navigation";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-const requestValidation = yup.object().shape({
-  recipientEmail: signupValidationParts.email.required(messages.emailRequired),
-  message: systemValidation.description,
-  expires: yup.number(),
+const requestValidation = z.object({
+  recipientEmail: z
+    .string({ required_error: "recipient email is required" })
+    .trim()
+    .email(),
+  message: z.string().max(systemConstants.maxDescriptionLength),
+  expires: z.number().optional(),
 });
-
-const initialValues: ICollaborationRequestInput = {
-  recipientEmail: "",
-  message: "",
-  expires: undefined,
-};
 
 function getRequestFormInputFromRequest(
   item: CollaborationRequestForWorkspace
@@ -52,10 +54,11 @@ export interface IRequestFormProps {
 
 export default function RequestForm(props: IRequestFormProps) {
   const { request, className, workspaceId } = props;
+  const { toast } = useToast();
   const router = useRouter();
   const updateHook = useWorkspaceCollaborationRequestUpdateMutationHook({
     onSuccess(data, params) {
-      message.success("Collaboration request updated");
+      toast({ title: "Collaboration request updated" });
       router.push(
         appWorkspacePaths.request(
           data.body.request.workspaceId,
@@ -66,7 +69,7 @@ export default function RequestForm(props: IRequestFormProps) {
   });
   const createHook = useWorkspaceCollaborationRequestAddMutationHook({
     onSuccess(data, params) {
-      message.success("Collaboration request created");
+      toast({ title: "Collaboration request created" });
       router.push(
         appWorkspacePaths.request(
           data.body.request.workspaceId,
@@ -77,132 +80,113 @@ export default function RequestForm(props: IRequestFormProps) {
   });
   const mergedHook = request ? updateHook : createHook;
 
-  const { formik } = useFormHelpers({
-    errors: mergedHook.error,
-    formikProps: {
-      validationSchema: requestValidation,
-      initialValues: request
-        ? getRequestFormInputFromRequest(request)
-        : initialValues,
-      onSubmit: (body) =>
-        request
-          ? updateHook.runAsync({
-              body: {
-                requestId: request.resourceId,
-                request: {
-                  message: body.message,
-                  expires: body.expires,
-                },
-              },
-            })
-          : createHook.runAsync({
-              body: {
-                workspaceId,
-                request: body,
-              },
-            }),
-    },
+  const onSubmit = (body: z.infer<typeof requestValidation>) =>
+    request
+      ? updateHook.runAsync({
+          body: {
+            requestId: request.resourceId,
+            request: {
+              message: body.message,
+              expires: body.expires,
+            },
+          },
+        })
+      : createHook.runAsync({
+          body: {
+            workspaceId,
+            request: body,
+          },
+        });
+
+  const form = useForm<z.infer<typeof requestValidation>>({
+    resolver: zodResolver(requestValidation),
+    defaultValues: request ? getRequestFormInputFromRequest(request) : {},
   });
 
+  useFormHelpers(form, { errors: mergedHook.error });
+
   const recipientEmailNode = (
-    <Form.Item
-      required
-      label="Recipient Email Address"
-      help={
-        formik.touched?.recipientEmail &&
-        formik.errors?.recipientEmail && (
-          <FormError
-            visible={formik.touched.recipientEmail}
-            error={formik.errors.recipientEmail}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        name="recipientEmail"
-        value={formik.values.recipientEmail}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter recipient email"
-        disabled={mergedHook.loading || !!request}
-        maxLength={systemConstants.maxNameLength}
-        autoComplete="off"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="recipientEmail"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Recipient Email Address</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              maxLength={systemConstants.maxNameLength}
+              placeholder="Enter recipient email"
+              autoComplete="off"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const messageNode = (
-    <Form.Item
-      label="Message"
-      help={
-        formik.touched?.message &&
-        formik.errors?.message && (
-          <FormError
-            visible={formik.touched.message}
-            error={formik.errors.message}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Textarea
-        name="message"
-        value={formik.values.message}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter request message"
-        disabled={mergedHook.loading}
-        maxLength={systemConstants.maxDescriptionLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="message"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Message</FormLabel>
+          <FormControl>
+            <Textarea
+              {...field}
+              placeholder="Enter request message"
+              maxLength={systemConstants.maxDescriptionLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const expiresNode = (
-    <Form.Item
-      label="Expires"
-      help={
-        formik.touched?.expires &&
-        formik.errors?.expires && (
-          <FormError
-            visible={formik.touched.expires}
-            error={formik.errors.expires}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <DatePicker
-        showTime
-        use12Hours
-        // format="h:mm A"
-        value={formik.values.expires ? dayjs(formik.values.expires) : undefined}
-        onChange={(date) => formik.setFieldValue("expires", date?.valueOf())}
-        placeholder="Request expiration date"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="expires"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Expires</FormLabel>
+          <FormControl>
+            <DatePicker
+              {...field}
+              value={field.value ? new Date(field.value) : undefined}
+              onChange={(date) => {
+                form.setValue("expires", date?.valueOf());
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   return (
-    <div className={cx(styles.formBody, className)}>
+    <div className={cn(styles.formBody, className)}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>Collaboration Request Form</Title>
-          </Form.Item>
-          <FormAlert error={mergedHook.error} />
-          {recipientEmailNode}
-          {messageNode}
-          {expiresNode}
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button type="submit" loading={mergedHook.loading}>
-              {request ? "Update Request" : "Create Request"}
-            </Button>
-          </Form.Item>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="mb-4">
+              <h4>Collaboration Request Form</h4>
+            </div>
+            <FormAlert error={mergedHook.error} />
+            {recipientEmailNode}
+            {messageNode}
+            {expiresNode}
+            <div className="my-4">
+              <Button type="submit" loading={mergedHook.loading}>
+                {request ? "Update Request" : "Create Request"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
-import { AlertProps } from "antd";
 import { FormAlert } from "./FormAlert";
 
-export interface FormAlertListProps extends Omit<AlertProps, "message"> {
+export interface FormAlertListProps {
   error: any[];
 }
 

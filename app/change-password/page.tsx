@@ -1,22 +1,29 @@
 "use client";
 
 import { Button } from "@/components/ui/button.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
+import { useToast } from "@/hooks/use-toast.ts";
 import {
   appWorkspacePaths,
   systemConstants,
 } from "@/lib/definitions/system.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserChangePasswordWithTokenMutationHook } from "@/lib/hooks/mutationHooks.ts";
-import useFormHelpers from "@/lib/hooks/useFormHelpers.ts";
-import { css } from "@emotion/css";
-import { Form, notification } from "antd";
-import Title from "antd/es/typography/Title";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 export interface IChangePasswordWithTokenFormData {
   password: string;
@@ -29,100 +36,85 @@ interface IChangePasswordWithTokenFormInternalData
 
 export interface IChangePasswordWithTokeneProps {}
 
-const validationSchema = yup.object().shape({
-  password: yup
+const formSchema = z.object({
+  password: z
     .string()
     .min(userConstants.minPasswordLength)
-    .max(userConstants.maxPasswordLength)
-    .required(),
-  // confirmPassword: yup
-  //   .string()
-  //   .oneOf([yup.ref("password")], messages.passwordsDoNotMatch)
-  //   .required(),
+    .max(userConstants.maxPasswordLength),
 });
-
-const initialValues: IChangePasswordWithTokenFormInternalData = {
-  password: "",
-};
 
 export default function ChangePasswordWithToken(
   props: IChangePasswordWithTokeneProps
 ) {
   const router = useRouter();
+  const { toast } = useToast();
   const changePasswordHook = useUserChangePasswordWithTokenMutationHook({
     onSuccess(data, params) {
       router.push(appWorkspacePaths.workspaces);
     },
   });
-  const { formik } = useFormHelpers({
-    errors: changePasswordHook.error,
-    formikProps: {
-      validationSchema,
-      initialValues: initialValues,
-      onSubmit: (body) => {
-        const query = new URLSearchParams(window.location.search);
-        const token = query.get(systemConstants.tokenQueryKey);
+  const onSubmit = async (body: z.infer<typeof formSchema>) => {
+    const query = new URLSearchParams(window.location.search);
+    const token = query.get(systemConstants.tokenQueryKey);
 
-        if (!token) {
-          notification.error({
-            message: "Change password token not found",
-            description:
-              "Please ensure you are using the change password link sent to your email address",
-          });
+    if (!token) {
+      toast({
+        title: "Change password token not found",
+        description:
+          "Please ensure you are using the change password link sent to your email address",
+      });
 
-          return;
-        }
+      return;
+    }
 
-        return changePasswordHook.runAsync({ body, authToken: token });
-      },
-    },
+    return await changePasswordHook.runAsync({ body, authToken: token });
+  };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {},
   });
 
+  useFormHelpers(form, { errors: changePasswordHook.error });
+
   const passwordNode = (
-    <Form.Item
-      required
-      label="Password"
-      help={
-        formik.touched.password && (
-          <FormError visible={formik.touched.password}>
-            {formik.errors.password}
-          </FormError>
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        type="password"
-        autoComplete="new-password"
-        name="password"
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        value={formik.values.password}
-        placeholder="Enter new password"
-        disabled={changePasswordHook.loading}
-        maxLength={userConstants.maxPasswordLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="password"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Password</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              type="password"
+              autoComplete="new-password"
+              placeholder="Enter new password"
+              maxLength={userConstants.maxPasswordLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   return (
     <div className={styles.formBody}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>Change Password</Title>
-          </Form.Item>
-          <FormAlert error={changePasswordHook.error} />
-          {passwordNode}
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button type="submit" loading={changePasswordHook.loading}>
-              {changePasswordHook.loading
-                ? "Changing Password"
-                : "Change Password"}
-            </Button>
-          </Form.Item>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="mb-4">
+              <h2 className="text-xl">Change Password</h2>
+            </div>
+            <FormAlert error={changePasswordHook.error} />
+            {passwordNode}
+            <div className="my-4">
+              <Button type="submit" loading={changePasswordHook.loading}>
+                Change Password
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

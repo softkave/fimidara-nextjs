@@ -1,19 +1,20 @@
 import { systemConstants } from "@/lib/definitions/system";
 import { useRequest } from "ahooks";
-import { Avatar, AvatarProps } from "antd";
 import assert from "assert";
 import { getFimidaraReadFileURL } from "fimidara";
 import { first } from "lodash-es";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
-import { Omit1 } from "../../lib/utils/types";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar.tsx";
 import { appDimensions } from "./theme";
 
-export interface IAppAvatarProps extends Omit1<AvatarProps, "src" | "srcSet"> {
+export interface IAppAvatarProps {
+  alt: string;
   filepath?: string;
+  fallback?: React.ReactNode;
 }
 
 export default function AppAvatar(props: IAppAvatarProps) {
-  const { filepath, ...restProps } = props;
+  const { filepath, alt, fallback } = props;
 
   const getPresignedPath = async () => {
     if (!filepath) return undefined;
@@ -36,22 +37,19 @@ export default function AppAvatar(props: IAppAvatarProps) {
   };
 
   const pathHook = useRequest(getPresignedPath);
+  const src = pathHook.data
+    ? getFimidaraReadFileURL({
+        serverURL: systemConstants.serverAddr,
+        filepath: "/" + pathHook.data,
+        width: appDimensions.avatar.width,
+        height: appDimensions.avatar.height,
+      })
+    : undefined;
 
   return (
-    <Avatar
-      size="default"
-      shape="circle"
-      {...restProps}
-      src={
-        pathHook.data
-          ? getFimidaraReadFileURL({
-              serverURL: systemConstants.serverAddr,
-              filepath: "/" + pathHook.data,
-              width: appDimensions.avatar.width,
-              height: appDimensions.avatar.height,
-            })
-          : undefined
-      }
-    />
+    <Avatar>
+      <AvatarImage src={src} alt={alt} />
+      {fallback && <AvatarFallback>{fallback}</AvatarFallback>}
+    </Avatar>
   );
 }

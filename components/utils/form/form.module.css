@@ -9,7 +9,7 @@
 .formContentWrapper {
   width: 100%;
   max-width: 520px;
-  padding: 16px 0px;
+  padding: 16px;
   box-sizing: content-box;
   overflow-y: auto;
   flex-direction: column;

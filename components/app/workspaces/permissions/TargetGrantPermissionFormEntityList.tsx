@@ -1,3 +1,10 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion.tsx";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import {
@@ -10,7 +17,6 @@ import { useResolveEntityPermissionsFetchHook } from "@/lib/hooks/fetchHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { makeKey } from "@/lib/utils/fns";
 import { indexArray } from "@/lib/utils/indexArray";
-import { Collapse } from "antd";
 import {
   FimidaraPermissionAction,
   FimidaraResourceType,
@@ -42,10 +48,6 @@ export interface TargetGrantPermissionFormEntityListProps<
     original: ResolvedPermissionsMap
   ): void;
 }
-
-type CollapseItemType = Required<
-  React.ComponentProps<typeof Collapse>
->["items"][number];
 
 const separator = "#";
 export const resolvedPermissionToKey = (
@@ -164,24 +166,6 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
     [rpMap, updatedPermissionsMap, onChange]
   );
 
-  const collapseItems = entities.map((entity): CollapseItemType => {
-    const info = getInfoFromItem(entity);
-    return {
-      key: entity.resourceId,
-      label: info.name,
-      children: (
-        <EntityPermissionForm
-          actions={actions}
-          everyAction={everyAction}
-          entity={entity}
-          disabled={disabled}
-          permissionsMap={activePermissionsMap}
-          onChange={handleChange}
-        />
-      ),
-    };
-  });
-
   let content: React.ReactNode = null;
 
   if (rpState.error) {
@@ -193,7 +177,32 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
   } else if (rpState.isLoading) {
     content = <PageLoading message="Resolving permissions..." />;
   } else if (rpState.data) {
-    content = <Collapse items={collapseItems} />;
+    content = (
+      <Accordion type="single" collapsible>
+        {entities.map((entity) => {
+          const info = getInfoFromItem(entity);
+          return (
+            <AccordionItem key={entity.resourceId} value={entity.resourceId}>
+              <AccordionTrigger>
+                <p>{info.name}</p>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ScrollArea className="h-full max-h-80 overflow-y-auto">
+                  <EntityPermissionForm
+                    actions={actions}
+                    everyAction={everyAction}
+                    entity={entity}
+                    disabled={disabled}
+                    permissionsMap={activePermissionsMap}
+                    onChange={handleChange}
+                  />
+                </ScrollArea>
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+    );
   }
 
   return <React.Fragment>{content}</React.Fragment>;

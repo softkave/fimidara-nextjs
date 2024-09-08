@@ -1,15 +1,14 @@
+import { useCollaborationRequestForm } from "@/components/hooks/useCollaborationRequestForm.tsx";
+import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
+import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { appClasses } from "@/components/utils/theme";
-import { MenuInfo } from "@/components/utils/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
-import { Dropdown, MenuProps, message, Modal } from "antd";
 import { CollaborationRequestForWorkspace } from "fimidara";
-import Link from "next/link";
+import { Ellipsis } from "lucide-react";
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 
 export interface IWorkspaceRequestMenuProps {
@@ -25,6 +24,7 @@ enum MenuKeys {
 
 const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   const { request, onCompleteDeleteRequest } = props;
+  const { toast } = useToast();
   const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: request.workspaceId,
     targetId: request.resourceId,
@@ -32,55 +32,48 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceCollaborationRequestDeleteMutationHook({
     onSuccess(data, params) {
-      message.success("Collaboration request scheduled for deletion");
+      toast({ title: "Collaboration request scheduled for deletion" });
       onCompleteDeleteRequest();
     },
     onError(e, params) {
-      errorMessageNotificatition(e, "Error deleting collaboration request");
+      errorMessageNotificatition(
+        e,
+        "Error deleting collaboration request",
+        toast
+      );
     },
   });
 
-  const onSelectMenuItem = (info: MenuInfo) => {
-    if (info.key === MenuKeys.DeleteItem) {
-      Modal.confirm({
-        title: "Are you sure you want to delete this collaboration request?",
-        okText: "Yes",
-        cancelText: "No",
-        okType: "primary",
-        okButtonProps: { danger: true },
-        onOk: async () => {
-          await deleteHook.runAsync({
-            body: { requestId: request.resourceId },
-          });
-        },
-        onCancel() {
-          // do nothing
-        },
+  const deleteModalHook = useDeleteModal({
+    title: `Delete collaboration request to - "${request.recipientEmail}"`,
+    description: "Are you sure you want to delete this collaboration request?",
+    onDelete: async () => {
+      await deleteHook.runAsync({
+        body: { requestId: request.resourceId },
       });
-    } else if (info.key === MenuKeys.GrantPermission) {
+    },
+  });
+
+  const formHook = useCollaborationRequestForm({
+    workspaceId: request.workspaceId,
+  });
+
+  const onSelectMenuItem = (key: string) => {
+    if (key === MenuKeys.DeleteItem) {
+      deleteModalHook.setShow(true);
+    } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
+    } else if (key === MenuKeys.UpdateItem) {
+      formHook.setFormOpen(true);
     }
   };
 
   const isPending = request.status === "pending";
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  const items = insertAntdMenuDivider([
     {
       // TODO: only show if user has permission
       key: MenuKeys.UpdateItem,
-      label: (
-        <Link
-          href={
-            !isPending
-              ? "#"
-              : appWorkspacePaths.requestForm(
-                  request.workspaceId,
-                  request.resourceId
-                )
-          }
-        >
-          Update Request
-        </Link>
-      ),
+      label: "Update Request",
       disabled: !isPending,
     },
     {
@@ -96,19 +89,16 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
 
   return (
     <React.Fragment>
-      <Dropdown
+      <DropdownItems
         disabled={deleteHook.loading}
-        trigger={["click"]}
-        menu={{
-          items,
-          style: { minWidth: "150px" },
-          onClick: onSelectMenuItem,
-        }}
-        placement="bottomRight"
+        items={items}
+        onSelect={onSelectMenuItem}
       >
-        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
-      </Dropdown>
+        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      </DropdownItems>
       {permissionsHook.node}
+      {deleteModalHook.node}
+      {formHook.node}
     </React.Fragment>
   );
 };

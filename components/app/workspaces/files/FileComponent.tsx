@@ -1,11 +1,9 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import BackButton from "@/components/utils/buttons/BackButton";
-import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import Paragraph from "antd/es/typography/Paragraph";
 import { File } from "fimidara";
 import { useRouter } from "next/navigation";
 import FileMenu from "./FileMenu";
@@ -73,14 +71,7 @@ function FileComponent(props: FileComponentProps) {
           <LabeledNode
             direction="vertical"
             label="Description"
-            node={
-              <Paragraph
-                ellipsis={{ rows: 2 }}
-                className={appClasses.muteMargin}
-              >
-                {file.description}
-              </Paragraph>
-            }
+            node={<p className="line-clamp-2">{file.description}</p>}
           />
         )}
       </div>

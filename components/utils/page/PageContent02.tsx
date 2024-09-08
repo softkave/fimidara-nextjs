@@ -31,19 +31,13 @@ function PageContent02<T>(props: IPageContent02Props<T>) {
 
   if (error) {
     contentNode = (
-      <PageError
-        message={getBaseError(error) || defaultErrorMessage}
-        showMessageOnly={isDataFetched}
-      />
+      <PageError message={getBaseError(error) || defaultErrorMessage} />
     );
   } else if (isLoading) {
     contentNode = (
       <div className="space-y-4">
         {contentNode}
-        <PageLoading
-          message={defaultLoadingMessage}
-          showMessageOnly={isDataFetched}
-        />
+        <PageLoading message={defaultLoadingMessage} />
       </div>
     );
   } else if (data) {

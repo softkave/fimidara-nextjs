@@ -1,8 +1,5 @@
-import { css } from "@emotion/css";
-import { Divider } from "antd";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
 import React from "react";
+import { Separator } from "../ui/separator.tsx";
 import { cn } from "../utils.ts";
 import { htmlCharacterCodes } from "../utils/utils";
 import FieldDescription from "./FieldDescription";
@@ -18,63 +15,41 @@ export interface JsSdkFunctionProps {
   throws?: FieldType;
 }
 
-const classes = {
-  fnDeclaration: css({ display: "inline-block" }),
-  root: css({
-    "& h1, h2, h3, h4, h5": {
-      fontWeight: "500 !important",
-      fontSize: "15px !important",
-    },
-  }),
-  header: css({
-    marginTop: "0px !important",
-    marginBottom: "8px !important",
-    textDecoration: "underline",
-  }),
-};
-
 const JsSdkFunction: React.FC<JsSdkFunctionProps> = (props) => {
   const { functionName, params, result, throws } = props;
 
   const paramsNode: React.ReactNode[] = [];
   params?.map((nextParam, index) => {
     if (index) {
-      paramsNode.push(<Divider key={`divider-${index}`} />);
+      paramsNode.push(<Separator key={`divider-${index}`} />);
     }
 
     paramsNode.push(renderFieldType(nextParam.type, nextParam.name));
   });
 
   return (
-    <div className={cn(classes.root, "space-y-4")}>
-      <Title
-        level={5}
-        className={classes.fnDeclaration}
+    <div className={cn("space-y-4")}>
+      <h5
+        className="inline-block"
         id={functionName}
         style={{ margin: 0 }}
         key="title"
       >
         <code>{functionName}</code>
-      </Title>
-      <div key="parameters">
-        <Title level={5} className={classes.header}>
-          Parameters
-        </Title>
+      </h5>
+      <div key="parameters" className="space-y-4">
+        <h5>Parameters</h5>
         {paramsNode}
       </div>
       {result && (
-        <div key="result">
-          <Title level={5} className={classes.header}>
-            Result
-          </Title>
+        <div key="result" className="space-y-4">
+          <h5>Result</h5>
           {renderFieldType(result)}
         </div>
       )}
       {throws && (
-        <div key="throws">
-          <Title level={5} className={classes.header}>
-            Throws
-          </Title>
+        <div key="throws" className="space-y-4">
+          <h5>Throws</h5>
           {renderFieldType(throws)}
         </div>
       )}
@@ -110,20 +85,20 @@ function renderFieldType(nextParam: any, name?: string) {
         <div className="space-x-2">
           {name && (
             <>
-              <Text code>{name}</Text>
+              <code>{name}</code>
               <span>{htmlCharacterCodes.doubleDash}</span>
             </>
           )}
-          <Text code>{node}</Text>
+          <code>{node}</code>
           {nextParam.required ? (
             <>
               <span>{htmlCharacterCodes.doubleDash}</span>
-              <Text code>Required</Text>
+              <code>Required</code>
             </>
           ) : (
             <>
               <span>{htmlCharacterCodes.doubleDash}</span>
-              <Text code>Optional</Text>
+              <code>Optional</code>
             </>
           )}
         </div>

@@ -1,41 +1,41 @@
 import { Button } from "@/components/ui/button.tsx";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
-import styles from "@/components/utils/form/form.module.css";
+import { StyleableComponentProps } from "@/components/utils/styling/types.ts";
+import { useToast } from "@/hooks/use-toast.ts";
 import { folderConstants } from "@/lib/definitions/folder";
 import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceAddMutationHook,
   useWorkspaceUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
-import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import { messages } from "@/lib/messages/messages";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
 import { systemValidation } from "@/lib/validation/system";
 import { workspaceValidationParts } from "@/lib/validation/workspace";
-import { css } from "@emotion/css";
-import { Form, message } from "antd";
-import Title from "antd/es/typography/Title";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
+import { CircleChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import * as yup from "yup";
-import FormError from "../../utils/form/FormError";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { FormAlert } from "../../utils/FormAlert";
 import { getRootnameFromName } from "./utils";
 
-const workspaceValidation = yup.object().shape({
-  name: systemValidation.name.required(messages.fieldIsRequired),
-  rootname: workspaceValidationParts.rootname.required(
-    messages.fieldIsRequired
-  ),
-  description: systemValidation.description,
+const formSchema = z.object({
+  name: systemValidation.name,
+  rootname: workspaceValidationParts.rootname,
+  description: systemValidation.description.optional(),
 });
-
-const initialValues: AddWorkspaceEndpointParams = {
-  name: "",
-  rootname: "",
-  description: "",
-};
 
 function getWorkspaceFormInputFromWorkspace(
   item: Workspace
@@ -47,161 +47,144 @@ function getWorkspaceFormInputFromWorkspace(
   };
 }
 
-export interface WorkspaceFormProps {
+export interface WorkspaceFormProps extends StyleableComponentProps {
   workspace?: Workspace;
-  className?: string;
 }
 
 export default function WorkspaceForm(props: WorkspaceFormProps) {
-  const { workspace, className } = props;
+  const { workspace, className, style } = props;
+  const { toast } = useToast();
   const router = useRouter();
   const updateHook = useWorkspaceUpdateMutationHook({
     onSuccess(data, params) {
-      message.success("Workspace updated");
+      toast({ title: "Workspace updated" });
     },
   });
   const createHook = useWorkspaceAddMutationHook({
     onSuccess(data, params) {
-      message.success("Workspace created");
+      toast({ title: "Workspace created" });
       router.push(appWorkspacePaths.folderList(data.body.workspace.resourceId));
     },
   });
   const stateHook = workspace ? updateHook : createHook;
-
-  const { formik } = useFormHelpers({
-    errors: stateHook.error,
-    formikProps: {
-      validationSchema: workspaceValidation,
-      initialValues: workspace
-        ? getWorkspaceFormInputFromWorkspace(workspace)
-        : initialValues,
-      onSubmit: (body) =>
-        workspace
-          ? updateHook.runAsync({
-              body: { workspaceId: workspace.resourceId, workspace: body },
-            })
-          : createHook.runAsync({ body }),
-    },
+  const onSubmit = async (body: z.infer<typeof formSchema>) =>
+    workspace
+      ? await updateHook.runAsync({
+          body: { workspaceId: workspace.resourceId, workspace: body },
+        })
+      : await createHook.runAsync({ body });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: workspace
+      ? getWorkspaceFormInputFromWorkspace(workspace)
+      : {},
   });
 
+  useFormHelpers(form, { errors: stateHook.error });
+
+  const wName = form.watch("name");
+
   const nameNode = (
-    <Form.Item
-      required
-      label="Workspace Name"
-      help={
-        formik.touched?.name &&
-        formik.errors?.name && (
-          <FormError visible={formik.touched.name} error={formik.errors.name} />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        name="name"
-        value={formik.values.name}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter workspace name"
-        disabled={stateHook.loading}
-        maxLength={systemConstants.maxNameLength}
-        autoComplete="off"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="name"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Workspace Name</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              maxLength={systemConstants.maxNameLength}
+              placeholder="Enter workspace name"
+              autoComplete="off"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const rootnameNode = (
-    <Form.Item
-      required
-      label="Workspace Root Name"
-      help={
-        formik.touched?.rootname && formik.errors?.rootname ? (
-          <FormError
-            visible={formik.touched.rootname}
-            error={formik.errors.rootname}
-          />
-        ) : (
-          "Used for namespacing when working with files and folders. " +
-          'For example "my-workspace-root-name/my-folder/my-file.txt"'
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <div className="space-y-4">
-        <Input
-          name="rootname"
-          value={formik.values.rootname}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-          placeholder="Enter workspace root name"
-          disabled={stateHook.loading || !!workspace}
-          maxLength={folderConstants.maxFolderNameLength}
-          autoComplete="off"
-        />
-        {formik.values.name && !workspace && (
-          <Button
-            variant="link"
-            onClick={() => {
-              formik.setFieldValue(
-                "rootname",
-                getRootnameFromName(formik.values.name)
-              );
-            }}
-            style={{ paddingLeft: 0, paddingRight: 0 }}
-          >
-            Auto-fill from workspace name
-          </Button>
-        )}
-      </div>
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="rootname"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Workspace Root Name</FormLabel>
+          <FormControl>
+            <div>
+              <Input
+                {...field}
+                disabled={field.disabled || !!workspace}
+                placeholder="Enter workspace root name"
+                maxLength={folderConstants.maxFolderNameLength}
+                autoComplete="off"
+              />
+              {!workspace && (
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    form.setValue("rootname", getRootnameFromName(wName));
+                  }}
+                  className="space-x-2 flex px-0"
+                  type="button"
+                  disabled={!wName}
+                >
+                  <CircleChevronRight className="h-4 w-4" />
+                  <span>Auto-fill from workspace name</span>
+                </Button>
+              )}
+            </div>
+          </FormControl>
+          <FormDescription>
+            Used for namespacing when working with files and folders. For{" "}
+            example &quot;my-workspace-root-name/my-folder/my-file.txt&quot;
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const descriptionNode = (
-    <Form.Item
-      label="Description"
-      help={
-        formik.touched?.description &&
-        formik.errors?.description && (
-          <FormError
-            visible={formik.touched.description}
-            error={formik.errors.description}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Textarea
-        name="description"
-        value={formik.values.description}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter workspace description"
-        disabled={stateHook.loading}
-        maxLength={systemConstants.maxDescriptionLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="description"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <Textarea
+              {...field}
+              name="description"
+              placeholder="Enter workspace description"
+              maxLength={systemConstants.maxDescriptionLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   return (
-    <div className={cn(styles.formBody, className)}>
-      <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>Workspace Form</Title>
-          </Form.Item>
-          <FormAlert error={stateHook.error} />
-          {nameNode}
-          {rootnameNode}
-          {descriptionNode}
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button type="submit" loading={stateHook.loading}>
-              {workspace ? "Update Workspace" : "Create Workspace"}
-            </Button>
-          </Form.Item>
-        </form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-8", className)}
+        style={style}
+      >
+        <FormAlert error={stateHook.error} />
+        {nameNode}
+        {rootnameNode}
+        {descriptionNode}
+        <div className="my-4">
+          <Button type="submit" loading={stateHook.loading}>
+            {workspace ? "Update Workspace" : "Create Workspace"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

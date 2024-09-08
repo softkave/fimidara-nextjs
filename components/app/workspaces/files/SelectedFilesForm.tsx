@@ -1,93 +1,81 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion.tsx";
 import DeleteButton from "@/components/utils/buttons/DeleteButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
-import { css, cx } from "@emotion/css";
-import { Collapse, Form } from "antd";
-import Text from "antd/es/typography/Text";
-import { FormikErrors, FormikTouched } from "formik";
 import prettyBytes from "pretty-bytes";
+import { UseFormReturn } from "react-hook-form";
+import { z } from "zod";
 import { SingleFileForm } from "./SingleFileForm";
-import { SingleFileFormValue } from "./types";
+import { newFileValidationSchema } from "./validation.ts";
+
+export const selectedFilesSchema = z.object({
+  files: z.array(newFileValidationSchema),
+});
 
 export interface SelectedFilesFormProps extends StyleableComponentProps {
-  disabled?: boolean;
-  values: SingleFileFormValue[];
-  touched?: FormikTouched<SingleFileFormValue>[];
-  errors?: string | string[] | FormikErrors<SingleFileFormValue[]>;
+  form: UseFormReturn<z.infer<typeof selectedFilesSchema>>;
   isDirectory?: boolean;
-  onChange: (values: SingleFileFormValue[]) => void;
+  beforeUpdateModifyName?: (name: string) => string;
 }
 
-const classes = {
-  multi: {
-    panelHeader: css({ display: "flex" }),
-    panelLabel: css({ flex: 1 }),
-  },
-};
-
 export function SelectedFilesForm(props: SelectedFilesFormProps) {
-  const {
-    disabled,
-    values,
-    touched,
-    errors,
-    className,
-    style,
-    isDirectory,
-    onChange,
-  } = props;
+  const { form, className, style, isDirectory, beforeUpdateModifyName } = props;
 
-  const handleRemoveFile = (index: number) =>
-    onChange(values.filter((nextValue, nextIndex) => nextIndex !== index));
+  const wFiles = form.watch("files");
 
-  const handleUpdateFile = (
-    index: number,
-    updatedValue: Partial<SingleFileFormValue>
-  ) => {
-    const newValues = [...values];
-    newValues[index] = { ...newValues[index], ...updatedValue };
-    onChange(newValues);
+  const handleRemoveFile = (index: number) => {
+    const update = wFiles.filter((nextValue, nextIndex) => nextIndex !== index);
+    form.setValue("files", update);
   };
 
-  const panelNodes = values.map((value, index) => (
-    <Collapse.Panel
-      key={value.__localId}
-      header={
-        <div className={classes.multi.panelHeader}>
-          <div className={classes.multi.panelLabel}>
-            <Text>{value.name}</Text>
-            {errors && errors[index] ? (
-              <Text type="danger">Entry contains error</Text>
-            ) : null}
+  // TODO: show file entry error in panel
+  const panelNodes = wFiles.map((value, index) => (
+    <AccordionItem key={value.__localId} value={value.__localId}>
+      <AccordionTrigger>
+        <div className="flex">
+          <div className="flex-1">
+            <span>{value.name}</span>
+            {/* {errors && errors[index] ? (
+              <span className="text-red-600">Entry contains error</span>
+            ) : null} */}
           </div>
           <div className="space-x-4 ml-4">
             {value?.file ? (
-              <Text type="secondary">{prettyBytes(value.file.size)}</Text>
+              <span className="text-secondary">
+                {prettyBytes(value.file.size)}
+              </span>
             ) : null}
             <DeleteButton onClick={() => handleRemoveFile(index)} />
           </div>
         </div>
-      }
-    >
-      <SingleFileForm
-        key={value.__localId}
-        value={value}
-        onChange={(updatedValue) => handleUpdateFile(index, updatedValue)}
-        disabled={disabled}
-        errors={errors && errors[index]}
-        touched={touched && touched[index]}
-        isDirectory={isDirectory}
-      />
-    </Collapse.Panel>
+      </AccordionTrigger>
+      <AccordionContent>
+        <SingleFileForm
+          key={value.__localId}
+          index={index}
+          form={form}
+          isExistingFile={!!value.resourceId}
+          isDirectory={isDirectory}
+          beforeUpdateModifyName={beforeUpdateModifyName}
+        />
+      </AccordionContent>
+    </AccordionItem>
   ));
 
   const collapseNode = panelNodes.length ? (
-    <Form.Item>
-      <Collapse>{panelNodes}</Collapse>
-    </Form.Item>
+    <div className="mb-4">
+      <Accordion type="single" collapsible>
+        {panelNodes}
+      </Accordion>
+    </div>
   ) : null;
 
   return (
-    <div className={cx(className)} style={style}>
+    <div className={className} style={style}>
       {collapseNode}
     </div>
   );

@@ -1,8 +1,10 @@
 import { ObjectValues } from "@/lib/api/utils";
+import { appDocPaths } from "@/lib/definitions/paths/docs.ts";
+import assert from "assert";
 import { first, forEach, get, last, set } from "lodash-es";
 import { isObjectEmpty } from "../../lib/utils/fns";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
-import { renderToAntDMenuItemList } from "../utils/page/side-nav/utils.tsx";
+import { renderToSideNavMenuItemList } from "../utils/page/side-nav/utils.tsx";
 import { htmlCharacterCodes } from "../utils/utils";
 import restApiTableOfContent from "./raw/toc/v1/table-of-content.json";
 
@@ -49,14 +51,14 @@ export const fimidaraNavItems: IRawNavItem[] = [
     label: "fimidara",
     children: [
       {
-        withLink: true,
         label: "Introduction",
         key: "introduction",
+        href: appDocPaths.fimidaraDoc("introduction"),
       },
       {
-        withLink: true,
         label: "Workspace",
         key: "workspace",
+        href: appDocPaths.fimidaraDoc("workspace"),
       },
     ],
   },
@@ -68,10 +70,9 @@ export const fimidaraRestApiNavItems: IRawNavItem[] = [
     children: (
       [
         {
-          withLink: true,
           label: "overview",
           key: kDocNavRootKeysMap.restApi + "__" + "overview",
-          href: "overview",
+          href: appDocPaths.fimidaraRestApiDoc("overview"),
         },
       ] as IRawNavItem[]
     ).concat(restApiRawNavItems),
@@ -84,30 +85,22 @@ export const fimidaraJsSdkNavItems: IRawNavItem[] = [
     children: (
       [
         {
-          withLink: true,
           label: "overview",
           key: kDocNavRootKeysMap.jsSdk + "__" + "overview",
-          href: "overview",
+          href: appDocPaths.fimidaraJsSdkDoc("overview"),
         },
       ] as IRawNavItem[]
     ).concat(jsSdkRawNavItems),
   },
 ];
 
-export const fimidaraAntdNavItems = renderToAntDMenuItemList(
-  fimidaraNavItems,
-  /** parentItems */ [],
-  getNavItemPath
+export const fimidaraAntdNavItems =
+  renderToSideNavMenuItemList(fimidaraNavItems);
+export const fimidaraRestApiAntdNavItems = renderToSideNavMenuItemList(
+  fimidaraRestApiNavItems
 );
-export const fimidaraRestApiAntdNavItems = renderToAntDMenuItemList(
-  fimidaraRestApiNavItems,
-  /** parentItems */ [],
-  getNavItemPath
-);
-export const fimidaraJsSdkAntdNavItems = renderToAntDMenuItemList(
-  fimidaraJsSdkNavItems,
-  /** parentItems */ [],
-  getNavItemPath
+export const fimidaraJsSdkAntdNavItems = renderToSideNavMenuItemList(
+  fimidaraJsSdkNavItems
 );
 
 function extractRestApiFromRawTableOfContent(
@@ -123,6 +116,13 @@ function extractRestApiFromRawTableOfContent(
 
   const links: IRawNavItem[] = [];
   const linksMap: Record<string, NavItemIntermediateRep> = {};
+  const pFn =
+    rootKey === kDocNavRootKeysMap.restApi
+      ? appDocPaths.fimidaraRestApiDoc
+      : rootKey === kDocNavRootKeysMap.jsSdk
+      ? appDocPaths.fimidaraJsSdkDoc
+      : undefined;
+  assert(pFn);
 
   function setEntry(endpointPath: string, httpMethod: string) {
     const [unused, apiVersion, ...restPath] = endpointPath
@@ -146,7 +146,7 @@ function extractRestApiFromRawTableOfContent(
       const item: IRawNavItem = {
         label,
         key: itemKey,
-        withLink: isFn,
+        href: pFn?.(itemKey),
       };
 
       if (!get(linksMap, fullKeyPath)) {

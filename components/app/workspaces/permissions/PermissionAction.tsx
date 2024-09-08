@@ -1,7 +1,13 @@
+import { Label } from "@/components/ui/label.tsx";
+import { Switch } from "@/components/ui/switch.tsx";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
+import { cn } from "@/components/utils.ts";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { Switch, Tooltip } from "antd";
-import Text from "antd/es/typography/Text";
 import React from "react";
 import { PermissionMapItemInfo } from "./types";
 
@@ -18,39 +24,43 @@ export interface PermissionActionProps {
   info?: React.ReactNode;
 }
 
-const classes = {
-  labelRoot: css({ display: "flex" }),
-  label: css({ flex: 1 }),
-};
-
 const PermissionAction: React.FC<PermissionActionProps> = (props) => {
   const { permitted, label, disabled, info, onChange } = props;
 
   return (
-    <div className={classes.labelRoot}>
-      <Text
-        ellipsis
-        className={classes.label}
-        type={permitted.disabled ? "secondary" : undefined}
-      >
-        {label}
-      </Text>
-      <div className="space-x-2">
-        {(permitted.disabledReason || info) && (
-          <Tooltip title={permitted.disabledReason || info}>
-            <QuestionCircleOutlined />
-          </Tooltip>
-        )}
-        <Switch
-          size="small"
-          disabled={permitted.disabled || disabled}
-          checked={permitted.access}
-          onChange={(checked) => {
-            onChange({ ...permitted, access: checked });
-          }}
-        />
+    <Label>
+      <div className="flex justify-center space-x-2">
+        <div
+          className={cn(
+            "flex items-center flex-1",
+            permitted.disabled ? "text-secondary" : undefined
+          )}
+        >
+          <span className="line-clamp-1">{label}</span>
+        </div>
+        <div className="space-x-2 flex">
+          {(permitted.disabledReason || info) && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <QuestionCircleOutlined />
+                </TooltipTrigger>
+                <TooltipContent>
+                  {permitted.disabledReason || info}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          <Switch
+            disabled={permitted.disabled || disabled}
+            checked={permitted.access}
+            onCheckedChange={(value) => {
+              onChange({ ...permitted, access: value });
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </Label>
   );
 };
 

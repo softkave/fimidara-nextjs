@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button.tsx";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ItemList from "@/components/utils/list/ItemList";
 import ListHeader from "@/components/utils/list/ListHeader";
@@ -8,18 +8,17 @@ import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { appWorkspacePaths } from "@/lib/definitions/system.ts";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { PlusOutlined } from "@ant-design/icons";
-import Text from "antd/es/typography/Text";
 import { User, Workspace } from "fimidara";
-import { noop } from "lodash-es";
+import { isBoolean, noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import WorkspaceAvatar from "./WorkspaceAvatar.tsx";
+import WorkspaceForm from "./WorkspaceForm.tsx";
 import WorkspaceMenu from "./WorkspaceMenu.tsx";
 
 export interface IWorkspaceListProps {
@@ -35,6 +34,7 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
   });
   const { count, error, isLoading, resourceList, isDataFetched } =
     useFetchPaginatedResourceListFetchState(fetchState);
+  const [formOpen, setFormOpen] = useState<Workspace | boolean>(false);
 
   const contentNode = (
     <PageContent02
@@ -53,37 +53,38 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
             <ThumbnailContent
               key={item.resourceId}
               prefixNode={
-                <WorkspaceAvatar
-                  workspaceId={item.resourceId}
-                  alt={`Workspace picture for ${item.name}`}
-                />
+                <div className="flex flex-col justify-center">
+                  <WorkspaceAvatar
+                    workspaceId={item.resourceId}
+                    alt={`Workspace picture for ${item.name}`}
+                  />
+                </div>
               }
               main={
-                <div className={appClasses.thumbnailMain}>
+                <div className="flex flex-col justify-center">
                   <Link href={appWorkspacePaths.folderList(item.resourceId)}>
-                    <Text strong>{item.name}</Text>
+                    <div>{item.name}</div>
                   </Link>
                   {item.description && (
-                    <Text type="secondary">{item.description}</Text>
+                    <span className="text-secondary">{item.description}</span>
                   )}
                 </div>
               }
               menu={
-                <WorkspaceMenu
-                  key="menu"
-                  workspace={item}
-                  onCompleteDelete={noop}
-                />
+                <div className="flex flex-col justify-center h-full">
+                  <WorkspaceMenu workspace={item} onCompleteDelete={noop} />
+                </div>
               }
+              className="px-4 py-4"
             />
           )}
           emptyMessage={
             <PageNothingFound
               message={
                 user.isOnWaitlist
-                  ? "You are currently on the waitlist so you can't create workspaces, " +
+                  ? "You are currently on waitlist so you can't create workspaces, " +
                     "but you can be added to an existing workspace. " +
-                    "Once you've been upgraded from the waitlist, we'll send an email to you confirming the upgrade"
+                    "Once you've been upgraded from the waitlist, we'll send an email to you confirming the upgrade."
                   : "Create a workspace to get started"
               }
             />
@@ -93,21 +94,34 @@ const WorkspaceList: React.FC<IWorkspaceListProps> = (props) => {
     />
   );
 
+  const isNewWorkspaceForm = isBoolean(formOpen);
+  const sNode = (
+    <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
+      <SheetContent className="w-full sm:w-[500px]">
+        <SheetTitle>
+          {isNewWorkspaceForm ? "New Workspace" : "Update Workspace"}
+        </SheetTitle>
+        <WorkspaceForm
+          workspace={isBoolean(formOpen) ? undefined : formOpen}
+          className="mt-8"
+        />
+      </SheetContent>
+    </Sheet>
+  );
+
   return (
     <div className="space-y-4">
+      {sNode}
       <ListHeader
         label="Workspaces"
         buttons={
-          user.isOnWaitlist ? (
-            <Button disabled variant="outline" size="icon">
-              <PlusOutlined className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Link href={appWorkspacePaths.createWorkspaceForm}>
-              <IconButton icon={<PlusOutlined />} />
-            </Link>
-          )
+          <IconButton
+            icon={<PlusOutlined />}
+            disabled={user.isOnWaitlist}
+            onClick={() => setFormOpen(true)}
+          />
         }
+        className="px-4"
       />
       <PaginatedContent
         content={contentNode}

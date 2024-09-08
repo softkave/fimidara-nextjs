@@ -1,8 +1,8 @@
-import { css, cx } from "@emotion/css";
-import { Divider, Typography } from "antd";
 import { map } from "lodash-es";
 import prettyBytes from "pretty-bytes";
 import React from "react";
+import { Separator } from "../ui/separator.tsx";
+import { cn } from "../utils.ts";
 import { StyleableComponentProps } from "../utils/styling/types";
 import { FieldBase } from "./types";
 import {
@@ -16,176 +16,159 @@ import {
   isFieldString,
 } from "./utils";
 
-const { Text, Paragraph } = Typography;
-
 export interface FieldDescriptionProps extends StyleableComponentProps {
   fieldbase: any;
   type?: "secondary";
 }
-
-const classes = {
-  root: css({
-    margin: "2px 0px",
-  }),
-  underline: css({
-    textDecoration: "underline",
-  }),
-};
 
 const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
   const { fieldbase, style, className, type } = props;
   const nodes: React.ReactNode[] = [];
   if (fieldbase && (fieldbase as Pick<FieldBase, "description">)) {
     nodes.push(
-      <Paragraph key="description" type={type}>
+      <p
+        key="description"
+        className={type === "secondary" ? "text-secondary" : undefined}
+      >
         {fieldbase.description}
-      </Paragraph>
+      </p>
     );
   }
 
   if (isFieldString(fieldbase)) {
     if (fieldbase.valid) {
       nodes.push(
-        <Paragraph key="string-enum">
-          <Text className={classes.underline}>Enum</Text>:{" "}
+        <p key="string-enum">
+          <strong>Enum</strong>:{" "}
           {map(fieldbase.valid, (enumString) => (
-            <Text code>{enumString}</Text>
+            <code>{enumString}</code>
           ))}
-        </Paragraph>
+        </p>
       );
     }
     if (fieldbase.min) {
       nodes.push(
-        <Paragraph key="string-min">
-          <Text className={classes.underline}>Min characters</Text>:{" "}
-          {fieldbase.min}
-        </Paragraph>
+        <p key="string-min">
+          <strong>Min characters</strong>: {fieldbase.min}
+        </p>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Paragraph key="string-max">
-          <Text className={classes.underline}>Max characters</Text>:{" "}
-          {fieldbase.max}
-        </Paragraph>
+        <p key="string-max">
+          <strong>Max characters</strong>: {fieldbase.max}
+        </p>
       );
     }
     if (fieldbase.example) {
       nodes.push(
-        <Paragraph key="string-example">
-          <Text className={classes.underline}>Example</Text>:{" "}
-          {fieldbase.example}
-        </Paragraph>
+        <p key="string-example">
+          <strong>Example</strong>: {fieldbase.example}
+        </p>
       );
     }
   } else if (isFieldNumber(fieldbase)) {
     if (fieldbase.integer) {
       nodes.push(
-        <Paragraph key="number-subset">
-          <Text className={classes.underline}>Number subset</Text>:{" "}
-          <Text code>integer</Text> only
-        </Paragraph>
+        <p key="number-subset">
+          <strong>Number subset</strong>: <code>integer</code> only
+        </p>
       );
     } else {
       nodes.push(
-        <Paragraph key="number-subset">
-          <Text className={classes.underline}>Number subset</Text>:{" "}
-          <Text code>floating point</Text> or <Text code>integer</Text>
-        </Paragraph>
+        <p key="number-subset">
+          <strong>Number subset</strong>: <code>floating point</code> or{" "}
+          <code>integer</code>
+        </p>
       );
     }
 
     if (fieldbase.min) {
       nodes.push(
-        <Paragraph key="number-min">
-          <Text className={classes.underline}>Min</Text>: {fieldbase.min}
-        </Paragraph>
+        <p key="number-min">
+          <strong>Min</strong>: {fieldbase.min}
+        </p>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Paragraph key="number-max">
-          <Text className={classes.underline}>Max</Text>: {fieldbase.max}
-        </Paragraph>
+        <p key="number-max">
+          <strong>Max</strong>: {fieldbase.max}
+        </p>
       );
     }
     if (fieldbase.example) {
       nodes.push(
-        <Paragraph key="number-example">
-          <Text className={classes.underline}>Example</Text>:{" "}
-          {fieldbase.example}
-        </Paragraph>
+        <p key="number-example">
+          <strong>Example</strong>: {fieldbase.example}
+        </p>
       );
     }
   } else if (isFieldBoolean(fieldbase)) {
     if (fieldbase.example) {
       nodes.push(
-        <Paragraph key="boolean-example">
-          <Text className={classes.underline}>Example</Text>:{" "}
-          {fieldbase.example}
-        </Paragraph>
+        <p key="boolean-example">
+          <strong>Example</strong>: {fieldbase.example}
+        </p>
       );
     }
   } else if (isFieldDate(fieldbase)) {
     nodes.push(
-      <Paragraph key="date-fieldbase-type">
-        <Text code>unix milliseconds timestamp</Text>
-      </Paragraph>
+      <p key="date-fieldbase-type">
+        <code>unix milliseconds timestamp</code>
+      </p>
     );
 
     if (fieldbase.example) {
       nodes.push(
-        <Paragraph key="date-example">
-          <Text className={classes.underline}>Example</Text>:{" "}
-          {fieldbase.example}
-        </Paragraph>
+        <p key="date-example">
+          <strong>Example</strong>: {fieldbase.example}
+        </p>
       );
     }
   } else if (isFieldArray(fieldbase)) {
     if (fieldbase.min) {
       nodes.push(
-        <Paragraph key="array-min">
-          <Text className={classes.underline}>Min items</Text>: {fieldbase.min}
-        </Paragraph>
+        <p key="array-min">
+          <strong>Min items</strong>: {fieldbase.min}
+        </p>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Paragraph key="array-max">
-          <Text className={classes.underline}>Max items</Text>: {fieldbase.max}
-        </Paragraph>
+        <p key="array-max">
+          <strong>Max items</strong>: {fieldbase.max}
+        </p>
       );
     }
   } else if (isFieldBinary(fieldbase)) {
     if (fieldbase.min) {
       nodes.push(
-        <Paragraph key="binary-min">
-          <Text className={classes.underline}>Min bytes</Text>:{" "}
-          {prettyBytes(fieldbase.min)}
-        </Paragraph>
+        <p key="binary-min">
+          <strong>Min bytes</strong>: {prettyBytes(fieldbase.min)}
+        </p>
       );
     }
     if (fieldbase.max) {
       nodes.push(
-        <Paragraph key="binary-max">
-          <Text className={classes.underline}>Max bytes</Text>:{" "}
-          {prettyBytes(fieldbase.max)}
-        </Paragraph>
+        <p key="binary-max">
+          <strong>Max bytes</strong>: {prettyBytes(fieldbase.max)}
+        </p>
       );
     }
   } else if (isFieldCustomType(fieldbase)) {
     if (fieldbase.descriptionLink) {
       nodes.push(
-        <Paragraph key="custom-type-description-link">
-          <Text className={classes.underline}>Link</Text>:{" "}
+        <p key="custom-type-description-link">
+          <strong>Link</strong>:{" "}
           <a href={fieldbase.descriptionLink}>{fieldbase.descriptionLink}</a>
-        </Paragraph>
+        </p>
       );
     }
   } else if (isFieldOrCombination(fieldbase)) {
     const descriptions = map(fieldbase.types ?? {}, (type, i) => (
       <React.Fragment key={i}>
-        {Number(i) != 0 && <Divider>OR</Divider>}
+        {Number(i) != 0 && <Separator />}
         <FieldDescription fieldbase={type} />
       </React.Fragment>
     ));
@@ -193,7 +176,7 @@ const FieldDescription: React.FC<FieldDescriptionProps> = (props) => {
   }
 
   return (
-    <div style={style} className={cx(classes.root, className)}>
+    <div style={style} className={cn("my-0.5", className)}>
       {nodes}
     </div>
   );

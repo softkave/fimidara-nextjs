@@ -1,16 +1,15 @@
+import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
+import { useFolderForm } from "@/components/hooks/useFolderForm.tsx";
+import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { appClasses } from "@/components/utils/theme";
-import { MenuInfo } from "@/components/utils/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { useToast } from "@/hooks/use-toast.ts";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspaceFolderDeleteMutationHook } from "@/lib/hooks/mutationHooks";
-import { Dropdown, MenuProps, Modal, message } from "antd";
 import { Folder } from "fimidara";
-import Link from "next/link";
+import { Ellipsis } from "lucide-react";
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 
 export interface FolderMenuProps {
@@ -27,6 +26,7 @@ enum MenuKeys {
 
 const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   const { folder, workspaceRootname, onScheduleDeleteSuccess } = props;
+  const { toast } = useToast();
   const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: folder.workspaceId,
     targetId: folder.resourceId,
@@ -34,54 +34,48 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceFolderDeleteMutationHook({
     onSuccess(data, params) {
-      message.success("Folder scheduled for deletion");
+      toast({ title: "Folder scheduled for deletion" });
       onScheduleDeleteSuccess();
     },
-    onError(e, params) {
-      errorMessageNotificatition(e, "Error deleting folder");
+    onError(error, params) {
+      errorMessageNotificatition(error, "Error deleting folder", toast);
     },
   });
 
-  const onSelectMenuItem = (info: MenuInfo) => {
-    if (info.key === MenuKeys.DeleteItem) {
-      Modal.confirm({
-        title: "Are you sure you want to delete this folder?",
-        okText: "Yes",
-        cancelText: "No",
-        okType: "primary",
-        okButtonProps: { danger: true },
-        onOk: async () => {
-          await deleteHook.runAsync({
-            body: {
-              folderpath: addRootnameToPath(
-                folder.namepath.join(folderConstants.nameSeparator),
-                workspaceRootname
-              ),
-            },
-          });
-        },
-        onCancel() {
-          // do nothing
+  const deleteModalHook = useDeleteModal({
+    title: `Delete folder - "${folder.name}"`,
+    description: "Are you sure you want to delete this folder?",
+    onDelete: async () => {
+      await deleteHook.runAsync({
+        body: {
+          folderpath: addRootnameToPath(
+            folder.namepath.join(folderConstants.nameSeparator),
+            workspaceRootname
+          ),
         },
       });
-    } else if (info.key === MenuKeys.GrantPermission) {
+    },
+  });
+
+  const formHook = useFolderForm({
+    workspaceRootname,
+    workspaceId: folder.workspaceId,
+  });
+
+  const onSelectMenuItem = (key: string) => {
+    if (key === MenuKeys.DeleteItem) {
+      deleteModalHook.setShow(true);
+    } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
+    } else if (key === MenuKeys.UpdateItem) {
+      formHook.setFormOpen(true);
     }
   };
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  const items = insertAntdMenuDivider([
     {
       key: MenuKeys.UpdateItem,
-      label: (
-        <Link
-          href={appWorkspacePaths.folderForm(
-            folder.workspaceId,
-            folder.resourceId
-          )}
-        >
-          Update Folder
-        </Link>
-      ),
+      label: "Update Folder",
     },
     {
       key: MenuKeys.GrantPermission,
@@ -95,19 +89,16 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
 
   return (
     <React.Fragment>
-      <Dropdown
+      <DropdownItems
         disabled={deleteHook.loading}
-        trigger={["click"]}
-        menu={{
-          items,
-          style: { minWidth: "150px" },
-          onClick: onSelectMenuItem,
-        }}
-        placement="bottomRight"
+        items={items}
+        onSelect={onSelectMenuItem}
       >
-        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
-      </Dropdown>
+        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      </DropdownItems>
       {permissionsHook.node}
+      {deleteModalHook.node}
+      {formHook.node}
     </React.Fragment>
   );
 };

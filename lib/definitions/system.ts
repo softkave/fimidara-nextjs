@@ -367,6 +367,7 @@ export const appWorkspacePaths = {
     return `${this.workspace(workspaceId)}/usage`;
   },
 };
+
 export const appAccountPaths = {
   signup: "/signup",
   login: "/login",
@@ -378,11 +379,13 @@ export const appAccountPaths = {
   forgotPassword: "/forgot-password",
   changePassword: "/change-password",
 };
+
 export const appInternalPaths = {
   waitlist: `${appRootPaths.internal}/waitlist`,
   users: `${appRootPaths.internal}/users`,
   workspaces: `${appRootPaths.internal}/workspaces`,
 };
+
 export const appUserPaths = {
   settings: "/settings",
   requests: "/collaboration-requests",

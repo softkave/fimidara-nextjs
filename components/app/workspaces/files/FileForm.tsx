@@ -1,24 +1,20 @@
 import { Button } from "@/components/ui/button.tsx";
+import { Form } from "@/components/ui/form.tsx";
+import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
+import { useToast } from "@/hooks/use-toast.ts";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import {
   useWorkspaceFileUpdateMutationHook,
   useWorkspaceFileUploadMutationHook,
 } from "@/lib/hooks/mutationHooks";
-import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
 import { useTransferProgressHandler } from "@/lib/hooks/useTransferProgress";
-import { messages } from "@/lib/messages/messages";
-import { fileValidationParts } from "@/lib/validation/file";
-import { systemValidation } from "@/lib/validation/system";
-import { yupObject } from "@/lib/validation/utils";
-import { css, cx } from "@emotion/css";
-import { Form, message } from "antd";
-import Title from "antd/es/typography/Title";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { File as FimidaraFile } from "fimidara";
-import { isString } from "lodash-es";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { FilesFormUploadProgress } from "./FilesFormUploadProgress";
 import { MultipleFilesForm } from "./MultipleFilesForm";
 import { SingleFileForm } from "./SingleFileForm";
@@ -49,20 +45,8 @@ function getFileFormInputFromFile(item: FimidaraFile): FileFormValue {
   };
 }
 
-const existingFileValidationSchema = yupObject<
-  Omit<SingleFileFormValue, "__localId" | "resourceId">
->({
-  name: fileValidationParts.filename.required(messages.fieldIsRequired),
-  description: systemValidation.description.nullable(),
-  file: yup.mixed(),
-  encoding: yup.string(),
-  mimetype: yup.string(),
-});
-const newFileFormValidationSchema = yupObject<FileFormValue>({
-  files: yup.array().of(newFileValidationSchema).min(1).required(),
-});
-const existingFileFormValidationSchema = yupObject<FileFormValue>({
-  files: yup.array().of(existingFileValidationSchema).max(1).required(),
+const newFileFormValidationSchema = z.object({
+  files: z.array(newFileValidationSchema).min(1),
 });
 
 export interface FileFormProps {
@@ -77,10 +61,11 @@ export interface FileFormProps {
 
 export default function FileForm(props: FileFormProps) {
   const { file, className, folderpath, workspaceRootname, directory } = props;
+  const { toast } = useToast();
   const progressHandlerHook = useTransferProgressHandler();
   const updateHook = useWorkspaceFileUpdateMutationHook({
     onSuccess(data, params) {
-      message.success("File updated");
+      toast({ title: "File updated" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
       // );
@@ -88,7 +73,7 @@ export default function FileForm(props: FileFormProps) {
   });
   const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
-      message.success("File uploaded");
+      toast({ title: "File uploaded" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
       // );
@@ -115,7 +100,7 @@ export default function FileForm(props: FileFormProps) {
             fileId: input.resourceId,
             data: input.file,
             size: input.file.size,
-            description: input.description,
+            description: input.description || undefined,
             mimetype: input.mimetype,
             encoding: input.encoding,
           },
@@ -126,7 +111,7 @@ export default function FileForm(props: FileFormProps) {
           body: {
             fileId: input.resourceId,
             file: {
-              description: input.description,
+              description: input.description || undefined,
               mimetype: input.mimetype,
 
               // TODO: add to server
@@ -146,7 +131,7 @@ export default function FileForm(props: FileFormProps) {
           filepath,
           data: input.file,
           size: input.file.size,
-          description: input.description,
+          description: input.description || undefined,
           mimetype: input.mimetype,
           encoding: input.encoding,
         },
@@ -155,81 +140,53 @@ export default function FileForm(props: FileFormProps) {
     }
   };
 
-  const { formik } = useFormHelpers({
-    errors: mergedHook.error,
-    formikProps: {
-      validationSchema: file
-        ? existingFileFormValidationSchema
-        : newFileFormValidationSchema,
-      initialValues: file ? getFileFormInputFromFile(file) : initialValues,
-      onSubmit: async (data) => {
-        await Promise.all(data.files.map(submitFile));
-      },
-    },
+  const onSubmit = async (
+    data: z.infer<typeof newFileFormValidationSchema>
+  ) => {
+    await Promise.all(data.files.map(submitFile));
+  };
+
+  const form = useForm<z.infer<typeof newFileFormValidationSchema>>({
+    resolver: zodResolver(newFileFormValidationSchema),
+    defaultValues: file ? getFileFormInputFromFile(file) : initialValues,
   });
+
+  useFormHelpers(form, { errors: mergedHook.error });
 
   let contentNode: React.ReactNode = null;
 
   if (file) {
-    const touched = formik.touched?.files ? formik.touched.files[0] : undefined;
-    const error = formik.errors?.files ? formik.errors.files[0] : undefined;
-    contentNode = (
-      <Form.Item
-        help={
-          touched && isString(error) ? (
-            <FormError visible error={error} />
-          ) : null
-        }
-        labelCol={{ span: 24 }}
-        wrapperCol={{ span: 24 }}
-      >
-        <SingleFileForm
-          value={formik.values.files[0]}
-          touched={touched}
-          errors={error}
-          disabled={mergedHook.loading}
-          onChange={(partialValue) =>
-            formik.setValues({
-              files: [{ ...formik.values.files[0], ...partialValue }],
-            })
-          }
-        />
-      </Form.Item>
-    );
+    contentNode = <SingleFileForm isExistingFile form={form} index={0} />;
   } else {
     contentNode = (
-      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-        <MultipleFilesForm
-          values={formik.values.files}
-          disabled={mergedHook.loading}
-          errors={formik.errors.files}
-          touched={formik.touched.files}
-          onChange={(files) => formik.setValues({ files })}
-        />
-      </Form.Item>
+      <div className="mb-4">
+        <MultipleFilesForm form={form} disabled={mergedHook.loading} />
+      </div>
     );
   }
 
   // TODO: should "uploading files progress" below open the progress drawer on
   // click?
   return (
-    <div className={cx(styles.formBody, className)}>
+    <div className={cn(styles.formBody, className)}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>File Form</Title>
-          </Form.Item>
-          <FormAlert error={mergedHook.error} />
-          {contentNode}
-          <FilesFormUploadProgress
-            identifiers={progressHandlerHook.identifiers}
-          />
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button type="submit" loading={mergedHook.loading}>
-              {file ? "Update File" : "Upload File"}
-            </Button>
-          </Form.Item>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="mb-4">
+              <h4>File Form</h4>
+            </div>
+            <FormAlert error={mergedHook.error} />
+            {contentNode}
+            <FilesFormUploadProgress
+              identifiers={progressHandlerHook.identifiers}
+            />
+            <div className="my-4">
+              <Button type="submit" loading={mergedHook.loading}>
+                {file ? "Update File" : "Upload File"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

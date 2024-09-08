@@ -1,11 +1,10 @@
 "use client";
 
+import { usePermissionGroupForm } from "@/components/hooks/usePermissionGroupForm.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
-import { appWorkspacePaths } from "@/lib/definitions/system";
-import { PlusOutlined } from "@ant-design/icons";
 import { PermissionGroup } from "fimidara";
-import Link from "next/link";
+import { Plus } from "lucide-react";
 import React from "react";
 import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
 import PermissionGroupListContainer from "./PermissionGroupListContainer";
@@ -15,13 +14,14 @@ export interface IWorkspacePermissionGroupsProps {
   renderItem?: (item: PermissionGroup) => React.ReactNode;
   renderList?: (items: PermissionGroup[]) => React.ReactNode;
   renderRoot?: (node: React.ReactNode) => React.ReactElement;
-  menu?: React.ReactNode;
 }
 
 const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
   props
 ) => {
-  const { workspaceId, menu } = props;
+  const { workspaceId } = props;
+
+  const formHook = usePermissionGroupForm({ workspaceId });
 
   return (
     <div>
@@ -30,21 +30,20 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
           label="Permission Groups"
           buttons={
             <div className="flex items-center space-x-2">
-              <Link
-                href={appWorkspacePaths.createPermissionGroupForm(workspaceId)}
-              >
-                <IconButton icon={<PlusOutlined />} />
-              </Link>
+              <IconButton
+                icon={<Plus className="h-4 w-4" />}
+                onClick={() => formHook.setFormOpen(true)}
+              />
               <WorkspaceResourceListMenu
                 workspaceId={workspaceId}
                 targetType="permissionGroup"
               />
-              {menu}
             </div>
           }
         />
         <PermissionGroupListContainer {...props} />
       </div>
+      {formHook.node}
     </div>
   );
 };

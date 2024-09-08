@@ -1,7 +1,6 @@
+import { Computer, GitPullRequestArrow, UserCog } from "lucide-react";
 import {
-  FiBriefcase,
   FiFile,
-  FiGitPullRequest,
   FiKey,
   FiSettings,
   FiUserPlus,
@@ -15,8 +14,7 @@ import {
   appUserPaths,
   appWorkspacePaths,
 } from "../../lib/definitions/system";
-import { IRawNavItem } from "../utils/page/side-nav/types.ts";
-import { AntDMenuItem } from "../utils/types.ts";
+import { IRawNavItem, ISomeNavItem } from "../utils/page/side-nav/types.ts";
 
 export function getWorkspaceNavItems(workspaceId: string) {
   const menuItems: IRawNavItem[] = [
@@ -73,20 +71,20 @@ export function getUserNavItems(workspaceId?: string) {
       key: appWorkspacePaths.workspaces,
       href: appWorkspacePaths.workspaces,
       label: "Workspaces",
-      icon: <FiBriefcase />,
+      icon: <Computer className="w-4 h-4" />,
       children: workspaceId ? getWorkspaceNavItems(workspaceId) : undefined,
     },
     {
       key: appUserPaths.requests,
       href: appUserPaths.requests,
       label: "Collaboration Requests",
-      icon: <FiGitPullRequest />,
+      icon: <GitPullRequestArrow className="w-4 h-4" />,
     },
     {
       key: appUserPaths.settings,
       href: appUserPaths.settings,
       label: "User Settings",
-      icon: <FiSettings />,
+      icon: <UserCog className="w-4 h-4" />,
     },
   ];
 
@@ -94,7 +92,7 @@ export function getUserNavItems(workspaceId?: string) {
 }
 
 export function getInternalMenu() {
-  const items: AntDMenuItem[] = [
+  const items: ISomeNavItem[] = [
     {
       key: appInternalPaths.waitlist,
       label: "Waitlist",

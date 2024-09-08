@@ -57,7 +57,7 @@ function PageContent<T>(props: IPageContentProps<T>) {
           <MessageList
             useAlertGroup
             key="message-list"
-            type="danger"
+            type="destructive"
             messages={error}
             className={styleMessageList?.className}
             style={styleMessageList?.style}
@@ -78,7 +78,7 @@ function PageContent<T>(props: IPageContentProps<T>) {
           shouldFillParent
           maxWidth
           key="message-list"
-          type="danger"
+          type="destructive"
           messages={error}
         />
       );

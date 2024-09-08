@@ -16,10 +16,9 @@ import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { appWorkspacePaths } from "@/lib/definitions/system.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserLoginMutationHook } from "@/lib/hooks/mutationHooks/useUserLoginMutationHook.ts";
-import { useNewForm } from "@/lib/hooks/useFormHelpers.ts";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import UserSessionStorageFns from "@/lib/storage/userSession.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Title from "antd/es/typography/Title";
 import { isBoolean, omit } from "lodash-es";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -64,13 +63,11 @@ export default function Login(props: ILoginProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
       remember: false,
     },
   });
 
-  useNewForm(form, { errors: loginHook.error });
+  useFormHelpers(form, { errors: loginHook.error });
 
   const emailNode = (
     <FormField
@@ -78,7 +75,7 @@ export default function Login(props: ILoginProps) {
       name="email"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Email Address</FormLabel>
+          <FormLabel required>Email Address</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -98,7 +95,7 @@ export default function Login(props: ILoginProps) {
       name="password"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Password</FormLabel>
+          <FormLabel required>Password</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -150,7 +147,7 @@ export default function Login(props: ILoginProps) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="mb-4">
-              <Title level={4}>Login</Title>
+              <h2 className="text-xl">Login</h2>
             </div>
             <FormAlert error={loginHook.error} />
             {emailNode}

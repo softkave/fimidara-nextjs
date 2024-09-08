@@ -1,29 +1,28 @@
-import { css, cx } from "@emotion/css";
-import { Empty } from "antd";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
+import { cn } from "@/components/utils.ts";
+import { Terminal } from "lucide-react";
 import React from "react";
-import { appClasses } from "../theme";
 
 export interface IEmptyMessageProps {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
-  image?: React.ReactNode;
+  title?: React.ReactNode;
 }
 
-const classes = {
-  root: css({
-    display: "flex",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  }),
-};
-
 const EmptyMessage: React.FC<IEmptyMessageProps> = (props) => {
-  const { children, className, style, image } = props;
+  const { children, className, style, title } = props;
+
   return (
-    <div className={cx(className, classes.root)} style={style}>
-      <Empty description={children} className={appClasses.w100} image={image} />
+    <div
+      className={cn("flex items-center align-center h-full w-full", className)}
+      style={style}
+    >
+      <Alert>
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>{title || "Heads up!"}</AlertTitle>
+        <AlertDescription>{children}</AlertDescription>
+      </Alert>
     </div>
   );
 };

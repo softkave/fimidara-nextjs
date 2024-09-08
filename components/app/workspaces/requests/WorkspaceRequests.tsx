@@ -1,14 +1,13 @@
+import { useCollaborationRequestForm } from "@/components/hooks/useCollaborationRequestForm.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
 import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useWorkspaceCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { PlusOutlined } from "@ant-design/icons";
-import Link from "next/link";
+import { Plus } from "lucide-react";
 import React from "react";
 import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
 import WorkspaceRequestList from "./WorkspaceRequestList";
@@ -27,6 +26,8 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
   });
   const { count, error, isLoading, resourceList, isDataFetched } =
     useFetchPaginatedResourceListFetchState(fetchState);
+
+  const formHook = useCollaborationRequestForm({ workspaceId });
 
   const contentNode = (
     <PageContent02
@@ -59,9 +60,10 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
         label="Collaboration Requests"
         buttons={
           <div className="flex items-center space-x-2">
-            <Link href={appWorkspacePaths.createRequestForm(workspaceId)}>
-              <IconButton icon={<PlusOutlined />} />
-            </Link>
+            <IconButton
+              icon={<Plus className="h-4 w-4" />}
+              onClick={() => formHook.setFormOpen(true)}
+            />
             <WorkspaceResourceListMenu
               workspaceId={workspaceId}
               targetType={"collaborationRequest"}
@@ -73,6 +75,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
         pagination={count ? { ...pagination, count } : undefined}
         content={contentNode}
       />
+      {formHook.node}
     </div>
   );
 };

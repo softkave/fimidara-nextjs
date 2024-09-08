@@ -2,10 +2,8 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
-import Text from "antd/es/typography/Text";
 import { AgentToken } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -29,19 +27,21 @@ const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div className={appClasses.thumbnailMain}>
+          <div className="flex flex-col justify-center">
             <Link
               href={appWorkspacePaths.agentToken(workspaceId, item.resourceId)}
             >
               {item.name || item.resourceId}
             </Link>
             {item.description && (
-              <Text type="secondary">{item.description}</Text>
+              <span className="text-secondary">{item.description}</span>
             )}
           </div>
         }
         menu={
-          <AgentTokenMenu key="menu" token={item} onCompleteDelete={noop} />
+          <div className="flex flex-col justify-center h-full">
+            <AgentTokenMenu key="menu" token={item} onCompleteDelete={noop} />
+          </div>
         }
       />
     ),

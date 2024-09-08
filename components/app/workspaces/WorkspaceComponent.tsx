@@ -1,9 +1,7 @@
 import ComponentHeader from "@/components/utils/ComponentHeader.tsx";
 import LabeledNode from "@/components/utils/LabeledNode.tsx";
-import { appClasses } from "@/components/utils/theme.ts";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import Paragraph from "antd/es/typography/Paragraph";
 import { Workspace } from "fimidara";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -47,14 +45,7 @@ function WorkspaceComponent(props: WorkspaceComponentProps) {
           <LabeledNode
             direction="vertical"
             label="Description"
-            node={
-              <Paragraph
-                ellipsis={{ rows: 2 }}
-                className={appClasses.muteMargin}
-              >
-                {resource.description}
-              </Paragraph>
-            }
+            node={<p className="line-clamp-2">{resource.description}</p>}
           />
         )}
       </div>

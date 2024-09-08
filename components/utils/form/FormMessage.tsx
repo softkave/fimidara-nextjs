@@ -1,4 +1,5 @@
-import { css, cx } from "@emotion/css";
+import { cn } from "@/components/utils.ts";
+import { css } from "@emotion/css";
 import { compact, isObject, isString } from "lodash-es";
 import React from "react";
 import { AppError } from "../../../lib/utils/errors";
@@ -7,10 +8,12 @@ type FormMessageType = "error" | "message";
 type MessageWithVisible = { message: string; visible?: boolean };
 type SimpleMessageType =
   | string
+  | number
   | Error
   | AppError
   | MessageWithVisible
-  | React.ReactElement;
+  | React.ReactElement
+  | React.ReactNode;
 type SimpleMessageTypeWithFalsyValues = SimpleMessageType | null | undefined;
 type StackedMessageType =
   | SimpleMessageTypeWithFalsyValues
@@ -60,7 +63,7 @@ const FormMessage: React.FC<IFormMessageProps> = (props) => {
   return (
     <div
       style={style}
-      className={cx(
+      className={cn(
         className,
         css({
           color: getFontColor(type as FormMessageType),

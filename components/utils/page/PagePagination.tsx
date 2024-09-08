@@ -1,11 +1,9 @@
-import { cx } from "@emotion/css";
 import { Pagination, PaginationProps } from "antd";
 import React from "react";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import CustomIcon from "../buttons/CustomIcon";
 import IconButton from "../buttons/IconButton";
 import { StyleableComponentProps } from "../styling/types";
-import { appClasses } from "../theme";
 import { IPaginationData } from "./utils";
 
 export interface IPaginatedContentProps
@@ -46,7 +44,7 @@ function PaginatedContent(props: IPaginatedContentProps) {
       return (
         <IconButton
           icon={<CustomIcon icon={<FiArrowLeft />} />}
-          className={appClasses.mr8Forced}
+          className="mr-2"
         />
       );
     }
@@ -55,7 +53,7 @@ function PaginatedContent(props: IPaginatedContentProps) {
       return (
         <IconButton
           icon={<CustomIcon icon={<FiArrowRight />} />}
-          className={cx(appClasses.ml8Forced, appClasses.mr8Forced)}
+          className="ml-2 mr-2"
         />
       );
     }

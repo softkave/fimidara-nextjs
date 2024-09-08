@@ -1,15 +1,9 @@
 "use client";
 
-import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
-import { SelectInfo } from "@/components/utils/types";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import { useWorkspaceCollaborationRequestDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { getResourceId } from "@/lib/utils/resource";
-import { message, Modal } from "antd";
-import Text from "antd/es/typography/Text";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
@@ -21,44 +15,8 @@ export interface IWorkspaceRequestListProps {
   requests: CollaborationRequestForWorkspace[];
 }
 
-enum MenuKeys {
-  DeleteItem = "delete-item",
-  UpdateItem = "update-item",
-}
-
 const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
   const { workspaceId, requests } = props;
-  const deleteHook = useWorkspaceCollaborationRequestDeleteMutationHook({
-    onSuccess(data, params) {
-      message.success("Collaboration request scheduled for deletion");
-    },
-    onError(e, params) {
-      errorMessageNotificatition(e, "Error deleting collaboration request");
-    },
-  });
-
-  const onSelectMenuItem = React.useCallback(
-    (info: SelectInfo, itemId: string) => {
-      if (info.key === MenuKeys.DeleteItem) {
-        Modal.confirm({
-          title: "Are you sure you want to delete this collaboration request?",
-          okText: "Yes",
-          cancelText: "No",
-          okType: "primary",
-          okButtonProps: { danger: true },
-          onOk: async () => {
-            await deleteHook.runAsync({
-              body: { requestId: itemId },
-            });
-          },
-          onCancel() {
-            // do nothing
-          },
-        });
-      }
-    },
-    [deleteHook]
-  );
 
   return (
     <ItemList
@@ -68,24 +26,24 @@ const WorkspaceRequestList: React.FC<IWorkspaceRequestListProps> = (props) => {
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div className={appClasses.thumbnailMain}>
+            <div className="flex flex-col justify-center">
               <Link
                 href={appWorkspacePaths.request(workspaceId, item.resourceId)}
               >
                 {item.recipientEmail}
               </Link>
               {item.status && (
-                <Text code type="secondary" style={{ marginTop: "6px" }}>
-                  {item.status}
-                </Text>
+                <code className="text-secondary mt-2">{item.status}</code>
               )}
             </div>
           }
           menu={
-            <WorkspaceRequestMenu
-              request={item}
-              onCompleteDeleteRequest={noop}
-            />
+            <div className="flex flex-col justify-center h-full">
+              <WorkspaceRequestMenu
+                request={item}
+                onCompleteDeleteRequest={noop}
+              />
+            </div>
           }
         />
       )}

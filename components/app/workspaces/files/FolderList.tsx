@@ -5,12 +5,11 @@ import AppIcon from "@/components/utils/page/AppIcon";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
-import Text from "antd/es/typography/Text";
 import { Folder } from "fimidara";
 import { noop } from "lodash-es";
+import { FolderIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { FiFolder } from "react-icons/fi";
 import FolderMenu from "./FolderMenu";
 
 export interface FolderListProps {
@@ -34,7 +33,7 @@ const FolderList: React.FC<FolderListProps> = (props) => {
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div className={appClasses.thumbnailMain}>
+            <div className="flex flex-col justify-center">
               <Link
                 href={appWorkspacePaths.folder(
                   item.workspaceId,
@@ -44,24 +43,27 @@ const FolderList: React.FC<FolderListProps> = (props) => {
                 {item.name}
               </Link>
               {item.description && (
-                <Text type="secondary">{item.description}</Text>
+                <span className="text-secondary">{item.description}</span>
               )}
             </div>
           }
           menu={
-            <FolderMenu
-              key="menu"
-              folder={item}
-              workspaceRootname={workspaceRootname}
-              onScheduleDeleteSuccess={noop}
-            />
+            <div className="flex flex-col justify-center h-full">
+              <FolderMenu
+                folder={item}
+                workspaceRootname={workspaceRootname}
+                onScheduleDeleteSuccess={noop}
+              />
+            </div>
           }
           prefixNode={
-            <AppIcon
-              icon={<FiFolder />}
-              className={appClasses.alignStart}
-              style={{ marginTop: "1px" }}
-            />
+            <div className="flex flex-col justify-center">
+              <AppIcon
+                icon={<FolderIcon className="w-4 h-4" />}
+                className={appClasses.alignStart}
+                style={{ marginTop: "1px" }}
+              />
+            </div>
           }
         />
       );
@@ -76,6 +78,7 @@ const FolderList: React.FC<FolderListProps> = (props) => {
       renderItem={internalRenderItem}
       getId={(item: Folder) => item.resourceId}
       emptyMessage="No folders yet"
+      space="sm"
     />
   );
 };

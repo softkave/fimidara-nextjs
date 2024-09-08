@@ -1,19 +1,23 @@
-import { css, cx } from "@emotion/css";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet.tsx";
+import { cn } from "@/components/utils.ts";
 import { useResponsive } from "ahooks";
-import { Drawer, DrawerProps } from "antd";
-import React from "react";
-import { FiArrowLeft } from "react-icons/fi";
-import IconButton from "../buttons/IconButton";
+import {
+  CSSProperties,
+  forwardRef,
+  ForwardRefRenderFunction,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 
 export interface IPageDrawerProps {
   open?: boolean;
-  closable?: boolean;
-  title: React.ReactNode;
-  extra?: React.ReactNode;
-  placement?: DrawerProps["placement"];
-  style?: React.CSSProperties;
+  title: ReactNode;
+  style?: CSSProperties;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   onClose?: () => void;
 }
 
@@ -22,42 +26,25 @@ export interface IPageDrawerRef {
   toggleOpen: () => void;
 }
 
-const classes = {
-  root: css({
-    "& .ant-drawer-header": { padding: "16px" },
-    "& .ant-drawer-close": { padding: "0px" },
-  }),
-};
-
-const PageDrawer: React.ForwardRefRenderFunction<
-  IPageDrawerRef,
-  IPageDrawerProps
-> = (props, ref) => {
-  const {
-    open,
-    closable,
-    title,
-    placement,
-    style,
-    className,
-    extra,
-    children,
-    onClose,
-  } = props;
-  const [isOpen, setOpen] = React.useState(open ?? false);
-  const toggleOpen = React.useCallback(() => {
+const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
+  props,
+  ref
+) => {
+  const { open, title, style, className, children, onClose } = props;
+  const [isOpen, setOpen] = useState(open ?? false);
+  const toggleOpen = useCallback(() => {
     setOpen((state) => !state);
     onClose && onClose();
   }, [onClose]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setOpen(open ?? false);
   }, [open]);
 
   const responsive = useResponsive();
   const drawerWidth = responsive.md ? 500 : window.innerWidth;
 
-  React.useImperativeHandle<IPageDrawerRef, IPageDrawerRef>(
+  useImperativeHandle<IPageDrawerRef, IPageDrawerRef>(
     ref,
     () => {
       return { isOpen, toggleOpen };
@@ -66,22 +53,16 @@ const PageDrawer: React.ForwardRefRenderFunction<
   );
 
   return (
-    <Drawer
-      destroyOnClose
-      title={title}
-      closable={closable}
-      placement={placement || "right"}
-      onClose={toggleOpen}
-      open={isOpen}
-      closeIcon={<IconButton icon={<FiArrowLeft />} />}
-      style={style}
-      className={cx(className, classes.root)}
-      width={drawerWidth}
-      extra={extra}
-    >
-      {children}
-    </Drawer>
+    <Sheet open={isOpen} onOpenChange={toggleOpen}>
+      <SheetContent
+        className={cn("w-full sm:w-[500px]", className)}
+        style={style}
+      >
+        <SheetTitle>{title}</SheetTitle>
+        <div className="pt-6 w-full space-y-8">{children}</div>
+      </SheetContent>
+    </Sheet>
   );
 };
 
-export default React.forwardRef<IPageDrawerRef, IPageDrawerProps>(PageDrawer);
+export default forwardRef<IPageDrawerRef, IPageDrawerProps>(PageDrawer);

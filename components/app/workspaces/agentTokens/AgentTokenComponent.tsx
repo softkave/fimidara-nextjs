@@ -1,9 +1,7 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
-import { appClasses } from "@/components/utils/theme";
 import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import Paragraph from "antd/es/typography/Paragraph";
 import { AgentToken } from "fimidara";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -84,14 +82,7 @@ function AgentTokenComponent(props: IAgentTokenProps) {
           <LabeledNode
             direction="vertical"
             label="Description"
-            node={
-              <Paragraph
-                ellipsis={{ rows: 2 }}
-                className={appClasses.muteMargin}
-              >
-                {resource.description}
-              </Paragraph>
-            }
+            node={<p className="line-clamp-2">{resource.description}</p>}
           />
         )}
         <AssignedPermissionGroupList

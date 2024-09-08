@@ -1,6 +1,4 @@
 import { getUsageForCost } from "@/lib/definitions/usageRecord";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
 import {
   UsageRecordCategory,
   UsageRecordFulfillmentStatus,
@@ -67,10 +65,8 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
 
   return (
     <div className="space-y-2">
-      <Title level={5} type="secondary">
-        {labelText}
-      </Title>
-      <Text>{usageText}</Text>
+      <h5 className="text-secondary">{labelText}</h5>
+      <span>{usageText}</span>
     </div>
   );
 };

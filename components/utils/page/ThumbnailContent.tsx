@@ -1,18 +1,20 @@
-import { css, cx } from "@emotion/css";
-import { Checkbox, MenuProps } from "antd";
+import { Checkbox } from "@/components/ui/checkbox.tsx";
+import { IDropdownItem } from "@/components/ui/dropdown-items.tsx";
+import { cn } from "@/components/utils.ts";
 import { defaultTo } from "lodash-es";
 import React from "react";
 import { useHandledEventTraker } from "../../hooks/useHandledEventTraker";
 import DropdownButton from "../buttons/DropdownButton";
 import MenuButton from "../buttons/MenuButton";
 import { GridHelpers, GridPortions, GridTemplateLayout } from "../styling/grid";
-import { appClasses } from "../theme";
 
 export interface IThumbnailContentProps {
   prefixNode?: React.ReactNode;
   suffixNode?: React.ReactNode;
   main: React.ReactNode;
-  menu?: MenuProps | React.ReactElement;
+  menu?:
+    | { items: Array<IDropdownItem>; onSelect?: (key: string) => void }
+    | React.ReactElement;
   selectable?: boolean;
   selected?: boolean;
   withCheckbox?: boolean;
@@ -22,13 +24,6 @@ export interface IThumbnailContentProps {
   className?: string;
   disabled?: boolean;
 }
-
-const classes = {
-  root: css({
-    display: "grid",
-    columnGap: "16px",
-  }),
-};
 
 const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
   const {
@@ -51,7 +46,11 @@ const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
     menuNode = React.isValidElement(menu) ? (
       menu
     ) : (
-      <DropdownButton menu={menu as MenuProps} triggerNode={<MenuButton />} />
+      <DropdownButton
+        items={(menu as Exclude<typeof menu, React.ReactElement>).items}
+        onSelect={(menu as Exclude<typeof menu, React.ReactElement>).onSelect}
+        triggerNode={<MenuButton />}
+      />
     );
   }
 
@@ -67,19 +66,25 @@ const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
     gridTemplateColumns: GridHelpers.toStringGridTemplate(columnsLayout),
   };
 
-  const { shouldHandleEvt } = useHandledEventTraker();
+  const { shouldHandleEvent, markExclusivelyHandled } = useHandledEventTraker();
 
   return (
     <div
-      className={cx(className, classes.root, {
-        [appClasses.selectable]: selectable,
-        [appClasses.selected]: selectable && selected,
-        [appClasses.disabled]: disabled,
-      })}
+      className={cn(
+        "grid cursor-auto gap-x-4",
+        {
+          ["cursor-pointer hover:bg-sky-100"]: selectable && !disabled,
+          // ["hover:bg-sky-100"]: !disabled,
+          ["bg-sky-100"]: selectable && selected,
+          ["cursor-not-allowed"]: disabled,
+        },
+        className
+      )}
       style={rootStyle}
       onClick={(evt) => {
-        const shouldHandle = shouldHandleEvt(evt);
-        if (shouldHandle && !disabled) {
+        console.log("h");
+        if (shouldHandleEvent(evt) && !disabled) {
+          console.log("m");
           if (onClick) {
             onClick();
           } else if (onSelect) {
@@ -91,7 +96,15 @@ const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
       {withCheckbox && <Checkbox checked={selected} disabled={disabled} />}
       {prefixNode}
       {main}
-      {menuNode}
+      {menuNode && (
+        <div
+          onClick={(evt) => {
+            markExclusivelyHandled(evt);
+          }}
+        >
+          {menuNode}
+        </div>
+      )}
       {suffixNode}
     </div>
   );

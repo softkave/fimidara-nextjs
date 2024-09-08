@@ -1,30 +1,41 @@
+import { Button } from "@/components/ui/button.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form.tsx";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet.tsx";
+import { cn } from "@/components/utils.ts";
 import { FormAlert } from "@/components/utils/FormAlert";
-import FormError from "@/components/utils/form/FormError.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
-import { permissionGroupPermissionsGroupConstants } from "@/lib/definitions/permissionGroups";
+import { useToast } from "@/hooks/use-toast.ts";
+import { kPermissionGroupConstants } from "@/lib/definitions/permissionGroups";
 import {
   useMergeMutationHookStates,
   useWorkspacePermissionGroupAssignMutationHook,
   useWorkspacePermissionGroupUnassignMutationHook,
 } from "@/lib/hooks/mutationHooks";
-import useFormHelpers from "@/lib/hooks/useFormHelpers";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { indexArray } from "@/lib/utils/indexArray";
-import { css, cx } from "@emotion/css";
-import { Form, Modal, message } from "antd";
-import { isString } from "lodash-es";
-import React from "react";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import PermissionGroupListContainer from "./PermissionGroupListContainer";
 
 type AssignPermissionGroupsFormValues = {
   permissionGroups: string[];
 };
 
-const validationSchema = yup.object().shape({
-  permissionGroups: yup
-    .array()
-    .max(permissionGroupPermissionsGroupConstants.maxAssignedPermissionGroups),
+const validationSchema = z.object({
+  permissionGroups: z
+    .array(z.string(), { required_error: "permission groups is required" })
+    .max(kPermissionGroupConstants.maxAssignedPermissionGroups, {
+      message: `${kPermissionGroupConstants.maxAssignedPermissionGroups} max chars`,
+    }),
 });
 
 export interface IAssignPermissionGroupsFormProps
@@ -35,14 +46,6 @@ export interface IAssignPermissionGroupsFormProps
   onClose: () => void;
   onCompleteSubmit: () => void;
 }
-
-const classes = {
-  root: css({
-    "& .ant-modal-body": {
-      padding: 0,
-    },
-  }),
-};
 
 export default function AssignPermissionGroupsForm(
   props: IAssignPermissionGroupsFormProps
@@ -56,12 +59,13 @@ export default function AssignPermissionGroupsForm(
     onClose,
     onCompleteSubmit,
   } = props;
+  const { toast } = useToast();
 
   const assignHook = useWorkspacePermissionGroupAssignMutationHook();
   const unassignHook = useWorkspacePermissionGroupUnassignMutationHook();
   const mergedHook = useMergeMutationHookStates(assignHook, unassignHook);
 
-  const handleSubmit = async (body: AssignPermissionGroupsFormValues) => {
+  const onSubmit = async (body: AssignPermissionGroupsFormValues) => {
     const initialPgsMap = indexArray(permissionGroups);
     const assignedPgsMap = indexArray(body.permissionGroups);
     const unassignedPgs = permissionGroups.filter(
@@ -94,90 +98,90 @@ export default function AssignPermissionGroupsForm(
     ]);
 
     if (assignedPgs.length || unassignedPgs.length) {
-      message.success(`Assigned permission groups updated`);
+      toast({ title: "Assigned permission groups updated" });
     }
 
     onCompleteSubmit();
     onClose();
   };
 
-  const { formik } = useFormHelpers({
-    errors: mergedHook.error,
-    formikProps: {
-      validationSchema: validationSchema,
-      initialValues: { permissionGroups },
-      onSubmit: handleSubmit,
-    },
+  const form = useForm<z.infer<typeof validationSchema>>({
+    resolver: zodResolver(validationSchema),
+    defaultValues: { permissionGroups },
   });
 
-  const selectedMap = React.useMemo(() => {
-    return indexArray(formik.values.permissionGroups, {
+  useFormHelpers(form, { errors: mergedHook.error });
+
+  const wPermissionGroups = form.watch("permissionGroups");
+  const selectedMap = useMemo(() => {
+    return indexArray(wPermissionGroups, {
       reducer: (item) => true,
     });
-  }, [formik.values.permissionGroups]);
+  }, [wPermissionGroups]);
 
   const permissionGroupsNode = (
-    <Form.Item
-      required
-      help={
-        formik.touched?.permissionGroups &&
-        isString(formik.errors?.permissionGroups) && (
-          <FormError
-            visible={formik.touched.permissionGroups}
-            error={formik.errors.permissionGroups}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <PermissionGroupListContainer
-        withCheckbox
-        workspaceId={workspaceId}
-        selectedMap={selectedMap}
-        onSelect={(pg) => {
-          const idList = [...formik.values.permissionGroups];
-          const i = idList.indexOf(pg.resourceId);
+    <FormField
+      control={form.control}
+      name="permissionGroups"
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <PermissionGroupListContainer
+              withCheckbox
+              workspaceId={workspaceId}
+              selectedMap={selectedMap}
+              onSelect={(pg) => {
+                const idList = [...wPermissionGroups];
+                const i = idList.indexOf(pg.resourceId);
 
-          if (i === -1) idList.push(pg.resourceId);
-          else idList.splice(i, 1);
+                if (i === -1) idList.push(pg.resourceId);
+                else idList.splice(i, 1);
 
-          formik.setValues({ permissionGroups: idList });
-        }}
-      />
-    </Form.Item>
+                form.setValue("permissionGroups", idList);
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   const mainNode = (
-    <div className={cx(styles.formBody, className)} style={style}>
+    <div className={cn(styles.formBody, className)} style={style}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          {/* <Form.Item>
-            <Title level={4}>
-              Assign Permission Group Form
-            </Title>
-          </Form.Item> */}
-          <FormAlert error={mergedHook.error} />
-          {permissionGroupsNode}
-        </form>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8"
+            ref={formRef}
+          >
+            <FormAlert error={mergedHook.error} />
+            {permissionGroupsNode}
+          </form>
+        </Form>
       </div>
     </div>
   );
 
   return (
-    <Modal
-      open
-      destroyOnClose
-      closable={false}
-      onOk={formik.submitForm}
-      onCancel={onClose}
-      okButtonProps={{ disabled: mergedHook.loading }}
-      cancelButtonProps={{ danger: true, disabled: mergedHook.loading }}
-      okText="Update"
-      cancelText="Close"
-      className={classes.root}
-    >
-      {mainNode}
-    </Modal>
+    <Sheet open onOpenChange={onClose}>
+      <SheetContent className="w-full sm:w-[500px]">
+        <SheetTitle>Assign Permission Groups</SheetTitle>
+        <div className="pt-6 w-full space-y-8">
+          {mainNode}
+          <div>
+            <Button
+              loading={mergedHook.loading}
+              onClick={() => formRef.current?.submit()}
+            >
+              Update
+            </Button>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
