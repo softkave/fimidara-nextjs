@@ -1,4 +1,5 @@
 import { useToast } from "@/hooks/use-toast.ts";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 import { messages } from "@/lib/messages/messages.ts";
 import {
   EmailAddressNotVerifiedError,
@@ -9,7 +10,6 @@ import {
 import Link from "next/link";
 import React from "react";
 import { appComponentConstants, htmlCharacterCodes } from "./utils";
-import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 
 export function enrichErrorMessage(error: any): React.ReactNode {
   if (!error) {
@@ -44,7 +44,8 @@ export function errorMessageNotificatition(
   const errorMessage =
     enrichErrorMessage(error) || defaultMessage || messages.requestError;
   toast({
-    title: errorMessage as any,
+    variant: "destructive",
+    description: String(errorMessage),
     duration: appComponentConstants.messageDuration,
   });
 }

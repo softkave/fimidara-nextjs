@@ -4,7 +4,6 @@ import IconButton from "@/components/utils/buttons/IconButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { Folder } from "fimidara";
-import { noop } from "lodash-es";
 import { Plus } from "lucide-react";
 import React from "react";
 import FolderMenu from "./FolderMenu";
@@ -16,6 +15,7 @@ export interface IFileListContainerHeaderProps extends StyleableComponentProps {
   folder?: Folder;
   onBeginCreateFile: () => void;
   onBeginCreateFolder: () => void;
+  onScheduleDeleteSuccess: () => void;
 }
 
 enum CreateMenuKeys {
@@ -34,6 +34,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
     className,
     onBeginCreateFile,
     onBeginCreateFolder,
+    onScheduleDeleteSuccess,
   } = props;
 
   const items = insertAntdMenuDivider([
@@ -67,7 +68,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
           <FolderMenu
             folder={folder}
             workspaceRootname={workspaceRootname}
-            onScheduleDeleteSuccess={noop}
+            onScheduleDeleteSuccess={onScheduleDeleteSuccess}
           />
         ) : (
           <RootFilesMenu workspaceId={workspaceId} />

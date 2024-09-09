@@ -27,7 +27,7 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
   const selectedHook = useSelectList();
   const upgradeHook = useWaitlistedUsersUpgradeMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Waitlisted users upgraded" });
+      toast({ description: "Waitlisted users upgraded" });
       clearFetchState();
       selectedHook.clear();
     },
@@ -51,6 +51,7 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
     content = (
       <ItemList
         items={data.users}
+        space="md"
         renderItem={(item) => {
           return (
             <ThumbnailContent
@@ -84,6 +85,7 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
 
   const controlsNode = (
     <Button
+      type="button"
       loading={upgradeHook.loading}
       disabled={!hasSelected}
       onClick={() =>

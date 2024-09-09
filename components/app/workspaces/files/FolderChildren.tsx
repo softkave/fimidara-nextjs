@@ -3,6 +3,7 @@ import { useFolderForm } from "@/components/hooks/useFolderForm.tsx";
 import PageContent02 from "@/components/utils/page/PageContent02.tsx";
 import PaginatedContent from "@/components/utils/page/PaginatedContent.tsx";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import {
   useWorkspaceFilesFetchHook,
   useWorkspaceFoldersFetchHook,
@@ -10,6 +11,7 @@ import {
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils.tsx";
 import usePagination from "@/lib/hooks/usePagination.ts";
 import { fimidaraAddRootnameToPath, Folder } from "fimidara";
+import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import AppFileList from "./AppFileList.tsx";
 import FileListContainerHeader from "./FileListContainerHeader";
@@ -55,6 +57,7 @@ const useFiles = (workspaceRootname: string, folder?: Folder) => {
 
 function FolderChildren(props: FolderChildrenProps) {
   const { folder, workspaceRootname, workspaceId, style, className } = props;
+  const router = useRouter();
 
   const fileFormHook = useFileForm({ workspaceId, workspaceRootname });
   const folderFormHook = useFolderForm({ workspaceId, workspaceRootname });
@@ -64,6 +67,8 @@ function FolderChildren(props: FolderChildrenProps) {
   const isInitialLoad = !foldersHook.isDataFetched && !filesHook.isDataFetched;
   const hasContent =
     foldersHook.resourceList.length || filesHook.resourceList.length;
+  const hasNoContent =
+    !foldersHook.resourceList.length && !filesHook.resourceList.length;
 
   let foldersNode: ReactNode = null;
   let filesNode: ReactNode = null;
@@ -116,6 +121,8 @@ function FolderChildren(props: FolderChildrenProps) {
     if (filesHook.resourceList.length) {
       filesNode = renderFiles();
     }
+  } else if (hasNoContent) {
+    filesNode = renderFiles();
   } else {
     foldersNode = renderFolders();
     filesNode = renderFiles();
@@ -130,6 +137,9 @@ function FolderChildren(props: FolderChildrenProps) {
         className="mb-4"
         onBeginCreateFile={() => fileFormHook.setFormOpen(true)}
         onBeginCreateFolder={() => folderFormHook.setFormOpen(true)}
+        onScheduleDeleteSuccess={() => {
+          router.push(kAppWorkspacePaths.folder(workspaceId, folder?.parentId));
+        }}
       />
       <div className="space-y-8">
         <FolderParentLink workspaceId={workspaceId} folder={folder}>

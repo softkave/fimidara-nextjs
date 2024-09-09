@@ -6,10 +6,9 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet.tsx";
-import { cn } from "@/components/utils.ts";
 import { FormAlert } from "@/components/utils/FormAlert";
-import styles from "@/components/utils/form/form.module.css";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { useToast } from "@/hooks/use-toast.ts";
 import { kPermissionGroupConstants } from "@/lib/definitions/permissionGroups";
@@ -98,7 +97,7 @@ export default function AssignPermissionGroupsForm(
     ]);
 
     if (assignedPgs.length || unassignedPgs.length) {
-      toast({ title: "Assigned permission groups updated" });
+      toast({ description: "Assigned permission groups updated" });
     }
 
     onCompleteSubmit();
@@ -150,37 +149,36 @@ export default function AssignPermissionGroupsForm(
   const formRef = useRef<HTMLFormElement>(null);
 
   const mainNode = (
-    <div className={cn(styles.formBody, className)} style={style}>
-      <div className={styles.formContentWrapper}>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8"
-            ref={formRef}
-          >
-            <FormAlert error={mergedHook.error} />
-            {permissionGroupsNode}
-          </form>
-        </Form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8"
+        ref={formRef}
+      >
+        <FormAlert error={mergedHook.error} />
+        {permissionGroupsNode}
+      </form>
+    </Form>
   );
 
   return (
     <Sheet open onOpenChange={onClose}>
-      <SheetContent className="w-full sm:w-[500px]">
-        <SheetTitle>Assign Permission Groups</SheetTitle>
-        <div className="pt-6 w-full space-y-8">
-          {mainNode}
-          <div>
-            <Button
-              loading={mergedHook.loading}
-              onClick={() => formRef.current?.submit()}
-            >
-              Update
-            </Button>
+      <SheetContent className="w-full sm:w-[500px] p-0">
+        <ScrollArea className="p-6 h-full overflow-y-auto">
+          <SheetTitle>Assign Permission Groups</SheetTitle>
+          <div className="pt-6 w-full space-y-8">
+            {mainNode}
+            <div>
+              <Button
+                type="button"
+                loading={mergedHook.loading}
+                onClick={() => formRef.current?.submit()}
+              >
+                Update
+              </Button>
+            </div>
           </div>
-        </div>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

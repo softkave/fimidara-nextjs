@@ -5,13 +5,12 @@ import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
-import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { useDownloadFile } from "@/lib/hooks/useDownloadFile";
-import { File } from "fimidara";
+import { File, stringifyFimidaraFilenamepath } from "fimidara";
 import { Ellipsis } from "lucide-react";
-import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 import { FC, Fragment } from "react";
+import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 
 export interface FileMenuProps {
   file: File;
@@ -36,7 +35,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceFileDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ title: "File scheduled for deletion" });
+      toast({ description: "File scheduled for deletion" });
       onScheduleDeleteSuccess();
     },
     onError(error, params) {
@@ -52,10 +51,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
     onDelete: async () => {
       await deleteHook.runAsync({
         body: {
-          filepath: addRootnameToPath(
-            file.namepath.join(folderConstants.nameSeparator),
-            workspaceRootname
-          ),
+          filepath: stringifyFimidaraFilenamepath(file, workspaceRootname),
         },
       });
     },
@@ -74,7 +70,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
     } else if (key === MenuKeys.DownloadFile) {
       downloadHook.downloadHook.run();
     } else if (key === MenuKeys.UpdateItem) {
-      formHook.setFormOpen(true);
+      formHook.setFormOpen(file);
     }
   };
 

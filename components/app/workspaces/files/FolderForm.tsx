@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
 import { FormAlert } from "@/components/utils/FormAlert";
-import CustomIcon from "@/components/utils/buttons/CustomIcon";
 import { useToast } from "@/hooks/use-toast.ts";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
@@ -26,12 +25,12 @@ import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
 import { useTransferProgressHandler } from "@/lib/hooks/useTransferProgress";
 import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
-import { UploadOutlined } from "@ant-design/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMount } from "ahooks";
 import { Upload } from "antd";
 import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
 import { compact } from "lodash-es";
+import { CircleChevronRight, FolderUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEventHandler, ReactNode, useMemo } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -50,7 +49,7 @@ import { newFileValidationSchema } from "./validation";
 const folderValidation = z.object({
   name: fileValidationParts.filename,
   description: systemValidation.description.nullable().optional(),
-  files: z.array(newFileValidationSchema),
+  files: z.array(newFileValidationSchema).optional(),
 });
 
 export interface FolderFormValues {
@@ -90,7 +89,7 @@ export default function FolderForm(props: FolderFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceFolderUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Folder updated" });
+      toast({ description: "Folder updated" });
       router.push(
         kAppWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
       );
@@ -99,7 +98,7 @@ export default function FolderForm(props: FolderFormProps) {
 
   const createHook = useWorkspaceFolderAddMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Folder created" });
+      toast({ description: "Folder created" });
       router.push(
         kAppWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
       );
@@ -109,7 +108,7 @@ export default function FolderForm(props: FolderFormProps) {
   const progressHandlerHook = useTransferProgressHandler();
   const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
-      toast({ title: "File uploaded" });
+      toast({ description: "File uploaded" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
       // );
@@ -262,8 +261,14 @@ export default function FolderForm(props: FolderFormProps) {
                   autoComplete="off"
                 />
                 {autofillName && !folder && (
-                  <Button variant="link" onClick={onAutofillName}>
-                    <span className="underline">
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={onAutofillName}
+                    className="space-x-2 flex px-0"
+                  >
+                    <CircleChevronRight className="h-4 w-4" />
+                    <span>
                       Use <strong>{autofillName}</strong> from selected files
                     </span>
                   </Button>
@@ -326,18 +331,18 @@ export default function FolderForm(props: FolderFormProps) {
 
                 if (folder) {
                   files = replaceBaseFoldername(files, foldername);
-                  form.setValue("files", files);
                 } else {
                   foldername = getFirstFoldername(files) || foldername;
                   form.setValue("name", foldername);
                 }
 
+                form.setValue("files", files);
                 return false;
               }}
             >
-              <Button title="Select Folder">
-                <div className="space-x-2">
-                  <CustomIcon icon={<UploadOutlined />} />
+              <Button title="Select Folder" variant="outline" type="button">
+                <div className="space-x-2 flex items-center">
+                  <FolderUp className="h-4 w-4" />
                   <span>Select Folder</span>
                 </div>
               </Button>
@@ -383,14 +388,11 @@ export default function FolderForm(props: FolderFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-8", className)}
       >
-        <div className="mb-4">
-          <h4>Folder Form</h4>
-        </div>
         <FormAlert error={hookError} />
-        {selectedFilesNode}
         {nameNode}
         {descriptionNode}
         {selectFolderNode}
+        {selectedFilesNode}
         <FilesFormUploadProgress
           identifiers={progressHandlerHook.identifiers}
         />

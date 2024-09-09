@@ -47,7 +47,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
 
   const deleteHook = useWorkspacePermissionGroupDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Permission group scheduled for deletion" });
+      toast({ description: "Permission group scheduled for deletion" });
       onCompleteDelete();
     },
     onError(e, params) {
@@ -58,7 +58,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
   const unassignPermissionGroupHook =
     useWorkspacePermissionGroupUnassignMutationHook({
       onSuccess(data, params) {
-        toast({ title: "Permission group unassigned" });
+        toast({ description: "Permission group unassigned" });
         onCompleteUnassignPermissionGroup();
       },
       onError(e, params) {
@@ -114,7 +114,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     ) {
       unassignModalHook.setShow(true);
     } else if (key === MenuKeys.UpdateItem) {
-      formHook.setFormOpen(true);
+      formHook.setFormOpen(permissionGroup);
     }
   };
 

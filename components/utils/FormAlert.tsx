@@ -3,12 +3,12 @@ import { Alert, AlertDescription, AlertTitle } from "../ui/alert.tsx";
 import { enrichErrorMessage } from "./errorHandling";
 
 export interface IFormAlertProps {
-  error: any;
+  error: unknown;
 }
 
 export function FormAlert(props: IFormAlertProps) {
   const { error } = props;
-  const errorMessage = enrichErrorMessage(error) ?? "An error occurred";
+  const errorMessage = enrichErrorMessage(error);
 
   return errorMessage ? (
     <div className="mb-4">

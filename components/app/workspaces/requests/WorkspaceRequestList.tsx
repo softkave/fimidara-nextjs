@@ -2,13 +2,13 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { getResourceId } from "@/lib/utils/resource";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { FC } from "react";
+import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 
 export interface IWorkspaceRequestListProps {
   workspaceId: string;
@@ -21,6 +21,7 @@ const WorkspaceRequestList: FC<IWorkspaceRequestListProps> = (props) => {
   return (
     <ItemList
       bordered
+      space="md"
       items={requests}
       renderItem={(item: CollaborationRequestForWorkspace) => (
         <ThumbnailContent

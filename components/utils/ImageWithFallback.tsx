@@ -168,6 +168,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
           onClick={onClick}
         >
           <Button
+            type="button"
             disabled={isDeleting}
             data-skipeventfortag={skipEventForTag}
             onClick={(evt) => {

@@ -32,7 +32,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceCollaborationRequestDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Collaboration request scheduled for deletion" });
+      toast({ description: "Collaboration request scheduled for deletion" });
       onCompleteDeleteRequest();
     },
     onError(e, params) {
@@ -64,7 +64,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
     } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
     } else if (key === MenuKeys.UpdateItem) {
-      formHook.setFormOpen(true);
+      formHook.setFormOpen(request);
     }
   };
 

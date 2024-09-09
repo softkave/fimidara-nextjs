@@ -8,6 +8,7 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useFetchNonPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useEntityAssignedPermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
 import { cn } from "@/lib/utils.ts";
@@ -18,10 +19,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
 import { noop } from "lodash-es";
 import Link from "next/link";
+import { FC, Fragment, ReactNode, useMemo } from "react";
 import AssignPermissionGroupsForm from "./AssignPermissionGroupsForm";
 import PermissionGroupMenu from "./PermissionGroupMenu";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { FC, useMemo, ReactNode, Fragment } from "react";
 
 export interface IAssignedPermissionGroupListProps
   extends StyleableComponentProps {
@@ -65,6 +65,7 @@ const AssignedPermissionGroupList: FC<IAssignedPermissionGroupListProps> = (
   } else if (other) {
     content = (
       <ItemList
+        space="md"
         items={other.immediateAssignedPermissionGroupsMeta}
         renderItem={(item) => {
           const permissionGroup = permissionGroupsMap[item.permissionGroupId];

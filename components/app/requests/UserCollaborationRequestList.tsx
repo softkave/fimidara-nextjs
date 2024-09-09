@@ -56,6 +56,7 @@ export default function UserCollaborationRequestList() {
             />
           )}
           emptyMessage="You do not have any collaboration requests"
+          space="md"
         />
       )}
     />

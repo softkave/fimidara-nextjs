@@ -23,14 +23,14 @@ import {
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
 import { systemValidation } from "@/lib/validation/system.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AgentToken, NewAgentTokenInput } from "fimidara";
+import { AgentToken } from "fimidara";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  name: systemValidation.name,
-  description: systemValidation.description,
+  name: systemValidation.name.optional(),
+  description: systemValidation.description.optional(),
   expires: z.number().optional(),
   providedResourceId: z
     .string()
@@ -41,8 +41,12 @@ const formSchema = z.object({
     .optional(),
 });
 
-function getAgentTokenFormInputFromToken(item: AgentToken): NewAgentTokenInput {
+function getAgentTokenFormInputFromToken(
+  item: AgentToken
+): z.infer<typeof formSchema> {
   return {
+    name: item.name,
+    description: item.description,
     expires: item.expiresAt,
     providedResourceId: item.providedResourceId || undefined,
   };
@@ -60,7 +64,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceAgentTokenUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Agent token updated" });
+      toast({ description: "Agent token updated" });
       router.push(
         kAppWorkspacePaths.agentToken(
           data.body.token.workspaceId,
@@ -71,7 +75,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
   });
   const createHook = useWorkspaceAgentTokenAddMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Agent token created" });
+      toast({ description: "Agent token created" });
       router.push(
         kAppWorkspacePaths.agentToken(
           data.body.token.workspaceId,
@@ -116,7 +120,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
       name="name"
       render={({ field }) => (
         <FormItem>
-          <FormLabel required>Token Name</FormLabel>
+          <FormLabel>Token Name</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -160,13 +164,15 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         <FormItem>
           <FormLabel>Expires</FormLabel>
           <FormControl>
-            <DatePicker
-              {...field}
-              value={field.value ? new Date(field.value) : undefined}
-              onChange={(date) => {
-                form.setValue("expires", date?.valueOf());
-              }}
-            />
+            <div className="block">
+              <DatePicker
+                {...field}
+                value={field.value ? new Date(field.value) : undefined}
+                onChange={(date) => {
+                  form.setValue("expires", date?.valueOf());
+                }}
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>

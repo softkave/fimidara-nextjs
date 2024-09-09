@@ -89,6 +89,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
                         entry?.file?.name;
                       form.setValue(`files.${index}.name`, name);
                     }}
+                    type="button"
                   >
                     <span className="underline">
                       {messages.autofillText(entry?.file?.name)}

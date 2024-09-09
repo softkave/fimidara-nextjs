@@ -28,7 +28,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
       },
       onSuccess(data, params) {
         toast({
-          title: `Email verification link sent to ${session.user.email}`,
+          description: `Email verification link sent to ${session.user.email}`,
         });
         cooldown.startCooldown();
       },
@@ -46,6 +46,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
           Your email address is not verified.
         </span>
         <Button
+          type="button"
           onClick={() => sendEmailVerificationHook.run()}
           loading={sendEmailVerificationHook.loading}
           disabled={cooldown.isInCooldown}

@@ -37,7 +37,7 @@ export const PageMessageActions: React.FC<PageMessageActionsProps> = (
     <div style={style} className={cn("space-x-2", className)}>
       {actions?.map((action, i) => {
         if (isPageAction(action)) {
-          return <Button key={i} {...action} />;
+          return <Button key={i} {...action} type="button" />;
         } else {
           return action;
         }

@@ -36,9 +36,9 @@ export function SelectedFilesForm(props: SelectedFilesFormProps) {
   const panelNodes = wFiles.map((value, index) => (
     <AccordionItem key={value.__localId} value={value.__localId}>
       <AccordionTrigger>
-        <div className="flex">
-          <div className="flex-1">
-            <span>{value.name}</span>
+        <div className="flex flex-1 items-center mr-2">
+          <div className="flex flex-1 flex-col items-start">
+            <span className="line-clamp-1 text-left">{value.name}</span>
             {/* {errors && errors[index] ? (
               <span className="text-red-600">Entry contains error</span>
             ) : null} */}

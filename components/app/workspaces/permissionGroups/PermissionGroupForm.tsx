@@ -53,7 +53,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   const router = useRouter();
   const updateHook = useWorkspacePermissionGroupUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Permission group updated" });
+      toast({ description: "Permission group updated" });
       router.push(
         kAppWorkspacePaths.permissionGroup(
           data.body.permissionGroup.workspaceId,
@@ -64,7 +64,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   });
   const createHook = useWorkspacePermissionGroupAddMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Permission group created" });
+      toast({ description: "Permission group created" });
       router.push(
         kAppWorkspacePaths.permissionGroup(
           data.body.permissionGroup.workspaceId,
@@ -144,9 +144,6 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-8", className)}
       >
-        <div className="mb-4">
-          <h4>Permission Group Form</h4>
-        </div>
         <FormAlert error={mergedHook.error} />
         {nameNode}
         {descriptionNode}

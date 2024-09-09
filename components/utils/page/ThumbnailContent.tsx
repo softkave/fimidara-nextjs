@@ -82,9 +82,7 @@ const ThumbnailContent: React.FC<IThumbnailContentProps> = (props) => {
       )}
       style={rootStyle}
       onClick={(evt) => {
-        console.log("h");
         if (shouldHandleEvent(evt) && !disabled) {
-          console.log("m");
           if (onClick) {
             onClick();
           } else if (onSelect) {

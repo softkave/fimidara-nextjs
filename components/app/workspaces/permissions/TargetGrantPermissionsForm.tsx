@@ -24,6 +24,7 @@ import {
   PermissionItemInput,
 } from "fimidara";
 import { forEach, isBoolean, merge } from "lodash-es";
+import { FC, useState } from "react";
 import AgentTokenListContainer from "../agentTokens/AgentTokenListContainer";
 import CollaboratorListContainer from "../collaborators/CollaboratorListContainer";
 import PermissionGroupListContainer from "../permissionGroups/PermissionGroupListContainer";
@@ -31,7 +32,6 @@ import TargetGrantPermissionFormEntityList, {
   splitKey,
 } from "./TargetGrantPermissionFormEntityList";
 import { ResolvedPermissionsMap, TargetIdPermissions } from "./types";
-import { FC, useState } from "react";
 
 export interface TargetGrantPermissionFormProps {
   workspaceId: string;
@@ -85,7 +85,7 @@ const TargetGrantPermissionForm: FC<TargetGrantPermissionFormProps> = (
     ]);
 
     if (addItems.length || deleteItems.length) {
-      toast({ title: "Permissions updated" });
+      toast({ description: "Permissions updated" });
     }
 
     // Close first, to prevent a refetch of resolved permissions in this
@@ -195,7 +195,11 @@ const TargetGrantPermissionForm: FC<TargetGrantPermissionFormProps> = (
           {errorNode}
           {tabsNode}
           <div>
-            <Button loading={loading} onClick={() => handleOnSave()}>
+            <Button
+              loading={loading}
+              onClick={() => handleOnSave()}
+              type="button"
+            >
               Save Permissions
             </Button>
           </div>

@@ -14,6 +14,7 @@ import { cn } from "@/components/utils.ts";
 import { StyleableComponentProps } from "@/components/utils/styling/types.ts";
 import { useToast } from "@/hooks/use-toast.ts";
 import { folderConstants } from "@/lib/definitions/folder";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceAddMutationHook,
@@ -30,7 +31,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormAlert } from "../../utils/FormAlert";
 import { getRootnameFromName } from "./utils";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 const formSchema = z.object({
   name: systemValidation.name,
@@ -58,12 +58,12 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Workspace updated" });
+      toast({ description: "Workspace updated" });
     },
   });
   const createHook = useWorkspaceAddMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Workspace created" });
+      toast({ description: "Workspace created" });
       router.push(
         kAppWorkspacePaths.folderList(data.body.workspace.resourceId)
       );
@@ -126,12 +126,12 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
               />
               {!workspace && (
                 <Button
+                  type="button"
                   variant="link"
                   onClick={() => {
                     form.setValue("rootname", getRootnameFromName(wName));
                   }}
                   className="space-x-2 flex px-0"
-                  type="button"
                   disabled={!wName}
                 >
                   <CircleChevronRight className="h-4 w-4" />

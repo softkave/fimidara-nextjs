@@ -35,7 +35,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
     useFetchSingleResourceFetchState(fetchState);
   const respondHook = useUserCollaborationRequestResponseMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Response submitted" });
+      toast({ description: "Response submitted" });
       clearFetchState();
     },
     onError(e, params) {
@@ -72,6 +72,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
           ) : (
             <div className="space-x-4">
               <Button
+                type="button"
                 variant="destructive"
                 loading={respondHook.loading}
                 onClick={() =>
@@ -86,6 +87,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
                 Decline Request
               </Button>
               <Button
+                type="button"
                 loading={respondHook.loading}
                 onClick={() =>
                   respondHook.run({

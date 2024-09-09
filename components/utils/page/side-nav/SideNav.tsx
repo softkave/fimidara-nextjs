@@ -144,8 +144,6 @@ function SomeNav(props: ISomeNavProps) {
     return _selectedMap || keyBy(selected, (k) => k);
   }, [selected, _selectedMap]);
 
-  console.log({ openMap, selectedMap });
-
   const handleOpen = (key: string) => {
     if (openMap[key]) {
       onOpen?.((open || []).filter((k) => k !== key));
@@ -184,7 +182,7 @@ function SomeNav(props: ISomeNavProps) {
           </span>
         ) : null}
         <div
-          className="space-x-2 flex items-center"
+          className="space-x-2 flex items-center flex-1"
           onClick={() => {
             handleSelect(item.key);
           }}
@@ -194,7 +192,7 @@ function SomeNav(props: ISomeNavProps) {
               {item.icon}
             </span>
           )}
-          <span className="inline-flex items-center justify-center h-8">
+          <span className="inline-flex items-center justify-start h-8 flex-1">
             {item.label}
           </span>
         </div>

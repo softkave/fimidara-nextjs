@@ -61,6 +61,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
           items={fulfilledRecords}
           renderItem={internalRenderItem}
           emptyMessage="No fulfilled usage records yet"
+          space="md"
         />
       </div>
       <div className="space-y-4">
@@ -70,6 +71,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
           items={droppedRecords}
           renderItem={internalRenderItem}
           emptyMessage="No dropped usage records"
+          space="md"
         />
       </div>
     </div>

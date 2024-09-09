@@ -27,6 +27,7 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
     content = (
       <ItemList
         items={data.workspaceList}
+        space="md"
         renderItem={(item) => {
           return (
             <ThumbnailContent

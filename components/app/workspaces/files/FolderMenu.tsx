@@ -34,7 +34,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceFolderDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Folder scheduled for deletion" });
+      toast({ description: "Folder scheduled for deletion" });
       onScheduleDeleteSuccess();
     },
     onError(error, params) {
@@ -68,7 +68,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
     } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
     } else if (key === MenuKeys.UpdateItem) {
-      formHook.setFormOpen(true);
+      formHook.setFormOpen(folder);
     }
   };
 

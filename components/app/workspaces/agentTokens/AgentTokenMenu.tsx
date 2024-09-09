@@ -32,7 +32,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceAgentTokenDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Agent token scheduled for deletion" });
+      toast({ description: "Agent token scheduled for deletion" });
       onCompleteDelete();
     },
     onError(error, params) {
@@ -58,7 +58,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
     } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
     } else if (key === MenuKeys.UpdatePermissionGroups) {
-      formHook.setFormOpen(true);
+      formHook.setFormOpen(token);
     }
   };
 

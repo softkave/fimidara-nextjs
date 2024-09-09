@@ -64,7 +64,7 @@ export default function FileForm(props: FileFormProps) {
   const progressHandlerHook = useTransferProgressHandler();
   const updateHook = useWorkspaceFileUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ title: "File updated" });
+      toast({ description: "File updated" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
       // );
@@ -72,7 +72,7 @@ export default function FileForm(props: FileFormProps) {
   });
   const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
-      toast({ title: "File uploaded" });
+      toast({ description: "File uploaded" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
       // );
@@ -172,9 +172,6 @@ export default function FileForm(props: FileFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-8", className)}
       >
-        <div className="mb-4">
-          <h4>File Form</h4>
-        </div>
         <FormAlert error={mergedHook.error} />
         {contentNode}
         <FilesFormUploadProgress

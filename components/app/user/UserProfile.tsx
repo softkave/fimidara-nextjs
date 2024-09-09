@@ -59,7 +59,7 @@ export default function UserProfile(props: IUserProfileProps) {
   const { toast } = useToast();
   const updateUserHook = useUserUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Profile updated" });
+      toast({ description: "Profile updated" });
     },
   });
 

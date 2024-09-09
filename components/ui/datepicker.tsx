@@ -1,8 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -11,20 +8,29 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { StyleableComponentProps } from "../utils/styling/types.ts";
 
-export interface IDatePickerProps {
+export interface IDatePickerProps extends StyleableComponentProps {
   disabled?: boolean;
   value?: Date;
   onChange: (value?: Date) => void;
 }
 
 export function DatePicker(props: IDatePickerProps) {
-  const { disabled, value, onChange } = props;
+  const { disabled, value, className, style, onChange } = props;
 
   return (
     <Popover>
-      <PopoverTrigger asChild disabled={disabled}>
+      <PopoverTrigger
+        asChild
+        disabled={disabled}
+        className={className}
+        style={style}
+      >
         <Button
+          type="button"
           disabled={disabled}
           variant={"outline"}
           className={cn(

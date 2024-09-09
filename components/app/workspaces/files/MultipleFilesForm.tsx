@@ -5,13 +5,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form.tsx";
-import CustomIcon from "@/components/utils/buttons/CustomIcon";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { indexArray } from "@/lib/utils/indexArray";
-import { UploadOutlined } from "@ant-design/icons";
 import { cx } from "@emotion/css";
 import { Upload } from "antd";
 import { compact } from "lodash-es";
+import { FileUp } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { SelectedFilesForm } from "./SelectedFilesForm";
@@ -63,10 +62,10 @@ export function MultipleFilesForm(props: MultipleFilesFormProps) {
                 return false;
               }}
             >
-              <Button title="Select Files">
-                <div className="space-x-2">
-                  <CustomIcon icon={<UploadOutlined />} />
-                  Select Files
+              <Button title="Select Files" type="button" variant="outline">
+                <div className="space-x-2 flex items-center">
+                  <FileUp className="h-4 w-4" />
+                  <span>Select Files</span>
                 </div>
               </Button>
             </Upload>

@@ -27,6 +27,7 @@ const FimidaraUsers: React.FC<{}> = (props) => {
     content = (
       <ItemList
         items={data.users}
+        space="md"
         renderItem={(item) => {
           return (
             <ThumbnailContent

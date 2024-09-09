@@ -4,13 +4,13 @@ import IconButton from "@/components/utils/buttons/IconButton";
 import { appClasses } from "@/components/utils/theme";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Workspace } from "fimidara";
 import { compact, noop } from "lodash-es";
 import { Ellipsis } from "lucide-react";
 import Link from "next/link";
-import useTargetGrantPermissionModal from "../../hooks/useTargetGrantPermissionModal";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { FC, Fragment } from "react";
+import useTargetGrantPermissionModal from "../../hooks/useTargetGrantPermissionModal";
 
 export interface WorkspaceMenuProps {
   workspace: Workspace;
@@ -36,7 +36,7 @@ const WorkspaceMenu: FC<WorkspaceMenuProps> = (props) => {
   const onSelectMenuItem = (key: string) => {
     if (key === MenuKeys.DeleteWorkspace) {
       toast({
-        title: "Are you sure you want to delete this workspace?",
+        description: "Are you sure you want to delete this workspace?",
         action: (
           <ToastAction altText="Yes" onClick={noop}>
             Yes

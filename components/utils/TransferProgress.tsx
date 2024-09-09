@@ -4,11 +4,11 @@ import { KeyValueDynamicKeys } from "@/lib/hooks/kvStore.ts";
 import { useTransferProgress } from "@/lib/hooks/useTransferProgress";
 import { formatDistanceToNow } from "date-fns";
 import { identity, uniqBy } from "lodash-es";
+import { Dot } from "lucide-react";
 import pb from "pretty-bytes";
 import { Progress } from "../ui/progress.tsx";
 import FormError from "./form/FormError";
 import ItemList from "./list/ItemList";
-import { htmlCharacterCodes } from "./utils";
 
 export interface ITransferProgressProps {
   identifier?: string;
@@ -36,16 +36,16 @@ export function TransferProgress(props: ITransferProgressProps) {
   // TODO: have an internal way for calculating estimated time that doesnt
   // depend on the progress event, or we can extend it to the progress event
   return (
-    <div>
+    <div className="space-y-1">
       <span className="text-secondary">{identifier}</span>
       <Progress value={percent} />
       <div className="space-x-2">
         <span className="text-secondary">
           {pb(loaded)} of {pb(total)}
         </span>
-        <span className="text-secondary">{htmlCharacterCodes.middleDot}</span>
+        <Dot className="h-4 w-4 inline text-secondary" />
         <span className="text-secondary">{pb(rate)}/s</span>
-        <span className="text-secondary">{htmlCharacterCodes.middleDot}</span>
+        <Dot className="h-4 w-4 inline text-secondary" />
         <span className="text-secondary">
           {estimatedTime
             ? formatDistanceToNow(estimatedTime)
@@ -97,6 +97,7 @@ export function TransferProgressList(props: ITransferProgressListProps) {
         );
       }}
       getId={identity}
+      space="sm"
     />
   );
 }

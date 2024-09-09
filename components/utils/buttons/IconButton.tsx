@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Omit1 } from "@/lib/utils/types";
-import React, { ComponentProps } from "react";
+import React, { ButtonHTMLAttributes, ComponentProps } from "react";
 
 export interface IIconButtonProps {
   style?: React.CSSProperties;
@@ -17,6 +17,7 @@ export interface IIconButtonProps {
   onClick?: () => void;
   buttonProps?: Partial<ComponentProps<typeof Button>>;
   children?: React.ReactNode;
+  type?: ButtonHTMLAttributes<unknown>["type"];
 }
 
 export type IExtendsIconButtonProps = Omit1<IIconButtonProps, "icon">;
@@ -31,6 +32,7 @@ const IconButton: React.FC<IIconButtonProps> = (props) => {
     onClick,
     buttonProps,
     children,
+    type,
   } = props;
 
   const btnNode = (
@@ -42,6 +44,7 @@ const IconButton: React.FC<IIconButtonProps> = (props) => {
       style={style}
       variant="outline"
       size="icon"
+      type={type || "button"}
     >
       {icon}
       {children}

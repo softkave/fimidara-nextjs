@@ -58,7 +58,7 @@ export default function RequestForm(props: IRequestFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceCollaborationRequestUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Collaboration request updated" });
+      toast({ description: "Collaboration request updated" });
       router.push(
         kAppWorkspacePaths.request(
           data.body.request.workspaceId,
@@ -69,7 +69,7 @@ export default function RequestForm(props: IRequestFormProps) {
   });
   const createHook = useWorkspaceCollaborationRequestAddMutationHook({
     onSuccess(data, params) {
-      toast({ title: "Collaboration request created" });
+      toast({ description: "Collaboration request created" });
       router.push(
         kAppWorkspacePaths.request(
           data.body.request.workspaceId,
@@ -154,13 +154,15 @@ export default function RequestForm(props: IRequestFormProps) {
         <FormItem>
           <FormLabel>Expires</FormLabel>
           <FormControl>
-            <DatePicker
-              {...field}
-              value={field.value ? new Date(field.value) : undefined}
-              onChange={(date) => {
-                form.setValue("expires", date?.valueOf());
-              }}
-            />
+            <div>
+              <DatePicker
+                {...field}
+                value={field.value ? new Date(field.value) : undefined}
+                onChange={(date) => {
+                  form.setValue("expires", date?.valueOf());
+                }}
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -174,9 +176,6 @@ export default function RequestForm(props: IRequestFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-8", className)}
       >
-        <div className="mb-4">
-          <h4>Collaboration Request Form</h4>
-        </div>
         <FormAlert error={mergedHook.error} />
         {recipientEmailNode}
         {messageNode}

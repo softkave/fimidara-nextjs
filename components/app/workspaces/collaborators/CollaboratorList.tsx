@@ -2,12 +2,12 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Collaborator } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
+import { FC, ReactNode, useCallback } from "react";
 import CollaboratorMenu from "./CollaboratorMenu";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { ReactNode, FC, useCallback } from "react";
 
 export interface CollaboratorListProps {
   workspaceId: string;
@@ -56,6 +56,7 @@ const CollaboratorList: FC<CollaboratorListProps> = (props) => {
       renderItem={renderItem || internalRenderItem}
       getId={(item: Collaborator) => item.resourceId}
       emptyMessage="No collaborators yet"
+      space="md"
     />
   );
 };

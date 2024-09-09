@@ -28,7 +28,11 @@ export const kAppWorkspacePaths = {
   folderList(workspaceId: string) {
     return `${this.workspace(workspaceId)}/folders`;
   },
-  folder(workspaceId: string, folderId: string) {
+  folder(workspaceId: string, folderId?: string | null) {
+    if (!folderId) {
+      return `${this.workspace(workspaceId)}/folders`;
+    }
+
     return `${this.folderList(workspaceId)}/${folderId}`;
   },
   folderForm(workspaceId: string, folderId: string) {

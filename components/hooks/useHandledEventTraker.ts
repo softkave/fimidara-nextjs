@@ -9,14 +9,12 @@ export function useHandledEventTraker() {
   const handledEvtTrackerRef = React.useRef<Record<number, true>>({});
 
   const shouldHandleEvent = useCallback((evt: React.BaseSyntheticEvent) => {
-    console.log(evt.eventPhase);
     if (
       evt.eventPhase === Event.BUBBLING_PHASE ||
       evt.eventPhase === Event.AT_TARGET
     ) {
       const isHandled = handledEvtTrackerRef.current[evt.timeStamp];
       handledEvtTrackerRef.current[evt.timeStamp] = true;
-      console.log({ isHandled });
       return !isHandled;
     } else {
       delete handledEvtTrackerRef.current[evt.timeStamp];
