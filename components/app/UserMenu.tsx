@@ -1,10 +1,12 @@
-import { appRootPaths, appUserPaths } from "@/lib/definitions/system.ts";
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
-import { Badge, Button, Dropdown, MenuProps, Popover } from "antd";
 import Link from "next/link";
 import { useUserNode } from "../hooks/useUserNode";
+import { DropdownItems, IDropdownItem } from "../ui/dropdown-items.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover.tsx";
 import { insertAntdMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 
 const kMenuKeys = {
   logout: "logout",
@@ -17,37 +19,35 @@ export default function UserMenu() {
   const userNode = useUserNode();
 
   const renderBtnNode = (userId: string, withError?: boolean) => {
-    const userAvatarNode = (
-      <UserAvatar userId={userId} alt="Your profile picture" />
-    );
-    return (
-      <Button
-        style={{
-          padding: 0,
-          border: "none",
-          boxShadow: "none",
-        }}
-      >
-        {withError ? <Badge dot>{userAvatarNode}</Badge> : userAvatarNode}
-      </Button>
-    );
+    return <UserAvatar userId={userId} alt="Your profile picture" />;
   };
 
   if (userNode.renderedNode) {
     return (
-      <Popover content={userNode.renderedNode} placement="bottomRight">
-        {renderBtnNode(/** userId */ "", /** withError */ true)}
+      <Popover>
+        <PopoverTrigger>
+          {renderBtnNode(/** userId */ "", /** withError */ true)}
+        </PopoverTrigger>
+        <PopoverContent>{userNode.renderedNode}</PopoverContent>
       </Popover>
     );
   }
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  const items: Array<IDropdownItem> = insertAntdMenuDivider([
     {
-      label: <Link href={appUserPaths.workspaces}>App</Link>,
+      label: (
+        <Link href={kAppUserPaths.workspaces} className="w-full inline-block">
+          App
+        </Link>
+      ),
       key: kMenuKeys.app,
     },
     {
-      label: <Link href={appRootPaths.docs}>Docs</Link>,
+      label: (
+        <Link href={kAppRootPaths.docs} className="w-full inline-block">
+          Docs
+        </Link>
+      ),
       key: kMenuKeys.docs,
     },
     {
@@ -57,19 +57,15 @@ export default function UserMenu() {
     },
   ]);
 
-  const onClick: MenuProps["onClick"] = async (info) => {
-    if (info.key === kMenuKeys.logout) {
+  const onClick = async (key: string) => {
+    if (key === kMenuKeys.logout) {
       requestLogout();
     }
   };
 
   return (
-    <Dropdown
-      trigger={["click"]}
-      menu={{ items, onClick, style: { minWidth: "150px" } }}
-      placement="bottomRight"
-    >
+    <DropdownItems items={items} onSelect={onClick}>
       {renderBtnNode(userNode.assertGet().user.resourceId)}
-    </Dropdown>
+    </DropdownItems>
   );
 }

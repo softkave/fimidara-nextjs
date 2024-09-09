@@ -1,14 +1,15 @@
 "use client";
 
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { SideNav } from "../utils/page/side-nav/SideNav.tsx";
 import {
   getMenuSelectedKeys,
-  renderToAntDMenuItemList,
+  renderToSideNavMenuItemList,
 } from "../utils/page/side-nav/utils.tsx";
-import { getUserNavItems } from "./menu.tsx";
+import { getInternalNavItems, getUserNavItems } from "./menu.tsx";
 import { useAppMenu } from "./useAppMenu.tsx";
 import { getWorkspaceId } from "./utils.ts";
 
@@ -21,16 +22,17 @@ export default function AppSideNav(props: IAppSideNavProps) {
   const pathname = usePathname();
   const workspaceId = getWorkspaceId(pathname);
 
-  const { antdMenuItems, navItems } = useMemo(() => {
+  const { appMenuItems, navItems } = useMemo(() => {
     const navItems = getUserNavItems(workspaceId);
-    const antdMenuItems = renderToAntDMenuItemList(
-      navItems,
-      /** parentItems */ [],
-      /** getNavItemPath */ () => ""
+    const internalItems = pathname.includes(kAppRootPaths.internal)
+      ? getInternalNavItems()
+      : [];
+    const appMenuItems = renderToSideNavMenuItemList(
+      navItems.concat(internalItems)
     );
 
-    return { navItems, antdMenuItems };
-  }, [workspaceId]);
+    return { navItems, appMenuItems };
+  }, [workspaceId, pathname]);
 
   const selectedKeys = useMemo(() => {
     if (!pathname) {
@@ -46,7 +48,7 @@ export default function AppSideNav(props: IAppSideNavProps) {
 
   return (
     <SideNav
-      items={antdMenuItems}
+      items={appMenuItems}
       onClose={toggleAppMenu}
       title="fimidara"
       selectedKeys={selectedKeys}

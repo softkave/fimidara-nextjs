@@ -10,6 +10,6 @@ export interface INewPermissionGroupInput {
 
 export type IUpdatePermissionGroupInput = Partial<INewPermissionGroupInput>;
 
-export const permissionGroupPermissionsGroupConstants = {
+export const kPermissionGroupConstants = {
   maxAssignedPermissionGroups: 100,
 };

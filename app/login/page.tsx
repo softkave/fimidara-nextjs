@@ -1,18 +1,28 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
+import { Checkbox } from "@/components/ui/checkbox.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError.tsx";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
-import { appWorkspacePaths } from "@/lib/definitions/system.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
-import { useUserLoginMutationHook } from "@/lib/hooks/mutationHooks.ts";
-import useFormHelpers from "@/lib/hooks/useFormHelpers.ts";
+import { useUserLoginMutationHook } from "@/lib/hooks/mutationHooks/useUserLoginMutationHook.ts";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import UserSessionStorageFns from "@/lib/storage/userSession.ts";
-import { css } from "@emotion/css";
-import { Button, Checkbox, Form, Input } from "antd";
-import Title from "antd/es/typography/Title";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { isBoolean, omit } from "lodash-es";
 import { useRouter } from "next/navigation";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 export interface ILoginFormValues {
   email: string;
@@ -22,138 +32,134 @@ export interface ILoginFormValues {
 
 export interface ILoginProps {}
 
-const validationSchema = yup.object().shape({
-  email: yup.string().email().required(),
-  password: yup.string().max(userConstants.maxPasswordLength).required(),
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().max(userConstants.maxPasswordLength),
+  remember: z.boolean().optional(),
 });
-
-const initialValues: ILoginFormValues = {
-  email: "",
-  password: "",
-  remember: false,
-};
 
 export default function Login(props: ILoginProps) {
   const router = useRouter();
   const loginHook = useUserLoginMutationHook({
     onSuccess(data, params) {
-      router.push(appWorkspacePaths.workspaces);
+      router.push(kAppWorkspacePaths.workspaces);
     },
   });
-  const { formik } = useFormHelpers({
-    errors: loginHook.error,
-    formikProps: {
-      validationSchema,
-      initialValues,
-      onSubmit: async (body) => {
-        const result = await loginHook.runAsync({
-          body: {
-            email: body.email,
-            password: body.password,
-          },
-        });
-
-        if (body.remember) {
-          UserSessionStorageFns.saveUserToken(result.body.token);
-          UserSessionStorageFns.saveClientAssignedToken(
-            result.body.clientAssignedToken
-          );
-        }
+  const onSubmit = async (body: z.infer<typeof formSchema>) => {
+    const result = await loginHook.runAsync({
+      body: {
+        email: body.email,
+        password: body.password,
       },
+    });
+
+    if (body.remember) {
+      UserSessionStorageFns.saveUserToken(result.body.token);
+      UserSessionStorageFns.saveClientAssignedToken(
+        result.body.clientAssignedToken
+      );
+    }
+  };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      remember: false,
     },
   });
+
+  useFormHelpers(form, { errors: loginHook.error });
 
   const emailNode = (
-    <Form.Item
-      required
-      label="Email Address"
-      help={
-        formik.touched.email && (
-          <FormError visible={formik.touched.email}>
-            {formik.errors.email}
-          </FormError>
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="email"
-        name="email"
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        value={formik.values.email}
-        disabled={loginHook.loading}
-        placeholder="Enter your email address"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="email"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Email Address</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              autoComplete="email"
+              placeholder="Enter your email address"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const passwordNode = (
-    <Form.Item
-      required
-      label="Password"
-      help={
-        formik.touched.password && (
-          <FormError visible={formik.touched.password}>
-            {formik.errors.password}
-          </FormError>
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input.Password
-        visibilityToggle
-        autoComplete="current-password"
-        name="password"
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        value={formik.values.password}
-        disabled={loginHook.loading}
-        placeholder="Enter your password"
-        maxLength={userConstants.maxPasswordLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="password"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Password</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              type="password"
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              maxLength={userConstants.maxPasswordLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const rememberNode = (
-    <Form.Item>
-      <Checkbox
-        name="remember"
-        onChange={(evt) => {
-          formik.setFieldValue("remember", evt.target.checked);
-        }}
-        checked={formik.values.remember}
-        disabled={loginHook.loading}
-      >
-        Remember Me
-      </Checkbox>
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="remember"
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="remember"
+                {...omit(field, ["value"])}
+                checked={field.value}
+                onCheckedChange={(state) => {
+                  if (isBoolean(state)) form.setValue("remember", state);
+                }}
+              />
+              <label
+                htmlFor="remember"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Remember Me
+              </label>
+            </div>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   return (
     <div className={styles.formBody}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>Login</Title>
-          </Form.Item>
-          <FormAlert error={loginHook.error} />
-          {emailNode}
-          {passwordNode}
-          {rememberNode}
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={loginHook.loading}
-            >
-              {loginHook.loading ? "Logging In" : "Log In"}
-            </Button>
-          </Form.Item>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="mb-4">
+              <h2 className="text-xl">Login</h2>
+            </div>
+            <FormAlert error={loginHook.error} />
+            {emailNode}
+            {passwordNode}
+            {rememberNode}
+            <div className="my-4">
+              <Button type="submit" loading={loginHook.loading}>
+                Login
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

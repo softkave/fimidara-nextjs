@@ -1,16 +1,17 @@
-import { messages } from "@/lib/messages/messages";
 import { fileValidationParts } from "@/lib/validation/file";
 import { systemValidation } from "@/lib/validation/system";
-import { yupObject } from "@/lib/validation/utils";
-import * as yup from "yup";
-import { SingleFileFormValue } from "./types";
+import { z } from "zod";
 
-export const newFileValidationSchema = yupObject<
-  Omit<SingleFileFormValue, "__localId" | "resourceId">
->({
-  name: fileValidationParts.filename.required(messages.fieldIsRequired),
-  description: systemValidation.description.nullable(),
-  file: yup.mixed().required(messages.fieldIsRequired),
-  encoding: yup.string(),
-  mimetype: yup.string(),
+export const newFileValidationSchema = z.object({
+  name: fileValidationParts.filename,
+  description: systemValidation.description.nullable().optional(),
+  file: z.any(),
+  encoding: z.string().optional(),
+  mimetype: z.string().optional(),
+  resourceId: z.string().optional(),
+  __localId: z.string(),
+});
+
+export const fileFormValidationSchema = z.object({
+  files: z.array(newFileValidationSchema).min(1),
 });

@@ -1,4 +1,10 @@
-import { Select } from "antd";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select.tsx";
 import { first, uniq } from "lodash-es";
 import React, { useMemo } from "react";
 
@@ -59,17 +65,37 @@ const SummedUsageRecordListControls: React.FC<
   return (
     <div className="flex items-center space-x-2">
       <Select
-        value={year.toString()}
-        onChange={(value) => onChange(Number(value), first(monthList))}
         disabled={disabled}
-        options={yearOptions}
-      />
+        onValueChange={(value) => onChange(Number(value), first(monthList))}
+        defaultValue={year.toString()}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Year" />
+        </SelectTrigger>
+        <SelectContent>
+          {yearOptions.map((y) => (
+            <SelectItem key={y.value} value={y.value.toString()}>
+              {y.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <Select
         disabled={disabled}
-        value={monthLabels[month]?.toString()}
-        onChange={(value) => onChange(year, monthLabelsMap[value])}
-        options={monthOptions}
-      />
+        onValueChange={(value) => onChange(year, monthLabelsMap[value])}
+        defaultValue={monthLabels[month]?.toString()}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Year" />
+        </SelectTrigger>
+        <SelectContent>
+          {monthOptions.map((m) => (
+            <SelectItem key={m.value} value={m.value.toString()}>
+              {m.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };

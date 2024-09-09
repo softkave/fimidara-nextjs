@@ -6,13 +6,10 @@ import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
 import { useFetchArbitraryFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useInternalWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space } from "antd";
-import Text from "antd/es/typography/Text";
 import React from "react";
 
 const FimidaraWorkspaces: React.FC<{}> = (props) => {
@@ -30,16 +27,17 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
     content = (
       <ItemList
         items={data.workspaceList}
+        space="md"
         renderItem={(item) => {
           return (
             <ThumbnailContent
               key={item.resourceId}
               main={
-                <div className={appClasses.thumbnailMain} style={{ rowGap: 4 }}>
-                  <Text>{item.name}</Text>
-                  <Text type="secondary">
+                <div className="flex flex-col justify-center">
+                  <span>{item.name}</span>
+                  <span className="text-secondary">
                     Created {formatDateTime(item.createdAt)}
-                  </Text>
+                  </span>
                 </div>
               }
             />
@@ -52,10 +50,10 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
   }
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader label="Fimidara Workspaces" />
       <PaginatedContent content={content} />
-    </Space>
+    </div>
   );
 };
 

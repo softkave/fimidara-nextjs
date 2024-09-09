@@ -1,4 +1,4 @@
-import { compact, last } from "lodash-es";
+import { compact, flatten, last, uniq } from "lodash-es";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useAppMenu } from "../app/useAppMenu.tsx";
@@ -8,7 +8,6 @@ import {
   fimidaraAntdNavItems,
   fimidaraJsSdkAntdNavItems,
   fimidaraRestApiAntdNavItems,
-  kDocNavRootKeysList,
   kDocNavRootKeysMap,
 } from "./navItems";
 
@@ -19,27 +18,33 @@ export function DocsSideNav() {
 
   const { openKeys, selectedKeys } = useMemo(() => {
     const docPath = last(pathname?.split(DOCS_BASE_PATH));
-    const docKeys = compact(docPath?.split("/"));
-    const [rootKey, ...restKeys] = docKeys;
-    let openKeys = docKeys;
+    const openKeys = uniq(
+      flatten(
+        docPath
+          ?.split("/")
+          .filter((p) => !!p && p !== "v1")
+          .map((p) => p.split("__"))
+      )
+    )
+      .reduce((acc, p, i) => {
+        if (["get", "post", "delete", "head", "option"].includes(p)) {
+          acc[i - 1] = `${acc[i - 1]}__${p}`;
+        } else {
+          acc.push(p);
+        }
 
-    if (
-      rootKey === kDocNavRootKeysMap.restApi ||
-      rootKey === kDocNavRootKeysMap.jsSdk
-    ) {
-      const [version, endpointKey] = restKeys;
-      const parentKeys = endpointKey
-        .split("__")
-        .filter((p) => !(kDocNavRootKeysList as string[]).includes(p))
-        .slice(0, -2);
-      openKeys = [rootKey, ...parentKeys, endpointKey];
-    }
+        return acc;
+      }, [] as string[])
+      .reduce((acc, p, i) => {
+        if (acc.length && acc[0] !== kDocNavRootKeysMap.fimidara) {
+          acc.push(`${acc[i - 1]}__${p}`);
+        } else {
+          acc.push(p);
+        }
 
-    openKeys = openKeys.map((key, i) => {
-      if (i === 0) return key;
-      if (rootKey) return `${rootKey}_${key}`;
-      else return key;
-    });
+        return acc;
+      }, [] as string[]);
+
     const selectedKeys = compact([last(openKeys)]);
     return { openKeys, selectedKeys };
   }, [pathname]);

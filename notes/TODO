@@ -1,9 +1,34 @@
 # fimidara
 
+## Now
 - start script
 - integrate sentry
+- avatar and presigned URLs
+- bug in usage records
 
+## Bugs
+- toggle all should toggle all permission and untoggling one should untoggle all
+- deleted file not removed from list. check folder too
+- only text navigates not menu in sidenav, and other menus not navigated to get selected
+
+## Later
+- convert last of message to toast
+- convert last of antd to shadcn
+- prevent submit if error and data has not changed
+- group actions by resource type
+- search
+  - all resources
+  - permissions
+  - all list
+- prevent submit again mof change password after success
+- only show actions if user has permission
+- toggle allow showing password
+- hide agent token and toggle to see
+- error in assign permissions modal
+- copy in agent token and other info
 - message dark mode
+- add toast for long runnign tasks like delete so they can track and know it's not immediate
+- no separate folders/files loading and error
 - files and folders not refreshed after upload (testing in root)
 - link to go back to file or folder from form
   - open in drawer/sidebar
@@ -55,3 +80,4 @@
 - soft refresh data on first load page (remove clear fetch state in folder form also)
 - prevent mutation actions if user is not email verified
 - auto-scroll back to top of page on error to surface error
+- accessibility

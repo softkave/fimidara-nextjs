@@ -1,34 +1,32 @@
-import {
-  appAccountPaths,
-  appInternalPaths,
-  appRootPaths,
-} from "../definitions/system";
+import { kAppAccountPaths } from "../definitions/paths/account.ts";
+import { kAppInternalPaths } from "../definitions/paths/internal.ts";
+import { kAppRootPaths } from "../definitions/paths/root.ts";
 
 // Render WebHeader for these routes starting with these paths
 const webRoutes = [
-  appAccountPaths.signup,
-  appAccountPaths.login,
-  appAccountPaths.changePassword,
-  appAccountPaths.forgotPassword,
-  appAccountPaths.verifyEmail,
+  kAppAccountPaths.signup,
+  kAppAccountPaths.login,
+  kAppAccountPaths.changePassword,
+  kAppAccountPaths.forgotPassword,
+  kAppAccountPaths.verifyEmail,
 ];
-const noHeaderRoutes = [appInternalPaths.waitlist];
+const noHeaderRoutes = [kAppInternalPaths.waitlist];
 const routeToAppOnInitRoutes = [
   // appRootPaths.home,
-  appAccountPaths.signup,
-  appAccountPaths.login,
+  kAppAccountPaths.signup,
+  kAppAccountPaths.login,
 ];
 
 export function isWebPath(pathname: string) {
   return (
-    pathname === appRootPaths.home ||
+    pathname === kAppRootPaths.home ||
     webRoutes.some((r) => {
       return pathname.startsWith(r);
     })
   );
 }
 export function isInternalPath(pathname: string) {
-  return pathname.startsWith(`${appRootPaths.internal}/`);
+  return pathname.startsWith(`${kAppRootPaths.internal}/`);
 }
 export function isNoHeaderPath(pathname: string) {
   return noHeaderRoutes.some((r) => {
@@ -37,7 +35,7 @@ export function isNoHeaderPath(pathname: string) {
 }
 export function isRouteToAppOnInitPath(pathname: string) {
   return (
-    pathname === appRootPaths.home ||
+    pathname === kAppRootPaths.home ||
     routeToAppOnInitRoutes.some((r) => {
       return pathname.startsWith(r);
     })

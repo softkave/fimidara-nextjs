@@ -3,20 +3,17 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/fetchHooks/permissionGroup.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
-import { Space } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
 import assert from "assert";
 import { noop } from "lodash-es";
 import { useRouter } from "next/navigation";
-import React from "react";
 import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { useCallback } from "react";
 
 export interface PermissionGroupComponentProps {
   permissionGroupId: string;
@@ -31,15 +28,15 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
   const { isLoading, error, resource } =
     useFetchSingleResourceFetchState(fetchState);
 
-  const onCompleteDeletePermissionGroup = React.useCallback(async () => {
+  const onCompleteDeletePermissionGroup = useCallback(async () => {
     assert(resource, new Error("Permission group not found"));
-    router.push(appWorkspacePaths.collaboratorList(resource.workspaceId));
+    router.push(kAppWorkspacePaths.collaboratorList(resource.workspaceId));
   }, [router, resource]);
 
   if (resource) {
     return (
       <div>
-        <Space direction="vertical" size={32} style={{ width: "100%" }}>
+        <div className="space-y-8">
           <ComponentHeader title={resource.name}>
             <PermissionGroupMenu
               permissionGroup={resource}
@@ -65,21 +62,14 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
             <LabeledNode
               direction="vertical"
               label="Description"
-              node={
-                <Paragraph
-                  ellipsis={{ rows: 2 }}
-                  className={appClasses.muteMargin}
-                >
-                  {resource.description}
-                </Paragraph>
-              }
+              node={<p className="line-clamp-2">{resource.description}</p>}
             />
           )}
           <AssignedPermissionGroupList
             entityId={permissionGroupId}
             workspaceId={resource.workspaceId}
           />
-        </Space>
+        </div>
       </div>
     );
   } else if (error) {

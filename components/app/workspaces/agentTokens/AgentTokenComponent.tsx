@@ -1,13 +1,10 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
 import { AgentToken } from "fimidara";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { useCallback } from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import AgentTokenMenu from "./AgentTokenMenu";
 
@@ -22,11 +19,11 @@ export interface IAgentTokenProps {
 function AgentTokenComponent(props: IAgentTokenProps) {
   const { token: resource } = props;
   const router = useRouter();
-  const onCompeleteDeleteToken = React.useCallback(async () => {
+  const onCompeleteDeleteToken = useCallback(async () => {
     router.push(
       resource
-        ? appWorkspacePaths.agentTokenList(resource.workspaceId)
-        : appWorkspacePaths.workspaces
+        ? kAppWorkspacePaths.agentTokenList(resource.workspaceId)
+        : kAppWorkspacePaths.workspaces
     );
   }, [router, resource]);
 
@@ -34,72 +31,65 @@ function AgentTokenComponent(props: IAgentTokenProps) {
     resource.expiresAt && formatDateTime(resource.expiresAt);
 
   return (
-    <div>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
-        <ComponentHeader title={resource.name || resource.resourceId}>
-          <AgentTokenMenu
-            token={resource}
-            onCompleteDelete={onCompeleteDeleteToken}
-          />
-        </ComponentHeader>
+    <div className="space-y-8">
+      <ComponentHeader title={resource.name || resource.resourceId}>
+        <AgentTokenMenu
+          token={resource}
+          onCompleteDelete={onCompeleteDeleteToken}
+        />
+      </ComponentHeader>
+      <LabeledNode
+        nodeIsText
+        copyable
+        code
+        direction="vertical"
+        label="Resource ID"
+        node={resource.resourceId}
+      />
+      {resource.providedResourceId && (
         <LabeledNode
           nodeIsText
           copyable
           code
           direction="vertical"
-          label="Resource ID"
-          node={resource.resourceId}
+          label="Provided Resource ID"
+          node={resource.providedResourceId}
         />
-        {resource.providedResourceId && (
-          <LabeledNode
-            nodeIsText
-            copyable
-            code
-            direction="vertical"
-            label="Provided Resource ID"
-            node={resource.providedResourceId}
-          />
-        )}
-        <LabeledNode
-          nodeIsText
-          copyable
-          direction="vertical"
-          label="JWT Token"
-          node={resource.tokenStr}
-        />
-        {expirationDate && (
-          <LabeledNode
-            nodeIsText
-            direction="vertical"
-            label="Token Expires"
-            node={expirationDate}
-          />
-        )}
+      )}
+      <LabeledNode
+        nodeIsText
+        copyable
+        direction="vertical"
+        label="JWT Token"
+        node={
+          <span style={{ overflowWrap: "anywhere" }}>{resource.tokenStr}</span>
+        }
+      />
+      {expirationDate && (
         <LabeledNode
           nodeIsText
           direction="vertical"
-          label="Last Updated"
-          node={formatDateTime(resource.lastUpdatedAt)}
+          label="Token Expires"
+          node={expirationDate}
         />
-        {resource.description && (
-          <LabeledNode
-            direction="vertical"
-            label="Description"
-            node={
-              <Paragraph
-                ellipsis={{ rows: 2 }}
-                className={appClasses.muteMargin}
-              >
-                {resource.description}
-              </Paragraph>
-            }
-          />
-        )}
-        <AssignedPermissionGroupList
-          entityId={resource.resourceId}
-          workspaceId={resource.workspaceId}
+      )}
+      <LabeledNode
+        nodeIsText
+        direction="vertical"
+        label="Last Updated"
+        node={formatDateTime(resource.lastUpdatedAt)}
+      />
+      {resource.description && (
+        <LabeledNode
+          direction="vertical"
+          label="Description"
+          node={<p className="line-clamp-2">{resource.description}</p>}
         />
-      </Space>
+      )}
+      <AssignedPermissionGroupList
+        entityId={resource.resourceId}
+        workspaceId={resource.workspaceId}
+      />
     </div>
   );
 }

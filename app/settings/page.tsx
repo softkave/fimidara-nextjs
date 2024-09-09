@@ -6,22 +6,25 @@ import UploadUserAvatar from "@/components/app/user/UploadUserAvatar.tsx";
 import UserContainer from "@/components/app/user/UserContainer.tsx";
 import UserProfile from "@/components/app/user/UserProfile.tsx";
 import { usePageAuthRequired } from "@/components/hooks/usePageAuthRequired.tsx";
-import { Divider, Space } from "antd";
+import { Separator } from "@/components/ui/separator.tsx";
 
 function UserSettings() {
   return usePageAuthRequired({
     render: () => (
       <UserContainer
         render={(session) => (
-          <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+          <div className="space-y-8">
             <UploadUserAvatar />
-            <Divider orientation="left">Email Verification</Divider>
+            <Separator />
+            <h4>Email Verification</h4>
             <EmailVerification session={session} />
-            <Divider orientation="left">Profile</Divider>
+            <Separator />
+            <h4>Profile</h4>
             <UserProfile session={session} />
-            <Divider orientation="left">Password</Divider>
+            <Separator />
+            <h4>Password</h4>
             <ChangePasswordWithCurrentPassword />
-          </Space>
+          </div>
         )}
       />
     ),

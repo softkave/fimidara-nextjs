@@ -1,18 +1,12 @@
 "use client";
 
-import { useRequest } from "ahooks";
-import type {
-  Result,
-  Options as UseRequestOptions,
-} from "ahooks/lib/useRequest/src/types";
-import { FimidaraEndpointResult, LoginResult } from "fimidara";
-import { compact, isEqual, over, uniq } from "lodash-es";
+import type { Result } from "ahooks/lib/useRequest/src/types";
+import { isEqual, uniq } from "lodash-es";
 import React from "react";
 import {
   getPrivateFimidaraEndpointsUsingUserToken,
   getPublicFimidaraEndpointsUsingUserToken,
 } from "../api/fimidaraEndpoints";
-import UserSessionStorageFns from "../storage/userSession";
 import { AnyFn } from "../utils/types";
 import {
   useResolveEntityPermissionsFetchStore,
@@ -24,7 +18,6 @@ import {
   useWorkspacePermissionGroupsFetchStore,
 } from "./fetchHooks";
 import { FetchResourceZustandStore } from "./fetchHooks/makeFetchResourceStoreHook.ts";
-import { useUserSessionFetchStore } from "./fetchStores/session.ts";
 import { ResourceZustandStore } from "./makeResourceListStore";
 import {
   getCollaboratorStoreKey,
@@ -40,75 +33,15 @@ import {
   useWorkspaceUsageRecordsStore,
   useWorkspacesStore,
 } from "./resourceListStores";
-import { useHandleServerRecommendedActions } from "./useHandleServerRecommendedActions";
-
-type GetEndpointFn<TEndpoints, TFn> = TFn extends AnyFn<
-  [TEndpoints],
-  infer TEndpointFn
->
-  ? TEndpointFn
-  : never;
-
-function makeEndpointMutationHook<
-  TEndpoints,
-  TFn extends AnyFn<[TEndpoints], AnyFn>,
-  TData = Awaited<ReturnType<GetEndpointFn<TEndpoints, TFn>>>,
-  TParams extends any[] = Parameters<GetEndpointFn<TEndpoints, TFn>>
->(
-  getEndpoints: AnyFn<[], TEndpoints>,
-  getFn: TFn,
-  baseOnSuccess?: AnyFn<[TData, TParams]>,
-  baseOnError?: AnyFn<[Error, TParams]>
-) {
-  return function (requestOptions?: UseRequestOptions<TData, TParams>) {
-    const { handleServerRecommendedActions } =
-      useHandleServerRecommendedActions();
-    const mutationFn = React.useCallback(
-      async (...data: TParams): Promise<TData> => {
-        const endpoints = getEndpoints();
-        const fn = getFn(endpoints);
-        // TODO: error seems to be leaking, try delete file
-        const result = await fn(...data);
-        return result;
-      },
-      []
-    );
-    const onSuccessFn = (data: TData, params: TParams) => {
-      const fn = over(compact([baseOnSuccess, requestOptions?.onSuccess]));
-      fn(data, params);
-    };
-    const onErrorFn = (e: Error, params: TParams) => {
-      const fn = over(
-        compact([
-          baseOnError,
-          requestOptions?.onError,
-          handleServerRecommendedActions,
-        ])
-      );
-      fn(e, params);
-    };
-
-    const request = useRequest(mutationFn, {
-      manual: true,
-      ...requestOptions,
-      onSuccess: onSuccessFn,
-      onError: onErrorFn,
-    });
-
-    return request;
-  };
-}
+import { makeEndpointMutationHook } from "./mutationHooks/makeEndpointMutationHook.ts";
+import { updateUserSessionWhenResultIsLoginResult } from "./mutationHooks/updateUserSessionWhenResultIsLoginResult.ts";
 
 export const useUserSignupMutationHook = makeEndpointMutationHook(
   getPrivateFimidaraEndpointsUsingUserToken,
   (endpoints) => endpoints.users.signup,
   updateUserSessionWhenResultIsLoginResult
 );
-export const useUserLoginMutationHook = makeEndpointMutationHook(
-  getPrivateFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.users.login,
-  updateUserSessionWhenResultIsLoginResult
-);
+
 export const useUserForgotPasswordMutationHook = makeEndpointMutationHook(
   getPrivateFimidaraEndpointsUsingUserToken,
   (endpoints) => endpoints.users.forgotPassword
@@ -497,54 +430,6 @@ function insertInFetchStoreAddMutationFn<
       /** initialize */ false
     );
   }
-}
-
-function updateUserSessionWhenResultIsLoginResult(
-  result: FimidaraEndpointResult<LoginResult>
-) {
-  const { user, clientAssignedToken, token } = result.body;
-
-  // Persist user token to local storage if it's already there. If it's there,
-  // it means during the user's last login, the user opted-in to "remember me".
-  if (UserSessionStorageFns.getUserToken()) {
-    UserSessionStorageFns.saveUserToken(token);
-    UserSessionStorageFns.saveClientAssignedToken(clientAssignedToken);
-  }
-
-  const states = [...useUserSessionFetchStore.getState().states];
-  useUsersStore.getState().set(user.resourceId, user);
-
-  if (states[0]) {
-    const [params] = states[0];
-    states[0] = [
-      params,
-      {
-        error: undefined,
-        loading: false,
-        data: {
-          id: user.resourceId,
-          other: { clientToken: clientAssignedToken, userToken: token },
-        },
-      },
-    ];
-  } else {
-    states.push([
-      // anything is allowed really because `useUserSessionFetchStore`'s
-      // `comparisonFn` returns true always making there be only one session in
-      // store.
-      {},
-      {
-        loading: false,
-        error: undefined,
-        data: {
-          id: user.resourceId,
-          other: { clientToken: clientAssignedToken, userToken: token },
-        },
-      },
-    ]);
-  }
-
-  useUserSessionFetchStore.setState({ states });
 }
 
 function deleteFolderChildren(folderId: string) {

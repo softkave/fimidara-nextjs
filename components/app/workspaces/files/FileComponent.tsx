@@ -1,16 +1,13 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import BackButton from "@/components/utils/buttons/BackButton";
-import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
 import { File } from "fimidara";
 import { useRouter } from "next/navigation";
 import FileMenu from "./FileMenu";
 import FolderParentLink from "./FolderParentLink";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 export interface FileComponentProps {
   file: File;
@@ -24,7 +21,7 @@ function FileComponent(props: FileComponentProps) {
 
   return (
     <div>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+      <div className="space-y-8">
         <ComponentHeader
           title={file.name + extension}
           prefixNode={
@@ -39,8 +36,8 @@ function FileComponent(props: FileComponentProps) {
             onScheduleDeleteSuccess={() => {
               router.push(
                 file.parentId
-                  ? appWorkspacePaths.folder(file.workspaceId, file.parentId)
-                  : appWorkspacePaths.folderList(file.workspaceId)
+                  ? kAppWorkspacePaths.folder(file.workspaceId, file.parentId)
+                  : kAppWorkspacePaths.folderList(file.workspaceId)
               );
             }}
           />
@@ -74,17 +71,10 @@ function FileComponent(props: FileComponentProps) {
           <LabeledNode
             direction="vertical"
             label="Description"
-            node={
-              <Paragraph
-                ellipsis={{ rows: 2 }}
-                className={appClasses.muteMargin}
-              >
-                {file.description}
-              </Paragraph>
-            }
+            node={<p className="line-clamp-2">{file.description}</p>}
           />
         )}
-      </Space>
+      </div>
     </div>
   );
 }

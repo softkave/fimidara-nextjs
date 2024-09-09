@@ -4,27 +4,23 @@ import ItemList from "@/components/utils/list/ItemList";
 import AppIcon from "@/components/utils/page/AppIcon";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
-import Text from "antd/es/typography/Text";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Folder } from "fimidara";
 import { noop } from "lodash-es";
+import { FolderIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import { FiFolder } from "react-icons/fi";
 import FolderMenu from "./FolderMenu";
+import { ReactNode, FC, useCallback } from "react";
 
 export interface FolderListProps {
   folders: Folder[];
   workspaceRootname: string;
-  renderFolderItem?: (
-    item: Folder,
-    workspaceRootname: string
-  ) => React.ReactNode;
+  renderFolderItem?: (item: Folder, workspaceRootname: string) => ReactNode;
 }
 
-const FolderList: React.FC<FolderListProps> = (props) => {
+const FolderList: FC<FolderListProps> = (props) => {
   const { folders, workspaceRootname, renderFolderItem } = props;
-  const internalRenderItem = React.useCallback(
+  const internalRenderItem = useCallback(
     (item: Folder) => {
       if (renderFolderItem) {
         return renderFolderItem(item, workspaceRootname);
@@ -34,9 +30,9 @@ const FolderList: React.FC<FolderListProps> = (props) => {
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div className={appClasses.thumbnailMain}>
+            <div className="flex flex-col justify-center">
               <Link
-                href={appWorkspacePaths.folder(
+                href={kAppWorkspacePaths.folder(
                   item.workspaceId,
                   item.resourceId
                 )}
@@ -44,24 +40,27 @@ const FolderList: React.FC<FolderListProps> = (props) => {
                 {item.name}
               </Link>
               {item.description && (
-                <Text type="secondary">{item.description}</Text>
+                <span className="text-secondary">{item.description}</span>
               )}
             </div>
           }
           menu={
-            <FolderMenu
-              key="menu"
-              folder={item}
-              workspaceRootname={workspaceRootname}
-              onScheduleDeleteSuccess={noop}
-            />
+            <div className="flex flex-col justify-center h-full">
+              <FolderMenu
+                folder={item}
+                workspaceRootname={workspaceRootname}
+                onScheduleDeleteSuccess={noop}
+              />
+            </div>
           }
           prefixNode={
-            <AppIcon
-              icon={<FiFolder />}
-              className={appClasses.alignStart}
-              style={{ marginTop: "1px" }}
-            />
+            <div className="flex flex-col justify-center">
+              <AppIcon
+                icon={<FolderIcon className="w-4 h-4" />}
+                className={appClasses.alignStart}
+                style={{ marginTop: "1px" }}
+              />
+            </div>
           }
         />
       );
@@ -76,6 +75,7 @@ const FolderList: React.FC<FolderListProps> = (props) => {
       renderItem={internalRenderItem}
       getId={(item: Folder) => item.resourceId}
       emptyMessage="No folders yet"
+      space="sm"
     />
   );
 };

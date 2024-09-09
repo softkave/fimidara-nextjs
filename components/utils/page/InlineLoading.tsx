@@ -1,6 +1,5 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { css } from "@emotion/css";
-import { Alert, Space } from "antd";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
+import { LoaderCircle } from "lucide-react";
 import React from "react";
 import { StyleableComponentProps } from "../styling/types";
 
@@ -8,26 +7,15 @@ export interface IInlineLoadingProps extends StyleableComponentProps {
   messageText?: string;
 }
 
-const classes = {
-  spinner: css({
-    fontSize: "18px",
-  }),
-};
-
 const InlineLoading: React.FC<IInlineLoadingProps> = (props) => {
   const { messageText, className, style } = props;
+
   return (
-    <Alert
-      type="warning"
-      message={
-        <Space>
-          <LoadingOutlined className={classes.spinner} />{" "}
-          {messageText || "Loading..."}
-        </Space>
-      }
-      className={className}
-      style={style}
-    />
+    <Alert variant="destructive" className={className} style={style}>
+      <LoaderCircle className="h-4 w-4" />
+      <AlertTitle>Heads up!</AlertTitle>
+      <AlertDescription>{messageText || "Loading..."}</AlertDescription>
+    </Alert>
   );
 };
 

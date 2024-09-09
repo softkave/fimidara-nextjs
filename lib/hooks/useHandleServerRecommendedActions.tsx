@@ -1,29 +1,22 @@
 "use client";
 
-import { message, notification } from "antd";
+import { useToast } from "@/hooks/use-toast.ts";
 import { usePathname } from "next/navigation";
 import { isFimidaraEndpointError } from "../api/localUtils";
-import { appAccountPaths } from "../definitions/system";
-import { AnyFn } from "../utils/types";
 import { useRequestLogout } from "./session/useRequestLogout.ts";
+import { kAppAccountPaths } from "../definitions/paths/account.ts";
 
-const kTimeout = 3000; // 3 seconds
-const kMessageDuration = 10; // seconds
+const kTimeout = 3_000; // 3 seconds
+const kMessageDuration = 10_000; // seconds
 
 export function useHandleRequiresPasswordChange() {
+  const { toast } = useToast();
   const { requestLogout } = useRequestLogout();
 
   const handleRequiresPasswordChange = () => {
-    const closeMessageFn: AnyFn = message.loading({
-      type: "loading",
-      content: "An error occurred, logging you out...",
-      duration: 0,
-    });
-
     setTimeout(() => {
-      closeMessageFn();
-      notification.error({
-        message: "Logged Out",
+      toast({
+        title: "Logged Out",
         description:
           "An error occurred involving your session. " +
           "Because your account requires a password change, " +
@@ -31,7 +24,7 @@ export function useHandleRequiresPasswordChange() {
           "Please change your password to continue, thank you",
         duration: kMessageDuration,
       });
-      requestLogout(appAccountPaths.forgotPassword);
+      requestLogout(kAppAccountPaths.forgotPassword);
     }, kTimeout);
   };
 
@@ -39,31 +32,19 @@ export function useHandleRequiresPasswordChange() {
 }
 
 export function useHandleLoginAgain() {
+  const { toast } = useToast();
   const { requestLogout } = useRequestLogout();
   const pathname = usePathname();
 
   const handleLoginAgain = () => {
-    let closeMessageFn: AnyFn = message.loading({
-      type: "loading",
-      content: "An error occurred, logging you out...",
-      duration: 0,
-    });
-
     setTimeout(() => {
-      closeMessageFn();
-
-      /**
-       * TODO:
-       * Warning: [antd: message] Static function can not consume context like
-       * dynamic theme. Please use 'App' component instead.
-       */
-      notification.error({
-        message: "Logged Out",
+      toast({
+        title: "Logged Out",
         description:
           "An error occurred involving your session, please login again, thank you",
         duration: kMessageDuration,
       });
-      requestLogout(appAccountPaths.loginWithReturnPath(pathname));
+      requestLogout(kAppAccountPaths.loginWithReturnPath(pathname));
     }, kTimeout);
   };
 

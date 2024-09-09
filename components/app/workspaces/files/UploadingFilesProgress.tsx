@@ -1,17 +1,16 @@
 import { TransferProgressList } from "@/components/utils/TransferProgress";
-import IconButton from "@/components/utils/buttons/IconButton";
+import IconButton from "@/components/utils/buttons/IconButton.tsx";
 import PageDrawer from "@/components/utils/page/PageDrawer";
-import { useKvStore, KeyValueKeys } from "@/lib/hooks/kvStore.ts";
+import { KeyValueKeys, useKvStore } from "@/lib/hooks/kvStore.ts";
 import { useToggle } from "ahooks";
-import { Badge } from "antd";
 import { FimidaraEndpointProgressEvent } from "fimidara";
 import { map } from "lodash-es";
-import React from "react";
+import { FC, Fragment } from "react";
 import { FiDownload } from "react-icons/fi";
 
 export interface UploadingFilesProgressButtonProps {}
 
-export const UploadingFilesProgressButton: React.FC<
+export const UploadingFilesProgressButton: FC<
   UploadingFilesProgressButtonProps
 > = (props) => {
   const { progressKeys } = useTransferProgressKeys();
@@ -25,18 +24,21 @@ export const UploadingFilesProgressButton: React.FC<
   });
 
   return (
-    <React.Fragment>
+    <Fragment>
       {showList && (
         <UploadingFilesProgressDrawer onClose={() => showListHook.toggle()} />
       )}
-      <Badge count={pendingTransfers.length} color="blue">
-        <IconButton
-          icon={<FiDownload />}
-          title={`Uploading files progress...`}
-          onClick={() => showListHook.toggle()}
-        />
-      </Badge>
-    </React.Fragment>
+      <IconButton
+        icon={<FiDownload />}
+        title={`Uploading files progress...`}
+        onClick={() => showListHook.toggle()}
+        className="min-w-12 w-fit px-2"
+      >
+        <span className="inline-block ml-2 text-secondary">
+          {pendingTransfers.length}
+        </span>
+      </IconButton>
+    </Fragment>
   );
 };
 
@@ -44,18 +46,13 @@ export interface UploadingFilesProgressDrawerProps {
   onClose: () => void;
 }
 
-export const UploadingFilesProgressDrawer: React.FC<
+export const UploadingFilesProgressDrawer: FC<
   UploadingFilesProgressDrawerProps
 > = (props) => {
   const { onClose } = props;
   const { progressKeys } = useTransferProgressKeys();
   return (
-    <PageDrawer
-      open
-      closable
-      title="Uploading files progress"
-      onClose={onClose}
-    >
+    <PageDrawer open title="Uploading files progress" onClose={onClose}>
       <TransferProgressList progressKeys={progressKeys} />
     </PageDrawer>
   );

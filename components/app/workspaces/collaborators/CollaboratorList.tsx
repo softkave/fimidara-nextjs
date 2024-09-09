@@ -2,48 +2,47 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
-import Text from "antd/es/typography/Text";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Collaborator } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
+import { FC, ReactNode, useCallback } from "react";
 import CollaboratorMenu from "./CollaboratorMenu";
 
 export interface CollaboratorListProps {
   workspaceId: string;
   collaborators: Collaborator[];
-  renderItem?: (item: Collaborator) => React.ReactNode;
+  renderItem?: (item: Collaborator) => ReactNode;
 }
 
-const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
+const CollaboratorList: FC<CollaboratorListProps> = (props) => {
   const { workspaceId, collaborators, renderItem } = props;
 
-  const internalRenderItem = React.useCallback(
+  const internalRenderItem = useCallback(
     (item: Collaborator) => (
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div className={appClasses.thumbnailMain}>
+          <div className="flex flex-col justify-center">
             <Link
-              href={appWorkspacePaths.collaborator(
+              href={kAppWorkspacePaths.collaborator(
                 workspaceId,
                 item.resourceId
               )}
             >
               {item.firstName + " " + item.lastName}
             </Link>
-            {item.email && <Text type="secondary">{item.email}</Text>}
+            {item.email && <span className="text-secondary">{item.email}</span>}
           </div>
         }
         menu={
-          <CollaboratorMenu
-            key="menu"
-            collaborator={item}
-            workspaceId={workspaceId}
-            onCompleteRemove={noop}
-          />
+          <div className="flex flex-col justify-center h-full">
+            <CollaboratorMenu
+              collaborator={item}
+              workspaceId={workspaceId}
+              onCompleteRemove={noop}
+            />
+          </div>
         }
       />
     ),
@@ -57,6 +56,7 @@ const CollaboratorList: React.FC<CollaboratorListProps> = (props) => {
       renderItem={renderItem || internalRenderItem}
       getId={(item: Collaborator) => item.resourceId}
       emptyMessage="No collaborators yet"
+      space="md"
     />
   );
 };

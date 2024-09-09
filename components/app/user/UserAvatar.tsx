@@ -10,7 +10,7 @@ export interface IUserAvatarProps {
 export default function UserAvatar(props: IUserAvatarProps) {
   return (
     <AppAvatar
-      icon={<UserOutlined />}
+      fallback={<UserOutlined />}
       filepath={
         props.userId
           ? systemConstants.userImagesFolder + "/" + props.userId

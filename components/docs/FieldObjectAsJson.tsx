@@ -1,10 +1,7 @@
-import { css, cx } from "@emotion/css";
-import { Space } from "antd";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
+import { css } from "@emotion/css";
 import { forEach, map } from "lodash-es";
 import React from "react";
-import { appClasses } from "../utils/theme";
+import { cn } from "../utils.ts";
 import { htmlCharacterCodes } from "../utils/utils";
 import FieldDescription from "./FieldDescription";
 import { useContainedFieldObjects } from "./hooks";
@@ -39,17 +36,13 @@ const classes = {
   }),
   jsonContent: css({
     padding: "16px",
-    backgroundColor: "var(--border-hex)",
     borderRadius: "4px",
     fontFamily: `var(--font-code), monospace !important`,
 
     "& *": {
-      fontSize: "13px !important",
       fontFamily: `var(--font-code), monospace !important`,
-      fontWeight: "500 !important",
     },
   }),
-  title: css({ fontSize: "14px !important" }),
 };
 
 const FieldObjectAsJson: React.FC<FieldObjectAsJsonProps> = (props) => {
@@ -105,7 +98,12 @@ export function renderJsonFieldType(
     );
   } else if (isFieldObject(data)) {
     return data.name ? (
-      <a href={`#${getTypeNameID(data.name)}`}>{data.name}</a>
+      <a
+        href={`#${getTypeNameID(data.name)}`}
+        className="underline decoration-sky-500"
+      >
+        {data.name}
+      </a>
     ) : null;
   } else if (isFieldOrCombination(data)) {
     if (!data.types) return "";
@@ -119,24 +117,34 @@ export function renderJsonFieldType(
     if (isForJsSdk)
       return (
         <span>
-          <Text code={!isForJsSdk}>string</Text> |{" "}
-          <a href="https://nodejs.org/api/stream.html#class-streamreadable">
-            <Text code={!isForJsSdk} style={{ color: "inherit" }}>
-              Readable
-            </Text>
+          {isForJsSdk ? <span>string</span> : <code>string</code>}|{" "}
+          <a
+            href="https://nodejs.org/api/stream.html#class-streamreadable"
+            className="underline decoration-sky-500"
+          >
+            {isForJsSdk ? <span>Readable</span> : <code>Readable</code>}|{" "}
           </a>{" "}
           |{" "}
-          <a href="https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream">
-            <Text code={!isForJsSdk} style={{ color: "inherit" }}>
-              ReadableStream
-            </Text>
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream"
+            className="underline decoration-sky-500"
+          >
+            {isForJsSdk ? (
+              <span>ReadableStream</span>
+            ) : (
+              <code>ReadableStream</code>
+            )}
           </a>
         </span>
       );
     return "binary";
   } else if (isFieldCustomType(data)) {
     if (data.descriptionLink) {
-      return <a href={data.descriptionLink}>{data.name}</a>;
+      return (
+        <a href={data.descriptionLink} className="underline decoration-sky-500">
+          {data.name}
+        </a>
+      );
     } else {
       return data.name;
     }
@@ -165,25 +173,25 @@ function renderFieldObjectAsJson(
 
   return (
     <div className={classes.jsonRoot} key={key}>
-      <Space split={htmlCharacterCodes.doubleDash}>
-        {propName && <Text code>{propName}</Text>}
+      <div className="space-x-2 flex">
+        {propName && <code>{propName}</code>}
         {nextObject.name && (
-          <Title
-            id={getTypeNameID(nextObject.name)}
-            level={5}
-            className={cx(classes.title, appClasses.muteMargin)}
-          >
-            {nextObject.name}
-          </Title>
+          <h5 id={getTypeNameID(nextObject.name)}>{nextObject.name}</h5>
         )}
         {nextObject.required ? (
-          <Text code>Required</Text>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <code>Required</code>
+          </>
         ) : (
-          <Text code>Optional</Text>
+          <>
+            <span>{htmlCharacterCodes.doubleDash}</span>
+            <code>Optional</code>
+          </>
         )}
-      </Space>
+      </div>
       <FieldDescription fieldbase={nextObject} type="secondary" />
-      <div className={classes.jsonContent}>
+      <div className={cn(classes.jsonContent, "bg-gray-100 w-full mt-4")}>
         &#123;
         {rows}
         &#125;

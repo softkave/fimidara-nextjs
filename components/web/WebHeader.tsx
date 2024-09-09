@@ -1,67 +1,93 @@
-import { Dropdown, MenuProps, Space } from "antd";
-import Title from "antd/es/typography/Title";
+import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
-import { BsThreeDots } from "react-icons/bs";
-import { appAccountPaths, appRootPaths } from "../../lib/definitions/system";
+import { useAppMenu } from "../app/useAppMenu.tsx";
+import { DropdownItems } from "../ui/dropdown-items.tsx";
 import { cn } from "../utils.ts";
 import IconButton from "../utils/buttons/IconButton";
-import { appClasses } from "../utils/theme";
 import { insertAntdMenuDivider } from "../utils/utils";
 import styles from "./WebHeader.module.css";
+import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
+import { CSSProperties, FC, ReactNode } from "react";
 
 export interface IWebHeaderProps {
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
-const WebHeader: React.FC<IWebHeaderProps> = (props) => {
+const WebHeader: FC<IWebHeaderProps> = (props) => {
   const { className, style } = props;
   const pathname = usePathname();
+  const { isOpen, toggleAppMenu } = useAppMenu();
 
-  let sideLinksNode: React.ReactNode = null;
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  let sideLinksNode: ReactNode = null;
+  const items = insertAntdMenuDivider([
     {
-      key: appAccountPaths.signup,
-      label: <Link href={appAccountPaths.signup}>Signup</Link>,
+      key: kAppAccountPaths.signup,
+      label: (
+        <Link href={kAppAccountPaths.signup} className="w-full inline-block">
+          Signup
+        </Link>
+      ),
     },
     {
-      key: appAccountPaths.login,
-      label: <Link href={appAccountPaths.login}>Login</Link>,
+      key: kAppAccountPaths.login,
+      label: (
+        <Link href={kAppAccountPaths.login} className="w-full inline-block">
+          Login
+        </Link>
+      ),
     },
     {
-      key: appAccountPaths.forgotPassword,
-      label: <Link href={appAccountPaths.forgotPassword}>Forgot Password</Link>,
+      key: kAppAccountPaths.forgotPassword,
+      label: (
+        <Link
+          href={kAppAccountPaths.forgotPassword}
+          className="w-full inline-block"
+        >
+          Forgot Password
+        </Link>
+      ),
     },
     {
-      key: appRootPaths.docs,
-      label: <Link href={appRootPaths.docs}>Docs</Link>,
+      key: kAppRootPaths.docs,
+      label: (
+        <Link href={kAppRootPaths.docs} className="w-full inline-block">
+          Docs
+        </Link>
+      ),
     },
   ]);
 
   sideLinksNode = (
-    <Space size={"middle"}>
-      <Link href={appAccountPaths.login} className={styles.login}>
+    <div className="space-x-4 flex items-center">
+      <Link
+        href={kAppAccountPaths.login}
+        className="underline decoration-sky-500"
+      >
         Login
       </Link>
-      <Dropdown trigger={["click"]} menu={{ items }} placement="bottomRight">
-        <IconButton icon={<BsThreeDots />} className={appClasses.iconBtn} />
-      </Dropdown>
-    </Space>
+      <DropdownItems items={items}>
+        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      </DropdownItems>
+    </div>
   );
 
-  const isDocs = pathname.startsWith(appRootPaths.docs);
+  const isDocs = pathname.startsWith(kAppRootPaths.docs);
   return (
-    <div className={cn(styles.root, className)} style={style}>
+    <div className={cn(styles.root, "space-x-4", className)} style={style}>
+      {isDocs && !isOpen && (
+        <IconButton
+          icon={isOpen ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
+          onClick={toggleAppMenu}
+        />
+      )}
       <div style={{ display: "flex", alignItems: "center" }}>
-        <Link href={appRootPaths.home}>
-          <Title level={5} style={{ margin: 0, cursor: "pointer" }}>
-            <Link href={isDocs ? appRootPaths.docs : appRootPaths.home}>
-              {isDocs ? "fimidara docs" : "fimidara"}
-            </Link>
-          </Title>
-        </Link>
+        <h5 className="text-xl underline decoration-sky-500">
+          {isDocs ? null : <Link href={kAppRootPaths.home}>fimidara</Link>}
+        </h5>
       </div>
       <div className={styles.sideLinks}>{sideLinksNode}</div>
     </div>

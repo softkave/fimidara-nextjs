@@ -1,41 +1,26 @@
+import { Button } from "@/components/ui/button.tsx";
 import { cn } from "@/components/utils.ts";
 import { AppError } from "@/lib/utils/errors";
-import { css } from "@emotion/css";
-import { Button, ButtonProps } from "antd";
-import Text, { TextProps } from "antd/es/typography/Text";
 import isString from "lodash-es/isString";
-import React from "react";
+import React, { ComponentProps } from "react";
 import { StyleableComponentProps } from "../styling/types";
+import { ITextProps, Text } from "../text.tsx";
 import EmptyMessage, { IEmptyMessageProps } from "./EmptyMessage";
 
-export type IPageMessageAction = ButtonProps;
+export type IPageMessageAction = ComponentProps<typeof Button>;
 
 export interface IPageMessageProps
   extends IEmptyMessageProps,
     StyleableComponentProps {
-  type?: TextProps["type"];
-  message: Pick<AppError, "message"> | React.ReactNode;
-  /** Don't wrap in EmptyMessage which renders a large icon and a message */
-  showMessageOnly?: boolean;
+  type?: ITextProps["type"];
+  message?: Pick<AppError, "message"> | React.ReactNode;
   actions?: Array<IPageMessageAction | React.ReactElement>;
+  title?: React.ReactNode;
 }
 
 export interface PageMessageActionsProps extends StyleableComponentProps {
   actions: IPageMessageProps["actions"];
 }
-
-const classes = {
-  root: css({
-    backgroundColor: "var(--background-hex)",
-    borderRadius: "4px",
-    padding: "32px",
-  }),
-  rootMessageOnly: css({
-    backgroundColor: "var(--background-hex)",
-    borderRadius: "4px",
-    padding: "16px",
-  }),
-};
 
 const isPageAction = (
   action: Required<IPageMessageProps>["actions"][0]
@@ -52,7 +37,7 @@ export const PageMessageActions: React.FC<PageMessageActionsProps> = (
     <div style={style} className={cn("space-x-2", className)}>
       {actions?.map((action, i) => {
         if (isPageAction(action)) {
-          return <Button key={i} {...action} />;
+          return <Button key={i} {...action} type="button" />;
         } else {
           return action;
         }
@@ -70,15 +55,7 @@ function isError(message: any): message is Pick<AppError, "message"> {
 }
 
 const PageMessage: React.FC<IPageMessageProps> = (props) => {
-  const {
-    message,
-    children,
-    showMessageOnly,
-    type,
-    actions,
-    style,
-    className,
-  } = props;
+  const { message, children, type, actions, className } = props;
 
   let messageNode: React.ReactNode = null;
 
@@ -91,32 +68,19 @@ const PageMessage: React.FC<IPageMessageProps> = (props) => {
   }
 
   if (isString(messageNode)) {
-    messageNode = <Text type={type || "secondary"}>{messageNode}</Text>;
-  }
-
-  if (showMessageOnly) {
-    return (
-      <div
-        style={style}
-        className={cn(classes.rootMessageOnly, "space-y-4", className)}
-      >
-        {messageNode}
-        <PageMessageActions actions={actions} />
-        {children}
-      </div>
-    );
+    messageNode = <Text type={type}>{messageNode}</Text>;
   }
 
   return (
     <EmptyMessage
       {...props}
       className={cn(
-        classes.root,
         "space-y-4",
         "flex",
         "flex-col",
         "justify-center",
         "h-full",
+        "py-8",
         className
       )}
     >

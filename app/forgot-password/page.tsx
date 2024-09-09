@@ -1,16 +1,24 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError.tsx";
-import { preSubmitCheck } from "@/components/utils/form/formUtils";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { appComponentConstants } from "@/components/utils/utils.ts";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useUserForgotPasswordMutationHook } from "@/lib/hooks/mutationHooks.ts";
-import useFormHelpers from "@/lib/hooks/useFormHelpers.ts";
-import { css } from "@emotion/css";
-import { Button, Form, Input, notification } from "antd";
-import Title from "antd/es/typography/Title";
-import * as yup from "yup";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 export interface IForgotPasswordFormData {
   email: string;
@@ -22,83 +30,66 @@ interface IForgotPasswordFormInternalData extends IForgotPasswordFormData {
 
 export interface IForgotPasswordProps {}
 
-const validationSchema = yup.object().shape({
-  email: yup.string().email().required(),
+const formSchema = z.object({
+  email: z.string().email(),
 });
 
-const initialValues: IForgotPasswordFormInternalData = {
-  email: "",
-  // confirmEmail: "",
-};
-
 export default function ForgotPassword(props: IForgotPasswordProps) {
+  const { toast } = useToast();
   const forgotHook = useUserForgotPasswordMutationHook({
     onSuccess(data, params) {
-      notification.success({
-        type: "success",
-        message: `You should see a change password email soon at ${params[0].body.email}`,
+      toast({
+        title: `You should see a change password email soon at ${params[0].body.email}`,
         duration: appComponentConstants.messageDuration,
       });
     },
   });
-  const { formik } = useFormHelpers({
-    errors: forgotHook.error,
-    formikProps: {
-      validationSchema,
-      initialValues,
-      onSubmit: (body) => forgotHook.runAsync({ body }),
-    },
+  const onSubmit = async (body: z.infer<typeof formSchema>) =>
+    await forgotHook.runAsync({ body });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {},
   });
 
+  useFormHelpers(form, { errors: forgotHook.error });
+
   const emailNode = (
-    <Form.Item
-      required
-      label="Email Address"
-      help={
-        formik.touched.email && (
-          <FormError visible={formik.touched.email}>
-            {formik.errors.email}
-          </FormError>
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="email"
-        name="email"
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        value={formik.values.email}
-        disabled={forgotHook.loading}
-        placeholder="Enter your email address"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="email"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Email Address</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              autoComplete="email"
+              placeholder="Enter your email address"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   return (
     <div className={styles.formBody}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>Request Change Password</Title>
-          </Form.Item>
-          <FormAlert error={forgotHook.error} />
-          {emailNode}
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={forgotHook.loading}
-              onClick={() => preSubmitCheck(formik)}
-            >
-              {forgotHook.loading
-                ? "Sending Change Password Email"
-                : "Send Change Password Email"}
-            </Button>
-          </Form.Item>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="mb-4">
+              <h2 className="text-xl">Request Change Password</h2>
+            </div>
+            <FormAlert error={forgotHook.error} />
+            {emailNode}
+            <div className="my-4">
+              <Button type="submit" loading={forgotHook.loading}>
+                Send Change Password Email
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

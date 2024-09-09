@@ -1,7 +1,6 @@
+import { cn } from "@/components/utils.ts";
 import { AppError } from "@/lib/utils/errors";
-import { css, cx } from "@emotion/css";
-import { AlertProps } from "antd";
-import { TextProps } from "antd/es/typography/Text";
+import { css } from "@emotion/css";
 import { isBoolean, isNumber, merge } from "lodash-es";
 import isString from "lodash-es/isString";
 import React from "react";
@@ -14,10 +13,9 @@ export interface IMessageListProps extends StyleableComponentProps {
   messages: string | AppError | Array<string | AppError> | null;
   shouldFillParent?: boolean;
   shouldPad?: boolean;
-  type?: TextProps["type"];
+  type?: "destructive";
   showMessageOnly?: boolean;
   useAlertGroup?: boolean;
-  alertGroupCloseable?: boolean;
   useEmptyMessage?: boolean;
   maxWidth?: boolean | number;
 }
@@ -43,7 +41,6 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
     shouldPad,
     className,
     style,
-    alertGroupCloseable,
     maxWidth,
     useEmptyMessage,
   } = props;
@@ -64,13 +61,7 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
     }
   }
 
-  let contentNode = (
-    <AlertGroup
-      type={textTypeToAlertType(type)}
-      closable={alertGroupCloseable}
-      messages={errorList}
-    />
-  );
+  let contentNode = <AlertGroup type={type} messages={errorList} />;
 
   if (useEmptyMessage) {
     contentNode = <EmptyMessage>{contentNode}</EmptyMessage>;
@@ -89,7 +80,7 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
         },
         style
       )}
-      className={cx(
+      className={cn(
         className,
         appClasses.w100,
         shouldFillParent && classes.fillParent,
@@ -100,20 +91,5 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
     </div>
   );
 };
-
-function textTypeToAlertType(type: TextProps["type"]): AlertProps["type"] {
-  switch (type) {
-    case "danger":
-      return "error";
-    case "secondary":
-      return "info";
-    case "success":
-      return "success";
-    case "warning":
-      return "warning";
-    default:
-      return "info";
-  }
-}
 
 export default MessageList;

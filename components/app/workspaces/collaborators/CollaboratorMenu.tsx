@@ -1,13 +1,13 @@
+import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
+import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { appClasses } from "@/components/utils/theme";
-import { MenuInfo } from "@/components/utils/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceCollaboratorDeleteMutationHook } from "@/lib/hooks/mutationHooks";
-import { Dropdown, MenuProps, message, Modal } from "antd";
 import { Collaborator } from "fimidara";
+import { Ellipsis } from "lucide-react";
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 
 export interface CollaboratorMenuProps {
@@ -18,12 +18,12 @@ export interface CollaboratorMenuProps {
 
 enum MenuKeys {
   DeleteItem = "delete-item",
-  UpdateItem = "update-item",
   GrantPermission = "grant-permission",
 }
 
 const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
   const { workspaceId, collaborator, onCompleteRemove } = props;
+  const { toast } = useToast();
   const permissionsHook = useTargetGrantPermissionModal({
     workspaceId,
     targetId: collaborator.resourceId,
@@ -31,37 +31,33 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceCollaboratorDeleteMutationHook({
     onSuccess(data, params) {
-      message.success("Collaborator removed");
+      toast({ description: "Collaborator removed" });
       onCompleteRemove();
     },
-    onError(e, params) {
-      errorMessageNotificatition(e, "Error removing collaborator");
+    onError(error, params) {
+      errorMessageNotificatition(error, "Error removing collaborator", toast);
     },
   });
 
-  const onSelectMenuItem = (info: MenuInfo) => {
-    if (info.key === MenuKeys.DeleteItem) {
-      Modal.confirm({
-        title: "Are you sure you want to remove this collaborator?",
-        okText: "Yes",
-        cancelText: "No",
-        okType: "primary",
-        okButtonProps: { danger: true },
-        onOk: async () => {
-          await deleteHook.runAsync({
-            body: { workspaceId, collaboratorId: collaborator.resourceId },
-          });
-        },
-        onCancel() {
-          // do nothing
-        },
+  const deleteModalHook = useDeleteModal({
+    title: `Remove collaborator - "${collaborator.firstName}"`,
+    description: "Are you sure you want to remove this collaborator?",
+    onDelete: async () => {
+      await deleteHook.runAsync({
+        body: { workspaceId, collaboratorId: collaborator.resourceId },
       });
-    } else if (info.key === MenuKeys.GrantPermission) {
+    },
+  });
+
+  const onSelectMenuItem = (key: string) => {
+    if (key === MenuKeys.DeleteItem) {
+      deleteModalHook.setShow(true);
+    } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
     }
   };
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  const items = insertAntdMenuDivider([
     {
       key: MenuKeys.GrantPermission,
       label: "Permissions",
@@ -74,19 +70,15 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
 
   return (
     <React.Fragment>
-      <Dropdown
+      <DropdownItems
         disabled={deleteHook.loading}
-        trigger={["click"]}
-        menu={{
-          items,
-          style: { minWidth: "150px" },
-          onClick: onSelectMenuItem,
-        }}
-        placement="bottomRight"
+        items={items}
+        onSelect={onSelectMenuItem}
       >
-        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
-      </Dropdown>
+        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      </DropdownItems>
       {permissionsHook.node}
+      {deleteModalHook.node}
     </React.Fragment>
   );
 };

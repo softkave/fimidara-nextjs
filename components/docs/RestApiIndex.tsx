@@ -1,5 +1,4 @@
 import { toCompactArray } from "@/lib/utils/fns";
-import Title from "antd/es/typography/Title";
 import { first } from "lodash-es";
 import Link from "next/link";
 import React from "react";
@@ -33,22 +32,22 @@ function renderNavItemList(
       toCompactArray(first(fimidaraRestApiNavItems))
     );
 
-    if (item.withLink) {
-      return (
-        <li key={item.key}>
-          <Link href={itemPath}>{item.label}</Link>
-        </li>
-      );
-    } else if (item.children) {
-      return renderNavItemList(item.children, itemPath, item.label);
-    }
+    return (
+      <li key={item.key}>
+        {item.href && !item.children && (
+          <Link href={item.href} className="underline decoration-sky-500">
+            {item.label}
+          </Link>
+        )}
+        {item.children &&
+          renderNavItemList(item.children, itemPath, item.label)}
+      </li>
+    );
   });
 
   return (
     <div key={parentPath}>
-      <Title level={5} style={{ margin: "8px 0px" }}>
-        {parentLabel}
-      </Title>
+      <h5 className="my-2">{parentLabel}</h5>
       <ul key={parentPath}>{nodes}</ul>
     </div>
   );

@@ -1,22 +1,23 @@
-import * as yup from "yup";
+import { z } from "zod";
 import { userConstants } from "../definitions/user";
-import { messages } from "../messages/messages";
 
 export const signupValidationParts = {
-  name: yup.string().trim().max(userConstants.maxNameLength, messages.tooLong),
-  email: yup.string().trim().email(messages.invalidEmailAddress),
-  confirmEmail: yup
+  firstName: z
+    .string({ required_error: "first name is required" })
+    .trim()
+    .max(userConstants.maxNameLength, {
+      message: `${userConstants.maxNameLength} max chars`,
+    }),
+  lastName: z
+    .string({ required_error: "last name is required" })
+    .trim()
+    .max(userConstants.maxNameLength, {
+      message: `${userConstants.maxNameLength} max chars`,
+    }),
+  email: z.string().trim().email(),
+  password: z
     .string()
     .trim()
-    .email()
-    .oneOf([yup.ref("email")], messages.emailMismatch),
-  password: yup
-    .string()
-    .trim()
-    .min(userConstants.minPasswordLength, messages.tooShort)
-    .max(userConstants.maxPasswordLength, messages.tooLong),
-  confirmPassword: yup
-    .string()
-    .trim()
-    .oneOf([yup.ref("password")], messages.passwordMismatch),
+    .min(userConstants.minPasswordLength)
+    .max(userConstants.maxPasswordLength),
 };

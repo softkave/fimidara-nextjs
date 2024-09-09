@@ -1,8 +1,8 @@
-import { MenuProps } from "antd";
 import { isBoolean } from "lodash-es";
+import { IDropdownItem } from "../ui/dropdown-items.tsx";
 
 export const appComponentConstants = {
-  messageDuration: 12, // secs
+  messageDuration: 12_000, // secs
 };
 
 export function includeFirstNode<T1>(
@@ -23,11 +23,12 @@ export function includeFirstNode<T1>(
   return null;
 }
 
-export function insertAntdMenuDivider(items: MenuProps["items"]) {
-  const newItems: MenuProps["items"] = [];
+export function insertAntdMenuDivider(items: Array<IDropdownItem>) {
+  const newItems: Array<IDropdownItem> = [];
   items?.forEach((item, i) => {
     newItems.push(item);
-    if (i < items.length - 1) newItems.push({ type: "divider" });
+    if (i < items.length - 1)
+      newItems.push({ type: "divider", key: `divider-${i}` });
   });
   return newItems;
 }

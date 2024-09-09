@@ -1,6 +1,6 @@
-import Text, { TextProps } from "antd/es/typography/Text";
+import { ITextProps, Text } from "./text.tsx";
 
-const Middledot: React.FC<Pick<TextProps, "type">> = (props) => {
+const Middledot: React.FC<Pick<ITextProps, "type">> = (props) => {
   const { type } = props;
   return (
     <Text

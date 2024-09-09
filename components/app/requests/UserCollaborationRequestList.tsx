@@ -5,14 +5,11 @@ import ListHeader from "@/components/utils/list/ListHeader.tsx";
 import PageContent02 from "@/components/utils/page/PageContent02";
 import PaginatedContent from "@/components/utils/page/PaginatedContent.tsx";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
-import { appClasses } from "@/components/utils/theme.ts";
-import { appUserPaths } from "@/lib/definitions/system";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestsFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
-import Text from "antd/es/typography/Text";
 import Link from "next/link";
 
 export default function UserCollaborationRequestList() {
@@ -40,40 +37,38 @@ export default function UserCollaborationRequestList() {
             <ThumbnailContent
               key={item.resourceId}
               main={
-                <div className={appClasses.thumbnailMain}>
-                  <Link href={`${appUserPaths.request(item.resourceId)}`}>
-                    <Text style={{ color: "inherit" }}>
-                      Request from{" "}
-                      <Text strong style={{ color: "inherit" }}>
-                        {item.workspaceName}
-                      </Text>
-                    </Text>
+                <div className="flex flex-col justify-center">
+                  <Link href={`${kAppUserPaths.request(item.resourceId)}`}>
+                    <span>
+                      Request from <strong>{item.workspaceName}</strong>
+                    </span>
                   </Link>
-                  <Text type="secondary">
+                  <span className="text-secondary">
                     Sent {formatDateTime(item.createdAt)}
-                  </Text>
+                  </span>
                   {item.expiresAt && (
-                    <Text type="secondary">
+                    <span className="text-secondary">
                       Expires on {formatDateTime(item.expiresAt)}
-                    </Text>
+                    </span>
                   )}
                 </div>
               }
             />
           )}
           emptyMessage="You do not have any collaboration requests"
+          space="md"
         />
       )}
     />
   );
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader label="Your Collaboration Requests" />
       <PaginatedContent
         content={contentNode}
         pagination={{ ...pagination, count }}
       />
-    </Space>
+    </div>
   );
 }

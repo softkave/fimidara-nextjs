@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
 import styles from "@/components/utils/form/form.module.css";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useUserSendEmailVerificationCodeMutationHook } from "@/lib/hooks/mutationHooks";
-import { Button, message, Space } from "antd";
-import Text from "antd/es/typography/Text";
 import { LoginResult } from "fimidara";
 import React from "react";
 import useCooldown from "../../hooks/useCooldown";
@@ -15,35 +15,45 @@ export interface EmailVerificationProps {
 
 export default function EmailVerification(props: EmailVerificationProps) {
   const { session } = props;
+  const { toast } = useToast();
   const cooldown = useCooldown();
   const sendEmailVerificationHook =
     useUserSendEmailVerificationCodeMutationHook({
-      onError(e, params) {
-        errorMessageNotificatition(e);
+      onError(error, params) {
+        errorMessageNotificatition(
+          error,
+          /** defaultMessage */ undefined,
+          toast
+        );
       },
       onSuccess(data, params) {
-        message.success(
-          `Email verification link sent to ${session.user.email}`
-        );
+        toast({
+          description: `Email verification link sent to ${session.user.email}`,
+        });
         cooldown.startCooldown();
       },
     });
   let rootNode: React.ReactNode = null;
 
   if (session.user.isEmailVerified) {
-    rootNode = <Text type="success">Your email address is verified.</Text>;
+    rootNode = (
+      <span className="text-green-600">Your email address is verified.</span>
+    );
   } else {
     rootNode = (
-      <Space direction="vertical">
-        <Text type="danger">Your email address is not verified.</Text>
+      <div className="space-y-4">
+        <span className="text-red-600">
+          Your email address is not verified.
+        </span>
         <Button
+          type="button"
           onClick={() => sendEmailVerificationHook.run()}
           loading={sendEmailVerificationHook.loading}
           disabled={cooldown.isInCooldown}
         >
           Send Email Verification Link to {session.user.email}
         </Button>
-      </Space>
+      </div>
     );
   }
 

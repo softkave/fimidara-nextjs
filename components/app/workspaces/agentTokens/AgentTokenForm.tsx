@@ -1,37 +1,52 @@
+import { Button } from "@/components/ui/button.tsx";
+import { DatePicker } from "@/components/ui/datepicker.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
-import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError";
 import { FormAlert } from "@/components/utils/FormAlert";
+import { useToast } from "@/hooks/use-toast.ts";
 import { agentTokenConstants } from "@/lib/definitions/agentToken";
-import { appWorkspacePaths, systemConstants } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { systemConstants } from "@/lib/definitions/system";
 import {
   useWorkspaceAgentTokenAddMutationHook,
   useWorkspaceAgentTokenUpdateMutationHook,
 } from "@/lib/hooks/mutationHooks";
-import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import { css } from "@emotion/css";
-import { Button, DatePicker, Form, Input, message } from "antd";
-import Title from "antd/es/typography/Title";
-import dayjs from "dayjs";
-import { AgentToken, NewAgentTokenInput } from "fimidara";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
+import { systemValidation } from "@/lib/validation/system.ts";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AgentToken } from "fimidara";
 import { useRouter } from "next/navigation";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-const agentTokenValidation = yup.object().shape({
-  expires: yup.number(),
-  providedResourceId: yup
+const formSchema = z.object({
+  name: systemValidation.name.optional(),
+  description: systemValidation.description.optional(),
+  expires: z.number().optional(),
+  providedResourceId: z
     .string()
-    .max(agentTokenConstants.providedResourceMaxLength)
-    .nullable(),
+    .max(agentTokenConstants.providedResourceMaxLength, {
+      message: `${agentTokenConstants.providedResourceMaxLength} max chars`,
+    })
+    .nullable()
+    .optional(),
 });
 
-const initialValues: NewAgentTokenInput = {
-  expires: undefined,
-  providedResourceId: undefined,
-};
-
-function getAgentTokenFormInputFromToken(item: AgentToken): NewAgentTokenInput {
+function getAgentTokenFormInputFromToken(
+  item: AgentToken
+): z.infer<typeof formSchema> {
   return {
+    name: item.name,
+    description: item.description,
     expires: item.expiresAt,
     providedResourceId: item.providedResourceId || undefined,
   };
@@ -45,12 +60,13 @@ export interface IAgentTokenFormProps {
 
 export default function AgentTokenForm(props: IAgentTokenFormProps) {
   const { agentToken, className, workspaceId } = props;
+  const { toast } = useToast();
   const router = useRouter();
   const updateHook = useWorkspaceAgentTokenUpdateMutationHook({
     onSuccess(data, params) {
-      message.success("Agent token updated");
+      toast({ description: "Agent token updated" });
       router.push(
-        appWorkspacePaths.agentToken(
+        kAppWorkspacePaths.agentToken(
           data.body.token.workspaceId,
           data.body.token.resourceId
         )
@@ -59,9 +75,9 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
   });
   const createHook = useWorkspaceAgentTokenAddMutationHook({
     onSuccess(data, params) {
-      message.success("Agent token created");
+      toast({ description: "Agent token created" });
       router.push(
-        appWorkspacePaths.agentToken(
+        kAppWorkspacePaths.agentToken(
           data.body.token.workspaceId,
           data.body.token.resourceId
         )
@@ -69,156 +85,139 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
     },
   });
   const mergedHook = agentToken ? updateHook : createHook;
-
-  const { formik } = useFormHelpers({
-    errors: mergedHook.error,
-    formikProps: {
-      validationSchema: agentTokenValidation,
-      initialValues: agentToken
-        ? getAgentTokenFormInputFromToken(agentToken)
-        : initialValues,
-      onSubmit: (body) =>
-        agentToken
-          ? updateHook.runAsync({
-              body: { tokenId: agentToken.resourceId, token: body },
-            })
-          : createHook.runAsync({ body: { workspaceId, token: body } }),
-    },
+  const onSubmit = (body: z.infer<typeof formSchema>) =>
+    agentToken
+      ? updateHook.runAsync({
+          body: {
+            tokenId: agentToken.resourceId,
+            token: {
+              ...body,
+              providedResourceId: body.providedResourceId || undefined,
+            },
+          },
+        })
+      : createHook.runAsync({
+          body: {
+            workspaceId,
+            token: {
+              ...body,
+              providedResourceId: body.providedResourceId || undefined,
+            },
+          },
+        });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: agentToken
+      ? getAgentTokenFormInputFromToken(agentToken)
+      : {},
   });
 
+  useFormHelpers(form, { errors: mergedHook.error });
+
   const nameNode = (
-    <Form.Item
-      label="Token Name [optional]"
-      help={
-        formik.touched?.name &&
-        formik.errors?.name && (
-          <FormError visible={formik.touched.name} error={formik.errors.name} />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        name="name"
-        value={formik.values.name}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter token name"
-        disabled={mergedHook.loading}
-        maxLength={systemConstants.maxNameLength}
-        autoComplete="off"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="name"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Token Name</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              maxLength={systemConstants.maxNameLength}
+              placeholder="Enter token name"
+              autoComplete="off"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const descriptionNode = (
-    <Form.Item
-      label="Description"
-      help={
-        formik.touched?.description &&
-        formik.errors?.description && (
-          <FormError
-            visible={formik.touched.description}
-            error={formik.errors.description}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input.TextArea
-        name="description"
-        value={formik.values.description}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter token description"
-        disabled={mergedHook.loading}
-        maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 3 }}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="description"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <Textarea
+              {...field}
+              name="description"
+              placeholder="Enter token description"
+              maxLength={systemConstants.maxDescriptionLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const expiresNode = (
-    <Form.Item
-      label="Expires"
-      help={
-        formik.touched?.expires &&
-        formik.errors?.expires && (
-          <FormError
-            visible={formik.touched.expires}
-            error={formik.errors.expires}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <DatePicker
-        showTime
-        use12Hours
-        // format="h:mm A"
-        value={formik.values.expires ? dayjs(formik.values.expires) : undefined}
-        onChange={(date) => {
-          formik.setFieldValue("expires", date?.valueOf());
-        }}
-        placeholder="Token expiration date"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="expires"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Expires</FormLabel>
+          <FormControl>
+            <div className="block">
+              <DatePicker
+                {...field}
+                value={field.value ? new Date(field.value) : undefined}
+                onChange={(date) => {
+                  form.setValue("expires", date?.valueOf());
+                }}
+              />
+            </div>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const providedResourceIdNode = (
-    <Form.Item
-      label="Provided Resource ID"
-      help={
-        formik.touched?.providedResourceId &&
-        formik.errors?.providedResourceId && (
-          <FormError
-            visible={formik.touched.providedResourceId}
-            error={formik.errors.providedResourceId}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input.TextArea
-        name="providedResourceId"
-        value={formik.values.providedResourceId}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter token provided resource ID"
-        disabled={mergedHook.loading}
-        maxLength={agentTokenConstants.providedResourceMaxLength}
-        autoSize={{ minRows: 2 }}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="providedResourceId"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Provided Resource ID</FormLabel>
+          <FormControl>
+            <Textarea
+              {...field}
+              value={field.value || ""}
+              placeholder="Enter token provided resource ID"
+              maxLength={agentTokenConstants.providedResourceMaxLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   return (
-    <div className={cn(styles.formBody, className)}>
-      <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <Form.Item>
-            <Title level={4}>Agent Assigned Token Form</Title>
-          </Form.Item>
-          <FormAlert error={mergedHook.error} />
-          {nameNode}
-          {descriptionNode}
-          {expiresNode}
-          {providedResourceIdNode}
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={mergedHook.loading}
-            >
-              {agentToken ? "Update Token" : "Create Token"}
-            </Button>
-          </Form.Item>
-        </form>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-8", className)}
+      >
+        <FormAlert error={mergedHook.error} />
+        {nameNode}
+        {descriptionNode}
+        {expiresNode}
+        {providedResourceIdNode}
+        <div className="my-4">
+          <Button type="submit" loading={mergedHook.loading}>
+            {agentToken ? "Update Token" : "Create Token"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

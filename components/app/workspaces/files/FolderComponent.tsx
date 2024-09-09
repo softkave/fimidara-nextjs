@@ -1,9 +1,6 @@
 import LabeledNode from "@/components/utils/LabeledNode";
-import { appClasses } from "@/components/utils/theme";
 import { addRootnameToPath } from "@/lib/definitions/folder";
 import { formatDateTime } from "@/lib/utils/dateFns";
-import { Space } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
 import { Folder } from "fimidara";
 import path from "path";
 import FolderChildren from "./FolderChildren";
@@ -18,7 +15,7 @@ function FolderComponent(props: FolderProps) {
 
   return (
     <div>
-      <Space direction="vertical" size={32} style={{ width: "100%" }}>
+      <div className="space-y-8">
         <LabeledNode
           nodeIsText
           copyable
@@ -47,14 +44,7 @@ function FolderComponent(props: FolderProps) {
           <LabeledNode
             direction="vertical"
             label="Description"
-            node={
-              <Paragraph
-                ellipsis={{ rows: 2 }}
-                className={appClasses.muteMargin}
-              >
-                {folder.description}
-              </Paragraph>
-            }
+            node={<div className="line-clamp-2">{folder.description}</div>}
           />
         )}
         <FolderChildren
@@ -62,7 +52,7 @@ function FolderComponent(props: FolderProps) {
           workspaceId={folder.workspaceId}
           workspaceRootname={workspaceRootname}
         />
-      </Space>
+      </div>
     </div>
   );
 }

@@ -1,53 +1,30 @@
-import { compact, first, flatten, isString } from "lodash-es";
+import { compact, flatten, isString } from "lodash-es";
 import Link from "next/link";
-import { AntDMenuItem } from "../../types.ts";
-import { IRawNavItem } from "./types.ts";
+import { IRawNavItem, ISomeNavItem } from "./types.ts";
 
-export function renderRawNavItemLink(
-  item: IRawNavItem,
-  parentItems: IRawNavItem[],
-  getNavItemPath: (item: IRawNavItem, parentItems: IRawNavItem[]) => string
-) {
-  const itemPath = item.href || getNavItemPath(item, parentItems);
-  return <Link href={itemPath}>{item.label}</Link>;
+export function renderRawNavItemLink(item: IRawNavItem, href: string) {
+  return <Link href={href}>{item.label}</Link>;
 }
 
-export function renderToAntDMenuItem(
-  item: IRawNavItem,
-  parentItems: IRawNavItem[],
-  getNavItemPath: (item: IRawNavItem, parentItems: IRawNavItem[]) => string
-): AntDMenuItem {
-  const { href, withLink, ...itemRest } = item;
-  const rootItem = first(parentItems);
+export function renderToSideNavItem(item: IRawNavItem): ISomeNavItem {
+  const { href, ...itemRest } = item;
 
   return {
     ...itemRest,
-    label:
-      withLink || href
-        ? renderRawNavItemLink(item, parentItems, getNavItemPath)
-        : item.label,
+    label: href ? renderRawNavItemLink(item, href) : item.label,
     children: item.children
-      ? renderToAntDMenuItemList(
-          item.children,
-          parentItems.concat(item),
-          getNavItemPath
-        )
+      ? renderToSideNavMenuItemList(item.children)
       : undefined,
   };
 }
 
-export function renderToAntDMenuItemList(
-  items: IRawNavItem[],
-  parentItems: IRawNavItem[],
-  getNavItemPath: (item: IRawNavItem, parentItems: IRawNavItem[]) => string
-): AntDMenuItem[] {
+export function renderToSideNavMenuItemList(
+  items: IRawNavItem[]
+): ISomeNavItem[] {
   return compact(
     flatten(
       items.map((item, i) => {
-        return [
-          renderToAntDMenuItem(item, parentItems, getNavItemPath),
-          // i < items.length - 1 ? { type: "divider" } : undefined,
-        ];
+        return [renderToSideNavItem(item)];
       })
     )
   );
@@ -72,9 +49,9 @@ export function getMenuSelectedKeys(
 }
 
 export function menuListToMap(
-  menuItems: AntDMenuItem[],
+  menuItems: ISomeNavItem[],
   parent: string[] = [],
-  map: Record<string, AntDMenuItem> = {}
+  map: Record<string, ISomeNavItem> = {}
 ) {
   menuItems.forEach((item) => {
     if (isString(item?.key)) {
@@ -82,7 +59,7 @@ export function menuListToMap(
       const key = keyList.join(".");
       map[key] = item;
 
-      type ItemWithChildren = { children: AntDMenuItem[] };
+      type ItemWithChildren = { children: ISomeNavItem[] };
 
       if ((item as ItemWithChildren | null)?.children) {
         menuListToMap((item as ItemWithChildren).children, keyList, map);

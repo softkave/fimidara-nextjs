@@ -1,35 +1,39 @@
 "use client";
 
+import { useAgentTokenForm } from "@/components/hooks/useAgentTokenForm.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import ListHeader from "@/components/utils/list/ListHeader";
-import { appWorkspacePaths } from "@/lib/definitions/system";
-import { PlusOutlined } from "@ant-design/icons";
-import { Space } from "antd";
 import { AgentToken } from "fimidara";
+import { Plus } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import { FC, ReactElement, ReactNode } from "react";
 import WorkspaceResourceListMenu from "../WorkspaceResourceListMenu";
 import AgentTokenListContainer from "./AgentTokenListContainer";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 export interface IWorkspaceAgentTokensProps {
   workspaceId: string;
-  renderItem?: (item: AgentToken) => React.ReactNode;
-  renderList?: (items: AgentToken[]) => React.ReactNode;
-  renderRoot?: (node: React.ReactNode) => React.ReactElement;
-  menu?: React.ReactNode;
+  renderItem?: (item: AgentToken) => ReactNode;
+  renderList?: (items: AgentToken[]) => ReactNode;
+  renderRoot?: (node: ReactNode) => ReactElement;
+  menu?: ReactNode;
 }
 
-const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
+const WorkspaceAgentTokens: FC<IWorkspaceAgentTokensProps> = (props) => {
   const { workspaceId, menu } = props;
+  const formHook = useAgentTokenForm({ workspaceId });
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }} size="large">
+    <div className="space-y-8">
       <ListHeader
         label="Agent Tokens"
         buttons={
           <div className="flex items-center space-x-2">
-            <Link href={appWorkspacePaths.createAgentTokenForm(workspaceId)}>
-              <IconButton icon={<PlusOutlined />} />
+            <Link href={kAppWorkspacePaths.createAgentTokenForm(workspaceId)}>
+              <IconButton
+                icon={<Plus className="h-4 w-4" />}
+                onClick={() => formHook.setFormOpen(true)}
+              />
             </Link>
             <WorkspaceResourceListMenu
               workspaceId={workspaceId}
@@ -40,7 +44,8 @@ const WorkspaceAgentTokens: React.FC<IWorkspaceAgentTokensProps> = (props) => {
         }
       />
       <AgentTokenListContainer {...props} />
-    </Space>
+      {formHook.node}
+    </div>
   );
 };
 

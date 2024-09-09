@@ -1,8 +1,8 @@
 "use client";
 
 import { css } from "@emotion/css";
-import { Typography } from "antd";
 import React from "react";
+import { Separator } from "../ui/separator.tsx";
 import { cn } from "../utils.ts";
 import PageMessage from "../utils/page/PageMessage";
 import { htmlCharacterCodes } from "../utils/utils";
@@ -15,23 +15,17 @@ import {
   isHttpEndpointMultipartFormdata,
 } from "./utils";
 
-const { Title, Text } = Typography;
-
 export interface HttpEndpointDocProps {
   endpoint: HttpEndpointDefinition;
 }
 
 const classes = {
-  inline: css({ display: "inline-block" }),
-  header: css({
-    marginTop: "0px !important",
-    marginBottom: "8px !important",
-    textDecoration: "underline",
-  }),
   root: css({
-    "& h1, h2, h3, h4, h5": {
-      fontWeight: "500 !important",
-      fontSize: "15px !important",
+    "& table": {
+      fontFamily: `var(--font-default), -apple-system, BlinkMacSystemFont,
+        "Work Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+        sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji" !important`,
     },
   }),
 };
@@ -39,59 +33,49 @@ const classes = {
 const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
   const { endpoint } = props;
   const notApplicableNode = (
-    <PageMessage showMessageOnly message="Not Applicable" />
+    <PageMessage title="Not Applicable" className="py-4 px-0" />
   );
 
   return (
-    <div style={{ width: "100%" }} className={cn(classes.root, "space-y-4")}>
+    <div style={{ width: "100%" }} className={cn("space-y-6", classes.root)}>
       <div>
-        <Title
-          copyable
-          level={5}
-          className={classes.inline}
-          style={{ margin: 0 }}
-        >
+        <h5 className="inline-block" style={{ margin: 0 }}>
           <code>{endpoint.basePathname}</code>
-        </Title>{" "}
+        </h5>{" "}
         {htmlCharacterCodes.doubleDash}{" "}
-        <Title level={5} className={classes.inline} style={{ margin: 0 }}>
+        <h5 className="inline-block" style={{ margin: 0 }}>
           <code>{endpoint.method}</code>
-        </Title>
+        </h5>
       </div>
-      <div>
-        <Title level={5} className={classes.header}>
-          Path Parameters
-        </Title>
+      <div className="space-y-4">
+        <h5>Path Parameters</h5>
         {endpoint.pathParamaters ? (
-          <FieldObjectAsTable hideTitle fieldObject={endpoint.pathParamaters} />
+          <FieldObjectAsTable fieldObject={endpoint.pathParamaters} />
         ) : (
           notApplicableNode
         )}
       </div>
-      <div>
-        <Title className={classes.header} level={5}>
-          Request Headers
-        </Title>
+      <Separator />
+      <div className="space-y-4">
+        <h5>Request Headers</h5>
         {endpoint.requestHeaders ? (
-          <FieldObjectAsTable hideTitle fieldObject={endpoint.requestHeaders} />
+          <FieldObjectAsTable fieldObject={endpoint.requestHeaders} />
         ) : (
           notApplicableNode
         )}
       </div>
-      <div>
-        <Title className={classes.header} level={5}>
-          Request Query
-        </Title>
+      <Separator />
+      <div className="space-y-4">
+        <h5>Request Query</h5>
         {endpoint.query ? (
-          <FieldObjectAsTable hideTitle fieldObject={endpoint.query} />
+          <FieldObjectAsTable fieldObject={endpoint.query} />
         ) : (
           notApplicableNode
         )}
       </div>
-      <div>
-        <Title className={classes.header} level={5}>
-          Request Body
-        </Title>
+      <Separator />
+      <div className="space-y-4">
+        <h5>Request Body</h5>
         {isFieldObject(endpoint.requestBody) ? (
           <FieldObjectRender fieldObject={endpoint.requestBody} />
         ) : isHttpEndpointMultipartFormdata(endpoint.requestBody) &&
@@ -101,48 +85,38 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
           notApplicableNode
         )}
       </div>
-      <div>
-        <Title className={classes.header} level={5}>
-          200 {htmlCharacterCodes.doubleDash} Response Headers
-        </Title>
+      <Separator />
+      <div className="space-y-4">
+        <h5>200 {htmlCharacterCodes.doubleDash} Response Headers</h5>
         {endpoint.responseHeaders ? (
-          <FieldObjectAsTable
-            hideTitle
-            fieldObject={endpoint.responseHeaders}
-          />
+          <FieldObjectAsTable fieldObject={endpoint.responseHeaders} />
         ) : (
           notApplicableNode
         )}
       </div>
-      <div>
-        <Title className={classes.header} level={5}>
-          200 {htmlCharacterCodes.doubleDash} Response Body
-        </Title>
+      <Separator />
+      <div className="space-y-4">
+        <h5>200 {htmlCharacterCodes.doubleDash} Response Body</h5>
         {isFieldObject(endpoint.responseBody) ? (
           <FieldObjectRender fieldObject={endpoint.responseBody} />
         ) : isFieldBinary(endpoint.responseBody) ? (
-          <Text code>binary</Text>
+          <code>binary</code>
         ) : (
           notApplicableNode
         )}
       </div>
-      <div>
-        <Title className={classes.header} level={5}>
-          4XX or 5XX {htmlCharacterCodes.doubleDash} Response Headers
-        </Title>
+      <Separator />
+      <div className="space-y-4">
+        <h5>4XX or 5XX {htmlCharacterCodes.doubleDash} Response Headers</h5>
         {endpoint.errorResponseHeaders ? (
-          <FieldObjectAsTable
-            hideTitle
-            fieldObject={endpoint.errorResponseHeaders}
-          />
+          <FieldObjectAsTable fieldObject={endpoint.errorResponseHeaders} />
         ) : (
           notApplicableNode
         )}
       </div>
-      <div>
-        <Title className={classes.header} level={5}>
-          4XX or 5XX {htmlCharacterCodes.doubleDash} Response Body
-        </Title>
+      <Separator />
+      <div className="space-y-4">
+        <h5>4XX or 5XX {htmlCharacterCodes.doubleDash} Response Body</h5>
         {endpoint.errorResponseBody ? (
           <FieldObjectRender fieldObject={endpoint.errorResponseBody} />
         ) : (

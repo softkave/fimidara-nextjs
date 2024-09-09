@@ -8,20 +8,18 @@ import PageLoading from "@/components/utils/page/PageLoading";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useFetchNonPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useEntityAssignedPermissionGroupsFetchHook } from "@/lib/hooks/fetchHooks";
+import { cn } from "@/lib/utils.ts";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { getBaseError } from "@/lib/utils/errors";
 import { indexArray } from "@/lib/utils/indexArray";
 import { PlusOutlined } from "@ant-design/icons";
 import { useToggle } from "ahooks";
-import { Space } from "antd";
-import Text from "antd/es/typography/Text";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
+import { FC, Fragment, ReactNode, useMemo } from "react";
 import AssignPermissionGroupsForm from "./AssignPermissionGroupsForm";
 import PermissionGroupMenu from "./PermissionGroupMenu";
 
@@ -33,9 +31,9 @@ export interface IAssignedPermissionGroupListProps
 
 // TODO: add bulk remove, and add bulk actions to other lists
 
-const AssignedPermissionGroupList: React.FC<
-  IAssignedPermissionGroupListProps
-> = (props) => {
+const AssignedPermissionGroupList: FC<IAssignedPermissionGroupListProps> = (
+  props
+) => {
   const { workspaceId, entityId, className, style } = props;
   const { fetchState, clearFetchState } =
     useEntityAssignedPermissionGroupsFetchHook({
@@ -47,12 +45,12 @@ const AssignedPermissionGroupList: React.FC<
 
   const [isAssignFormVisible, toggleHook] = useToggle();
 
-  const permissionGroupsMap = React.useMemo(
+  const permissionGroupsMap = useMemo(
     () => indexArray(resourceList, { path: "resourceId" }),
     [resourceList]
   );
 
-  let content: React.ReactNode = null;
+  let content: ReactNode = null;
 
   if (error) {
     content = (
@@ -67,6 +65,7 @@ const AssignedPermissionGroupList: React.FC<
   } else if (other) {
     content = (
       <ItemList
+        space="md"
         items={other.immediateAssignedPermissionGroupsMeta}
         renderItem={(item) => {
           const permissionGroup = permissionGroupsMap[item.permissionGroupId];
@@ -79,9 +78,9 @@ const AssignedPermissionGroupList: React.FC<
             <ThumbnailContent
               key={item.permissionGroupId}
               main={
-                <div className={appClasses.thumbnailMain}>
+                <div className="flex flex-col justify-center">
                   <Link
-                    href={appWorkspacePaths.permissionGroup(
+                    href={kAppWorkspacePaths.permissionGroup(
                       workspaceId,
                       item.permissionGroupId
                     )}
@@ -89,21 +88,25 @@ const AssignedPermissionGroupList: React.FC<
                     {permissionGroup.name}
                   </Link>
                   {permissionGroup.description && (
-                    <Text type="secondary">{permissionGroup.description}</Text>
+                    <span className="text-secondary">
+                      {permissionGroup.description}
+                    </span>
                   )}
-                  <Text type="secondary">
+                  <span className="text-secondary">
                     Assigned {formatDateTime(item.assignedAt)}
-                  </Text>
+                  </span>
                 </div>
               }
               menu={
-                <PermissionGroupMenu
-                  key="menu"
-                  permissionGroup={permissionGroup}
-                  unassignParams={{ entityId }}
-                  onCompleteDelete={noop}
-                  onCompleteUnassignPermissionGroup={noop}
-                />
+                <div className="flex flex-col justify-center h-full">
+                  <PermissionGroupMenu
+                    key="menu"
+                    permissionGroup={permissionGroup}
+                    unassignParams={{ entityId }}
+                    onCompleteDelete={noop}
+                    onCompleteUnassignPermissionGroup={noop}
+                  />
+                </div>
               }
             />
           );
@@ -114,7 +117,7 @@ const AssignedPermissionGroupList: React.FC<
     );
   }
 
-  let assignFormNode: React.ReactNode = null;
+  let assignFormNode: ReactNode = null;
 
   if (other && isAssignFormVisible) {
     assignFormNode = (
@@ -133,28 +136,23 @@ const AssignedPermissionGroupList: React.FC<
   }
 
   return (
-    <React.Fragment>
-      <Space
-        direction="vertical"
-        style={{ width: "100%", ...style }}
-        className={className}
-        size="large"
-      >
+    <Fragment>
+      <div className={cn(className, "space-y-8")} style={style}>
         <ListHeader
           label="Assigned Permission Groups"
           buttons={
-            <Space>
+            <div className="space-x-2">
               <IconButton
                 icon={<PlusOutlined />}
                 onClick={() => toggleHook.toggle()}
               />
-            </Space>
+            </div>
           }
         />
         <PaginatedContent content={content} />
-      </Space>
+      </div>
       {assignFormNode}
-    </React.Fragment>
+    </Fragment>
   );
 };
 

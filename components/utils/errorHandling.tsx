@@ -1,19 +1,17 @@
-import { appUserPaths } from "@/lib/definitions/system.ts";
+import { useToast } from "@/hooks/use-toast.ts";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 import { messages } from "@/lib/messages/messages.ts";
-import { message } from "antd";
-import Text from "antd/es/typography/Text";
-import { ArgsProps } from "antd/lib/message";
+import {
+  EmailAddressNotVerifiedError,
+  getBaseError,
+  hasErrorTypes,
+  toAppErrorList,
+} from "@/lib/utils/errors.ts";
 import Link from "next/link";
 import React from "react";
 import { appComponentConstants, htmlCharacterCodes } from "./utils";
-import {
-  getBaseError,
-  hasErrorTypes,
-  EmailAddressNotVerifiedError,
-  toAppErrorList,
-} from "@/lib/utils/errors.ts";
 
-export function enrichErrorMessage(error: any) {
+export function enrichErrorMessage(error: any): React.ReactNode {
   if (!error) {
     return "";
   }
@@ -25,13 +23,13 @@ export function enrichErrorMessage(error: any) {
 
   if (hasEmailNotVerifiedError) {
     errorMessage = (
-      <Text>
+      <span>
         {errorMessage} {htmlCharacterCodes.doubleDash}{" "}
-        <Link href={appUserPaths.settings}>
+        <Link href={kAppUserPaths.settings}>
           <a>Goto Settings</a>
         </Link>{" "}
         to verify your email address.
-      </Text>
+      </span>
     );
   }
 
@@ -40,15 +38,15 @@ export function enrichErrorMessage(error: any) {
 
 export function errorMessageNotificatition(
   error: any,
-  defaultMessage = messages.requestError,
-  props: Partial<ArgsProps> = {}
+  defaultMessage: string | undefined,
+  toast: ReturnType<typeof useToast>["toast"]
 ) {
-  const errorMessage = enrichErrorMessage(error) || defaultMessage;
-  message.error({
-    type: "error",
-    content: errorMessage,
+  const errorMessage =
+    enrichErrorMessage(error) || defaultMessage || messages.requestError;
+  toast({
+    variant: "destructive",
+    description: String(errorMessage),
     duration: appComponentConstants.messageDuration,
-    ...props,
   });
 }
 

@@ -1,18 +1,16 @@
+import { Button } from "@/components/ui/button.tsx";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling.tsx";
 import InlineLoading from "@/components/utils/page/InlineLoading.tsx";
 import PageError from "@/components/utils/page/PageError.tsx";
 import PageLoading from "@/components/utils/page/PageLoading.tsx";
 import PageNothingFound from "@/components/utils/page/PageNothingFound.tsx";
 import { appDimensions } from "@/components/utils/theme.ts";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useUserCollaborationRequestFetchHook } from "@/lib/hooks/fetchHooks/userCollaborationRequest.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserCollaborationRequestResponseMutationHook } from "@/lib/hooks/mutationHooks";
 import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
-import { Button, Space, message } from "antd";
-import Paragraph from "antd/es/typography/Paragraph";
-import Text from "antd/es/typography/Text";
-import Title from "antd/es/typography/Title";
 import { formatRelative } from "date-fns";
 
 export interface IUserCollaborationRequestProps {
@@ -28,6 +26,7 @@ const classes = {
 };
 
 function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
+  const { toast } = useToast();
   const { requestId } = props.params;
   const { fetchState, clearFetchState } = useUserCollaborationRequestFetchHook({
     requestId,
@@ -36,11 +35,11 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
     useFetchSingleResourceFetchState(fetchState);
   const respondHook = useUserCollaborationRequestResponseMutationHook({
     onSuccess(data, params) {
-      message.success("Response submitted");
+      toast({ description: "Response submitted" });
       clearFetchState();
     },
     onError(e, params) {
-      errorMessageNotificatition(e);
+      errorMessageNotificatition(e, /** defaultMessage */ undefined, toast);
     },
   });
 
@@ -71,9 +70,10 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
           respondHook.loading ? (
             <InlineLoading />
           ) : (
-            <Space size={"middle"}>
+            <div className="space-x-4">
               <Button
-                danger
+                type="button"
+                variant="destructive"
                 loading={respondHook.loading}
                 onClick={() =>
                   respondHook.run({
@@ -87,6 +87,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
                 Decline Request
               </Button>
               <Button
+                type="button"
                 loading={respondHook.loading}
                 onClick={() =>
                   respondHook.run({
@@ -99,33 +100,33 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
               >
                 Accept Request
               </Button>
-            </Space>
+            </div>
           )
         ) : (
-          <Text>
-            Collaboration request <Text strong>{statusText}</Text> {statusDate}
-          </Text>
+          <span>
+            Collaboration request <strong>{statusText}</strong> {statusDate}
+          </span>
         );
 
       return (
         <div className={classes.main}>
-          <Space direction="vertical" size={"large"}>
-            <Space direction="vertical" size={2}>
-              <Title level={4} style={{ margin: 0 }}>
-                Collaboration Request from {resource.workspaceName}
-              </Title>
-              <Text type="secondary">Sent {createdDate}</Text>
-            </Space>
+          <div className="space-y-8">
+            <div className="space-y-0.5">
+              <h4>Collaboration Request from {resource.workspaceName}</h4>
+              <span className="text-secondary">Sent {createdDate}</span>
+            </div>
             {resource.message && expirationDate ? (
-              <Space direction="vertical" size={2}>
-                {resource.message && <Paragraph>{resource.message}</Paragraph>}
+              <div className="space-y-0.5">
+                {resource.message && <p>{resource.message}</p>}
                 {expirationDate && (
-                  <Text type="secondary">Expires {expirationDate}</Text>
+                  <span className="text-secondary">
+                    Expires {expirationDate}
+                  </span>
                 )}
-              </Space>
+              </div>
             ) : null}
             {actions}
-          </Space>
+          </div>
         </div>
       );
     }

@@ -1,17 +1,25 @@
 "use client";
 
+import { Button } from "@/components/ui/button.tsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
-import FormError from "@/components/utils/form/FormError";
-import { preSubmitCheck } from "@/components/utils/form/formUtils";
+import { useToast } from "@/hooks/use-toast.ts";
 import { userConstants } from "@/lib/definitions/user";
 import { useUserUpdateMutationHook } from "@/lib/hooks/mutationHooks";
-import useFormHelpers from "@/lib/hooks/useFormHelpers";
-import { messages } from "@/lib/messages/messages";
+import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { signupValidationParts } from "@/lib/validation/user";
-import { css } from "@emotion/css";
-import { Button, Form, Input, message } from "antd";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginResult, User } from "fimidara";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { FormAlert } from "../../utils/FormAlert";
 
 export interface IUserProfileProps {
@@ -24,10 +32,10 @@ interface UserProfileFormValues {
   email: string;
 }
 
-const userSettingsValidation = yup.object().shape({
-  firstName: signupValidationParts.name.required(messages.firstNameRequired),
-  lastName: signupValidationParts.name.required(messages.lastNameRequired),
-  email: signupValidationParts.email.required(messages.emailRequired),
+const userSettingsValidation = z.object({
+  firstName: signupValidationParts.firstName,
+  lastName: signupValidationParts.lastName,
+  email: signupValidationParts.email,
 });
 
 function getInitialValues(user?: User): UserProfileFormValues {
@@ -48,126 +56,101 @@ function getInitialValues(user?: User): UserProfileFormValues {
 
 export default function UserProfile(props: IUserProfileProps) {
   const { session } = props;
+  const { toast } = useToast();
   const updateUserHook = useUserUpdateMutationHook({
     onSuccess(data, params) {
-      message.success("Profile updated");
-    },
-  });
-  const { formik } = useFormHelpers({
-    errors: updateUserHook.error,
-    formikProps: {
-      validationSchema: userSettingsValidation,
-      initialValues: getInitialValues(session.user),
-      onSubmit: (body) => updateUserHook.runAsync({ body }),
+      toast({ description: "Profile updated" });
     },
   });
 
+  const onSubmit = (body: z.infer<typeof userSettingsValidation>) =>
+    updateUserHook.runAsync({ body });
+
+  const form = useForm<z.infer<typeof userSettingsValidation>>({
+    resolver: zodResolver(userSettingsValidation),
+    defaultValues: getInitialValues(session.user),
+  });
+
+  useFormHelpers(form, { errors: updateUserHook.error });
+
   const firstNameNode = (
-    <Form.Item
-      required
-      label="First Name"
-      help={
-        formik.touched?.firstName &&
-        formik.errors?.firstName && (
-          <FormError
-            visible={formik.touched.firstName}
-            error={formik.errors.firstName}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="given-name"
-        name="firstName"
-        value={formik.values.firstName}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter your first name"
-        disabled={updateUserHook.loading}
-        maxLength={userConstants.maxNameLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="firstName"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>First Name</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              maxLength={userConstants.maxNameLength}
+              autoComplete="given-name"
+              placeholder="Enter your first name"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const lastNameNode = (
-    <Form.Item
-      required
-      label="Last Name"
-      help={
-        formik.touched?.lastName &&
-        formik.errors?.lastName && (
-          <FormError
-            visible={formik.touched.lastName}
-            error={formik.errors.lastName}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="family-name"
-        name="lastName"
-        value={formik.values.lastName}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        placeholder="Enter your last name"
-        disabled={updateUserHook.loading}
-        maxLength={userConstants.maxNameLength}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="lastName"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Last Name</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              autoComplete="family-name"
+              placeholder="Enter your last name"
+              maxLength={userConstants.maxNameLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   const emailNode = (
-    <Form.Item
-      required
-      label="Email Address"
-      help={
-        formik.touched?.email &&
-        formik.errors?.email && (
-          <FormError
-            visible={formik.touched.email}
-            error={formik.errors.email}
-          />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="email"
-        name="email"
-        value={formik.values.email}
-        onBlur={formik.handleBlur}
-        onChange={formik.handleChange}
-        disabled={updateUserHook.loading}
-        placeholder="Enter your email address"
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name="email"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel required>Email Address</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              autoComplete="email"
+              placeholder="Enter your email address"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   return (
     <div className={styles.formBody}>
       <div className={styles.formContentWrapper}>
-        <form onSubmit={formik.handleSubmit}>
-          <FormAlert error={updateUserHook.error} />
-          {firstNameNode}
-          {lastNameNode}
-          {emailNode}
-          <Form.Item className={css({ marginTop: "16px" })}>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={updateUserHook.loading}
-              onClick={() => preSubmitCheck(formik)}
-            >
-              {updateUserHook.loading ? "Updating Profile" : "Update Profile"}
-            </Button>
-          </Form.Item>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormAlert error={updateUserHook.error} />
+            {firstNameNode}
+            {lastNameNode}
+            {emailNode}
+            <div className="my-4">
+              <Button type="submit" loading={updateUserHook.loading}>
+                Update Profile
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

@@ -1,11 +1,9 @@
+import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
-import { appClasses } from "@/components/utils/theme";
-import { MenuInfo } from "@/components/utils/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
-import { Dropdown, MenuProps } from "antd";
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
+import { Ellipsis } from "lucide-react";
 
 export interface IRootFilesMenuProps {
   workspaceId: string;
@@ -23,13 +21,13 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
     targetType: "workspace",
   });
 
-  const onSelectMenuItem = (info: MenuInfo) => {
-    if (info.key === MenuKeys.Permissions) {
+  const onSelectMenuItem = (key: string) => {
+    if (key === MenuKeys.Permissions) {
       permissionsHook.toggle();
     }
   };
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  const items = insertAntdMenuDivider([
     {
       key: MenuKeys.Permissions,
       label: "Permissions",
@@ -38,17 +36,9 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
 
   return (
     <React.Fragment>
-      <Dropdown
-        trigger={["click"]}
-        menu={{
-          items,
-          style: { minWidth: "150px" },
-          onClick: onSelectMenuItem,
-        }}
-        placement="bottomRight"
-      >
-        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
-      </Dropdown>
+      <DropdownItems items={items} onSelect={onSelectMenuItem}>
+        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      </DropdownItems>
       {permissionsHook.node}
     </React.Fragment>
   );

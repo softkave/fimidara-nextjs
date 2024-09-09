@@ -2,46 +2,46 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { getResourceId } from "@/lib/utils/resource";
-import Text from "antd/es/typography/Text";
 import { AgentToken } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
+import { FC, ReactNode, useCallback } from "react";
 import AgentTokenMenu from "./AgentTokenMenu";
 
 export interface AgentTokenListProps {
   workspaceId: string;
   tokens: AgentToken[];
-  renderItem?: (item: AgentToken) => React.ReactNode;
+  renderItem?: (item: AgentToken) => ReactNode;
 }
 
-const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
+const AgentTokenList: FC<AgentTokenListProps> = (props) => {
   const { workspaceId, tokens, renderItem } = props;
 
   // TODO: add a way to differentiate between the provided ID
   // and the resource ID
 
-  const internalRenderItem = React.useCallback(
+  const internalRenderItem = useCallback(
     (item: AgentToken) => (
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div className={appClasses.thumbnailMain}>
+          <div className="flex flex-col justify-center">
             <Link
-              href={appWorkspacePaths.agentToken(workspaceId, item.resourceId)}
+              href={kAppWorkspacePaths.agentToken(workspaceId, item.resourceId)}
             >
               {item.name || item.resourceId}
             </Link>
             {item.description && (
-              <Text type="secondary">{item.description}</Text>
+              <span className="text-secondary">{item.description}</span>
             )}
           </div>
         }
         menu={
-          <AgentTokenMenu key="menu" token={item} onCompleteDelete={noop} />
+          <div className="flex flex-col justify-center h-full">
+            <AgentTokenMenu key="menu" token={item} onCompleteDelete={noop} />
+          </div>
         }
       />
     ),
@@ -55,6 +55,7 @@ const AgentTokenList: React.FC<AgentTokenListProps> = (props) => {
       renderItem={renderItem || internalRenderItem}
       getId={getResourceId}
       emptyMessage="No agent tokens yet"
+      space="md"
     />
   );
 };

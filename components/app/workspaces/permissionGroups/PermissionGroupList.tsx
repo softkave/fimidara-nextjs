@@ -2,15 +2,13 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
-import { appClasses } from "@/components/utils/theme";
-import { appWorkspacePaths } from "@/lib/definitions/system";
 import { getResourceId } from "@/lib/utils/resource";
-import Text from "antd/es/typography/Text";
 import { PermissionGroup } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
-import React from "react";
 import PermissionGroupMenu from "./PermissionGroupMenu";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { ReactNode, FC } from "react";
 
 export interface PermissionGroupListProps {
   workspaceId: string;
@@ -19,10 +17,10 @@ export interface PermissionGroupListProps {
   withCheckbox?: boolean;
   selectedMap?: Record<string, boolean>;
   onSelect?: (item: PermissionGroup) => void;
-  renderItem?: (item: PermissionGroup) => React.ReactNode;
+  renderItem?: (item: PermissionGroup) => ReactNode;
 }
 
-const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
+const PermissionGroupList: FC<PermissionGroupListProps> = (props) => {
   const {
     workspaceId,
     permissionGroups,
@@ -38,7 +36,7 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
       item.name
     ) : (
       <Link
-        href={appWorkspacePaths.permissionGroup(workspaceId, item.resourceId)}
+        href={kAppWorkspacePaths.permissionGroup(workspaceId, item.resourceId)}
       >
         {item.name}
       </Link>
@@ -52,20 +50,22 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = (props) => {
         selected={selectedMap && selectedMap[item.resourceId]}
         onSelect={onSelect && (() => onSelect(item))}
         main={
-          <div className={appClasses.thumbnailMain}>
+          <div className="flex flex-col justify-center">
             {nameNode}
             {item.description && (
-              <Text type="secondary">{item.description}</Text>
+              <span className="text-secondary">{item.description}</span>
             )}
           </div>
         }
         menu={
-          <PermissionGroupMenu
-            key="menu"
-            permissionGroup={item}
-            onCompleteDelete={noop}
-            onCompleteUnassignPermissionGroup={noop}
-          />
+          <div className="flex flex-col justify-center h-full">
+            <PermissionGroupMenu
+              key="menu"
+              permissionGroup={item}
+              onCompleteDelete={noop}
+              onCompleteUnassignPermissionGroup={noop}
+            />
+          </div>
         }
       />
     );

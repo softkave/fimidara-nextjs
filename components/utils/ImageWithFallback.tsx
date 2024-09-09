@@ -1,7 +1,8 @@
+import { useToast } from "@/hooks/use-toast.ts";
 import { DeleteFilled, LoadingOutlined } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { useRequest } from "ahooks";
-import { Button, Image, ImageProps } from "antd";
+import { Image, ImageProps } from "antd";
 import assert from "assert";
 import { getFimidaraReadFileURL } from "fimidara";
 import { first } from "lodash-es";
@@ -9,6 +10,7 @@ import React from "react";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
 import { systemConstants } from "../../lib/definitions/system";
 import { useKvStore } from "../../lib/hooks/kvStore";
+import { Button } from "../ui/button.tsx";
 import { errorMessageNotificatition } from "./errorHandling";
 import { appDataImages, appDimensions } from "./theme";
 
@@ -37,7 +39,6 @@ const classes = {
     position: "absolute",
     top: 0,
     left: 0,
-    backgroundColor: "rgba(0,0,0,0)",
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "flex-start",
@@ -58,12 +59,6 @@ const classes = {
       display: "inline-block !important",
     },
   }),
-  image: css({
-    border: "1px solid var(--border-hex)",
-  }),
-  imagePlaceholder: css({
-    backgroundColor: "var(--background-hex)",
-  }),
 };
 
 const skipEventForTag = "skip-click-event-on-delete-btn";
@@ -81,6 +76,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
     onClick,
     onDelete,
   } = props;
+  const { toast } = useToast();
 
   const [imageLoadFailed, setImageLoadFailed] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -100,7 +96,7 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
       try {
         await onDelete();
       } catch (error: unknown) {
-        errorMessageNotificatition(error, "Error deleting image");
+        errorMessageNotificatition(error, "Error deleting image", toast);
       }
 
       setTimeout(() => {
@@ -136,8 +132,6 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
       alt={alt}
       onClick={onClick}
       style={{ width }}
-      className={classes.image}
-      placeholder={<div className={classes.imagePlaceholder} />}
     />
   );
 
@@ -159,7 +153,6 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
         fallback={appDataImages.brokenImage}
         onClick={onClick}
         style={{ width }}
-        className={classes.image}
       />
     );
   }
@@ -175,14 +168,22 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
           onClick={onClick}
         >
           <Button
+            type="button"
             disabled={isDeleting}
-            icon={isDeleting ? <LoadingOutlined /> : <DeleteFilled />}
             data-skipeventfortag={skipEventForTag}
             onClick={(evt) => {
               evt.stopPropagation();
               internalOnDelete();
             }}
-          />
+            variant="outline"
+            size="icon"
+          >
+            {isDeleting ? (
+              <LoadingOutlined className="h-4 w-4" />
+            ) : (
+              <DeleteFilled className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       )}
     </div>

@@ -1,15 +1,14 @@
+import { useAgentTokenForm } from "@/components/hooks/useAgentTokenForm.tsx";
+import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
+import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { appClasses } from "@/components/utils/theme";
-import { MenuInfo } from "@/components/utils/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceAgentTokenDeleteMutationHook } from "@/lib/hooks/mutationHooks";
-import { Dropdown, MenuProps, message, Modal } from "antd";
 import { AgentToken } from "fimidara";
-import Link from "next/link";
+import { Ellipsis } from "lucide-react";
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 
 export interface AgentTokenMenuProps {
@@ -25,6 +24,7 @@ enum MenuKeys {
 
 const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
   const { token, onCompleteDelete } = props;
+  const { toast } = useToast();
   const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: token.workspaceId,
     targetId: token.resourceId,
@@ -32,50 +32,41 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceAgentTokenDeleteMutationHook({
     onSuccess(data, params) {
-      message.success("Agent token scheduled for deletion");
+      toast({ description: "Agent token scheduled for deletion" });
       onCompleteDelete();
     },
-    onError(e, params) {
-      errorMessageNotificatition(e, "Error deleting token");
+    onError(error, params) {
+      errorMessageNotificatition(error, "Error deleting token", toast);
     },
   });
 
-  const onSelectMenuItem = (info: MenuInfo) => {
-    if (info.key === MenuKeys.DeleteToken) {
-      Modal.confirm({
-        title: "Are you sure you want to delete this token?",
-        okText: "Yes",
-        cancelText: "No",
-        okType: "primary",
-        okButtonProps: { danger: true },
-        onOk: async () => {
-          await deleteHook.runAsync({
-            body: { tokenId: token.resourceId },
-          });
-        },
-        onCancel() {
-          // do nothing
-        },
+  const deleteModalHook = useDeleteModal({
+    title: `Delete agent token - "${token.name}"`,
+    description: "Are you sure you want to delete this agent token?",
+    onDelete: async () => {
+      await deleteHook.runAsync({
+        body: { tokenId: token.resourceId },
       });
-    } else if (info.key === MenuKeys.GrantPermission) {
+    },
+  });
+
+  const formHook = useAgentTokenForm({ workspaceId: token.workspaceId });
+
+  const onSelectMenuItem = (key: string) => {
+    if (key === MenuKeys.DeleteToken) {
+      deleteModalHook.setShow(true);
+    } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
+    } else if (key === MenuKeys.UpdatePermissionGroups) {
+      formHook.setFormOpen(token);
     }
   };
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  const items = insertAntdMenuDivider([
     {
       // TODO: only show if user has permission
       key: MenuKeys.UpdatePermissionGroups,
-      label: (
-        <Link
-          href={appWorkspacePaths.agentTokenForm(
-            token.workspaceId,
-            token.resourceId
-          )}
-        >
-          Update Agent Token
-        </Link>
-      ),
+      label: "Update Agent Token",
     },
     {
       key: MenuKeys.GrantPermission,
@@ -90,18 +81,15 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
   return (
     <React.Fragment>
       {permissionsHook.node}
-      <Dropdown
+      {deleteModalHook.node}
+      {formHook.node}
+      <DropdownItems
         disabled={deleteHook.loading}
-        trigger={["click"]}
-        menu={{
-          items,
-          style: { minWidth: "150px" },
-          onClick: onSelectMenuItem,
-        }}
-        placement="bottomRight"
+        items={items}
+        onSelect={onSelectMenuItem}
       >
-        <IconButton className={appClasses.iconBtn} icon={<BsThreeDots />} />
-      </Dropdown>
+        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      </DropdownItems>
     </React.Fragment>
   );
 };

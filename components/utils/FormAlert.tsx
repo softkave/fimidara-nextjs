@@ -1,16 +1,22 @@
-import { Alert, AlertProps, Form } from "antd";
+import { Terminal } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert.tsx";
 import { enrichErrorMessage } from "./errorHandling";
 
-export interface IFormAlertProps extends Omit<AlertProps, "message"> {
-  error: any;
+export interface IFormAlertProps {
+  error: unknown;
 }
 
 export function FormAlert(props: IFormAlertProps) {
   const { error } = props;
-  const errorMessage = enrichErrorMessage(error) ?? "An error occurred";
+  const errorMessage = enrichErrorMessage(error);
+
   return errorMessage ? (
-    <Form.Item>
-      <Alert type="error" {...props} message={errorMessage} />
-    </Form.Item>
+    <div className="mb-4">
+      <Alert variant="destructive">
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>Heads up!</AlertTitle>
+        <AlertDescription>{errorMessage}</AlertDescription>
+      </Alert>
+    </div>
   ) : null;
 }

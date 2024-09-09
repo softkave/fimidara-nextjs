@@ -1,16 +1,15 @@
+import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
+import { useFileForm } from "@/components/hooks/useFileForm.tsx";
+import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { MenuInfo } from "@/components/utils/types";
 import { insertAntdMenuDivider } from "@/components/utils/utils";
-import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
-import { appWorkspacePaths } from "@/lib/definitions/system";
+import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { useDownloadFile } from "@/lib/hooks/useDownloadFile";
-import { Dropdown, MenuProps, Modal, message } from "antd";
-import { File } from "fimidara";
-import Link from "next/link";
-import React from "react";
-import { BsThreeDots } from "react-icons/bs";
+import { File, stringifyFimidaraFilenamepath } from "fimidara";
+import { Ellipsis } from "lucide-react";
+import { FC, Fragment } from "react";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
 
 export interface FileMenuProps {
@@ -26,8 +25,9 @@ enum MenuKeys {
   DownloadFile = "download",
 }
 
-const FileMenu: React.FC<FileMenuProps> = (props) => {
+const FileMenu: FC<FileMenuProps> = (props) => {
   const { file, workspaceRootname, onScheduleDeleteSuccess } = props;
+  const { toast } = useToast();
   const permissionsHook = useTargetGrantPermissionModal({
     workspaceId: file.workspaceId,
     targetId: file.resourceId,
@@ -35,55 +35,49 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceFileDeleteMutationHook({
     onSuccess(data, params) {
-      message.success("File scheduled for deletion");
+      toast({ description: "File scheduled for deletion" });
       onScheduleDeleteSuccess();
     },
-    onError(e, params) {
-      errorMessageNotificatition(e, "Error deleting file");
+    onError(error, params) {
+      errorMessageNotificatition(error, "Error deleting file", toast);
     },
   });
   const filename = file.name + (file.ext ?? "");
   const downloadHook = useDownloadFile(file.resourceId, filename);
 
-  const onSelectMenuItem = (info: MenuInfo) => {
-    if (info.key === MenuKeys.DeleteItem) {
-      Modal.confirm({
-        title: "Are you sure you want to delete this file?",
-        okText: "Yes",
-        cancelText: "No",
-        okType: "primary",
-        okButtonProps: { danger: true },
-        onOk: async () => {
-          await deleteHook.runAsync({
-            body: {
-              filepath: addRootnameToPath(
-                file.namepath.join(folderConstants.nameSeparator),
-                workspaceRootname
-              ),
-            },
-          });
-        },
-        onCancel() {
-          // do nothing
+  const deleteModalHook = useDeleteModal({
+    title: `Delete file - "${file.name}"`,
+    description: "Are you sure you want to delete this file?",
+    onDelete: async () => {
+      await deleteHook.runAsync({
+        body: {
+          filepath: stringifyFimidaraFilenamepath(file, workspaceRootname),
         },
       });
-    } else if (info.key === MenuKeys.GrantPermission) {
+    },
+  });
+
+  const formHook = useFileForm({
+    workspaceRootname,
+    workspaceId: file.workspaceId,
+  });
+
+  const onSelectMenuItem = (key: string) => {
+    if (key === MenuKeys.DeleteItem) {
+      deleteModalHook.setShow(true);
+    } else if (key === MenuKeys.GrantPermission) {
       permissionsHook.toggle();
-    } else if (info.key === MenuKeys.DownloadFile) {
+    } else if (key === MenuKeys.DownloadFile) {
       downloadHook.downloadHook.run();
+    } else if (key === MenuKeys.UpdateItem) {
+      formHook.setFormOpen(file);
     }
   };
 
-  const items: MenuProps["items"] = insertAntdMenuDivider([
+  const items = insertAntdMenuDivider([
     {
       key: MenuKeys.UpdateItem,
-      label: (
-        <Link
-          href={appWorkspacePaths.fileForm(file.workspaceId, file.resourceId)}
-        >
-          Update File
-        </Link>
-      ),
+      label: "Update File",
     },
     {
       key: MenuKeys.GrantPermission,
@@ -101,22 +95,18 @@ const FileMenu: React.FC<FileMenuProps> = (props) => {
   ]);
 
   return (
-    <React.Fragment>
-      {downloadHook.messageContextHolder}
-      <Dropdown
+    <Fragment>
+      <DropdownItems
         disabled={deleteHook.loading}
-        trigger={["click"]}
-        menu={{
-          items,
-          style: { minWidth: "150px" },
-          onClick: onSelectMenuItem,
-        }}
-        placement="bottomRight"
+        items={items}
+        onSelect={onSelectMenuItem}
       >
-        <IconButton icon={<BsThreeDots />} />
-      </Dropdown>
+        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      </DropdownItems>
       {permissionsHook.node}
-    </React.Fragment>
+      {deleteModalHook.node}
+      {formHook.node}
+    </Fragment>
   );
 };
 

@@ -1,23 +1,32 @@
+import { Button } from "@/components/ui/button.tsx";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Textarea } from "@/components/ui/textarea.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { systemConstants } from "@/lib/definitions/system";
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Space, Upload } from "antd";
-import Text from "antd/es/typography/Text";
-import { FormikErrors, FormikTouched } from "formik";
-import { isArray, isObject, isString } from "lodash-es";
+import { Upload } from "antd";
+import { values } from "lodash-es";
 import prettyBytes from "pretty-bytes";
+import { UseFormReturn } from "react-hook-form";
+import { z } from "zod";
 import { SingleFileFormValue } from "./types";
 import { getFirstFoldername, replaceBaseFoldername } from "./utils";
-import FormError from "@/components/utils/form/FormError.tsx";
+import { fileFormValidationSchema } from "./validation.ts";
 
 export interface SingleFileFormProps extends StyleableComponentProps {
-  disabled?: boolean;
-  value?: SingleFileFormValue;
-  touched?: FormikTouched<SingleFileFormValue>;
-  errors?: string | string[] | FormikErrors<SingleFileFormValue>;
   isDirectory?: boolean;
-  onChange: (values: Partial<SingleFileFormValue>) => void;
+  index: number;
+  form: UseFormReturn<z.infer<typeof fileFormValidationSchema>>;
+  isExistingFile: boolean;
+  beforeUpdateModifyName?: (name: string) => string;
 }
 
 const kFileMessages = {
@@ -29,147 +38,156 @@ const kFileMessages = {
   existingFileButtonTitle: "Replace File",
   newFileButtonTitle: "Select File",
   autofillText: (name: string) => (
-    <Text style={{ textDecoration: "underline", color: "inherit" }}>
-      Use <Text strong>{name}</Text> from selected file
-    </Text>
+    <span className="underline">
+      Use <strong>{name}</strong> from selected file
+    </span>
   ),
 } as const;
 
 export function SingleFileForm(props: SingleFileFormProps) {
   const {
-    value: values,
-    touched,
-    errors,
-    disabled,
+    form,
+    index,
     style,
     className,
     isDirectory,
-    onChange,
+    isExistingFile,
+    beforeUpdateModifyName,
   } = props;
-
   const messages = kFileMessages;
+  const wFiles = form.watch("files");
 
+  const entry = wFiles[index];
   const nameNode = (
-    <Form.Item
-      required
-      label={messages.nameLabel}
-      help={
-        touched?.name &&
-        isObject(errors) &&
-        !isArray(errors) &&
-        errors?.name ? (
-          <FormError visible={touched.name} error={errors.name} />
-        ) : (
-          messages.invalidNameError
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Space direction="vertical" style={{ width: "100%" }} size={0}>
-        <Input
-          value={values?.name}
-          onChange={(evt) => onChange({ name: evt.target.value })}
-          placeholder={messages.namePlaceholder}
-          disabled={disabled || !!values?.resourceId}
-          maxLength={systemConstants.maxNameLength}
-          autoComplete="off"
-        />
-        {values?.file && (
-          <Button
-            type="link"
-            onClick={() => onChange({ name: values.file?.name })}
-            style={{ paddingLeft: 0, paddingRight: 0 }}
-          >
-            <Text style={{ textDecoration: "underline", color: "inherit" }}>
-              {messages.autofillText(values.file.name)}
-            </Text>
-          </Button>
-        )}
-      </Space>
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name={`files.${index}.name`}
+      render={({ field }) => {
+        return (
+          <FormItem>
+            <FormLabel required>{messages.nameLabel}</FormLabel>
+            <FormControl>
+              <div>
+                <Input
+                  {...field}
+                  maxLength={systemConstants.maxNameLength}
+                  placeholder={messages.namePlaceholder}
+                  disabled={field.disabled || isExistingFile}
+                  autoComplete="off"
+                  onChange={(evt) => {
+                    const value = evt.target.value;
+                    const name = beforeUpdateModifyName?.(value) || value;
+                    form.setValue(`files.${index}.name`, name);
+                  }}
+                />
+                {entry?.file && (
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      const name =
+                        beforeUpdateModifyName?.(entry?.file?.name) ||
+                        entry?.file?.name;
+                      form.setValue(`files.${index}.name`, name);
+                    }}
+                    type="button"
+                  >
+                    <span className="underline">
+                      {messages.autofillText(entry?.file?.name)}
+                    </span>
+                  </Button>
+                )}
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
+    />
   );
 
   const descriptionNode = (
-    <Form.Item
-      label={messages.descriptionLabel}
-      help={
-        touched?.description &&
-        isObject(errors) &&
-        !isArray(errors) &&
-        errors?.description && (
-          <FormError visible={touched.description} error={errors.description} />
-        )
-      }
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input.TextArea
-        name="description"
-        value={values?.description}
-        onChange={(evt) => onChange({ description: evt.target.value })}
-        placeholder={messages.descriptionPlaceholder}
-        disabled={disabled}
-        maxLength={systemConstants.maxDescriptionLength}
-        autoSize={{ minRows: 2 }}
-      />
-    </Form.Item>
+    <FormField
+      control={form.control}
+      name={`files.${index}.description`}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <Textarea
+              {...field}
+              value={field.value || ""}
+              placeholder={messages.descriptionPlaceholder}
+              maxLength={systemConstants.maxDescriptionLength}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   // TODO: include max file size
   const selectFileNode = (
-    <Form.Item
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-      help={touched && isString(errors) && <FormError visible error={errors} />}
-    >
-      <Upload
-        showUploadList={false}
-        multiple={false}
-        disabled={disabled}
-        fileList={values?.file ? [values.file] : []}
-        beforeUpload={(file, fileList) => {
-          const existingBaseFoldername =
-            isDirectory && values?.name
-              ? getFirstFoldername([values])
-              : undefined;
-          const name = values?.resourceId
-            ? values.name
-            : isDirectory
-            ? file.webkitRelativePath || file.name
-            : file.name;
+    <FormField
+      control={form.control}
+      name={`files.${index}.file`}
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <Upload
+              showUploadList={false}
+              multiple={false}
+              disabled={field.disabled}
+              fileList={field.value ? [field.value] : []}
+              beforeUpload={(file, fileList) => {
+                const existingBaseFoldername =
+                  isDirectory && values?.name
+                    ? getFirstFoldername([values])
+                    : undefined;
+                const name = isExistingFile
+                  ? values.name
+                  : isDirectory
+                  ? file.webkitRelativePath || file.name
+                  : file.name;
 
-          type ValuesType = [
-            Partial<SingleFileFormValue> & Pick<SingleFileFormValue, "name">
-          ];
-          let newValues: ValuesType = [{ file, name }];
+                type ValuesType = [
+                  Partial<SingleFileFormValue> &
+                    Pick<SingleFileFormValue, "name">
+                ];
+                let newValues: ValuesType = [{ file, name }];
 
-          if (existingBaseFoldername) {
-            newValues = replaceBaseFoldername(
-              newValues,
-              existingBaseFoldername
-            ) as ValuesType;
-          }
+                if (existingBaseFoldername) {
+                  newValues = replaceBaseFoldername(
+                    newValues,
+                    existingBaseFoldername
+                  ) as ValuesType;
+                }
 
-          onChange(newValues[0]);
-          return false;
-        }}
-      >
-        <Space size="middle">
-          <IconButton
-            icon={<UploadOutlined />}
-            title={
-              values?.file
-                ? messages.existingFileButtonTitle
-                : messages.newFileButtonTitle
-            }
-          />
-          {values?.file ? (
-            <Text type="secondary">{prettyBytes(values.file.size)}</Text>
-          ) : null}
-        </Space>
-      </Upload>
-    </Form.Item>
+                form.setValue(`files.${index}.file`, newValues[0]);
+                return false;
+              }}
+            >
+              <div className="space-x-4">
+                <IconButton
+                  icon={<UploadOutlined />}
+                  title={
+                    field.value
+                      ? messages.existingFileButtonTitle
+                      : messages.newFileButtonTitle
+                  }
+                />
+                {field.value ? (
+                  <span className="text-secondary">
+                    {prettyBytes(field.value.size)}
+                  </span>
+                ) : null}
+              </div>
+            </Upload>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 
   // TODO: should "uploading files progress" below open the progress drawer on
