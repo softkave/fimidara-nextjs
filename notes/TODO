@@ -23,6 +23,8 @@
 - prevent submit again mof change password after success
 - only show actions if user has permission
 - toggle allow showing password
+- changelog
+- marketing emails & subscriptions using resend
 - hide agent token and toggle to see
 - error in assign permissions modal
 - copy in agent token and other info
