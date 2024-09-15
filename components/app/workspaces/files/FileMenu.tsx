@@ -7,7 +7,7 @@ import { insertAntdMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { useDownloadFile } from "@/lib/hooks/useDownloadFile";
-import { File, stringifyFimidaraFilenamepath } from "fimidara";
+import { File, stringifyFimidaraFilepath } from "fimidara";
 import { Ellipsis } from "lucide-react";
 import { FC, Fragment } from "react";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
@@ -51,7 +51,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
     onDelete: async () => {
       await deleteHook.runAsync({
         body: {
-          filepath: stringifyFimidaraFilenamepath(file, workspaceRootname),
+          filepath: stringifyFimidaraFilepath(file, workspaceRootname),
         },
       });
     },

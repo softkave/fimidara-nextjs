@@ -28,7 +28,7 @@ import { systemValidation } from "@/lib/validation/system";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMount } from "ahooks";
 import { Upload } from "antd";
-import { Folder, stringifyFimidaraFoldernamepath } from "fimidara";
+import { Folder, stringifyFimidaraFolderpath } from "fimidara";
 import { compact } from "lodash-es";
 import { CircleChevronRight, FolderUp } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -81,7 +81,7 @@ export default function FolderForm(props: FolderFormProps) {
   const parentPath =
     props.parentPath ||
     (folder
-      ? stringifyFimidaraFoldernamepath({
+      ? stringifyFimidaraFolderpath({
           namepath: folder.namepath.slice(0, -1),
         })
       : "");

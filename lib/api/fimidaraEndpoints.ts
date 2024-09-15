@@ -3,9 +3,9 @@
 import * as fimidara from "fimidara";
 import { first } from "lodash-es";
 import { systemConstants } from "../definitions/system";
+import { useUserSessionFetchStore } from "../hooks/fetchStores/session.ts";
 import UserSessionStorageFns from "../storage/userSession";
 import { FimidaraEndpoints as PrivateFimidaraEndpoints } from "./privateEndpoints";
-import { useUserSessionFetchStore } from "../hooks/fetchStores/session.ts";
 
 function getUserTokenFromStore() {
   const state = first(useUserSessionFetchStore.getState().states);
