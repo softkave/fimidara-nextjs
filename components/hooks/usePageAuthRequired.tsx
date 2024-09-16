@@ -52,5 +52,11 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
     set({ routeToOnLogout: undefined });
   }, [isLoggedIn, router, returnTo, routeToOnLogout, pathname, set]);
 
-  return isLoggedIn ? render() : renderRedirecting();
+  if (isLoggedIn === undefined) {
+    return null;
+  } else if (isLoggedIn) {
+    return render();
+  } else {
+    return renderRedirecting();
+  }
 };

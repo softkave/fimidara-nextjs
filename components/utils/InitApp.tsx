@@ -2,7 +2,6 @@
 
 import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
-import UserSessionStorageFns from "@/lib/storage/userSession";
 import { isRouteToAppOnInitPath } from "@/lib/utils/routes";
 import { useMount } from "ahooks";
 import { usePathname, useRouter } from "next/navigation";
@@ -19,11 +18,11 @@ export const InitApp = (props: IInitAppProps) => {
   const { isLoggedIn } = useUserLoggedIn();
 
   useMount(() => {
-    const savedToken = UserSessionStorageFns.getUserToken();
-    const isLoggedIn = !!savedToken;
     const shouldRouteToApp = isLoggedIn && p && isRouteToAppOnInitPath(p);
 
-    if (shouldRouteToApp) router.push(kAppUserPaths.workspaces);
+    if (shouldRouteToApp) {
+      router.push(kAppUserPaths.workspaces);
+    }
   });
 
   if (isLoggedIn === undefined) {

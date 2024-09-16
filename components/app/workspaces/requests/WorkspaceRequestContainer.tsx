@@ -31,7 +31,7 @@ const WorkspaceRequestContainer: React.FC<IWorkspaceRequestContainerProps> = (
       />
     );
   } else if (isLoading) {
-    return <PageLoading message="Loading collaboration resource..." />;
+    return <PageLoading message="Loading collaboration request..." />;
   } else {
     return <PageNothingFound message="Collaboration request not found" />;
   }

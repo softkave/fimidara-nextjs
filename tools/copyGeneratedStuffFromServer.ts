@@ -12,8 +12,9 @@ async function copyGeneratedStuffFromServer() {
   const serverSdkUtilsPrivateEndpointsPath = `${serverSdkRootpath}/privateEndpoints.ts`;
   const serverSdkUtilsPrivateTypesPath = `${serverSdkRootpath}/privateTypes.ts`;
 
-  const frontendRestApiEndpointsPath = `./components/docs/raw/endpoints`;
-  const frontendRestApiTableOfContentPath = `./components/docs/raw/toc`;
+  const frontendRestApiEndpointsPath = `./api-raw/endpoints`;
+  const frontendRestApiTableOfContentPath = `./api-raw/toc`;
+
   const frontendSdkUtilsFilepath = `./lib/api/utils.ts`;
   const frontendSdkUtilsPrivateEndpointsPath = `./lib/api/privateEndpoints.ts`;
   const frontendSdkUtilsPrivateTypesPath = `./lib/api/privateTypes.ts`;

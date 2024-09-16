@@ -2,7 +2,6 @@
 
 import WorkspaceRequest from "@/components/app/workspaces/requests/WorkspaceRequest";
 import WorkspaceRequestContainer from "@/components/app/workspaces/requests/WorkspaceRequestContainer.tsx";
-import { usePageAuthRequired } from "@/components/hooks/usePageAuthRequired.tsx";
 import React from "react";
 
 export type IWorkspaceRequestPageProps = {
@@ -11,14 +10,12 @@ export type IWorkspaceRequestPageProps = {
 
 const WorkspaceRequestPage: React.FC<IWorkspaceRequestPageProps> = (props) => {
   const { workspaceId, requestId } = props.params;
-  return usePageAuthRequired({
-    render: () => (
-      <WorkspaceRequestContainer
-        requestId={requestId}
-        render={(request) => <WorkspaceRequest request={request} />}
-      />
-    ),
-  });
+  return (
+    <WorkspaceRequestContainer
+      requestId={requestId}
+      render={(request) => <WorkspaceRequest request={request} />}
+    />
+  );
 };
 
 export default WorkspaceRequestPage;

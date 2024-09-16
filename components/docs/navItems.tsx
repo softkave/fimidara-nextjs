@@ -2,11 +2,11 @@ import { ObjectValues } from "@/lib/api/utils";
 import { kAppDocPaths } from "@/lib/definitions/paths/docs.ts";
 import assert from "assert";
 import { first, forEach, get, last, set } from "lodash-es";
+import restApiTableOfContent from "../../api-raw/toc/v1/table-of-content.json";
 import { isObjectEmpty } from "../../lib/utils/fns";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 import { renderToSideNavMenuItemList } from "../utils/page/side-nav/utils.tsx";
 import { htmlCharacterCodes } from "../utils/utils";
-import restApiTableOfContent from "./raw/toc/v1/table-of-content.json";
 
 export const DOCS_BASE_PATH = "/docs";
 export const apiVersion = "v1";

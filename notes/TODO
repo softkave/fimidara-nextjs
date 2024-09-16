@@ -1,17 +1,26 @@
 # fimidara
 
 ## Now
+
 - start script
 - integrate sentry
 - avatar and presigned URLs
 - bug in usage records
+- changelog
 
 ## Bugs
+
 - toggle all should toggle all permission and untoggling one should untoggle all
 - deleted file not removed from list. check folder too
 - only text navigates not menu in sidenav, and other menus not navigated to get selected
+  - click text does not open children menu
+- in error page, only surface error's marked public. error page per section, 
+  like public/logged-in. report errors to like sentry or logs. recover page from errors.
 
 ## Later
+
+- report bug/request feature
+- mobile rendering
 - convert last of message to toast
 - convert last of antd to shadcn
 - prevent submit if error and data has not changed
@@ -83,3 +92,4 @@
 - prevent mutation actions if user is not email verified
 - auto-scroll back to top of page on error to surface error
 - accessibility
+- improve docs

@@ -35,8 +35,8 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
       isLoading={isLoading}
       isDataFetched={isDataFetched}
       data={resourceList}
-      defaultErrorMessage="Error fetching permission groups"
-      defaultLoadingMessage="Loading permission groups..."
+      defaultErrorMessage="Error fetching collaboration requests"
+      defaultLoadingMessage="Loading collaboration requests..."
       render={(data) => {
         if (data.length) {
           return (

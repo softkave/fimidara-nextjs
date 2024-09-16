@@ -30,7 +30,7 @@ export const systemConstants = {
   ),
   endpointInfoPath: defaultTo(
     process.env.ENDPOINT_INFO_PATH,
-    `/components/docs/raw/endpoints/v1`
+    `/api-raw/endpoints/v1`
   ),
   serverAddr: defaultTo(
     process.env.NEXT_PUBLIC_SERVER_ADDR,
