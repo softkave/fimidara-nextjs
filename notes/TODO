@@ -21,6 +21,7 @@
 
 - report bug/request feature
 - mobile rendering
+  - sidenav
 - convert last of message to toast
 - convert last of antd to shadcn
 - prevent submit if error and data has not changed
