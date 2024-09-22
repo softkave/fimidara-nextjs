@@ -2,7 +2,6 @@
 
 import ChangePasswordWithCurrentPassword from "@/components/app/user/ChangePasswordWithCurrentPassword.tsx";
 import EmailVerification from "@/components/app/user/EmailVerification.tsx";
-import UploadUserAvatar from "@/components/app/user/UploadUserAvatar.tsx";
 import UserContainer from "@/components/app/user/UserContainer.tsx";
 import UserProfile from "@/components/app/user/UserProfile.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
@@ -12,8 +11,6 @@ function UserSettings() {
     <UserContainer
       render={(session) => (
         <div className="space-y-8">
-          <UploadUserAvatar />
-          <Separator />
           <h4>Email Verification</h4>
           <EmailVerification session={session} />
           <Separator />

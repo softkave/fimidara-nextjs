@@ -1,6 +1,5 @@
 "use client";
 
-import UploadWorkspaceAvatar from "@/components/app/workspaces/UploadWorkspaceAvatar";
 import WorkspaceComponent from "@/components/app/workspaces/WorkspaceComponent.tsx";
 import WorkspaceContainer from "@/components/app/workspaces/WorkspaceContainer.tsx";
 import WorkspaceForm from "@/components/app/workspaces/WorkspaceForm";
@@ -17,7 +16,6 @@ const EditWorkspacePage: NextPage<IEditWorkspacePageProps> = (props) => {
       workspaceId={workspaceId}
       render={(workspace) => (
         <div className="space-y-8">
-          <UploadWorkspaceAvatar workspaceId={workspace.resourceId} />
           <Separator />
           <h4>Workspace Details</h4>
           <WorkspaceComponent workspace={workspace} />
