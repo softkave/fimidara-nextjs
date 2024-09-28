@@ -44,7 +44,8 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
     description: "Are you sure you want to remove this collaborator?",
     onDelete: async () => {
       await deleteHook.runAsync({
-        body: { workspaceId, collaboratorId: collaborator.resourceId },
+        workspaceId,
+        collaboratorId: collaborator.resourceId,
       });
     },
   });

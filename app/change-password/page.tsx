@@ -65,7 +65,7 @@ export default function ChangePasswordWithToken(
       return;
     }
 
-    return await changePasswordHook.runAsync({ body, authToken: token });
+    return await changePasswordHook.runAsync(body, { authToken: token });
   };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

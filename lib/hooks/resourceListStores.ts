@@ -2,18 +2,20 @@
 
 import {
   AgentToken,
-  CollaborationRequestForUser,
   CollaborationRequestForWorkspace,
   Collaborator,
   File,
   Folder,
   PermissionGroup,
   UsageRecord,
-  User,
   Workspace,
 } from "fimidara";
 import { makeKey } from "../utils/fns";
 import { makeResourceListStore } from "./makeResourceListStore";
+import {
+  User,
+  CollaborationRequestForUser,
+} from "../api-internal/endpoints/privateTypes.ts";
 
 export const useUsersStore = makeResourceListStore<User>("users");
 export const useUserCollaborationRequestsStore =

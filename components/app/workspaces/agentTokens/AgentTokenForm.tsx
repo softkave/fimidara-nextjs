@@ -67,8 +67,8 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
       toast({ description: "Agent token updated" });
       router.push(
         kAppWorkspacePaths.agentToken(
-          data.body.token.workspaceId,
-          data.body.token.resourceId
+          data.token.workspaceId,
+          data.token.resourceId
         )
       );
     },
@@ -78,8 +78,8 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
       toast({ description: "Agent token created" });
       router.push(
         kAppWorkspacePaths.agentToken(
-          data.body.token.workspaceId,
-          data.body.token.resourceId
+          data.token.workspaceId,
+          data.token.resourceId
         )
       );
     },
@@ -88,22 +88,16 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
   const onSubmit = (body: z.infer<typeof formSchema>) =>
     agentToken
       ? updateHook.runAsync({
-          body: {
-            tokenId: agentToken.resourceId,
-            token: {
-              ...body,
-              providedResourceId: body.providedResourceId || undefined,
-            },
+          tokenId: agentToken.resourceId,
+          token: {
+            ...body,
+            providedResourceId: body.providedResourceId || undefined,
           },
         })
       : createHook.runAsync({
-          body: {
-            workspaceId,
-            token: {
-              ...body,
-              providedResourceId: body.providedResourceId || undefined,
-            },
-          },
+          workspaceId,
+          ...body,
+          providedResourceId: body.providedResourceId || undefined,
         });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

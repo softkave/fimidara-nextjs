@@ -45,7 +45,7 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
       })
       .then((result) => {
         toast({
-          title: `Email address ${result.body.user.email} verified`,
+          title: `Email address ${result.user.email} verified`,
           duration: appComponentConstants.messageDuration,
         });
       });

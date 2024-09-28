@@ -78,21 +78,15 @@ export default function AssignPermissionGroupsForm(
     await Promise.all([
       assignedPgs.length &&
         assignHook.runAsync({
-          body: {
-            workspaceId,
-            entityId: [entityId],
-            permissionGroups: assignedPgs.map((pId) => ({
-              permissionGroupId: pId,
-            })),
-          },
+          workspaceId,
+          entityId: [entityId],
+          permissionGroupId: assignedPgs,
         }),
       unassignedPgs.length &&
         unassignHook.runAsync({
-          body: {
-            workspaceId,
-            entityId: [entityId],
-            permissionGroups: unassignedPgs,
-          },
+          workspaceId,
+          entityId: [entityId],
+          permissionGroupId: unassignedPgs,
         }),
     ]);
 

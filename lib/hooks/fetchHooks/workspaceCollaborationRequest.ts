@@ -14,10 +14,10 @@ async function workspaceCollaborationRequestInputFetchFn(
   params: GetWorkspaceCollaborationRequestEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<CollaborationRequestForWorkspace>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.collaborationRequests.getWorkspaceRequest({
-    body: params,
-  });
-  return { resource: data.body.request };
+  const data = await endpoints.collaborationRequests.getWorkspaceRequest(
+    params
+  );
+  return { resource: data.request };
 }
 
 export const { useFetchHook: useWorkspaceCollaborationRequestFetchHook } =

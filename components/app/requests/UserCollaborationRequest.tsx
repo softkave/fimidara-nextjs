@@ -77,10 +77,8 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
                 loading={respondHook.loading}
                 onClick={() =>
                   respondHook.run({
-                    body: {
-                      requestId: resource.resourceId,
-                      response: "declined",
-                    },
+                    requestId: resource.resourceId,
+                    response: "declined",
                   })
                 }
               >
@@ -91,10 +89,8 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
                 loading={respondHook.loading}
                 onClick={() =>
                   respondHook.run({
-                    body: {
-                      requestId: resource.resourceId,
-                      response: "accepted",
-                    },
+                    requestId: resource.resourceId,
+                    response: "accepted",
                   })
                 }
               >

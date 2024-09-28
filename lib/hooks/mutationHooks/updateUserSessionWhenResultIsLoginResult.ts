@@ -1,12 +1,10 @@
+import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import UserSessionStorageFns from "@/lib/storage/userSession.ts";
-import { FimidaraEndpointResult, LoginResult } from "fimidara";
 import { useUserSessionFetchStore } from "../fetchStores/session.ts";
 import { useUsersStore } from "../resourceListStores.ts";
 
-export function updateUserSessionWhenResultIsLoginResult(
-  result: FimidaraEndpointResult<LoginResult>
-) {
-  const { user, clientAssignedToken, token } = result.body;
+export function updateUserSessionWhenResultIsLoginResult(result: LoginResult) {
+  const { user, clientAssignedToken, token } = result;
 
   // Persist user token to local storage if it's already there. If it's there,
   // it means during the user's last login, the user opted-in to "remember me".

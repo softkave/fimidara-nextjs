@@ -61,8 +61,8 @@ export default function RequestForm(props: IRequestFormProps) {
       toast({ description: "Collaboration request updated" });
       router.push(
         kAppWorkspacePaths.request(
-          data.body.request.workspaceId,
-          data.body.request.resourceId
+          data.request.workspaceId,
+          data.request.resourceId
         )
       );
     },
@@ -72,8 +72,8 @@ export default function RequestForm(props: IRequestFormProps) {
       toast({ description: "Collaboration request created" });
       router.push(
         kAppWorkspacePaths.request(
-          data.body.request.workspaceId,
-          data.body.request.resourceId
+          data.request.workspaceId,
+          data.request.resourceId
         )
       );
     },
@@ -83,19 +83,15 @@ export default function RequestForm(props: IRequestFormProps) {
   const onSubmit = (body: z.infer<typeof requestValidation>) =>
     request
       ? updateHook.runAsync({
-          body: {
-            requestId: request.resourceId,
-            request: {
-              message: body.message,
-              expires: body.expires,
-            },
+          requestId: request.resourceId,
+          request: {
+            message: body.message,
+            expires: body.expires,
           },
         })
       : createHook.runAsync({
-          body: {
-            workspaceId,
-            request: body,
-          },
+          workspaceId,
+          ...body,
         });
 
   const form = useForm<z.infer<typeof requestValidation>>({

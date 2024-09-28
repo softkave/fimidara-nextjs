@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
-import { SignupEndpointParams } from "@/lib/api/privateTypes.ts";
+import { SignupEndpointParams } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserSignupMutationHook } from "@/lib/hooks/mutationHooks.ts";
@@ -45,7 +45,7 @@ export default function Signup(props: ISignupProps) {
     },
   });
   const onSubmit = (body: z.infer<typeof formSchema>) =>
-    signupHook.runAsync({ body });
+    signupHook.runAsync(body);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},

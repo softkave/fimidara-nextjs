@@ -47,12 +47,10 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
     description: "Are you sure you want to delete this folder?",
     onDelete: async () => {
       await deleteHook.runAsync({
-        body: {
-          folderpath: addRootnameToPath(
-            folder.namepath.join(folderConstants.nameSeparator),
-            workspaceRootname
-          ),
-        },
+        folderpath: addRootnameToPath(
+          folder.namepath.join(folderConstants.nameSeparator),
+          workspaceRootname
+        ),
       });
     },
   });

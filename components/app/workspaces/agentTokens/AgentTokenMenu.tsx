@@ -45,7 +45,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
     description: "Are you sure you want to delete this agent token?",
     onDelete: async () => {
       await deleteHook.runAsync({
-        body: { tokenId: token.resourceId },
+        tokenId: token.resourceId,
       });
     },
   });

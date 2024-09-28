@@ -121,9 +121,9 @@ function TargetGrantPermissionFormEntityList<T extends { resourceId: string }>(
       workspaceId,
       items: entities.map((entity): ResolveEntityPermissionItemInput => {
         return {
+          targetId,
           entityId: entity.resourceId,
           action: actions,
-          target: { targetId },
         };
       }),
     };

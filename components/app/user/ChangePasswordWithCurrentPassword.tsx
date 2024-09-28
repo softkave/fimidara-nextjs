@@ -38,7 +38,7 @@ export default function ChangePasswordWithCurrentPassword() {
     });
 
   const onSubmit = (body: z.infer<typeof validationSchema>) =>
-    changePasswordHook.runAsync({ body });
+    changePasswordHook.runAsync(body);
 
   const form = useForm<z.infer<typeof validationSchema>>({
     resolver: zodResolver(validationSchema),

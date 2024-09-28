@@ -1,13 +1,13 @@
 import { useUserSessionFetchHook } from "@/lib/hooks/fetchHooks/session.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
 import assert from "assert";
-import { LoginResult } from "fimidara";
 import React from "react";
 import { useFetchSingleResourceFetchState } from "../../lib/hooks/fetchHookUtils";
 import { getBaseError } from "../../lib/utils/errors";
 import PageError from "../utils/page/PageError";
 import PageLoading from "../utils/page/PageLoading";
 import PageNothingFound from "../utils/page/PageNothingFound";
+import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface IUseUserNodeResult {
   renderedNode: React.ReactElement | null;

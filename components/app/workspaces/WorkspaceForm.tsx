@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
 import { StyleableComponentProps } from "@/components/utils/styling/types.ts";
 import { useToast } from "@/hooks/use-toast.ts";
+import { AddWorkspaceEndpointParams } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { folderConstants } from "@/lib/definitions/folder";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { systemConstants } from "@/lib/definitions/system";
@@ -24,7 +25,7 @@ import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
 import { systemValidation } from "@/lib/validation/system";
 import { workspaceValidationParts } from "@/lib/validation/workspace";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddWorkspaceEndpointParams, Workspace } from "fimidara";
+import { Workspace } from "fimidara";
 import { CircleChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -64,18 +65,17 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
   const createHook = useWorkspaceAddMutationHook({
     onSuccess(data, params) {
       toast({ description: "Workspace created" });
-      router.push(
-        kAppWorkspacePaths.folderList(data.body.workspace.resourceId)
-      );
+      router.push(kAppWorkspacePaths.folderList(data.workspace.resourceId));
     },
   });
   const stateHook = workspace ? updateHook : createHook;
   const onSubmit = async (body: z.infer<typeof formSchema>) =>
     workspace
       ? await updateHook.runAsync({
-          body: { workspaceId: workspace.resourceId, workspace: body },
+          workspaceId: workspace.resourceId,
+          workspace: body,
         })
-      : await createHook.runAsync({ body });
+      : await createHook.runAsync(body);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: workspace

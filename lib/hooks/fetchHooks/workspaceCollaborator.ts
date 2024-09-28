@@ -11,10 +11,8 @@ async function workspaceCollaboratorInputFetchFn(
   params: GetCollaboratorEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<Collaborator>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.collaborators.getCollaborator({
-    body: params,
-  });
-  return { resource: data.body.collaborator };
+  const data = await endpoints.collaborators.getCollaborator(params);
+  return { resource: data.collaborator };
 }
 
 export const { useFetchHook: useWorkspaceCollaboratorFetchHook } =

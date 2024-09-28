@@ -11,10 +11,8 @@ async function workspacePermissionGroupInputFetchFn(
   params: GetPermissionGroupEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<PermissionGroup>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.permissionGroups.getPermissionGroup({
-    body: params,
-  });
-  return { resource: data.body.permissionGroup };
+  const data = await endpoints.permissionGroups.getPermissionGroup(params);
+  return { resource: data.permissionGroup };
 }
 
 export const { useFetchHook: useWorkspacePermissionGroupFetchHook } =

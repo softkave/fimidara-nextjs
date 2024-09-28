@@ -10,12 +10,12 @@ import { flattenErrorList, toAppErrorList } from "../utils/errors";
 
 function downloadFile(filename: string, url: string) {
   const downloadAnchor = document.createElement("a");
-  document.body.appendChild(downloadAnchor);
+  document.appendChild(downloadAnchor);
   downloadAnchor.download = filename;
   downloadAnchor.href = url;
   downloadAnchor.target = "_blank";
   downloadAnchor.click();
-  document.body.removeChild(downloadAnchor);
+  document.removeChild(downloadAnchor);
 }
 
 export function useDownloadFile(fileId: string, filename: string) {
@@ -28,9 +28,10 @@ export function useDownloadFile(fileId: string, filename: string) {
 
     const fimidara = getPublicFimidaraEndpointsUsingUserToken();
     const result = await fimidara.presignedPaths.issuePresignedPath({
-      body: { fileId, usageCount: 1 },
+      fileId,
+      usageCount: 1,
     });
-    const presignedPath = result.body.path;
+    const presignedPath = result.path;
     const url = getFimidaraReadFileURL({
       serverURL: systemConstants.serverAddr,
       filepath: presignedPath,

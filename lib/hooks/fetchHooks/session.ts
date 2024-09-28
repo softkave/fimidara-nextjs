@@ -1,7 +1,7 @@
 "use client";
 
-import { getPublicFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints.ts";
-import { User } from "fimidara";
+import { User } from "@/lib/api-internal/endpoints/privateTypes.ts";
+import { getPrivateFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints.ts";
 import {
   UserSessionFetchStoreOther,
   useUserSessionFetchStore,
@@ -13,13 +13,13 @@ import { FetchSingleResourceFetchFnData } from "./types.ts";
 async function getUserDataInputFetchFn(): Promise<
   FetchSingleResourceFetchFnData<User, UserSessionFetchStoreOther>
 > {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.users.getUserData();
   return {
-    resource: data.body.user,
+    resource: data.user,
     other: {
-      userToken: data.body.token,
-      clientToken: data.body.clientAssignedToken,
+      userToken: data.token,
+      clientToken: data.clientAssignedToken,
     },
   };
 }

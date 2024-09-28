@@ -17,10 +17,13 @@ import { useUserUpdateMutationHook } from "@/lib/hooks/mutationHooks";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { signupValidationParts } from "@/lib/validation/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginResult, User } from "fimidara";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormAlert } from "../../utils/FormAlert";
+import {
+  LoginResult,
+  User,
+} from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface IUserProfileProps {
   session: LoginResult;
@@ -64,7 +67,7 @@ export default function UserProfile(props: IUserProfileProps) {
   });
 
   const onSubmit = (body: z.infer<typeof userSettingsValidation>) =>
-    updateUserHook.runAsync({ body });
+    updateUserHook.runAsync(body);
 
   const form = useForm<z.infer<typeof userSettingsValidation>>({
     resolver: zodResolver(userSettingsValidation),

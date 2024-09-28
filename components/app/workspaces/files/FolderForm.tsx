@@ -91,7 +91,7 @@ export default function FolderForm(props: FolderFormProps) {
     onSuccess(data, params) {
       toast({ description: "Folder updated" });
       router.push(
-        kAppWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
+        kAppWorkspacePaths.folder(workspaceId, data.folder.resourceId)
       );
     },
   });
@@ -100,7 +100,7 @@ export default function FolderForm(props: FolderFormProps) {
     onSuccess(data, params) {
       toast({ description: "Folder created" });
       router.push(
-        kAppWorkspacePaths.folder(workspaceId, data.body.folder.resourceId)
+        kAppWorkspacePaths.folder(workspaceId, data.folder.resourceId)
       );
     },
   });
@@ -110,11 +110,11 @@ export default function FolderForm(props: FolderFormProps) {
     onSuccess(data, params) {
       toast({ description: "File uploaded" });
       // router.push(
-      //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
+      //   appWorkspacePaths.file(workspaceId, data.file.resourceId)
       // );
     },
     onError(e, params) {
-      const filepath = params[0].body.filepath;
+      const filepath = params[0].filepath;
       if (filepath) progressHandlerHook.setOpError(filepath, e);
     },
   });
@@ -149,8 +149,8 @@ export default function FolderForm(props: FolderFormProps) {
         workspaceRootname
       );
 
-      return await uploadHook.runAsync({
-        body: {
+      return await uploadHook.runAsync(
+        {
           filepath,
           // fileId: input.resourceId,
           data: input.file,
@@ -159,8 +159,8 @@ export default function FolderForm(props: FolderFormProps) {
           mimetype: input.mimetype,
           encoding: input.encoding,
         },
-        onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
-      });
+        { onUploadProgress: progressHandlerHook.getProgressHandler(filepath) }
+      );
     }
   };
 
@@ -171,12 +171,8 @@ export default function FolderForm(props: FolderFormProps) {
         : data.name;
 
       return createHook.runAsync({
-        body: {
-          folder: {
-            folderpath: addRootnameToPath(folderpath, workspaceRootname),
-            description: data.description || undefined,
-          },
-        },
+        folderpath: addRootnameToPath(folderpath, workspaceRootname),
+        description: data.description || undefined,
       });
     }
   };
@@ -190,11 +186,9 @@ export default function FolderForm(props: FolderFormProps) {
     );
 
     return updateHook.runAsync({
-      body: {
-        // folderId: folder.resourceId,
-        folderpath,
-        folder: { description: data.description || undefined },
-      },
+      // folderId: folder.resourceId,
+      folderpath,
+      folder: { description: data.description || undefined },
     });
   };
 

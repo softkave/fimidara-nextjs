@@ -78,10 +78,8 @@ const TargetGrantPermissionForm: FC<TargetGrantPermissionFormProps> = (
     );
 
     await Promise.all([
-      addItems.length &&
-        addHook.runAsync({ body: { workspaceId, items: addItems } }),
-      deleteItems &&
-        deleteHook.runAsync({ body: { workspaceId, items: deleteItems } }),
+      addItems.length && addHook.runAsync({ workspaceId, items: addItems }),
+      deleteItems && deleteHook.runAsync({ workspaceId, items: deleteItems }),
     ]);
 
     if (addItems.length || deleteItems.length) {
@@ -236,7 +234,7 @@ function getAddedAndDeletedTargetIdPermissions(
     deleteItems.push({
       entityId,
       action: action as FimidaraPermissionAction,
-      target: { targetId },
+      targetId,
 
       // Delete opposite of permission
       access: !updatedPermitted.access,
@@ -244,7 +242,7 @@ function getAddedAndDeletedTargetIdPermissions(
     addItems.push({
       entityId,
       action: action as FimidaraPermissionAction,
-      target: { targetId },
+      targetId,
       access: updatedPermitted.access,
     });
   });

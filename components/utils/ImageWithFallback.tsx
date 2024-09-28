@@ -12,7 +12,7 @@ import { systemConstants } from "../../lib/definitions/system";
 import { useKvStore } from "../../lib/hooks/kvStore";
 import { Button } from "../ui/button.tsx";
 import { errorMessageNotificatition } from "./errorHandling";
-import { appDataImages, appDimensions } from "./theme";
+import { appDataImages } from "./theme";
 
 export interface IImageWithFallbackProps {
   allowDelete?: boolean;
@@ -108,19 +108,19 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
   const getPresignedPath = async () => {
     const endpoints = getPublicFimidaraEndpointsUsingUserToken();
     const getResult = await endpoints.presignedPaths.getPresignedPaths({
-      body: { files: [{ filepath }] },
+      files: [{ filepath }],
     });
 
-    if (getResult.body.paths.length) {
-      const p = first(getResult.body.paths);
+    if (getResult.paths.length) {
+      const p = first(getResult.paths);
       assert(p);
       return p.path;
     }
 
     const issueResult = await endpoints.presignedPaths.issuePresignedPath({
-      body: { filepath },
+      filepath,
     });
-    return issueResult.body.path;
+    return issueResult.path;
   };
 
   const pathHook = useRequest(getPresignedPath);
@@ -143,8 +143,8 @@ const ImageWithFallback: React.FC<IImageWithFallbackProps> = (props) => {
         width={width}
         height={height}
         src={getFimidaraReadFileURL({
-          width: width ?? appDimensions.upload.width,
-          height: height ?? appDimensions.upload.height,
+          // width: width ?? appDimensions.upload.width,
+          // height: height ?? appDimensions.upload.height,
           serverURL: systemConstants.serverAddr,
           filepath: "/" + pathHook.data,
         })}

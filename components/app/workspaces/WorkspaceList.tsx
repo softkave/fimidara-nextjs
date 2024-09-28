@@ -8,18 +8,19 @@ import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
 import { PlusOutlined } from "@ant-design/icons";
-import { User, Workspace } from "fimidara";
+import { Workspace } from "fimidara";
 import { isBoolean, noop } from "lodash-es";
 import Link from "next/link";
 import { FC, useState } from "react";
 import WorkspaceAvatar from "./WorkspaceAvatar.tsx";
 import WorkspaceForm from "./WorkspaceForm.tsx";
 import WorkspaceMenu from "./WorkspaceMenu.tsx";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { User } from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface IWorkspaceListProps {
   user: User;

@@ -49,7 +49,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
     description: "Are you sure you want to delete this collaboration request?",
     onDelete: async () => {
       await deleteHook.runAsync({
-        body: { requestId: request.resourceId },
+        requestId: request.resourceId,
       });
     },
   });

@@ -11,10 +11,8 @@ async function workspaceFolderInputFetchFn(
   params: GetFolderEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<Folder>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.folders.getFolder({
-    body: params,
-  });
-  return { resource: data.body.folder };
+  const data = await endpoints.folders.getFolder(params);
+  return { resource: data.folder };
 }
 
 export const { useFetchHook: useWorkspaceFolderFetchHook } =

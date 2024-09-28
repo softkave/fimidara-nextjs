@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "fimidara";
+import { User } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { useUsersStore } from "../resourceListStores.ts";
 import { makeSingleFetchStore } from "./makeSingleFetchStore.ts";
 

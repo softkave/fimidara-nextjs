@@ -1,7 +1,7 @@
-import { ObjectValues } from "@/lib/api/utils";
 import { kAppDocPaths } from "@/lib/definitions/paths/docs.ts";
 import assert from "assert";
 import { first, forEach, get, last, set } from "lodash-es";
+import { ValueOf } from "type-fest";
 import restApiTableOfContent from "../../api-raw/toc/v1/table-of-content.json";
 import { isObjectEmpty } from "../../lib/utils/fns";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
@@ -34,7 +34,7 @@ export const kDocNavRootKeysMap = {
 
 export const kDocNavRootKeysList = Object.values(kDocNavRootKeysMap);
 
-export type DocNavRootKeys = ObjectValues<typeof kDocNavRootKeysMap>;
+export type DocNavRootKeys = ValueOf<typeof kDocNavRootKeysMap>;
 
 export const restApiRawNavItems = extractRestApiFromRawTableOfContent(
   restApiTableOfContent as any,

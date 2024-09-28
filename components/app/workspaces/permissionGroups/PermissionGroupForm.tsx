@@ -56,8 +56,8 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
       toast({ description: "Permission group updated" });
       router.push(
         kAppWorkspacePaths.permissionGroup(
-          data.body.permissionGroup.workspaceId,
-          data.body.permissionGroup.resourceId
+          data.permissionGroup.workspaceId,
+          data.permissionGroup.resourceId
         )
       );
     },
@@ -67,8 +67,8 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
       toast({ description: "Permission group created" });
       router.push(
         kAppWorkspacePaths.permissionGroup(
-          data.body.permissionGroup.workspaceId,
-          data.body.permissionGroup.resourceId
+          data.permissionGroup.workspaceId,
+          data.permissionGroup.resourceId
         )
       );
     },
@@ -78,13 +78,12 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   const onSubmit = (body: z.infer<typeof permissionGroupValidation>) =>
     permissionGroup
       ? updateHook.runAsync({
-          body: {
-            permissionGroupId: permissionGroup.resourceId,
-            data: body,
-          },
+          permissionGroupId: permissionGroup.resourceId,
+          data: body,
         })
       : createHook.runAsync({
-          body: { workspaceId, permissionGroup: body },
+          workspaceId,
+          ...body,
         });
 
   const form = useForm<z.infer<typeof permissionGroupValidation>>({

@@ -1,54 +1,47 @@
-import { promises as fspromises } from "fs";
 import fse from "fs-extra";
+import path from "path";
 
-/** Copies generated REST API table of content, public endpoints info, and other
- * generated stuff. */
+interface ToCopy {
+  from: string;
+  to: string;
+  copy: string[];
+}
+
+const copyList: ToCopy[] = [
+  {
+    from: "../fimidara-server-node/mdoc/rest-api/endpoints",
+    to: "./api-raw/endpoints",
+    copy: ["."],
+  },
+  {
+    from: "../fimidara-server-node/mdoc/rest-api/toc",
+    to: "./api-raw/toc",
+    copy: ["."],
+  },
+  {
+    from: "../fimidara-server-node/sdk/js-sdk/src",
+    to: "./lib/api-internal",
+    copy: [
+      "/endpoints/endpointImports.ts",
+      "/endpoints/privateEndpoints.ts",
+      "/endpoints/privateTypes.ts",
+      "/FimidaraEndpointsBase.ts",
+      "/invokeEndpoint.ts",
+      "/types.ts",
+      "/config.ts",
+      "/constants.ts",
+      "/error.ts",
+    ],
+  },
+];
+
 async function copyGeneratedStuffFromServer() {
-  const serverRootpath = "../fimidara-server-node";
-  const serverRestApiEndpointsPath = `${serverRootpath}/mdoc/rest-api/endpoints`;
-  const serverRestApiTableOfContentPath = `${serverRootpath}/mdoc/rest-api/toc`;
-  const serverSdkRootpath = `${serverRootpath}/sdk/js-sdk/src`;
-  const serverSdkUtilsFilepath = `${serverSdkRootpath}/utils.ts`;
-  const serverSdkUtilsPrivateEndpointsPath = `${serverSdkRootpath}/privateEndpoints.ts`;
-  const serverSdkUtilsPrivateTypesPath = `${serverSdkRootpath}/privateTypes.ts`;
-
-  const frontendRestApiEndpointsPath = `./api-raw/endpoints`;
-  const frontendRestApiTableOfContentPath = `./api-raw/toc`;
-
-  const frontendSdkUtilsFilepath = `./lib/api/utils.ts`;
-  const frontendSdkUtilsPrivateEndpointsPath = `./lib/api/privateEndpoints.ts`;
-  const frontendSdkUtilsPrivateTypesPath = `./lib/api/privateTypes.ts`;
-
-  await Promise.all([
-    fse.remove(frontendRestApiEndpointsPath),
-    fse.remove(frontendRestApiTableOfContentPath),
-  ]);
-  await Promise.all([
-    fse.copy(serverRestApiEndpointsPath, frontendRestApiEndpointsPath),
-    fse.copy(
-      serverRestApiTableOfContentPath,
-      frontendRestApiTableOfContentPath
-    ),
-    fse.copy(serverSdkUtilsFilepath, frontendSdkUtilsFilepath),
-    fse.copy(
-      serverSdkUtilsPrivateEndpointsPath,
-      frontendSdkUtilsPrivateEndpointsPath
-    ),
-    fse.copy(serverSdkUtilsPrivateTypesPath, frontendSdkUtilsPrivateTypesPath),
-  ]);
-
-  const sdkUtilsRawContent = await fspromises.readFile(
-    frontendSdkUtilsFilepath,
-    "utf-8"
-  );
-  const sdkUtilsContentWithWarning =
-    "// This file is copied over from server-generated js sdk.\n" +
-    "// Do not modify directly. For util code, use localUtils.ts file instead.\n\n" +
-    sdkUtilsRawContent;
-  await fspromises.writeFile(
-    frontendSdkUtilsFilepath,
-    sdkUtilsContentWithWarning,
-    { encoding: "utf-8" }
+  await Promise.all(
+    copyList.map(async (c) => {
+      await Promise.all(
+        c.copy.map((f) => fse.copy(path.join(c.from, f), path.join(c.to, f)))
+      );
+    })
   );
 }
 

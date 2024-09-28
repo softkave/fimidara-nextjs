@@ -11,10 +11,8 @@ async function workspaceAgentTokenInputFetchFn(
   params: GetAgentTokenEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<AgentToken>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.agentTokens.getToken({
-    body: params,
-  });
-  return { resource: data.body.token };
+  const data = await endpoints.agentTokens.getToken(params);
+  return { resource: data.token };
 }
 
 export const { useFetchHook: useWorkspaceAgentTokenFetchHook } =

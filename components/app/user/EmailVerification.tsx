@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useUserSendEmailVerificationCodeMutationHook } from "@/lib/hooks/mutationHooks";
-import { LoginResult } from "fimidara";
 import React from "react";
 import useCooldown from "../../hooks/useCooldown";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
+import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface EmailVerificationProps {
   session: LoginResult;

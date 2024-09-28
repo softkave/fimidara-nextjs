@@ -50,9 +50,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
     description: "Are you sure you want to delete this file?",
     onDelete: async () => {
       await deleteHook.runAsync({
-        body: {
-          filepath: stringifyFimidaraFilepath(file, workspaceRootname),
-        },
+        filepath: stringifyFimidaraFilepath(file, workspaceRootname),
       });
     },
   });

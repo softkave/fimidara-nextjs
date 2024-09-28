@@ -90,7 +90,7 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
       disabled={!hasSelected}
       onClick={() =>
         upgradeHook.run({
-          body: { userIds: selectedHook.getList() },
+          userIds: selectedHook.getList(),
         })
       }
     >

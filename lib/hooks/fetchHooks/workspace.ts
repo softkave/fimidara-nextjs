@@ -11,10 +11,8 @@ async function userWorkspaceInputFetchFn(
   params: GetWorkspaceEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<Workspace>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.workspaces.getWorkspace({
-    body: params,
-  });
-  return { resource: data.body.workspace };
+  const data = await endpoints.workspaces.getWorkspace(params);
+  return { resource: data.workspace };
 }
 
 export const { useFetchHook: useUserWorkspaceFetchHook } = makeSingleFetchHook(

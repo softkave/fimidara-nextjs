@@ -66,7 +66,7 @@ export default function FileForm(props: FileFormProps) {
     onSuccess(data, params) {
       toast({ description: "File updated" });
       // router.push(
-      //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
+      //   appWorkspacePaths.file(workspaceId, data.file.resourceId)
       // );
     },
   });
@@ -74,11 +74,11 @@ export default function FileForm(props: FileFormProps) {
     onSuccess(data, params) {
       toast({ description: "File uploaded" });
       // router.push(
-      //   appWorkspacePaths.file(workspaceId, data.body.file.resourceId)
+      //   appWorkspacePaths.file(workspaceId, data.file.resourceId)
       // );
     },
     onError(e, params) {
-      const filepath = params[0].body.filepath;
+      const filepath = params[0].filepath;
       if (filepath) progressHandlerHook.setOpError(filepath, e);
     },
   });
@@ -94,8 +94,8 @@ export default function FileForm(props: FileFormProps) {
 
     if (input.resourceId) {
       if (input.file) {
-        return await uploadHook.runAsync({
-          body: {
+        return await uploadHook.runAsync(
+          {
             fileId: input.resourceId,
             data: input.file,
             size: input.file.size,
@@ -103,19 +103,17 @@ export default function FileForm(props: FileFormProps) {
             mimetype: input.mimetype,
             encoding: input.encoding,
           },
-          onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
-        });
+          { onUploadProgress: progressHandlerHook.getProgressHandler(filepath) }
+        );
       } else {
         return await updateHook.runAsync({
-          body: {
-            fileId: input.resourceId,
-            file: {
-              description: input.description || undefined,
-              mimetype: input.mimetype,
+          fileId: input.resourceId,
+          file: {
+            description: input.description || undefined,
+            mimetype: input.mimetype,
 
-              // TODO: add to server
-              // encoding: input.encoding,
-            },
+            // TODO: add to server
+            // encoding: input.encoding,
           },
         });
       }
@@ -125,8 +123,8 @@ export default function FileForm(props: FileFormProps) {
         return;
       }
 
-      return await uploadHook.runAsync({
-        body: {
+      return await uploadHook.runAsync(
+        {
           filepath,
           data: input.file,
           size: input.file.size,
@@ -134,8 +132,8 @@ export default function FileForm(props: FileFormProps) {
           mimetype: input.mimetype,
           encoding: input.encoding,
         },
-        onUploadProgress: progressHandlerHook.getProgressHandler(filepath),
-      });
+        { onUploadProgress: progressHandlerHook.getProgressHandler(filepath) }
+      );
     }
   };
 

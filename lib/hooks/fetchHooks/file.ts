@@ -11,10 +11,8 @@ async function workspaceFileInputFetchFn(
   params: GetFileDetailsEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<File>> {
   const endpoints = getPublicFimidaraEndpointsUsingUserToken();
-  const data = await endpoints.files.getFileDetails({
-    body: params,
-  });
-  return { resource: data.body.file };
+  const data = await endpoints.files.getFileDetails(params);
+  return { resource: data.file };
 }
 
 export const { useFetchHook: useWorkspaceFileFetchHook } = makeSingleFetchHook(

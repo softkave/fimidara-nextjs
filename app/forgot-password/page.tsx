@@ -39,13 +39,13 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
   const forgotHook = useUserForgotPasswordMutationHook({
     onSuccess(data, params) {
       toast({
-        title: `You should see a change password email soon at ${params[0].body.email}`,
+        title: `You should see a change password email soon at ${params[0].email}`,
         duration: appComponentConstants.messageDuration,
       });
     },
   });
   const onSubmit = async (body: z.infer<typeof formSchema>) =>
-    await forgotHook.runAsync({ body });
+    await forgotHook.runAsync(body);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},

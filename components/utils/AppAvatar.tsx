@@ -5,7 +5,6 @@ import { getFimidaraReadFileURL } from "fimidara";
 import { first } from "lodash-es";
 import { getPublicFimidaraEndpointsUsingUserToken } from "../../lib/api/fimidaraEndpoints";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar.tsx";
-import { appDimensions } from "./theme";
 
 export interface IAppAvatarProps {
   alt: string;
@@ -21,19 +20,19 @@ export default function AppAvatar(props: IAppAvatarProps) {
 
     const endpoints = getPublicFimidaraEndpointsUsingUserToken();
     const getResult = await endpoints.presignedPaths.getPresignedPaths({
-      body: { files: [{ filepath }] },
+      files: [{ filepath }],
     });
 
-    if (getResult.body.paths.length) {
-      const p = first(getResult.body.paths);
+    if (getResult.paths.length) {
+      const p = first(getResult.paths);
       assert(p);
       return p.path;
     }
 
     const issueResult = await endpoints.presignedPaths.issuePresignedPath({
-      body: { filepath },
+      filepath,
     });
-    return issueResult.body.path;
+    return issueResult.path;
   };
 
   const pathHook = useRequest(getPresignedPath);
@@ -41,8 +40,8 @@ export default function AppAvatar(props: IAppAvatarProps) {
     ? getFimidaraReadFileURL({
         serverURL: systemConstants.serverAddr,
         filepath: "/" + pathHook.data,
-        width: appDimensions.avatar.width,
-        height: appDimensions.avatar.height,
+        // width: appDimensions.avatar.width,
+        // height: appDimensions.avatar.height,
       })
     : undefined;
 

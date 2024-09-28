@@ -47,17 +47,13 @@ export default function Login(props: ILoginProps) {
   });
   const onSubmit = async (body: z.infer<typeof formSchema>) => {
     const result = await loginHook.runAsync({
-      body: {
-        email: body.email,
-        password: body.password,
-      },
+      email: body.email,
+      password: body.password,
     });
 
     if (body.remember) {
-      UserSessionStorageFns.saveUserToken(result.body.token);
-      UserSessionStorageFns.saveClientAssignedToken(
-        result.body.clientAssignedToken
-      );
+      UserSessionStorageFns.saveUserToken(result.token);
+      UserSessionStorageFns.saveClientAssignedToken(result.clientAssignedToken);
     }
   };
   const form = useForm<z.infer<typeof formSchema>>({

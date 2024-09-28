@@ -1,8 +1,8 @@
 "use client";
 
-import { LoginResult } from "fimidara";
 import React from "react";
 import { useUserNode } from "../../hooks/useUserNode";
+import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface UserContainerProps {
   render: (data: LoginResult) => React.ReactElement;

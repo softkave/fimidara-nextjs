@@ -75,9 +75,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     description: "Are you sure you want to delete this permission group?",
     onDelete: async () => {
       await deleteHook.runAsync({
-        body: {
-          permissionGroupId: permissionGroup.resourceId,
-        },
+        permissionGroupId: permissionGroup.resourceId,
       });
     },
   });
@@ -91,10 +89,8 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
       }
 
       await unassignPermissionGroupHook.runAsync({
-        body: {
-          entityId: [unassignParams.entityId],
-          permissionGroups: [permissionGroup.resourceId],
-        },
+        entityId: [unassignParams.entityId],
+        permissionGroupId: [permissionGroup.resourceId],
       });
     },
   });
