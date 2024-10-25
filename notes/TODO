@@ -4,7 +4,6 @@
 
 - add that you get $# free hosting for 1 year on fimidara as a banner
 - integrate sentry
-- avatar and presigned URLs
 - bug in usage records
 - changelog
 
@@ -14,12 +13,18 @@
 - deleted file not removed from list. check folder too
 - only text navigates not menu in sidenav, and other menus not navigated to get selected
   - click text does not open children menu
-- in error page, only surface error's marked public. error page per section, 
+- in error page, only surface error's marked public. error page per section,
   like public/logged-in. report errors to like sentry or logs. recover page from errors.
 - folder form highlighted input cuts off at the edges
 
 ## Later
 
+- agent token
+  - encode jwt
+- new homepage with features + code
+- sample apps
+- resumable uploads
+- image manipulation
 - report bug/request feature
 - mobile rendering
   - sidenav

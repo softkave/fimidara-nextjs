@@ -1,3 +1,4 @@
+import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { useUserSessionFetchHook } from "@/lib/hooks/fetchHooks/session.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
 import assert from "assert";
@@ -7,7 +8,6 @@ import { getBaseError } from "../../lib/utils/errors";
 import PageError from "../utils/page/PageError";
 import PageLoading from "../utils/page/PageLoading";
 import PageNothingFound from "../utils/page/PageNothingFound";
-import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface IUseUserNodeResult {
   renderedNode: React.ReactElement | null;
@@ -47,11 +47,7 @@ export function useUserNode(): IUseUserNodeResult {
 
   const assertGet = (): LoginResult => {
     assert(resource && other);
-    return {
-      user: resource,
-      token: other.userToken,
-      clientAssignedToken: other.clientToken,
-    };
+    return other.refresh.getValue();
   };
 
   return { renderedNode, assertGet };

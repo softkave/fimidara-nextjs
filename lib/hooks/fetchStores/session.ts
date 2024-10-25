@@ -1,12 +1,16 @@
 "use client";
 
-import { User } from "@/lib/api-internal/endpoints/privateTypes.ts";
+import {
+  LoginResult,
+  User,
+} from "@/lib/api-internal/endpoints/privateTypes.ts";
+import { RefreshUserToken } from "@/lib/api-internal/RefreshUserToken.ts";
 import { useUsersStore } from "../resourceListStores.ts";
 import { makeSingleFetchStore } from "./makeSingleFetchStore.ts";
 
 export type UserSessionFetchStoreOther = {
-  userToken: string;
-  clientToken: string;
+  session: LoginResult;
+  refresh: RefreshUserToken;
 };
 
 export const { useFetchStore: useUserSessionFetchStore } = makeSingleFetchStore<

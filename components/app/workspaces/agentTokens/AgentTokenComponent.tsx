@@ -56,15 +56,6 @@ function AgentTokenComponent(props: IAgentTokenProps) {
           node={resource.providedResourceId}
         />
       )}
-      <LabeledNode
-        nodeIsText
-        copyable
-        direction="vertical"
-        label="JWT Token"
-        node={
-          <span style={{ overflowWrap: "anywhere" }}>{resource.tokenStr}</span>
-        }
-      />
       {expirationDate && (
         <LabeledNode
           nodeIsText

@@ -5,30 +5,42 @@ import { first } from "lodash-es";
 import { FimidaraEndpoints as PrivateFimidaraEndpoints } from "../api-internal/endpoints/privateEndpoints.ts";
 import { systemConstants } from "../definitions/system";
 import { useUserSessionFetchStore } from "../hooks/fetchStores/session.ts";
-import UserSessionStorageFns from "../storage/userSession";
+import { kUserSessionStorageFns } from "../storage/UserSessionStorageFns.ts";
 
 function getUserTokenFromStore() {
   const state = first(useUserSessionFetchStore.getState().states);
-  let token: string | undefined = undefined;
+  let token: fimidara.FimidaraJsConfigAuthToken | undefined = undefined;
 
-  if (state) token = state[1].data?.other?.userToken;
-  if (!token) token = UserSessionStorageFns.getUserToken() ?? undefined;
+  if (state) {
+    token = state[1].data?.other?.refresh;
+  }
+
+  if (!token) {
+    token = kUserSessionStorageFns.getData()?.jwtToken ?? undefined;
+  }
 
   return token;
 }
+
 function getClientTokenFromStore() {
   const state = first(useUserSessionFetchStore.getState().states);
-  let token: string | undefined = undefined;
+  let token: fimidara.FimidaraJsConfigAuthToken | undefined = undefined;
 
-  if (state) token = state[1].data?.other?.clientToken;
-  if (!token)
-    token = UserSessionStorageFns.getClientAssignedToken() ?? undefined;
+  if (state) {
+    token = state[1].data?.other?.refresh;
+  }
+
+  if (!token) {
+    token = kUserSessionStorageFns.getData()?.clientJwtToken ?? undefined;
+  }
 
   return token;
 }
 
-export function getPublicFimidaraEndpointsUsingUserToken() {
-  const userToken = getUserTokenFromStore();
+export function getPublicFimidaraEndpointsUsingUserToken(
+  props: { userToken?: string } = {}
+) {
+  const { userToken = getUserTokenFromStore() } = props;
   const publicFimidaraEndpoints = new fimidara.FimidaraEndpoints({
     serverURL: systemConstants.serverAddr,
     authToken: userToken,
@@ -36,27 +48,38 @@ export function getPublicFimidaraEndpointsUsingUserToken() {
   return publicFimidaraEndpoints;
 }
 
-export function getPrivateFimidaraEndpointsUsingUserToken() {
-  const userToken = getUserTokenFromStore();
+export function getPrivateFimidaraEndpointsUsingUserToken(
+  props: { userToken?: string } = {}
+) {
+  const { userToken = getUserTokenFromStore() } = props;
   const privateFimidaraEndpoints = new PrivateFimidaraEndpoints({
     serverURL: systemConstants.serverAddr,
     authToken: userToken,
   });
+
   return privateFimidaraEndpoints;
 }
 
-export function getPublicFimidaraEndpointsUsingFimidaraAgentToken() {
+export function getPublicFimidaraEndpointsUsingFimidaraAgentToken(
+  props: { clientToken?: string } = {}
+) {
+  const { clientToken = getClientTokenFromStore() } = props;
   const publicFimidaraEndpoints = new fimidara.FimidaraEndpoints({
     serverURL: systemConstants.serverAddr,
-    authToken: getClientTokenFromStore(),
+    authToken: clientToken,
   });
+
   return publicFimidaraEndpoints;
 }
 
-export function getPrivateFimidaraEndpointsUsingFimidaraAgentToken() {
+export function getPrivateFimidaraEndpointsUsingFimidaraAgentToken(
+  props: { clientToken?: string } = {}
+) {
+  const { clientToken = getClientTokenFromStore() } = props;
   const privateFimidaraEndpoints = new PrivateFimidaraEndpoints({
     serverURL: systemConstants.serverAddr,
-    authToken: getClientTokenFromStore(),
+    authToken: clientToken,
   });
+
   return privateFimidaraEndpoints;
 }

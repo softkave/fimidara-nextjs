@@ -17,7 +17,7 @@ import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { userConstants } from "@/lib/definitions/user.ts";
 import { useUserLoginMutationHook } from "@/lib/hooks/mutationHooks/useUserLoginMutationHook.ts";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
-import UserSessionStorageFns from "@/lib/storage/userSession.ts";
+import { kUserSessionStorageFns } from "@/lib/storage/UserSessionStorageFns";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isBoolean, omit } from "lodash-es";
 import { useRouter } from "next/navigation";
@@ -52,8 +52,12 @@ export default function Login(props: ILoginProps) {
     });
 
     if (body.remember) {
-      UserSessionStorageFns.saveUserToken(result.token);
-      UserSessionStorageFns.saveClientAssignedToken(result.clientAssignedToken);
+      kUserSessionStorageFns.setData({
+        jwtToken: result.jwtToken,
+        clientJwtToken: result.clientJwtToken,
+        refreshToken: result.refreshToken,
+        jwtTokenExpiresAt: result.jwtTokenExpiresAt,
+      });
     }
   };
   const form = useForm<z.infer<typeof formSchema>>({

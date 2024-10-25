@@ -1,6 +1,7 @@
 import assert from 'assert';
+import {isString} from 'lodash-es';
 import {AnyObject} from 'softkave-js-utils';
-import {FimidaraJsConfig} from './config.ts';
+import {FimidaraJsConfig, FimidaraJsConfigAuthToken} from './config.ts';
 import {InvokeEndpointParams, invokeEndpoint} from './invokeEndpoint.ts';
 import {FimidaraEndpointParamsOptional} from './types.ts';
 
@@ -10,8 +11,9 @@ export type Mapping = Record<
 >;
 
 export class FimidaraEndpointsBase extends FimidaraJsConfig {
-  protected getAuthToken(params?: {authToken?: string}) {
-    return params?.authToken || this.config.authToken;
+  protected getAuthToken(params?: {authToken?: FimidaraJsConfigAuthToken}) {
+    const authToken = params?.authToken || this.config.authToken;
+    return isString(authToken) ? authToken : authToken?.getJwtToken();
   }
 
   protected getServerURL(params?: {serverURL?: string}) {

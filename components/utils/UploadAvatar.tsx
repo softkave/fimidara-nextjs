@@ -94,7 +94,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
     return u0.renderedNode;
   }
 
-  const clientAssignedToken = u0.assertGet().clientAssignedToken;
+  const clientAssignedToken = u0.assertGet().clientJwtToken;
   const uploadButton = (
     <IconButton
       icon={<CloudUploadOutlined />}

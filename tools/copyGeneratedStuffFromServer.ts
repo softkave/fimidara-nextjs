@@ -31,6 +31,7 @@ const copyList: ToCopy[] = [
       "/config.ts",
       "/constants.ts",
       "/error.ts",
+      "/RefreshUserToken.ts",
     ],
   },
 ];

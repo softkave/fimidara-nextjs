@@ -7,7 +7,7 @@ export function useUserLoggedIn() {
   let isLoggedIn: boolean | undefined = undefined;
 
   if (!isLoading) {
-    if (other?.userToken) {
+    if (other?.refresh.getJwtToken()) {
       isLoggedIn = true;
     } else {
       isLoggedIn = false;

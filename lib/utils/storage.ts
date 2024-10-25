@@ -1,71 +1,65 @@
-export type StorageType = "localStorage" | "sessionStorage";
-type StorageName = StorageType | "local" | "session";
+import { ValueOf } from "type-fest";
+
+export const kStorageType = {
+  localStorage: "localStorage",
+  sessionStorage: "sessionStorage",
+  local: "local",
+  session: "session",
+};
+
+export type StorageName = ValueOf<typeof kStorageType>;
 
 function getStorageType(storageType: StorageName) {
   switch (storageType) {
-    case "local":
-    case "localStorage":
+    case kStorageType.local:
+    case kStorageType.localStorage:
       return globalThis?.localStorage;
-    case "session":
-    case "sessionStorage":
+    case kStorageType.session:
+    case kStorageType.sessionStorage:
     default:
       return globalThis?.sessionStorage;
   }
 }
 
-const defaultStorageType: StorageName = "local";
-
-export function setItem(
+function setItem(
   key: string,
   data: string,
-  storageType = defaultStorageType
+  storageType: StorageName = kStorageType.local
 ) {
   const storageObject = getStorageType(storageType);
+
   if (storageObject) {
     storageObject.setItem(key, data);
   }
 }
 
-export function removeItem(key: string, storageType = defaultStorageType) {
+function removeItem(
+  key: string,
+  storageType: StorageName = kStorageType.local
+) {
   const storageObject = getStorageType(storageType);
+
   if (storageObject) {
     storageObject.removeItem(key);
   }
 }
 
-export function getItem(key: string, storageType = defaultStorageType) {
+function getItem(key: string, storageType: StorageName = kStorageType.local) {
   const storageObject = getStorageType(storageType);
+
   if (storageObject) {
     return storageObject.getItem(key);
   }
 }
 
-export function setItemIfExist(
+function setItemIfExist(
   key: string,
   data: string,
-  storageType = defaultStorageType
+  storageType: StorageName = kStorageType.local
 ) {
   if (getItem(key, storageType)) {
     setItem(key, data, storageType);
   }
-}
-
-export function makeSetFnForKey(key: string) {
-  return (data: string, storageType = defaultStorageType) =>
-    setItem(key, data, storageType);
-}
-
-export function makeGetFnForKey(key: string) {
-  return (storageType = defaultStorageType) => getItem(key, storageType);
-}
-
-export function makeSetIfExistFnForKey(key: string) {
-  return (data: string, storageType = defaultStorageType) =>
-    setItemIfExist(key, data, storageType);
-}
-
-export function makeRemoveFnForKey(key: string) {
-  return (storageType = defaultStorageType) => removeItem(key, storageType);
 }
 
 export class StorageFns {
@@ -73,8 +67,4 @@ export class StorageFns {
   static removeItem = removeItem;
   static getItem = getItem;
   static setItemIfExist = setItemIfExist;
-  static makeSetFnForKey = makeSetFnForKey;
-  static makeGetFnForKey = makeGetFnForKey;
-  static makeSetIfExistFnForKey = makeSetIfExistFnForKey;
-  static makeRemoveFnForKey = makeRemoveFnForKey;
 }

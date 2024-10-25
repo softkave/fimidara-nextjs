@@ -1,5 +1,7 @@
 export enum StorageKeys {
   // session data keys
-  UserToken = "fimidara.t",
-  ClientAssignedToken = "fimidara.cat",
+  userToken = "fimidara.t",
+  clientAssignedToken = "fimidara.cat",
+  refreshToken = "fimidara.rt",
+  jwtTokenExpiresAt = "fimidara.jtea",
 }

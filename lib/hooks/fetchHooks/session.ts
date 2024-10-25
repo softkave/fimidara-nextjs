@@ -1,6 +1,7 @@
 "use client";
 
 import { User } from "@/lib/api-internal/endpoints/privateTypes.ts";
+import { RefreshUserToken } from "@/lib/api-internal/RefreshUserToken.ts";
 import { getPrivateFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints.ts";
 import {
   UserSessionFetchStoreOther,
@@ -18,8 +19,11 @@ async function getUserDataInputFetchFn(): Promise<
   return {
     resource: data.user,
     other: {
-      userToken: data.token,
-      clientToken: data.clientAssignedToken,
+      session: data,
+      refresh: new RefreshUserToken({
+        endpoints,
+        user: data,
+      }),
     },
   };
 }

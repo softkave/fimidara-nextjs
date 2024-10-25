@@ -1,4 +1,4 @@
-import UserSessionStorageFns from "@/lib/storage/userSession.ts";
+import { kUserSessionStorageFns } from "@/lib/storage/UserSessionStorageFns.ts";
 import React from "react";
 import { clearFetchResourceListStores } from "../fetchHooks.ts";
 import { clearFetchSingleResourceStores } from "../fetchStores/clearFetchSingleResourceStores.ts";
@@ -7,7 +7,7 @@ import { clearResourceListStores } from "../resourceListStores.ts";
 
 export function useLogout() {
   const logout = React.useCallback(() => {
-    UserSessionStorageFns.clearSessionData();
+    kUserSessionStorageFns.clearData();
 
     // There should only ever be one entry in `useUserSessionFetchStore`
     // which'll be the current logged-in user.
