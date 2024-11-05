@@ -4,6 +4,7 @@ import type { Result } from "ahooks/lib/useRequest/src/types";
 import { isEqual, uniq } from "lodash-es";
 import React from "react";
 import {
+  getPrivateFimidaraEndpoints,
   getPrivateFimidaraEndpointsUsingUserToken,
   getPublicFimidaraEndpointsUsingUserToken,
 } from "../api/fimidaraEndpoints";
@@ -37,13 +38,13 @@ import {
 } from "./resourceListStores";
 
 export const useUserSignupMutationHook = makeEndpointMutationHook(
-  getPrivateFimidaraEndpointsUsingUserToken,
+  getPrivateFimidaraEndpoints,
   (endpoints) => endpoints.users.signup,
   updateUserSessionWhenResultIsLoginResult
 );
 
 export const useUserForgotPasswordMutationHook = makeEndpointMutationHook(
-  getPrivateFimidaraEndpointsUsingUserToken,
+  getPrivateFimidaraEndpoints,
   (endpoints) => endpoints.users.forgotPassword
 );
 export const useUserChangePasswordWithTokenMutationHook =

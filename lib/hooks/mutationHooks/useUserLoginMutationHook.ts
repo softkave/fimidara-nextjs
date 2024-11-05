@@ -1,9 +1,9 @@
-import { getPrivateFimidaraEndpointsUsingUserToken } from "@/lib/api/fimidaraEndpoints.ts";
-import { updateUserSessionWhenResultIsLoginResult } from "./updateUserSessionWhenResultIsLoginResult.ts";
+import { getPrivateFimidaraEndpoints } from "@/lib/api/fimidaraEndpoints.ts";
 import { makeEndpointMutationHook } from "./makeEndpointMutationHook.ts";
+import { updateUserSessionWhenResultIsLoginResult } from "./updateUserSessionWhenResultIsLoginResult.ts";
 
 export const useUserLoginMutationHook = makeEndpointMutationHook(
-  getPrivateFimidaraEndpointsUsingUserToken,
+  getPrivateFimidaraEndpoints,
   (endpoints) => endpoints.users.login,
   updateUserSessionWhenResultIsLoginResult
 );
