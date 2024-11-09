@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
@@ -29,7 +30,7 @@ import { z } from "zod";
 
 const permissionGroupValidation = z.object({
   name: systemValidation.name,
-  description: systemValidation.description,
+  description: systemValidation.description.optional(),
 });
 
 function getPermissionGroupFormInputFromPermissionGroup(
@@ -109,6 +110,17 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
               placeholder="Enter permission group name"
               autoComplete="off"
             />
+            <InputCounter
+              count={field.value.length}
+              maxCount={systemConstants.maxNameLength}
+              onTruncate={() => {
+                form.setValue(
+                  "name",
+                  field.value.slice(0, systemConstants.maxNameLength)
+                );
+              }}
+              className="mt-1"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -129,6 +141,17 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
               name="description"
               placeholder="Enter permission group description"
               maxLength={systemConstants.maxDescriptionLength}
+            />
+            <InputCounter
+              count={field.value?.length || 0}
+              maxCount={systemConstants.maxDescriptionLength}
+              onTruncate={() => {
+                form.setValue(
+                  "description",
+                  field.value?.slice(0, systemConstants.maxDescriptionLength)
+                );
+              }}
+              className="mt-1"
             />
           </FormControl>
           <FormMessage />

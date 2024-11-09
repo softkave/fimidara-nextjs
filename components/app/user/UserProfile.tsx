@@ -9,9 +9,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { useToast } from "@/hooks/use-toast.ts";
+import {
+  LoginResult,
+  User,
+} from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { userConstants } from "@/lib/definitions/user";
 import { useUserUpdateMutationHook } from "@/lib/hooks/mutationHooks";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
@@ -20,10 +25,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormAlert } from "../../utils/FormAlert";
-import {
-  LoginResult,
-  User,
-} from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface IUserProfileProps {
   session: LoginResult;
@@ -90,6 +91,17 @@ export default function UserProfile(props: IUserProfileProps) {
               autoComplete="given-name"
               placeholder="Enter your first name"
             />
+            <InputCounter
+              count={field.value.length}
+              maxCount={userConstants.maxNameLength}
+              onTruncate={() => {
+                form.setValue(
+                  "firstName",
+                  field.value.slice(0, userConstants.maxNameLength)
+                );
+              }}
+              className="mt-1"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -110,6 +122,17 @@ export default function UserProfile(props: IUserProfileProps) {
               autoComplete="family-name"
               placeholder="Enter your last name"
               maxLength={userConstants.maxNameLength}
+            />
+            <InputCounter
+              count={field.value.length}
+              maxCount={userConstants.maxNameLength}
+              onTruncate={() => {
+                form.setValue(
+                  "lastName",
+                  field.value.slice(0, userConstants.maxNameLength)
+                );
+              }}
+              className="mt-1"
             />
           </FormControl>
           <FormMessage />

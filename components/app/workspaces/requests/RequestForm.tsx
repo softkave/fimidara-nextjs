@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { FormAlert } from "@/components/utils/FormAlert";
@@ -134,6 +135,17 @@ export default function RequestForm(props: IRequestFormProps) {
               {...field}
               placeholder="Enter request message"
               maxLength={systemConstants.maxDescriptionLength}
+            />
+            <InputCounter
+              count={field.value.length}
+              maxCount={systemConstants.maxDescriptionLength}
+              onTruncate={() => {
+                form.setValue(
+                  "message",
+                  field.value.slice(0, systemConstants.maxDescriptionLength)
+                );
+              }}
+              className="mt-1"
             />
           </FormControl>
           <FormMessage />

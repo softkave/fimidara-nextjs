@@ -6,16 +6,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
+import { cn } from "@/components/utils.ts";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
+import { folderConstants } from "@/lib/definitions/folder.ts";
 import { systemConstants } from "@/lib/definitions/system";
 import { UploadOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
 import { values } from "lodash-es";
 import prettyBytes from "pretty-bytes";
 import { UseFormReturn } from "react-hook-form";
+import { pathExtension } from "softkave-js-utils";
 import { z } from "zod";
 import { SingleFileFormValue } from "./types";
 import { getFirstFoldername, replaceBaseFoldername } from "./utils";
@@ -38,9 +42,12 @@ const kFileMessages = {
   existingFileButtonTitle: "Replace File",
   newFileButtonTitle: "Select File",
   autofillText: (name: string) => (
-    <span className="underline">
-      Use <strong>{name}</strong> from selected file
-    </span>
+    <div className="inline-flex flex-wrap">
+      <span>Use&nbsp;</span>
+      <strong className="underline whitespace-normal text-left">{name}</strong>
+      &nbsp;
+      <span>from selected file</span>
+    </div>
   ),
 } as const;
 
@@ -70,7 +77,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
               <div>
                 <Input
                   {...field}
-                  maxLength={systemConstants.maxNameLength}
+                  maxLength={folderConstants.maxFolderNameLength}
                   placeholder={messages.namePlaceholder}
                   disabled={field.disabled || isExistingFile}
                   autoComplete="off"
@@ -79,6 +86,25 @@ export function SingleFileForm(props: SingleFileFormProps) {
                     const name = beforeUpdateModifyName?.(value) || value;
                     form.setValue(`files.${index}.name`, name);
                   }}
+                />
+                <InputCounter
+                  count={field.value.length}
+                  maxCount={folderConstants.maxFolderNameLength}
+                  onTruncate={() => {
+                    const extName = pathExtension({ input: field.value });
+                    const truncatedName =
+                      field.value.slice(
+                        /** start */ 0,
+                        folderConstants.maxFolderNameLength -
+                          extName.length -
+                          /** dot */ 1
+                      ) +
+                      /** extension dot */ "." +
+                      extName;
+
+                    form.setValue(`files.${index}.name`, truncatedName);
+                  }}
+                  className="mt-1"
                 />
                 {entry?.file && (
                   <Button
@@ -90,10 +116,9 @@ export function SingleFileForm(props: SingleFileFormProps) {
                       form.setValue(`files.${index}.name`, name);
                     }}
                     type="button"
+                    className="h-auto pl-0 pr-0"
                   >
-                    <span className="underline">
-                      {messages.autofillText(entry?.file?.name)}
-                    </span>
+                    {messages.autofillText(entry?.file?.name)}
                   </Button>
                 )}
               </div>
@@ -113,12 +138,25 @@ export function SingleFileForm(props: SingleFileFormProps) {
         <FormItem>
           <FormLabel>Description</FormLabel>
           <FormControl>
-            <Textarea
-              {...field}
-              value={field.value || ""}
-              placeholder={messages.descriptionPlaceholder}
-              maxLength={systemConstants.maxDescriptionLength}
-            />
+            <div>
+              <Textarea
+                {...field}
+                value={field.value || ""}
+                placeholder={messages.descriptionPlaceholder}
+                maxLength={systemConstants.maxDescriptionLength}
+              />
+              <InputCounter
+                count={field.value?.length || 0}
+                maxCount={folderConstants.maxFolderNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    `files.${index}.description`,
+                    field.value?.slice(0, folderConstants.maxFolderNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -193,7 +231,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
   // TODO: should "uploading files progress" below open the progress drawer on
   // click?
   return (
-    <div className={className} style={style}>
+    <div className={cn(className, "space-y-4")} style={style}>
       {nameNode}
       {descriptionNode}
       {selectFileNode}

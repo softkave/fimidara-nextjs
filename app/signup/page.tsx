@@ -9,6 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
@@ -67,6 +68,17 @@ export default function Signup(props: ISignupProps) {
               placeholder="Enter your first name"
               maxLength={userConstants.maxNameLength}
             />
+            <InputCounter
+              count={field.value.length}
+              maxCount={userConstants.maxNameLength}
+              onTruncate={() => {
+                form.setValue(
+                  "firstName",
+                  field.value.slice(0, userConstants.maxNameLength)
+                );
+              }}
+              className="mt-1"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -88,6 +100,17 @@ export default function Signup(props: ISignupProps) {
               name="lastName"
               placeholder="Enter your last name"
               maxLength={userConstants.maxNameLength}
+            />
+            <InputCounter
+              count={field.value.length}
+              maxCount={userConstants.maxNameLength}
+              onTruncate={() => {
+                form.setValue(
+                  "lastName",
+                  field.value.slice(0, userConstants.maxNameLength)
+                );
+              }}
+              className="mt-1"
             />
           </FormControl>
           <FormMessage />

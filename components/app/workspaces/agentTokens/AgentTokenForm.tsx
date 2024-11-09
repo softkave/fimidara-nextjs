@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
@@ -122,6 +123,17 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
               placeholder="Enter token name"
               autoComplete="off"
             />
+            <InputCounter
+              count={field.value?.length || 0}
+              maxCount={systemConstants.maxNameLength}
+              onTruncate={() => {
+                form.setValue(
+                  "name",
+                  field.value?.slice(0, systemConstants.maxNameLength)
+                );
+              }}
+              className="mt-1"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -142,6 +154,17 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
               name="description"
               placeholder="Enter token description"
               maxLength={systemConstants.maxDescriptionLength}
+            />
+            <InputCounter
+              count={field.value?.length || 0}
+              maxCount={systemConstants.maxDescriptionLength}
+              onTruncate={() => {
+                form.setValue(
+                  "description",
+                  field.value?.slice(0, systemConstants.maxDescriptionLength)
+                );
+              }}
+              className="mt-1"
             />
           </FormControl>
           <FormMessage />
@@ -187,6 +210,20 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
               value={field.value || ""}
               placeholder="Enter token provided resource ID"
               maxLength={agentTokenConstants.providedResourceMaxLength}
+            />
+            <InputCounter
+              count={field.value?.length || 0}
+              maxCount={agentTokenConstants.providedResourceMaxLength}
+              onTruncate={() => {
+                form.setValue(
+                  "providedResourceId",
+                  field.value?.slice(
+                    0,
+                    agentTokenConstants.providedResourceMaxLength
+                  )
+                );
+              }}
+              className="mt-1"
             />
           </FormControl>
           <FormMessage />

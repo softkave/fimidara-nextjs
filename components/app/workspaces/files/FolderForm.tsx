@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
+import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { cn } from "@/components/utils.ts";
@@ -251,8 +252,19 @@ export default function FolderForm(props: FolderFormProps) {
                   onChange={onUpdateFolderName}
                   placeholder="Enter folder name"
                   disabled={hookLoading || !!folder}
-                  maxLength={systemConstants.maxNameLength}
+                  maxLength={folderConstants.maxFolderNameLength}
                   autoComplete="off"
+                />
+                <InputCounter
+                  count={field.value.length}
+                  maxCount={folderConstants.maxFolderNameLength}
+                  onTruncate={() => {
+                    form.setValue(
+                      "name",
+                      field.value.slice(0, folderConstants.maxFolderNameLength)
+                    );
+                  }}
+                  className="mt-1"
                 />
                 {autofillName && !folder && (
                   <Button
@@ -289,6 +301,17 @@ export default function FolderForm(props: FolderFormProps) {
               value={field.value || ""}
               placeholder="Enter folder description"
               maxLength={systemConstants.maxDescriptionLength}
+            />
+            <InputCounter
+              count={field.value?.length || 0}
+              maxCount={systemConstants.maxDescriptionLength}
+              onTruncate={() => {
+                form.setValue(
+                  "description",
+                  field.value?.slice(0, systemConstants.maxDescriptionLength)
+                );
+              }}
+              className="mt-1"
             />
           </FormControl>
           <FormMessage />
