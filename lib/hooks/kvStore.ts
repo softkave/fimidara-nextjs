@@ -8,6 +8,7 @@ import { immer } from "zustand/middleware/immer";
 type KVStore = {
   items: Record<string, any>;
   set(key: string, value: any): void;
+  setWithFn(key: string, fn: (value: any) => any): void;
   get<T = any>(key: string): T | undefined;
   remove(key: string | string[]): void;
   setList(values: Array<[string, any]>): void;
@@ -60,6 +61,11 @@ export const useKvStore = create<
       set(key, value) {
         set((store) => {
           store.items[key] = value as any;
+        });
+      },
+      setWithFn(key, fn) {
+        set((store) => {
+          store.items[key] = fn(store.items[key]);
         });
       },
       setList(values) {

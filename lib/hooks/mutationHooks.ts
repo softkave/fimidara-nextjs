@@ -1,8 +1,13 @@
 "use client";
 
 import type { Result } from "ahooks/lib/useRequest/src/types";
+import {
+  IMultipartUploadBrowserParams,
+  multipartUploadBrowser,
+} from "fimidara/multipart/multipartBrowser";
 import { isEqual, uniq } from "lodash-es";
 import React from "react";
+import { OmitFrom } from "softkave-js-utils";
 import {
   getPrivateFimidaraEndpoints,
   getPrivateFimidaraEndpointsUsingUserToken,
@@ -145,7 +150,16 @@ export const useWorkspaceCollaboratorDeleteMutationHook =
   );
 export const useWorkspaceFileUploadMutationHook = makeEndpointMutationHook(
   getPublicFimidaraEndpointsUsingUserToken,
-  (endpoints) => endpoints.files.uploadFile,
+  (endpoints) => {
+    return async (
+      params: OmitFrom<IMultipartUploadBrowserParams, "endpoints">
+    ) => {
+      return await multipartUploadBrowser({
+        endpoints,
+        ...params,
+      });
+    };
+  },
   (result, params) => {
     if (params[0].fileId) {
       useWorkspaceFilesStore
@@ -156,14 +170,14 @@ export const useWorkspaceFileUploadMutationHook = makeEndpointMutationHook(
         result.file,
         useWorkspaceFilesStore,
         useWorkspaceFilesFetchStore,
-        (resource, params) => {
+        (resource, lsParams) => {
           // TODO: handle folderpath
           // Parent ID is set to null for files and folders without parent folder,
           // and for those, parentId is undefined.
           if (resource.parentId === null) {
-            return params.folderId === undefined;
+            return lsParams.folderId === undefined;
           } else {
-            return params.folderId === resource.parentId;
+            return lsParams.folderId === resource.parentId;
           }
         }
       );

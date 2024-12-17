@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {isString} from 'lodash-es';
+import {isNil, isString} from 'lodash-es';
 import {AnyObject} from 'softkave-js-utils';
 import {FimidaraJsConfig, FimidaraJsConfigAuthToken} from './config.ts';
 import {InvokeEndpointParams, invokeEndpoint} from './invokeEndpoint.ts';
@@ -30,33 +30,40 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
     let body: AnyObject = {};
 
     if (mapping && data) {
-      Object.keys(data).forEach(key => {
-        const value = data[key];
+      const path: AnyObject = {};
+
+      function write(obj: AnyObject, field: string, value: any) {
+        if (isNil(obj[field])) obj[field] = value;
+        else if (value !== undefined) obj[field] = value;
+      }
+
+      Object.entries(data).forEach(([key, value]) => {
         const [mapTo, field] = mapping[key] ?? [];
 
         switch (mapTo) {
-          case 'header': {
-            headers[field] = value;
+          case 'header':
+            write(headers, field, value);
             break;
-          }
 
-          case 'query': {
-            query[field] = value;
+          case 'query':
+            write(query, field, value);
             break;
-          }
 
-          case 'path': {
-            endpointPath = endpointPath.replace(
-              `:${field}`,
-              encodeURIComponent(value)
-            );
+          case 'path':
+            write(path, field, value);
             break;
-          }
 
           case 'body':
           default:
-            body[field || key] = value;
+            write(body, field || key, value);
         }
+      });
+
+      Object.entries(path).forEach(([key, value]) => {
+        endpointPath = endpointPath.replace(
+          `:${key}`,
+          encodeURIComponent(value)
+        );
       });
     } else if (data) {
       body = data;
@@ -67,7 +74,11 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
 
   protected async executeRaw(
     p01: InvokeEndpointParams,
-    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>,
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'> &
+      /** for binary options */ Pick<
+        InvokeEndpointParams,
+        'onUploadProgress' | 'onDownloadProgress'
+      >,
     mapping?: Mapping
   ) {
     assert(p01.path, 'Endpoint path not provided');
@@ -92,8 +103,8 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
       path: endpointPath,
       method: p01.method,
       responseType: p01.responseType,
-      onDownloadProgress: p01.onUploadProgress,
-      onUploadProgress: p01.onDownloadProgress,
+      onDownloadProgress: p02?.onDownloadProgress || p01.onDownloadProgress,
+      onUploadProgress: p02?.onUploadProgress || p01.onUploadProgress,
     });
 
     return response.data;
@@ -101,7 +112,11 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
 
   protected async executeJson(
     p01: Pick<InvokeEndpointParams, 'data' | 'formdata' | 'path' | 'method'>,
-    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'>,
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'> &
+      /** for binary options */ Pick<
+        InvokeEndpointParams,
+        'onUploadProgress' | 'onDownloadProgress'
+      >,
     mapping?: Mapping
   ) {
     return await this.executeRaw({...p01, responseType: 'json'}, p02, mapping);

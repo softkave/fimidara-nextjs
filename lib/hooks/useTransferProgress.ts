@@ -1,18 +1,49 @@
 "use client";
 
-import { FimidaraEndpointProgressEvent } from "fimidara";
+import {
+  FimidaraEndpointProgressEvent,
+  IMultipartUploadHookFnParams,
+} from "fimidara";
 import { merge, uniq } from "lodash-es";
 import React from "react";
 import { KeyValueDynamicKeys, useKvStore } from "./kvStore";
+
+export interface ITransferProgress {
+  completedParts: number;
+  estimatedNumParts: number;
+  totalSize: number;
+  completedSize: number;
+  startMs: number;
+}
 
 export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
   const [identifiers, setIdentifiers] = React.useState(inputIdentifiers);
 
   const setProgress = React.useCallback(
-    (identifier: string, evt: FimidaraEndpointProgressEvent) => {
+    (
+      identifier: string,
+      partParams: IMultipartUploadHookFnParams,
+      otherParams?: {
+        totalSize: number;
+      }
+    ) => {
       useKvStore
         .getState()
-        .set(KeyValueDynamicKeys.getTransferProgress(identifier), evt);
+        .setWithFn(
+          KeyValueDynamicKeys.getTransferProgress(identifier),
+          (maybeProgress: ITransferProgress | undefined) => {
+            const progress: ITransferProgress = {
+              completedParts: (maybeProgress?.completedParts ?? 0) + 1,
+              estimatedNumParts: partParams.estimatedNumParts,
+              totalSize:
+                otherParams?.totalSize ?? maybeProgress?.totalSize ?? 0,
+              completedSize:
+                (maybeProgress?.completedSize ?? 0) + (partParams.size ?? 0),
+              startMs: maybeProgress?.startMs ?? Date.now(),
+            };
+            return progress;
+          }
+        );
     },
     []
   );
@@ -34,10 +65,14 @@ export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
   );
 
   const getProgressHandler = React.useCallback(
-    (identifier: string) => {
-      setIdentifiers((identifiers) => uniq(identifiers.concat(identifier)));
-      return (evt: FimidaraEndpointProgressEvent) => {
-        setProgress(identifier, evt);
+    (params: { identifier: string; totalSize: number }) => {
+      setIdentifiers((identifiers) =>
+        uniq(identifiers.concat(params.identifier))
+      );
+      return (partParams: IMultipartUploadHookFnParams) => {
+        setProgress(params.identifier, partParams, {
+          totalSize: params.totalSize,
+        });
       };
     },
     [setProgress]
@@ -61,11 +96,11 @@ export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
 export function useTransferProgress(identifier?: string, progressKey?: string) {
   const progress = useKvStore((state) => {
     return identifier
-      ? state.get<FimidaraEndpointProgressEvent>(
+      ? state.get<ITransferProgress>(
           KeyValueDynamicKeys.getTransferProgress(identifier)
         )
       : progressKey
-      ? state.get<FimidaraEndpointProgressEvent>(progressKey)
+      ? state.get<ITransferProgress>(progressKey)
       : undefined;
   });
   const error = useKvStore((state) => {

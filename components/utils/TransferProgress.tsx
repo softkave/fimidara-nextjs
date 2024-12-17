@@ -2,7 +2,7 @@
 
 import { KeyValueDynamicKeys } from "@/lib/hooks/kvStore.ts";
 import { useTransferProgress } from "@/lib/hooks/useTransferProgress";
-import { formatDistanceToNow } from "date-fns";
+import { add, formatDistanceToNow } from "date-fns";
 import { identity, uniqBy } from "lodash-es";
 import { Dot } from "lucide-react";
 import pb from "pretty-bytes";
@@ -23,14 +23,21 @@ export interface ITransferProgressListProps {
 export function TransferProgress(props: ITransferProgressProps) {
   const { identifier, progressKey } = props;
   const progressHook = useTransferProgress(identifier, progressKey);
-  const rate = progressHook.progress?.rate ?? 0;
-  const loaded = progressHook.progress?.loaded ?? 0;
-  const estimatedTime = progressHook.progress?.estimated ?? 0;
-  const total = progressHook.progress?.total ?? 0;
+  const elapsedMs = progressHook.progress?.startMs
+    ? Date.now() - progressHook.progress.startMs
+    : 0;
+  const elapsedSeconds = elapsedMs ? elapsedMs / 1000 : 0;
+  const loaded = progressHook.progress?.completedSize ?? 0;
+  const rate = loaded && elapsedSeconds ? loaded / elapsedSeconds : 0;
+  const total = progressHook.progress?.totalSize ?? 0;
+  const estimatedTime = total && rate ? total / rate : undefined;
   let percent = 0;
 
   if (progressHook.progress) {
-    percent = (progressHook.progress.progress ?? 0) * 100;
+    percent =
+      (progressHook.progress.completedParts /
+        progressHook.progress.estimatedNumParts) *
+      100;
   }
 
   // TODO: have an internal way for calculating estimated time that doesnt
@@ -48,7 +55,7 @@ export function TransferProgress(props: ITransferProgressProps) {
         <Dot className="h-4 w-4 inline text-secondary" />
         <span className="text-secondary">
           {estimatedTime
-            ? formatDistanceToNow(estimatedTime)
+            ? formatDistanceToNow(add(new Date(), { seconds: estimatedTime }))
             : "Estimated time unknown"}
         </span>
       </div>

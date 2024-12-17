@@ -150,18 +150,20 @@ export default function FolderForm(props: FolderFormProps) {
         workspaceRootname
       );
 
-      return await uploadHook.runAsync(
-        {
-          filepath,
-          // fileId: input.resourceId,
-          data: input.file,
-          size: input.file.size,
-          description: input.description || undefined,
-          mimetype: input.mimetype,
-          encoding: input.encoding,
-        },
-        { onUploadProgress: progressHandlerHook.getProgressHandler(filepath) }
-      );
+      return await uploadHook.runAsync({
+        filepath,
+        // fileId: input.resourceId,
+        data: input.file,
+        size: input.file.size,
+        description: input.description || undefined,
+        mimetype: input.mimetype,
+        encoding: input.encoding,
+        clientMultipartId: input.file.name,
+        afterPart: progressHandlerHook.getProgressHandler({
+          identifier: filepath,
+          totalSize: input.file.size,
+        }),
+      });
     }
   };
 

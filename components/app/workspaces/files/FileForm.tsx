@@ -94,17 +94,19 @@ export default function FileForm(props: FileFormProps) {
 
     if (input.resourceId) {
       if (input.file) {
-        return await uploadHook.runAsync(
-          {
-            fileId: input.resourceId,
-            data: input.file,
-            size: input.file.size,
-            description: input.description || undefined,
-            mimetype: input.mimetype,
-            encoding: input.encoding,
-          },
-          { onUploadProgress: progressHandlerHook.getProgressHandler(filepath) }
-        );
+        return await uploadHook.runAsync({
+          fileId: input.resourceId,
+          data: input.file,
+          size: input.file.size,
+          description: input.description || undefined,
+          mimetype: input.mimetype,
+          encoding: input.encoding,
+          clientMultipartId: input.file.name,
+          afterPart: progressHandlerHook.getProgressHandler({
+            identifier: filepath,
+            totalSize: input.file.size,
+          }),
+        });
       } else {
         return await updateHook.runAsync({
           fileId: input.resourceId,
@@ -123,17 +125,19 @@ export default function FileForm(props: FileFormProps) {
         return;
       }
 
-      return await uploadHook.runAsync(
-        {
-          filepath,
-          data: input.file,
-          size: input.file.size,
-          description: input.description || undefined,
-          mimetype: input.mimetype,
-          encoding: input.encoding,
-        },
-        { onUploadProgress: progressHandlerHook.getProgressHandler(filepath) }
-      );
+      return await uploadHook.runAsync({
+        filepath,
+        data: input.file,
+        size: input.file.size,
+        description: input.description || undefined,
+        mimetype: input.mimetype,
+        encoding: input.encoding,
+        clientMultipartId: input.file.name,
+        afterPart: progressHandlerHook.getProgressHandler({
+          identifier: filepath,
+          totalSize: input.file.size,
+        }),
+      });
     }
   };
 
