@@ -111,7 +111,7 @@ export function SideNav(props: ISideNavProps) {
   }
 }
 
-export interface ISomeNavProps extends StyleableComponentProps {
+interface ISomeNavProps extends StyleableComponentProps {
   items: Array<ISomeNavItem>;
   open?: string[];
   selected?: string[];

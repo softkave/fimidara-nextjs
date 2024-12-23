@@ -9,6 +9,7 @@ export interface IRawNavItem {
 export interface ISomeNavItem {
   icon?: React.ReactNode;
   label?: React.ReactNode;
+  href?: string;
   key: string;
   children?: Array<ISomeNavItem>;
 }
