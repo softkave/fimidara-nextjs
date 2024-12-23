@@ -41,6 +41,7 @@ export class EmailAddressNotVerifiedError extends OperationError {
 export function getFlattenedError(error?: any) {
   const errArray = toAppErrorList(error);
   const flattenedErrors = flattenErrorList(errArray);
+
   return flattenedErrors;
 }
 
@@ -52,6 +53,7 @@ export function getBaseError(error?: any) {
 
   const fErrors = getFlattenedError(error);
   const baseErrors = fErrors?.error || [];
+
   return first(baseErrors);
 }
 
@@ -66,6 +68,17 @@ export function hasErrorTypes(error: any, types: string[]) {
 
 export const toAppError = (err: Error | AppError | string): AppError[] => {
   if (isFimidaraEndpointError(err)) {
+    if (err.errors.length === 0) {
+      return [
+        {
+          name: err.name,
+          message: err.message,
+          action: undefined,
+          field: undefined,
+        },
+      ];
+    }
+
     return flatten(err.errors.map(toAppError));
   }
 
