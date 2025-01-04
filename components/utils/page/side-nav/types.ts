@@ -4,6 +4,7 @@ export interface IRawNavItem {
   icon?: React.ReactNode;
   children?: IRawNavItem[];
   href?: string;
+  isDivider?: boolean;
 }
 
 export interface ISomeNavItem {
@@ -12,4 +13,5 @@ export interface ISomeNavItem {
   href?: string;
   key: string;
   children?: Array<ISomeNavItem>;
+  isDivider?: boolean;
 }

@@ -55,7 +55,13 @@ export function SideNav(props: ISideNavProps) {
     );
   } else {
     return (
-      <PageDrawer open={isOpen} onClose={onClose} title={title}>
+      <PageDrawer
+        open={isOpen}
+        onClose={onClose}
+        title={title}
+        className="px-0"
+        titleClassName="px-4"
+      >
         {menuNode}
       </PageDrawer>
     );

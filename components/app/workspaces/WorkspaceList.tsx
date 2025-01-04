@@ -8,6 +8,7 @@ import PageContent02 from "@/components/utils/page/PageContent02";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
 import PaginatedContent from "@/components/utils/page/PaginatedContent";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent.tsx";
+import { User } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils";
 import { useUserWorkspacesFetchHook } from "@/lib/hooks/fetchHooks";
@@ -20,7 +21,6 @@ import { FC, useState } from "react";
 import WorkspaceAvatar from "./WorkspaceAvatar.tsx";
 import WorkspaceForm from "./WorkspaceForm.tsx";
 import WorkspaceMenu from "./WorkspaceMenu.tsx";
-import { User } from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface IWorkspaceListProps {
   user: User;
@@ -54,10 +54,11 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
             <ThumbnailContent
               key={item.resourceId}
               prefixNode={
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col">
                   <WorkspaceAvatar
                     workspaceId={item.resourceId}
                     alt={`Workspace picture for ${item.name}`}
+                    className="sm:w-8 sm:h-8"
                   />
                 </div>
               }
@@ -76,7 +77,7 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
                   <WorkspaceMenu workspace={item} onCompleteDelete={noop} />
                 </div>
               }
-              className="px-4 py-4"
+              className="py-4 sm:p-2"
             />
           )}
           emptyMessage={
@@ -90,6 +91,7 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
               }
             />
           }
+          className="sm:p-0"
         />
       )}
     />
@@ -111,7 +113,7 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 sm:max-w-[500px] sm:mx-auto">
       {sNode}
       <ListHeader
         label="Workspaces"
@@ -122,11 +124,11 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
             onClick={() => setFormOpen(true)}
           />
         }
-        className="px-4"
       />
       <PaginatedContent
         content={contentNode}
         pagination={count ? { ...pagination, count } : undefined}
+        className="sm:border sm:border-gray-200 sm:rounded-lg"
       />
     </div>
   );

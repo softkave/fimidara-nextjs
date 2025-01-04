@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { useToast } from "@/hooks/use-toast.ts";
 import { userConstants } from "@/lib/definitions/user";
@@ -93,7 +94,7 @@ export default function ChangePasswordWithCurrentPassword() {
 
   return (
     <div className={styles.formBody}>
-      <div className={styles.formContentWrapper}>
+      <div className={cn(styles.formContentWrapper, "py-4")}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormAlert error={changePasswordHook.error} />

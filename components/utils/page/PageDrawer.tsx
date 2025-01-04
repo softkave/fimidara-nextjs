@@ -1,6 +1,5 @@
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet.tsx";
 import { cn } from "@/components/utils.ts";
-import { useResponsive } from "ahooks";
 import {
   CSSProperties,
   forwardRef,
@@ -19,6 +18,8 @@ export interface IPageDrawerProps {
   className?: string;
   children?: ReactNode;
   onClose?: () => void;
+  titleClassName?: string;
+  contentClassName?: string;
 }
 
 export interface IPageDrawerRef {
@@ -30,8 +31,18 @@ const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
   props,
   ref
 ) => {
-  const { open, title, style, className, children, onClose } = props;
+  const {
+    open,
+    title,
+    style,
+    className,
+    children,
+    onClose,
+    titleClassName,
+    contentClassName,
+  } = props;
   const [isOpen, setOpen] = useState(open ?? false);
+
   const toggleOpen = useCallback(() => {
     setOpen((state) => !state);
     onClose && onClose();
@@ -40,9 +51,6 @@ const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
   useEffect(() => {
     setOpen(open ?? false);
   }, [open]);
-
-  const responsive = useResponsive();
-  const drawerWidth = responsive.md ? 500 : window.innerWidth;
 
   useImperativeHandle<IPageDrawerRef, IPageDrawerRef>(
     ref,
@@ -55,11 +63,13 @@ const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
   return (
     <Sheet open={isOpen} onOpenChange={toggleOpen}>
       <SheetContent
-        className={cn("w-full sm:w-[500px]", className)}
+        className={cn("w-full sm:w-[500px] p-4", className)}
         style={style}
       >
-        <SheetTitle>{title}</SheetTitle>
-        <div className="pt-6 w-full space-y-8">{children}</div>
+        <SheetTitle className={titleClassName}>{title}</SheetTitle>
+        <div className={cn("pt-4 w-full space-y-8", contentClassName)}>
+          {children}
+        </div>
       </SheetContent>
     </Sheet>
   );

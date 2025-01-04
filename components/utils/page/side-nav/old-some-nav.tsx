@@ -19,6 +19,10 @@ export function SomeNav(props: ISomeNavProps) {
   const someBehaviour = useSomeNavBehaviour(props);
 
   const navNodes = items.map((item) => {
+    if (item.isDivider) {
+      return <div className="h-px bg-gray-200 my-2" key={item.key} />;
+    }
+
     let menuItemContentNode = (
       <div
         className="space-x-2 flex items-center flex-1"
@@ -36,19 +40,26 @@ export function SomeNav(props: ISomeNavProps) {
     );
 
     if (item.href) {
-      menuItemContentNode = <Link href={item.href}>{menuItemContentNode}</Link>;
+      menuItemContentNode = (
+        <Link href={item.href} className="flex flex-1">
+          {menuItemContentNode}
+        </Link>
+      );
     }
 
     return (
-      <div key={item.key}>
+      <div key={item.key} className="flex flex-col">
         <div
           className={cn(
-            "space-x-2 flex items-center py-0.5 px-4 hover:bg-slate-200",
-            someBehaviour.checkIsSelected(item.key) && "bg-slate-200"
+            "space-x-2 flex flex-1 items-center py-1 px-4 hover:bg-gray-100",
+            someBehaviour.checkIsSelected(item.key) && "bg-gray-100 font-bold"
           )}
         >
           {item.children?.length ? (
-            <span onClick={() => someBehaviour.handleOpen(item)}>
+            <span
+              onClick={() => someBehaviour.handleOpen(item)}
+              className="cursor-pointer"
+            >
               {someBehaviour.checkIsOpen(item.key) ? (
                 <ChevronDown className="h-4 w-4" />
               ) : (
@@ -71,7 +82,7 @@ export function SomeNav(props: ISomeNavProps) {
   });
 
   return (
-    <div className={className} style={style}>
+    <div className={cn(className, "flex flex-col flex-1")} style={style}>
       {navNodes}
     </div>
   );
