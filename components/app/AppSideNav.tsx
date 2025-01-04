@@ -4,7 +4,7 @@ import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
-import { SideNav } from "../utils/page/side-nav/SideNav.tsx";
+import { SideNav } from "../utils/page/side-nav/old-side-nav.tsx";
 import {
   getMenuSelectedKeys,
   renderToSideNavMenuItemList,

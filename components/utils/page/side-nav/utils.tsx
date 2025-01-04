@@ -1,17 +1,12 @@
 import { compact, flatten, isString } from "lodash-es";
-import Link from "next/link";
 import { IRawNavItem, ISomeNavItem } from "./types.ts";
 
-export function renderRawNavItemLink(item: IRawNavItem, href: string) {
-  return <Link href={href}>{item.label}</Link>;
-}
-
 export function renderToSideNavItem(item: IRawNavItem): ISomeNavItem {
-  const { href, ...itemRest } = item;
+  const { ...itemRest } = item;
 
   return {
     ...itemRest,
-    label: href ? renderRawNavItemLink(item, href) : item.label,
+    label: item.label,
     children: item.children
       ? renderToSideNavMenuItemList(item.children)
       : undefined,

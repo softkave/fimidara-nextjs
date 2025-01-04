@@ -139,8 +139,7 @@ html,
 body,
 #__next {
   height: 100%;
-  /* font-size: 14px;
-  font-weight: 400; */
+  /* font-size: 14px; */
 }
 
 code {

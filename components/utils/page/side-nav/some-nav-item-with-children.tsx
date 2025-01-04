@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar.tsx";
 import { useCallback } from "react";
 import { SomeNavItemMenuButton } from "./some-nav-item-menu-button.tsx";
+import { SomeNavItem } from "./some-nav-item.tsx";
 import { ISomeNavItem } from "./types.ts";
 import {
   ISomeNavBehaviourProps,
@@ -46,21 +47,22 @@ export function SomeNavItemWithChildren(props: ISomeNavItemWithChildrenProps) {
             item={item}
             isSelected={isSelected}
             onClick={someNavBehaviour.handleSelect}
+            isSubItem={isSubItem}
           />
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub>
             {item.children?.map((child) => (
-              <SomeNavItemWithChildren
+              <SomeNavItem
                 key={child.key}
                 item={child}
-                isSubItem={true}
-                _openMap={someNavBehaviour.openMap}
-                _selectedMap={someNavBehaviour.selectedMap}
+                openMap={someNavBehaviour.openMap}
+                selectedMap={someNavBehaviour.selectedMap}
                 onOpen={props.onOpen}
                 onSelect={props.onSelect}
                 open={props.open}
                 selected={props.selected}
+                isSubItem={true}
               />
             ))}
           </SidebarMenuSub>

@@ -9,20 +9,20 @@ export interface ISomeNavBehaviourProps {
   onSelect?: (selected: string[]) => void;
 
   // internal props
-  _openMap?: Record<string, string>;
-  _selectedMap?: Record<string, string>;
+  openMap?: Record<string, string>;
+  selectedMap?: Record<string, string>;
 }
 
 export function useSomeNavBehaviour(props: ISomeNavBehaviourProps) {
-  const { open, selected, onOpen, onSelect, _openMap, _selectedMap } = props;
+  const { open, selected, onOpen, onSelect } = props;
 
   const openMap = useMemo(() => {
-    return _openMap || keyBy(open, (k) => k);
-  }, [open, _openMap]);
+    return props.openMap || keyBy(open, (k) => k);
+  }, [open, props.openMap]);
 
   const selectedMap = useMemo(() => {
-    return _selectedMap || keyBy(selected, (k) => k);
-  }, [selected, _selectedMap]);
+    return props.selectedMap || keyBy(selected, (k) => k);
+  }, [selected, props.selectedMap]);
 
   const handleOpen = useCallback(
     (item: ISomeNavItem) => {
