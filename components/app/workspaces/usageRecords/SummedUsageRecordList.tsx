@@ -7,7 +7,9 @@ import {
   UsageRecordCategory,
   Workspace,
 } from "fimidara";
+import { compact } from "lodash-es";
 import React from "react";
+import { indexArray } from "softkave-js-utils";
 import SummedUsageRecordListItem from "./SummedUsageRecordListItem";
 
 export interface ISummedUsageRecordListProps {
@@ -21,13 +23,7 @@ export interface ISummedUsageRecordListProps {
 const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
   props
 ) => {
-  const {
-    workspace,
-    fulfilledRecords,
-    droppedRecords,
-    usageCosts,
-    renderItem,
-  } = props;
+  const { workspace, usageCosts, renderItem } = props;
 
   const internalRenderItem = React.useCallback(
     (item: UsageRecord) => {
@@ -49,8 +45,8 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
     [workspace, renderItem, usageCosts]
   );
 
-  sortRecords(fulfilledRecords);
-  sortRecords(droppedRecords);
+  const sortedFulfilledRecords = sortRecords(props.fulfilledRecords);
+  const sortedDroppedRecords = sortRecords(props.droppedRecords);
 
   return (
     <div className="space-y-8">
@@ -58,7 +54,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
         <h5>Fulfilled Requests</h5>
         <ItemList
           bordered
-          items={fulfilledRecords}
+          items={sortedFulfilledRecords}
           renderItem={internalRenderItem}
           emptyMessage="No fulfilled usage records yet"
           space="md"
@@ -68,7 +64,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
         <h5>Dropped Requests</h5>
         <ItemList
           bordered
-          items={droppedRecords}
+          items={sortedDroppedRecords}
           renderItem={internalRenderItem}
           emptyMessage="No dropped usage records"
           space="md"
@@ -87,7 +83,21 @@ const categoryWeight: Record<UsageRecordCategory, number> = {
 };
 
 function sortRecords(records: UsageRecord[]) {
-  return records.sort(
+  const rM = indexArray(records, {
+    indexer: (r) => r.category,
+    reducer: (r, i, arr, e) => {
+      if (e) {
+        return {
+          ...r,
+          usage: e.usage + r.usage,
+          usageCost: e.usageCost + r.usageCost,
+        };
+      }
+      return r;
+    },
+  });
+
+  return compact(Object.values(rM)).sort(
     (r1, r2) => categoryWeight[r1.category] - categoryWeight[r2.category]
   );
 }

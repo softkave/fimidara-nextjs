@@ -13,10 +13,9 @@ import {
   useWorkspaceUsageRecordsFetchHook,
 } from "@/lib/hooks/fetchHooks";
 import usePagination from "@/lib/hooks/usePagination";
-import { cast } from "@/lib/utils/fns";
+import { endOfMonth } from "date-fns";
 import { UsageRecord, Workspace } from "fimidara";
-import { first } from "lodash-es";
-import React from "react";
+import React, { useMemo } from "react";
 import SummedUsageRecordList from "./SummedUsageRecordList";
 import SummedUsageRecordListControls from "./SummedUsageRecordListControls";
 
@@ -29,16 +28,28 @@ const SummedUsageRecordListContainer: React.FC<
   ISummedUsageRecordListContainerProps
 > = (props) => {
   const { workspace, renderItem } = props;
+
+  const pagination = usePagination();
+
   const [dateOption, setDateOption] = React.useState({
     year: new Date().getFullYear(),
     month: new Date().getMonth(),
   });
-  const pagination = usePagination();
+  const { fromDate, toDate } = useMemo(() => {
+    const fromDate = new Date(dateOption.year, dateOption.month, 1);
+    const toDate = endOfMonth(fromDate);
+    return { fromDate, toDate };
+  }, [dateOption]);
+
   const { fetchState: usageRecordsFetchState } =
     useWorkspaceUsageRecordsFetchHook({
       workspaceId: workspace.resourceId,
       page: pagination.page,
       pageSize: pagination.pageSize,
+      query: {
+        fromDate: fromDate.getTime(),
+        toDate: toDate.getTime(),
+      },
     });
   const { fetchState: usageCostsFetchState } =
     useUsageCostsFetchHook(undefined);
@@ -51,44 +62,30 @@ const SummedUsageRecordListContainer: React.FC<
   const isLoading = usageRecords.isLoading || usageCosts.isLoading;
   const isDataFetched = usageRecords.isDataFetched && !!usageCosts.data;
 
-  const { fulfilledRecords, droppedRecords, dateOptions } =
-    React.useMemo(() => {
-      const fulfilledRecords: Record<
-        number,
-        Record<number, UsageRecord[]>
-      > = {};
-      const droppedRecords: Record<number, Record<number, UsageRecord[]>> = {};
-      const dateOptionsMap: Record<number, Record<number, number>> = {};
-      const dateOptions: Record<number, number[]> = {};
+  const { fulfilledRecords, droppedRecords } = React.useMemo(() => {
+    const fulfilledRecords: Record<number, Record<number, UsageRecord[]>> = {};
+    const droppedRecords: Record<number, Record<number, UsageRecord[]>> = {};
 
-      if (usageRecords.resourceList) {
-        usageRecords.resourceList.forEach((record) => {
-          if (record.status === "fulfilled") {
-            const yearRecords = fulfilledRecords[record.year] || {};
-            const monthRecords = yearRecords[record.month] || [];
-            monthRecords.push(record);
-            yearRecords[record.month] = monthRecords;
-            fulfilledRecords[record.year] = yearRecords;
-          } else {
-            const yearRecords = droppedRecords[record.year] || {};
-            const monthRecords = yearRecords[record.month] || [];
-            monthRecords.push(record);
-            yearRecords[record.month] = monthRecords;
-            droppedRecords[record.year] = yearRecords;
-          }
+    if (usageRecords.resourceList) {
+      usageRecords.resourceList.forEach((record) => {
+        if (record.status === "fulfilled") {
+          const yearRecords = fulfilledRecords[record.year] || {};
+          const monthRecords = yearRecords[record.month] || [];
+          monthRecords.push(record);
+          yearRecords[record.month] = monthRecords;
+          fulfilledRecords[record.year] = yearRecords;
+        } else {
+          const yearRecords = droppedRecords[record.year] || {};
+          const monthRecords = yearRecords[record.month] || [];
+          monthRecords.push(record);
+          yearRecords[record.month] = monthRecords;
+          droppedRecords[record.year] = yearRecords;
+        }
+      });
+    }
 
-          const monthOptions = dateOptionsMap[record.year] || [];
-          monthOptions[record.month] = record.month;
-          dateOptionsMap[record.year] = monthOptions;
-        });
-      }
-
-      for (const year in dateOptionsMap) {
-        dateOptions[year] = cast<number[]>(Object.keys(dateOptionsMap[year]));
-      }
-
-      return { dateOptions, fulfilledRecords, droppedRecords };
-    }, [usageRecords.resourceList]);
+    return { fulfilledRecords, droppedRecords };
+  }, [usageRecords.resourceList]);
 
   const data =
     usageCosts.data && usageRecords.resourceList
@@ -97,6 +94,7 @@ const SummedUsageRecordListContainer: React.FC<
           usageCostsData: usageCosts.data,
         }
       : undefined;
+
   const contentNode = (
     <PageContent02
       error={error}
@@ -138,11 +136,11 @@ const SummedUsageRecordListContainer: React.FC<
     <SummedUsageRecordListControls
       month={dateOption.month}
       year={dateOption.year}
-      options={dateOptions}
+      workspace={workspace}
       onChange={(year, month) =>
         setDateOption({
           year,
-          month: month || first(dateOptions[year])!,
+          month,
         })
       }
       disabled={!usageRecords.resourceList}

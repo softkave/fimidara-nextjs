@@ -5,15 +5,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx";
-import { first, uniq } from "lodash-es";
+import { endOfYear, startOfYear } from "date-fns";
+import { Workspace } from "fimidara";
+import { first, range } from "lodash-es";
 import React, { useMemo } from "react";
 
 export interface ISummedUsageRecordListControlsProps {
+  workspace: Workspace;
   year: number;
   month: number;
-  options: Record<number, number[]>;
   disabled?: boolean;
-  onChange: (year: number, month?: number) => void;
+  onChange: (year: number, month: number) => void;
 }
 
 const monthLabels = [
@@ -39,34 +41,39 @@ const monthLabelsMap = Object.values(monthLabels).reduce((acc, key, index) => {
 const SummedUsageRecordListControls: React.FC<
   ISummedUsageRecordListControlsProps
 > = (props) => {
-  const { year, month, options, disabled, onChange } = props;
+  const { year, month, disabled, onChange, workspace } = props;
 
-  const { monthOptions, monthList } = useMemo(() => {
-    const monthList = uniq((options[year] ?? []).concat(month).map(Number));
-    const monthOptions = monthList.map((iMonth) => ({
+  const { monthOptions, months } = useMemo(() => {
+    const startYear = startOfYear(new Date(year));
+    const endYear = endOfYear(new Date(year));
+    const now = new Date();
+    const end = now.getFullYear() === year ? now : endYear;
+    const months = range(startYear.getMonth(), end.getMonth() + 1);
+    const monthOptions = months.map((iMonth) => ({
       label: monthLabels[iMonth],
       value: monthLabels[iMonth],
     }));
 
-    return { monthOptions, monthList };
-  }, [options, year, month]);
+    return { monthOptions, months };
+  }, [year]);
 
   const { yearOptions } = useMemo(() => {
-    const yearOptions = uniq(Object.keys(options).map(Number).concat(year)).map(
-      (iYear) => ({
-        label: iYear,
-        value: iYear,
-      })
-    );
+    const startYear = startOfYear(new Date(workspace.createdAt));
+    const now = new Date();
+    const years = range(startYear.getFullYear(), now.getFullYear() + 1);
+    const yearOptions = years.map((iYear) => ({
+      label: iYear,
+      value: iYear,
+    }));
 
     return { yearOptions };
-  }, [options, year]);
+  }, [workspace.createdAt]);
 
   return (
     <div className="flex items-center space-x-2">
       <Select
         disabled={disabled}
-        onValueChange={(value) => onChange(Number(value), first(monthList))}
+        onValueChange={(value) => onChange(Number(value), first(months)!)}
         defaultValue={year.toString()}
       >
         <SelectTrigger className="w-[180px]">
