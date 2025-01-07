@@ -10,9 +10,13 @@ import {
 } from "@/lib/hooks/fetchHooks.ts";
 import { useFetchPaginatedResourceListFetchState } from "@/lib/hooks/fetchHookUtils.tsx";
 import usePagination from "@/lib/hooks/usePagination.ts";
-import { fimidaraAddRootnameToPath, Folder } from "fimidara";
+import {
+  fimidaraAddRootnameToPath,
+  Folder,
+  stringifyFimidaraFolderpath,
+} from "fimidara";
 import { useRouter } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import AppFileList from "./AppFileList.tsx";
 import FileListContainerHeader from "./FileListContainerHeader";
 import FolderList from "./FolderList.tsx";
@@ -59,8 +63,20 @@ function FolderChildren(props: FolderChildrenProps) {
   const { folder, workspaceRootname, workspaceId, style, className } = props;
   const router = useRouter();
 
-  const fileFormHook = useFileForm({ workspaceId, workspaceRootname });
-  const folderFormHook = useFolderForm({ workspaceId, workspaceRootname });
+  const folderpath = useMemo(
+    () => (folder ? stringifyFimidaraFolderpath(folder) : undefined),
+    [folder]
+  );
+  const fileFormHook = useFileForm({
+    workspaceId,
+    workspaceRootname,
+    folderpath,
+  });
+  const folderFormHook = useFolderForm({
+    workspaceId,
+    workspaceRootname,
+    folderpath,
+  });
 
   const foldersHook = useFolders(workspaceRootname, folder);
   const filesHook = useFiles(workspaceRootname, folder);

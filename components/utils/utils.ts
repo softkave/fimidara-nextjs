@@ -23,7 +23,7 @@ export function includeFirstNode<T1>(
   return null;
 }
 
-export function insertAntdMenuDivider(items: Array<IDropdownItem>) {
+export function insertMenuDivider(items: Array<IDropdownItem>) {
   const newItems: Array<IDropdownItem> = [];
   items?.forEach((item, i) => {
     newItems.push(item);

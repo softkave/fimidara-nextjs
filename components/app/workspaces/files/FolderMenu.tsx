@@ -3,7 +3,7 @@ import { useFolderForm } from "@/components/hooks/useFolderForm.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { addRootnameToPath, folderConstants } from "@/lib/definitions/folder";
 import { useWorkspaceFolderDeleteMutationHook } from "@/lib/hooks/mutationHooks";
@@ -70,7 +70,7 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
     }
   };
 
-  const items = insertAntdMenuDivider([
+  const items = insertMenuDivider([
     {
       key: MenuKeys.UpdateItem,
       label: "Update Folder",

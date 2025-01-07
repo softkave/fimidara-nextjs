@@ -2,7 +2,7 @@ import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceCollaboratorDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Collaborator } from "fimidara";
@@ -58,7 +58,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
     }
   };
 
-  const items = insertAntdMenuDivider([
+  const items = insertMenuDivider([
     {
       key: MenuKeys.GrantPermission,
       label: "Permissions",

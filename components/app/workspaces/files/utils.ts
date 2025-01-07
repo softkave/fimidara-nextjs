@@ -5,9 +5,9 @@ export function getNewFileLocalId() {
   return Math.random().toString();
 }
 
-export function getFirstFoldername(files: Pick<SingleFileFormValue, "name">[]) {
-  for (const file of files) {
-    const foldername = file.name
+export function getFirstFoldername(names: string[]) {
+  for (const name of names) {
+    const foldername = name
       .split("/")
       .find((name) => !!name && name !== "." && name !== "..");
 

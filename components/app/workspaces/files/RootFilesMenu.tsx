@@ -1,9 +1,9 @@
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
+import { Ellipsis } from "lucide-react";
 import React from "react";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
-import { Ellipsis } from "lucide-react";
 
 export interface IRootFilesMenuProps {
   workspaceId: string;
@@ -27,7 +27,7 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
     }
   };
 
-  const items = insertAntdMenuDivider([
+  const items = insertMenuDivider([
     {
       key: MenuKeys.Permissions,
       label: "Permissions",

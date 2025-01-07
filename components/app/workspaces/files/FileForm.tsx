@@ -11,7 +11,7 @@ import {
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers";
 import { useTransferProgressHandler } from "@/lib/hooks/useTransferProgress";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { File as FimidaraFile } from "fimidara";
+import { File as FimidaraFile, stringifyFimidaraFilepath } from "fimidara";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FilesFormUploadProgress } from "./FilesFormUploadProgress";
@@ -55,11 +55,10 @@ export interface FileFormProps {
   folderpath?: string;
   workspaceId: string;
   workspaceRootname: string;
-  directory?: boolean;
 }
 
 export default function FileForm(props: FileFormProps) {
-  const { file, className, folderpath, workspaceRootname, directory } = props;
+  const { file, className, folderpath, workspaceRootname } = props;
   const { toast } = useToast();
   const progressHandlerHook = useTransferProgressHandler();
   const updateHook = useWorkspaceFileUpdateMutationHook({
@@ -82,15 +81,16 @@ export default function FileForm(props: FileFormProps) {
       if (filepath) progressHandlerHook.setOpError(filepath, e);
     },
   });
-  const mergedHook = file ? updateHook : uploadHook;
 
   const submitFile = async (input: SingleFileFormValue) => {
-    const filepath = addRootnameToPath(
-      folderpath
-        ? `${folderpath}${folderConstants.nameSeparator}${input.name}`
-        : input.name,
-      workspaceRootname
-    );
+    const filepath = file
+      ? stringifyFimidaraFilepath(file, workspaceRootname)
+      : addRootnameToPath(
+          folderpath
+            ? `${folderpath}${folderConstants.nameSeparator}${input.name}`
+            : input.name,
+          workspaceRootname
+        );
 
     if (input.resourceId) {
       if (input.file) {
@@ -152,7 +152,9 @@ export default function FileForm(props: FileFormProps) {
     defaultValues: file ? getFileFormInputFromFile(file) : initialValues,
   });
 
-  useFormHelpers(form, { errors: mergedHook.error });
+  const loading = updateHook.loading || uploadHook.loading;
+  const error = updateHook.error || uploadHook.error;
+  useFormHelpers(form, { errors: error });
 
   let contentNode: React.ReactNode = null;
 
@@ -161,7 +163,7 @@ export default function FileForm(props: FileFormProps) {
   } else {
     contentNode = (
       <div className="mb-4">
-        <MultipleFilesForm form={form} disabled={mergedHook.loading} />
+        <MultipleFilesForm form={form} disabled={loading} />
       </div>
     );
   }
@@ -174,13 +176,13 @@ export default function FileForm(props: FileFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-8 max-w-full", className)}
       >
-        <FormAlert error={mergedHook.error} />
+        <FormAlert error={error} />
         {contentNode}
         <FilesFormUploadProgress
           identifiers={progressHandlerHook.identifiers}
         />
         <div className="my-4">
-          <Button type="submit" loading={mergedHook.loading}>
+          <Button type="submit" loading={loading}>
             {file ? "Update File" : "Upload File"}
           </Button>
         </div>

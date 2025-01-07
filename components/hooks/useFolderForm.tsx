@@ -8,8 +8,9 @@ import { Sheet, SheetContent, SheetTitle } from "../ui/sheet.tsx";
 export function useFolderForm(props: {
   workspaceId: string;
   workspaceRootname: string;
+  folderpath?: string;
 }) {
-  const { workspaceId, workspaceRootname } = props;
+  const { workspaceId, workspaceRootname, folderpath } = props;
   const [formOpen, setFormOpen] = useState<Folder | boolean>(false);
 
   const isNewResourceForm = isBoolean(formOpen);
@@ -25,6 +26,7 @@ export function useFolderForm(props: {
             workspaceId={workspaceId}
             folder={isBoolean(formOpen) ? undefined : formOpen}
             className="mt-8"
+            parentPath={folderpath}
           />
         </ScrollArea>
       </SheetContent>

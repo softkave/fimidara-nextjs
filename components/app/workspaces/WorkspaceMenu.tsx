@@ -2,7 +2,7 @@ import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import { ToastAction } from "@/components/ui/toast.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { appClasses } from "@/components/utils/theme";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Workspace } from "fimidara";
@@ -48,7 +48,7 @@ const WorkspaceMenu: FC<WorkspaceMenuProps> = (props) => {
     }
   };
 
-  const items = insertAntdMenuDivider(
+  const items = insertMenuDivider(
     compact([
       {
         // TODO: only show if user has permission
