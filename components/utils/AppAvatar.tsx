@@ -10,10 +10,11 @@ export interface IAppAvatarProps {
   alt: string;
   filepath?: string;
   fallback?: React.ReactNode;
+  className?: string;
 }
 
 export default function AppAvatar(props: IAppAvatarProps) {
-  const { filepath, alt, fallback } = props;
+  const { filepath, alt, fallback, className } = props;
 
   const getPresignedPath = async () => {
     if (!filepath) return undefined;
@@ -46,7 +47,7 @@ export default function AppAvatar(props: IAppAvatarProps) {
     : undefined;
 
   return (
-    <Avatar>
+    <Avatar className={className}>
       <AvatarImage src={src} alt={alt} />
       {fallback && <AvatarFallback>{fallback}</AvatarFallback>}
     </Avatar>

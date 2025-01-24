@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
@@ -143,7 +144,7 @@ export default function Login(props: ILoginProps) {
 
   return (
     <div className={styles.formBody}>
-      <div className={styles.formContentWrapper}>
+      <div className={cn(styles.formContentWrapper, "p-4")}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="mb-4">

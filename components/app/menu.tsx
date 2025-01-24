@@ -1,4 +1,5 @@
 import { kAppInternalPaths } from "@/lib/definitions/paths/internal.ts";
+import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { Computer, GitPullRequestArrow, UserCog } from "lucide-react";
 import {
@@ -12,7 +13,6 @@ import {
 import { MdOutlineWorkOutline } from "react-icons/md";
 import { TbLockAccess } from "react-icons/tb";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
-import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
 
 export function getWorkspaceNavItems(workspaceId: string) {
   const menuItems: IRawNavItem[] = [
@@ -64,14 +64,7 @@ export function getWorkspaceNavItems(workspaceId: string) {
 }
 
 export function getUserNavItems(workspaceId?: string) {
-  const items: IRawNavItem[] = [
-    {
-      key: kAppWorkspacePaths.workspaces,
-      href: kAppWorkspacePaths.workspaces,
-      label: "Workspaces",
-      icon: <Computer className="w-4 h-4" />,
-      children: workspaceId ? getWorkspaceNavItems(workspaceId) : undefined,
-    },
+  const userItems: IRawNavItem[] = [
     {
       key: kAppUserPaths.requests,
       href: kAppUserPaths.requests,
@@ -86,7 +79,25 @@ export function getUserNavItems(workspaceId?: string) {
     },
   ];
 
-  return items;
+  if (workspaceId) {
+    const items: IRawNavItem[] = [
+      ...getWorkspaceNavItems(workspaceId),
+      { isDivider: true, key: "divider-workspace", label: "" },
+      ...userItems,
+    ];
+
+    return items;
+  }
+
+  return [
+    {
+      key: kAppWorkspacePaths.workspaces,
+      href: kAppWorkspacePaths.workspaces,
+      label: "Workspaces",
+      icon: <Computer className="w-4 h-4" />,
+    },
+    ...userItems,
+  ];
 }
 
 export function getInternalNavItems() {

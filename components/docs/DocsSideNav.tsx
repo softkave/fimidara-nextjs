@@ -2,7 +2,7 @@ import { compact, flatten, last, uniq } from "lodash-es";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useAppMenu } from "../app/useAppMenu.tsx";
-import { SideNav } from "../utils/page/side-nav/SideNav.tsx";
+import { SideNav } from "../utils/page/side-nav/old-side-nav.tsx";
 import {
   DOCS_BASE_PATH,
   fimidaraAntdNavItems,

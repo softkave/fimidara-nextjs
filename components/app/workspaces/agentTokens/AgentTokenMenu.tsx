@@ -3,7 +3,7 @@ import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceAgentTokenDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { AgentToken } from "fimidara";
@@ -62,7 +62,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
     }
   };
 
-  const items = insertAntdMenuDivider([
+  const items = insertMenuDivider([
     {
       // TODO: only show if user has permission
       key: MenuKeys.UpdatePermissionGroups,

@@ -2,7 +2,7 @@ import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import { cn } from "@/components/utils.ts";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
 import { Folder } from "fimidara";
 import { Plus } from "lucide-react";
 import React from "react";
@@ -37,7 +37,7 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
     onScheduleDeleteSuccess,
   } = props;
 
-  const items = insertAntdMenuDivider([
+  const items = insertMenuDivider([
     {
       key: CreateMenuKeys.CreateFolder,
       label: "Add Folder",

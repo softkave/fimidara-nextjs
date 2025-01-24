@@ -3,7 +3,7 @@ import { usePermissionGroupForm } from "@/components/hooks/usePermissionGroupFor
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import {
   useWorkspacePermissionGroupDeleteMutationHook,
@@ -114,7 +114,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     }
   };
 
-  const items = insertAntdMenuDivider(
+  const items = insertMenuDivider(
     compact([
       {
         key: MenuKeys.UpdateItem,

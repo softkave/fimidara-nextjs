@@ -1,8 +1,13 @@
-import { Pagination, PaginationProps } from "antd";
-import React from "react";
-import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
-import CustomIcon from "../buttons/CustomIcon";
-import IconButton from "../buttons/IconButton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination.tsx";
+import React, { ReactElement } from "react";
 import { StyleableComponentProps } from "../styling/types";
 import { IPaginationData } from "./utils";
 
@@ -23,8 +28,7 @@ function PaginatedContent(props: IPaginatedContentProps) {
   } = props;
 
   const onPaginationChange = (inputPage: number, inputPageSize: number) => {
-    // fimidara's pagination is 0-based, but antd is not, we need to minus 1
-    inputPage = inputPage - 1;
+    if (disabled) return;
 
     if (page !== inputPage) {
       setPage(inputPage);
@@ -35,47 +39,55 @@ function PaginatedContent(props: IPaginatedContentProps) {
     }
   };
 
-  const itemRender: PaginationProps["itemRender"] = (
-    _,
-    type,
-    originalElement
-  ) => {
-    if (type === "prev") {
-      return (
-        <IconButton
-          icon={<CustomIcon icon={<FiArrowLeft />} />}
-          className="mr-2"
-        />
-      );
-    }
+  let pNode: ReactElement = <></>;
+  const maxPage = Math.ceil(count / pageSize);
+  const pMax = Math.min(3, maxPage);
+  const pStart = Math.max(0, page - 1);
+  const pList = Array.from({ length: pMax }, (_, i) => pStart + i);
+  const hasEllipsis = pList.length < maxPage;
 
-    if (type === "next") {
-      return (
-        <IconButton
-          icon={<CustomIcon icon={<FiArrowRight />} />}
-          className="ml-2 mr-2"
-        />
-      );
-    }
+  if (count > 0 && pList.length && maxPage > 1) {
+    pNode = (
+      <Pagination className={className} style={style}>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              disabled={page === 0 || disabled}
+              onClick={() => onPaginationChange(page - 1, pageSize)}
+            />
+          </PaginationItem>
+          {pList.map((p) => (
+            <PaginationItem key={p}>
+              <PaginationLink
+                href="#"
+                isActive={p === page}
+                disabled={disabled}
+                onClick={() => onPaginationChange(p, pageSize)}
+              >
+                {p + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          {hasEllipsis && (
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+          )}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              disabled={page + 1 === maxPage || disabled}
+              onClick={() => onPaginationChange(page + 1, pageSize)}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
+  }
 
-    return originalElement;
-  };
-
-  return (
-    <Pagination
-      hideOnSinglePage
-      size="small"
-      // fimidara's pagination is 0-based, but antd is not, we need to plus 1
-      current={page + 1}
-      onChange={onPaginationChange}
-      total={count}
-      pageSize={pageSize}
-      disabled={disabled}
-      className={className}
-      itemRender={itemRender}
-      style={style}
-    />
-  );
+  // TODO: show count
+  return pNode;
 }
 
 export default React.memo(PaginatedContent as React.FC<IPaginatedContentProps>);

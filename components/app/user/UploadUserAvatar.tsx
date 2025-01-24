@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { systemConstants } from "@/lib/definitions/system";
 import { KeyValueKeys, useKvStore } from "@/lib/hooks/kvStore.ts";
@@ -19,7 +20,7 @@ export default function UploadUserAvatar() {
 
   const userId = userNode.assertGet().user.resourceId;
   return (
-    <div className={styles.formContentWrapper}>
+    <div className={cn(styles.formContentWrapper, "py-4")}>
       <ImageAndUploadAvatar
         refreshKey={KeyValueKeys.UserImageLastUpdateTime}
         onCompleteUpload={onCompleteUpload}

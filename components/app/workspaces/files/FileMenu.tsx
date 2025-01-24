@@ -3,7 +3,7 @@ import { useFileForm } from "@/components/hooks/useFileForm.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
-import { insertAntdMenuDivider } from "@/components/utils/utils";
+import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { useDownloadFile } from "@/lib/hooks/useDownloadFile";
@@ -72,7 +72,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
     }
   };
 
-  const items = insertAntdMenuDivider([
+  const items = insertMenuDivider([
     {
       key: MenuKeys.UpdateItem,
       label: "Update File",

@@ -27,6 +27,7 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
     costPerUnit,
     fulfillmentStatus,
   } = props;
+
   const thresholds = workspace.usageThresholds || {};
   const threshold = thresholds[category];
   let usageText = "";
@@ -61,11 +62,13 @@ const SummedUsageRecordListItem: React.FC<ISummedUsageRecordListItemProps> = (
     labelText = "Bandwidth Out";
   } else if (category === "total") {
     labelText = "Total Cost";
+  } else if (category === "storageEver") {
+    labelText = "Storage Ever";
   }
 
   return (
     <div className="space-y-2">
-      <h5 className="text-secondary">{labelText}</h5>
+      <h5 className="text-secondary font-normal">{labelText}</h5>
       <span>{usageText}</span>
     </div>
   );

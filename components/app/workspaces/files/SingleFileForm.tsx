@@ -180,7 +180,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
               beforeUpload={(file, fileList) => {
                 const existingBaseFoldername =
                   isDirectory && values?.name
-                    ? getFirstFoldername([values])
+                    ? getFirstFoldername([values.name])
                     : undefined;
                 const name = isExistingFile
                   ? values.name

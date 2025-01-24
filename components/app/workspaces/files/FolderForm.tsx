@@ -30,7 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMount } from "ahooks";
 import { Upload } from "antd";
 import { Folder, stringifyFimidaraFolderpath } from "fimidara";
-import { compact } from "lodash-es";
+import { compact, last } from "lodash-es";
 import { CircleChevronRight, FolderUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEventHandler, ReactNode, useMemo } from "react";
@@ -82,9 +82,7 @@ export default function FolderForm(props: FolderFormProps) {
   const parentPath =
     props.parentPath ||
     (folder
-      ? stringifyFimidaraFolderpath({
-          namepath: folder.namepath.slice(0, -1),
-        })
+      ? stringifyFimidaraFolderpath({ namepath: folder.namepath.slice(0, -1) })
       : "");
 
   const router = useRouter();
@@ -144,11 +142,13 @@ export default function FolderForm(props: FolderFormProps) {
   const handleSubmitFile = async (input: SingleFileFormValue) => {
     if (input.file) {
       const filepath = addRootnameToPath(
-        parentPath
-          ? `${parentPath}${folderConstants.nameSeparator}${input.name}`
-          : input.name,
+        compact([parentPath, wFoldername, input.name]).join(
+          folderConstants.nameSeparator
+        ),
         workspaceRootname
       );
+
+      console.log({ filepath, name: input.name });
 
       return await uploadHook.runAsync({
         filepath,
@@ -169,9 +169,9 @@ export default function FolderForm(props: FolderFormProps) {
 
   const handleCreateFolder = (data: FolderFormValues) => {
     if (!folder) {
-      const folderpath = parentPath
-        ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
-        : data.name;
+      const folderpath = compact([parentPath, data.name]).join(
+        folderConstants.nameSeparator
+      );
 
       return createHook.runAsync({
         folderpath: addRootnameToPath(folderpath, workspaceRootname),
@@ -182,9 +182,7 @@ export default function FolderForm(props: FolderFormProps) {
 
   const handleUpdateFolder = (data: FolderFormValues) => {
     const folderpath = addRootnameToPath(
-      parentPath
-        ? `${parentPath}${folderConstants.nameSeparator}${data.name}`
-        : data.name,
+      compact([parentPath, data.name]).join(folderConstants.nameSeparator),
       workspaceRootname
     );
 
@@ -219,7 +217,9 @@ export default function FolderForm(props: FolderFormProps) {
   const wFoldername = form.watch("name");
 
   const autofillName = useMemo(() => {
-    return getFirstFoldername(wFiles || []);
+    return getFirstFoldername(
+      compact(wFiles?.map((file) => file.file?.webkitRelativePath))
+    );
   }, [wFiles]);
 
   const onAutofillName = () => {
@@ -258,7 +258,7 @@ export default function FolderForm(props: FolderFormProps) {
                   autoComplete="off"
                 />
                 <InputCounter
-                  count={field.value.length}
+                  count={field.value?.length || 0}
                   maxCount={folderConstants.maxFolderNameLength}
                   onTruncate={() => {
                     form.setValue(
@@ -294,31 +294,39 @@ export default function FolderForm(props: FolderFormProps) {
     <FormField
       control={form.control}
       name="description"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Description</FormLabel>
-          <FormControl>
-            <Textarea
-              {...field}
-              value={field.value || ""}
-              placeholder="Enter folder description"
-              maxLength={systemConstants.maxDescriptionLength}
-            />
-            <InputCounter
-              count={field.value?.length || 0}
-              maxCount={systemConstants.maxDescriptionLength}
-              onTruncate={() => {
-                form.setValue(
-                  "description",
-                  field.value?.slice(0, systemConstants.maxDescriptionLength)
-                );
-              }}
-              className="mt-1"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        console.log({ field });
+        return (
+          <FormItem>
+            <FormLabel>Description</FormLabel>
+            <FormControl>
+              <div>
+                <Textarea
+                  {...field}
+                  value={field.value || ""}
+                  placeholder="Enter folder description"
+                  maxLength={systemConstants.maxDescriptionLength}
+                />
+                <InputCounter
+                  count={field.value?.length || 0}
+                  maxCount={systemConstants.maxDescriptionLength}
+                  onTruncate={() => {
+                    form.setValue(
+                      "description",
+                      field.value?.slice(
+                        0,
+                        systemConstants.maxDescriptionLength
+                      )
+                    );
+                  }}
+                  className="mt-1"
+                />
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 
@@ -337,21 +345,21 @@ export default function FolderForm(props: FolderFormProps) {
               disabled={hookLoading}
               fileList={compact(field.value?.map((item) => item.file))}
               beforeUpload={(file, fileList) => {
-                let foldername = wFoldername;
-                let files = fileList.map(
+                const files = fileList.map(
                   (file): SingleFileFormValue => ({
                     file,
                     mimetype: file.type,
                     resourceId: undefined,
-                    name: file.webkitRelativePath,
+                    name: last(file.webkitRelativePath.split("/")) || "",
                     __localId: getNewFileLocalId(),
                   })
                 );
 
-                if (folder) {
-                  files = replaceBaseFoldername(files, foldername);
-                } else {
-                  foldername = getFirstFoldername(files) || foldername;
+                if (!folder && !wFoldername) {
+                  const foldername =
+                    getFirstFoldername(
+                      compact(fileList.map((file) => file.webkitRelativePath))
+                    ) || "";
                   form.setValue("name", foldername);
                 }
 
@@ -408,6 +416,7 @@ export default function FolderForm(props: FolderFormProps) {
         className={cn("space-y-8", className)}
       >
         <FormAlert error={hookError} />
+        {parentPath && <p>{parentPath}/</p>}
         {nameNode}
         {descriptionNode}
         {selectFolderNode}

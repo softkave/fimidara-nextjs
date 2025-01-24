@@ -1,13 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button.tsx";
+import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { useToast } from "@/hooks/use-toast.ts";
+import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { useUserSendEmailVerificationCodeMutationHook } from "@/lib/hooks/mutationHooks";
 import React from "react";
 import useCooldown from "../../hooks/useCooldown";
 import { errorMessageNotificatition } from "../../utils/errorHandling";
-import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 
 export interface EmailVerificationProps {
   session: LoginResult;
@@ -59,7 +60,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
 
   return (
     <div className={styles.formBody}>
-      <div className={styles.formContentWrapper}>{rootNode}</div>
+      <div className={cn(styles.formContentWrapper, "py-4")}>{rootNode}</div>
     </div>
   );
 }

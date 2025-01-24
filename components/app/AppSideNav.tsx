@@ -4,7 +4,8 @@ import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
-import { SideNav } from "../utils/page/side-nav/SideNav.tsx";
+import { SideNav } from "../utils/page/side-nav/old-side-nav.tsx";
+import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 import {
   getMenuSelectedKeys,
   renderToSideNavMenuItemList,
@@ -23,14 +24,22 @@ export default function AppSideNav(props: IAppSideNavProps) {
   const workspaceId = getWorkspaceId(pathname);
 
   const { appMenuItems, navItems } = useMemo(() => {
-    const navItems = getUserNavItems(workspaceId);
+    let navItems = getUserNavItems(workspaceId);
     const internalItems = pathname.includes(kAppRootPaths.internal)
       ? getInternalNavItems()
       : [];
-    const appMenuItems = renderToSideNavMenuItemList(
-      navItems.concat(internalItems)
-    );
 
+    if (internalItems.length) {
+      navItems = navItems.concat(
+        (
+          [
+            { isDivider: true, key: "divider-internal", label: "" },
+          ] as IRawNavItem[]
+        ).concat(internalItems)
+      );
+    }
+
+    const appMenuItems = renderToSideNavMenuItemList(navItems);
     return { navItems, appMenuItems };
   }, [workspaceId, pathname]);
 

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form.tsx";
 import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { useToast } from "@/hooks/use-toast.ts";
 import {
@@ -85,23 +86,25 @@ export default function UserProfile(props: IUserProfileProps) {
         <FormItem>
           <FormLabel required>First Name</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              maxLength={userConstants.maxNameLength}
-              autoComplete="given-name"
-              placeholder="Enter your first name"
-            />
-            <InputCounter
-              count={field.value.length}
-              maxCount={userConstants.maxNameLength}
-              onTruncate={() => {
-                form.setValue(
-                  "firstName",
-                  field.value.slice(0, userConstants.maxNameLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Input
+                {...field}
+                maxLength={userConstants.maxNameLength}
+                autoComplete="given-name"
+                placeholder="Enter your first name"
+              />
+              <InputCounter
+                count={field.value.length}
+                maxCount={userConstants.maxNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "firstName",
+                    field.value.slice(0, userConstants.maxNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -117,23 +120,25 @@ export default function UserProfile(props: IUserProfileProps) {
         <FormItem>
           <FormLabel required>Last Name</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              autoComplete="family-name"
-              placeholder="Enter your last name"
-              maxLength={userConstants.maxNameLength}
-            />
-            <InputCounter
-              count={field.value.length}
-              maxCount={userConstants.maxNameLength}
-              onTruncate={() => {
-                form.setValue(
-                  "lastName",
-                  field.value.slice(0, userConstants.maxNameLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Input
+                {...field}
+                autoComplete="family-name"
+                placeholder="Enter your last name"
+                maxLength={userConstants.maxNameLength}
+              />
+              <InputCounter
+                count={field.value.length}
+                maxCount={userConstants.maxNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "lastName",
+                    field.value.slice(0, userConstants.maxNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -163,7 +168,7 @@ export default function UserProfile(props: IUserProfileProps) {
 
   return (
     <div className={styles.formBody}>
-      <div className={styles.formContentWrapper}>
+      <div className={cn(styles.formContentWrapper, "py-4")}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormAlert error={updateUserHook.error} />
