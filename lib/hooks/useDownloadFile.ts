@@ -10,12 +10,12 @@ import { flattenErrorList, toAppErrorList } from "../utils/errors";
 
 function downloadFile(filename: string, url: string) {
   const downloadAnchor = document.createElement("a");
-  document.appendChild(downloadAnchor);
+  document.body.appendChild(downloadAnchor);
   downloadAnchor.download = filename;
   downloadAnchor.href = url;
   downloadAnchor.target = "_blank";
   downloadAnchor.click();
-  document.removeChild(downloadAnchor);
+  document.body.removeChild(downloadAnchor);
 }
 
 export function useDownloadFile(fileId: string, filename: string) {
@@ -37,6 +37,7 @@ export function useDownloadFile(fileId: string, filename: string) {
       filepath: presignedPath,
       download: true,
     });
+
     downloadFile(filename, url);
   };
 
