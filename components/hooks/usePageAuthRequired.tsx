@@ -2,7 +2,7 @@
 
 import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
 import { useLogout } from "@/lib/hooks/session/useLogout.ts";
-import { useSessionHook } from "@/lib/hooks/session/useSessionHook.ts";
+import { useSessionStore } from "@/lib/hooks/session/useSessionStore";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { isUndefined } from "lodash-es";
 import { usePathname, useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
   } = options;
   const router = useRouter();
   const pathname = usePathname();
-  const { isLogoutRequested, routeToOnLogout, set } = useSessionHook();
+  const { isLogoutRequested, routeToOnLogout, set } = useSessionStore();
   const { isLoggedIn } = useUserLoggedIn();
   const { logout } = useLogout();
 
