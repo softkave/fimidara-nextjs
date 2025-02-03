@@ -46,8 +46,8 @@ const FileMenu: FC<FileMenuProps> = (props) => {
   const downloadHook = useDownloadFile(file.resourceId, filename);
 
   const deleteModalHook = useDeleteModal({
-    title: `Delete file - "${file.name}"`,
-    description: "Are you sure you want to delete this file?",
+    title: "Delete file",
+    description: `Are you sure you want to delete file "${file.name}"?`,
     onDelete: async () => {
       await deleteHook.runAsync({
         filepath: stringifyFimidaraFilepath(file, workspaceRootname),

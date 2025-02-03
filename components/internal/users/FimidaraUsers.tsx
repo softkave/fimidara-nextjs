@@ -33,11 +33,11 @@ const FimidaraUsers: React.FC<{}> = (props) => {
             <ThumbnailContent
               key={item.resourceId}
               main={
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col justify-center break-all">
                   <span>
                     {item.firstName} {item.lastName}
                   </span>
-                  <span className="text-secondary">{item.email}</span>
+                  <span className="text-secondary break-all">{item.email}</span>
                   <div>
                     <Badge>
                       {item.isEmailVerified

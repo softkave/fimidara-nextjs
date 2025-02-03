@@ -6,6 +6,7 @@ import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceCollaboratorDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { Collaborator } from "fimidara";
+import { compact } from "lodash-es";
 import { Ellipsis } from "lucide-react";
 import React from "react";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
@@ -40,8 +41,11 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
   });
 
   const deleteModalHook = useDeleteModal({
-    title: `Remove collaborator - "${collaborator.firstName}"`,
-    description: "Are you sure you want to remove this collaborator?",
+    title: "Remove collaborator",
+    description: `Are you sure you want to remove collaborator "${compact([
+      collaborator.firstName,
+      collaborator.lastName,
+    ]).join(" ")}"?`,
     onDelete: async () => {
       await deleteHook.runAsync({
         workspaceId,

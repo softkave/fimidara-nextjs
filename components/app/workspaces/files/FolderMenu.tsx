@@ -43,8 +43,8 @@ const FolderMenu: React.FC<FolderMenuProps> = (props) => {
   });
 
   const deleteModalHook = useDeleteModal({
-    title: `Delete folder - "${folder.name}"`,
-    description: "Are you sure you want to delete this folder?",
+    title: "Delete folder",
+    description: `Are you sure you want to delete folder "${folder.name}"?`,
     onDelete: async () => {
       await deleteHook.runAsync({
         folderpath: addRootnameToPath(

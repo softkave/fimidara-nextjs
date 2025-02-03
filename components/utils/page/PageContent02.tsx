@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils.ts";
 import { AppError, getBaseError } from "@/lib/utils/errors";
 import React from "react";
 import { StyleableComponentProps } from "../styling/types";
@@ -43,7 +44,7 @@ function PageContent02<T>(props: IPageContent02Props<T>) {
   } else if (data) {
     const dataNode = render(data);
     contentNode = (
-      <div className="space-y-4">
+      <div className="space-y-4 w-full">
         {contentNode}
         {dataNode}
       </div>
@@ -51,7 +52,7 @@ function PageContent02<T>(props: IPageContent02Props<T>) {
   }
 
   return (
-    <div className={className} style={style}>
+    <div className={cn(className, "w-full")} style={style}>
       {contentNode}
     </div>
   );

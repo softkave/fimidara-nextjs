@@ -2,13 +2,13 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { File } from "fimidara";
 import { noop } from "lodash-es";
 import { FileIcon } from "lucide-react";
 import Link from "next/link";
+import { FC, ReactNode, useCallback } from "react";
 import FileMenu from "./FileMenu";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { ReactNode, FC, useCallback } from "react";
 
 export interface IAppFileListProps {
   files: File[];
@@ -29,7 +29,7 @@ const AppFileList: FC<IAppFileListProps> = (props) => {
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center break-all">
               <Link
                 href={kAppWorkspacePaths.file(
                   item.workspaceId,
@@ -39,7 +39,9 @@ const AppFileList: FC<IAppFileListProps> = (props) => {
                 {item.name + extension}
               </Link>
               {item.description && (
-                <span className="text-secondary">{item.description}</span>
+                <span className="text-secondary break-all">
+                  {item.description}
+                </span>
               )}
             </div>
           }
@@ -71,6 +73,7 @@ const AppFileList: FC<IAppFileListProps> = (props) => {
       getId={(item: File) => item.resourceId}
       emptyMessage="No files yet"
       space="sm"
+      className="w-full"
     />
   );
 };

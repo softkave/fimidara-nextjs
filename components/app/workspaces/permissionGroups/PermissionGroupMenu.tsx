@@ -71,8 +71,8 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
     });
 
   const deleteModalHook = useDeleteModal({
-    title: `Delete permission group - "${permissionGroup.name}"`,
-    description: "Are you sure you want to delete this permission group?",
+    title: "Delete permission group",
+    description: `Are you sure you want to delete permission group "${permissionGroup.name}"?`,
     onDelete: async () => {
       await deleteHook.runAsync({
         permissionGroupId: permissionGroup.resourceId,
@@ -81,8 +81,8 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
   });
 
   const unassignModalHook = useDeleteModal({
-    title: `Unassign permission group - "${permissionGroup.name}"`,
-    description: "Are you sure you want to unassign this permission group?",
+    title: "Unassign permission group",
+    description: `Are you sure you want to unassign permission group "${permissionGroup.name}"?`,
     onDelete: async () => {
       if (!unassignParams?.entityId) {
         return;

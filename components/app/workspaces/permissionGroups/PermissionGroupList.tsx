@@ -2,13 +2,13 @@
 
 import ItemList from "@/components/utils/list/ItemList";
 import ThumbnailContent from "@/components/utils/page/ThumbnailContent";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { getResourceId } from "@/lib/utils/resource";
 import { PermissionGroup } from "fimidara";
 import { noop } from "lodash-es";
 import Link from "next/link";
+import { FC, ReactNode } from "react";
 import PermissionGroupMenu from "./PermissionGroupMenu";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { ReactNode, FC } from "react";
 
 export interface PermissionGroupListProps {
   workspaceId: string;
@@ -37,6 +37,7 @@ const PermissionGroupList: FC<PermissionGroupListProps> = (props) => {
     ) : (
       <Link
         href={kAppWorkspacePaths.permissionGroup(workspaceId, item.resourceId)}
+        className="break-all"
       >
         {item.name}
       </Link>
@@ -50,10 +51,12 @@ const PermissionGroupList: FC<PermissionGroupListProps> = (props) => {
         selected={selectedMap && selectedMap[item.resourceId]}
         onSelect={onSelect && (() => onSelect(item))}
         main={
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center break-all">
             {nameNode}
             {item.description && (
-              <span className="text-secondary">{item.description}</span>
+              <span className="text-secondary break-all">
+                {item.description}
+              </span>
             )}
           </div>
         }

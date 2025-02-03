@@ -34,7 +34,7 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
               key={item.resourceId}
               main={
                 <div className="flex flex-col justify-center">
-                  <span>{item.name}</span>
+                  <span className="break-all">{item.name}</span>
                   <span className="text-secondary">
                     Created {formatDateTime(item.createdAt)}
                   </span>
