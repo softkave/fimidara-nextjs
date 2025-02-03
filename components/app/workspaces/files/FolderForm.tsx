@@ -148,8 +148,6 @@ export default function FolderForm(props: FolderFormProps) {
         workspaceRootname
       );
 
-      console.log({ filepath, name: input.name });
-
       return await uploadHook.runAsync({
         filepath,
         // fileId: input.resourceId,
@@ -295,7 +293,6 @@ export default function FolderForm(props: FolderFormProps) {
       control={form.control}
       name="description"
       render={({ field }) => {
-        console.log({ field });
         return (
           <FormItem>
             <FormLabel>Description</FormLabel>
