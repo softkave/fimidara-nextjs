@@ -48,7 +48,7 @@ import {
 import { newFileValidationSchema } from "./validation";
 
 const folderValidation = z.object({
-  name: fileValidationParts.filename,
+  name: fileValidationParts.filename.min(1),
   description: systemValidation.description.nullable().optional(),
   files: z.array(newFileValidationSchema).optional(),
 });
@@ -207,7 +207,7 @@ export default function FolderForm(props: FolderFormProps) {
 
   const form = useForm<z.infer<typeof folderValidation>>({
     resolver: zodResolver(folderValidation),
-    defaultValues: folder ? getFolderFormInputFromFolder(folder) : {},
+    defaultValues: folder ? getFolderFormInputFromFolder(folder) : { name: "" },
   });
   useFormHelpers(form, { errors: hookError });
 
@@ -261,7 +261,7 @@ export default function FolderForm(props: FolderFormProps) {
                   onTruncate={() => {
                     form.setValue(
                       "name",
-                      field.value.slice(0, folderConstants.maxFolderNameLength)
+                      field.value?.slice(0, folderConstants.maxFolderNameLength)
                     );
                   }}
                   className="mt-1"

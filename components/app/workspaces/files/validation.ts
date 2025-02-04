@@ -3,7 +3,7 @@ import { systemValidation } from "@/lib/validation/system";
 import { z } from "zod";
 
 export const newFileValidationSchema = z.object({
-  name: fileValidationParts.filename,
+  name: fileValidationParts.filename.min(1),
   description: systemValidation.description.nullable().optional(),
   file: z.any(),
   encoding: z.string().optional(),

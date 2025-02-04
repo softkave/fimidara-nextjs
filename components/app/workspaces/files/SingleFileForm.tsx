@@ -90,12 +90,12 @@ export function SingleFileForm(props: SingleFileFormProps) {
                   }}
                 />
                 <InputCounter
-                  count={field.value.length}
+                  count={field.value?.length ?? 0}
                   maxCount={folderConstants.maxFolderNameLength}
                   onTruncate={() => {
                     const extName = pathExtension({ input: field.value });
                     const truncatedName =
-                      field.value.slice(
+                      field.value?.slice(
                         /** start */ 0,
                         folderConstants.maxFolderNameLength -
                           extName.length -

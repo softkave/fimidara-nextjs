@@ -33,7 +33,7 @@ const requestValidation = z.object({
     .string({ required_error: "recipient email is required" })
     .trim()
     .email(),
-  message: z.string().max(systemConstants.maxDescriptionLength),
+  message: z.string().min(1).max(systemConstants.maxDescriptionLength),
   expires: z.number().optional(),
 });
 
@@ -97,7 +97,13 @@ export default function RequestForm(props: IRequestFormProps) {
 
   const form = useForm<z.infer<typeof requestValidation>>({
     resolver: zodResolver(requestValidation),
-    defaultValues: request ? getRequestFormInputFromRequest(request) : {},
+    defaultValues: request
+      ? getRequestFormInputFromRequest(request)
+      : {
+          recipientEmail: "",
+          message: "",
+          expires: undefined,
+        },
   });
 
   useFormHelpers(form, { errors: mergedHook.error });
@@ -131,22 +137,24 @@ export default function RequestForm(props: IRequestFormProps) {
         <FormItem>
           <FormLabel required>Message</FormLabel>
           <FormControl>
-            <Textarea
-              {...field}
-              placeholder="Enter request message"
-              maxLength={systemConstants.maxDescriptionLength}
-            />
-            <InputCounter
-              count={field.value.length}
-              maxCount={systemConstants.maxDescriptionLength}
-              onTruncate={() => {
-                form.setValue(
-                  "message",
-                  field.value.slice(0, systemConstants.maxDescriptionLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Textarea
+                {...field}
+                placeholder="Enter request message"
+                maxLength={systemConstants.maxDescriptionLength}
+              />
+              <InputCounter
+                count={field.value?.length ?? 0}
+                maxCount={systemConstants.maxDescriptionLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "message",
+                    field.value?.slice(0, systemConstants.maxDescriptionLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
