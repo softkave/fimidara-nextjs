@@ -106,6 +106,8 @@ export default function FileForm(props: FileFormProps) {
             identifier: filepath,
             totalSize: input.file.size,
           }),
+          resume: true,
+          firePartEventsForResumedParts: true,
         });
       } else {
         return await updateHook.runAsync({
@@ -137,6 +139,8 @@ export default function FileForm(props: FileFormProps) {
           identifier: filepath,
           totalSize: input.file.size,
         }),
+        resume: true,
+        firePartEventsForResumedParts: true,
       });
     }
   };

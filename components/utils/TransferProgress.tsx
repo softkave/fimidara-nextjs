@@ -44,7 +44,7 @@ export function TransferProgress(props: ITransferProgressProps) {
   // depend on the progress event, or we can extend it to the progress event
   return (
     <div className="space-y-1">
-      <span className="text-secondary">{identifier}</span>
+      <span className="text-secondary break-all">{identifier}</span>
       <Progress value={percent} />
       <div className="space-x-2">
         <span className="text-secondary">
