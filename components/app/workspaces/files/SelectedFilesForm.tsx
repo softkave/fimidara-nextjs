@@ -49,7 +49,9 @@ export function SelectedFilesForm(props: SelectedFilesFormProps) {
         <AccordionTrigger>
           <div className="flex flex-1 items-center mr-2">
             <div className="flex flex-1 flex-col items-start">
-              <span className="line-clamp-1 text-left">{value.name}</span>
+              <span className="line-clamp-1 text-left break-all">
+                {value.name}
+              </span>
               {errorMessage && (
                 <span className="text-sm font-medium text-destructive text-left">
                   {errorMessage}

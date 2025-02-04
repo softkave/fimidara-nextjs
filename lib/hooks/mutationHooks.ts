@@ -199,7 +199,10 @@ export const useWorkspaceFileDeleteMutationHook = makeEndpointMutationHook(
     let fileId = body?.fileId;
 
     if (!fileId && body?.filepath) {
-      fileId = getFileByPath(body.filepath, true)?.resourceId;
+      fileId = getFileByPath(
+        body.filepath,
+        /** includesWorkspaceRootname */ true
+      )?.resourceId;
     }
 
     if (fileId) {
