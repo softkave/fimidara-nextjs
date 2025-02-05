@@ -58,7 +58,7 @@ const FimidaraUsers: React.FC<{}> = (props) => {
 
   return (
     <div className="space-y-8">
-      <ListHeader label="Fimidara Users" />
+      <ListHeader label="fimidara Users" />
       <PaginatedContent content={content} />
     </div>
   );

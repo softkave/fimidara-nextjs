@@ -79,7 +79,7 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
                   <WorkspaceMenu workspace={item} onCompleteDelete={noop} />
                 </div>
               }
-              className="py-4 sm:p-2"
+              className="py-4"
             />
           )}
           emptyMessage={
@@ -93,7 +93,6 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
               }
             />
           }
-          className="sm:p-0"
         />
       )}
     />
@@ -130,7 +129,6 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
       <PaginatedContent
         content={contentNode}
         pagination={count ? { ...pagination, count } : undefined}
-        className="sm:border sm:border-gray-200 sm:rounded-lg"
       />
     </div>
   );

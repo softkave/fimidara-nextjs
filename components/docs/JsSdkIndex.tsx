@@ -5,8 +5,8 @@ import { Separator } from "../ui/separator.tsx";
 import { cn } from "../utils.ts";
 import { IRawNavItem } from "../utils/page/side-nav/types.ts";
 import JsSdkFunction from "./JsSdkFunction";
-import { FieldObject, FieldString } from "./types";
 import { jsSdkRawNavItems } from "./navItems.tsx";
+import { FieldObject, FieldString } from "./types";
 
 export interface JsSdkIndexProps {}
 
@@ -88,7 +88,7 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
 
   return (
     <div className={cn("space-y-6", classes.root)}>
-      <h5 style={{ margin: "0px 0px 24px 0px" }}>Fimidara JS SDK</h5>
+      <h5 style={{ margin: "0px 0px 24px 0px" }}>fimidara JS SDK</h5>
       {fimidaraJsDescriptionNode}
       <Separator />
       {endpointsNode}
