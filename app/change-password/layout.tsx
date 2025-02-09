@@ -11,5 +11,9 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <WebLayout>{children}</WebLayout>;
+  return (
+    <WebLayout isDocs={false} shouldRedirectToWorkspace={false}>
+      {children}
+    </WebLayout>
+  );
 }

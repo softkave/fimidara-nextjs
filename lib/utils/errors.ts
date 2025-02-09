@@ -8,7 +8,7 @@ import {
   isString,
   set,
 } from "lodash-es";
-import { isFimidaraEndpointError } from "../api/localUtils";
+import { isFimidaraEndpointError } from "../api/fimidaraEndpointUtils";
 import OperationError from "./OperationError";
 import { AnyObject } from "./types";
 

@@ -19,6 +19,9 @@
     "paths": {
       "@/components": ["./components"],
       "@/lib": ["./lib"],
+      "@/common": ["./lib/common"],
+      "@/auth": ["./auth"],
+      "@/server": ["./lib/server"],
       "@/*": ["./*"]
     },
     "plugins": [

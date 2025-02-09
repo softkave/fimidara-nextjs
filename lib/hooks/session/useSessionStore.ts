@@ -2,16 +2,13 @@ import { merge } from "lodash-es";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-export interface SessionHookState {
+export interface SessionStore {
   routeToOnLogout?: string;
   isLogoutRequested?: boolean;
   set(state: { routeToOnLogout?: string; isLogoutRequested?: boolean }): void;
 }
 
-export const useSessionHook = create<
-  SessionHookState,
-  [["zustand/devtools", {}]]
->(
+export const useSessionStore = create<SessionStore, [["zustand/devtools", {}]]>(
   devtools(
     (set, get) => {
       return {
@@ -23,6 +20,6 @@ export const useSessionHook = create<
         },
       };
     },
-    { name: "sessionHook" }
+    { name: "sessionStore" }
   )
 );

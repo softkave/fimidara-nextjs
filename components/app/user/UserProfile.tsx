@@ -18,7 +18,7 @@ import {
   LoginResult,
   User,
 } from "@/lib/api-internal/endpoints/privateTypes.ts";
-import { userConstants } from "@/lib/definitions/user";
+import { kUserConstants } from "@/lib/definitions/user";
 import { useUserUpdateMutationHook } from "@/lib/hooks/mutationHooks";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { signupValidationParts } from "@/lib/validation/user";
@@ -89,17 +89,17 @@ export default function UserProfile(props: IUserProfileProps) {
             <div>
               <Input
                 {...field}
-                maxLength={userConstants.maxNameLength}
+                maxLength={kUserConstants.maxNameLength}
                 autoComplete="given-name"
                 placeholder="Enter your first name"
               />
               <InputCounter
                 count={field.value?.length ?? 0}
-                maxCount={userConstants.maxNameLength}
+                maxCount={kUserConstants.maxNameLength}
                 onTruncate={() => {
                   form.setValue(
                     "firstName",
-                    field.value?.slice(0, userConstants.maxNameLength)
+                    field.value?.slice(0, kUserConstants.maxNameLength)
                   );
                 }}
                 className="mt-1"
@@ -125,15 +125,15 @@ export default function UserProfile(props: IUserProfileProps) {
                 {...field}
                 autoComplete="family-name"
                 placeholder="Enter your last name"
-                maxLength={userConstants.maxNameLength}
+                maxLength={kUserConstants.maxNameLength}
               />
               <InputCounter
                 count={field.value?.length ?? 0}
-                maxCount={userConstants.maxNameLength}
+                maxCount={kUserConstants.maxNameLength}
                 onTruncate={() => {
                   form.setValue(
                     "lastName",
-                    field.value?.slice(0, userConstants.maxNameLength)
+                    field.value?.slice(0, kUserConstants.maxNameLength)
                   );
                 }}
                 className="mt-1"

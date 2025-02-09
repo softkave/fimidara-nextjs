@@ -2,37 +2,65 @@
 
 import { FimidaraEndpoints, FimidaraJsConfigAuthToken } from "fimidara";
 import { first } from "lodash-es";
+import { getSession } from "next-auth/react";
 import { FimidaraEndpoints as PrivateFimidaraEndpoints } from "../api-internal/endpoints/privateEndpoints.ts";
 import { systemConstants } from "../definitions/system";
+import { IOAuthUser } from "../definitions/user.ts";
 import { useUserSessionFetchStore } from "../hooks/fetchStores/session.ts";
 import { kUserSessionStorageFns } from "../storage/UserSessionStorageFns.ts";
 
+async function getTokensFromOAuth() {
+  const auth = await getSession();
+  const user = auth?.user as IOAuthUser;
+  const jwtToken = user.jwtToken;
+  const clientJwtToken = user.clientJwtToken;
+
+  kUserSessionStorageFns.setData({
+    clientJwtToken,
+    jwtToken,
+    jwtTokenExpiresAt: user.jwtTokenExpiresAt,
+    refreshToken: user.refreshToken,
+  });
+
+  return { jwtToken, clientJwtToken };
+}
+
 function getUserTokenFromStore() {
   const state = first(useUserSessionFetchStore.getState().states);
-  let token: FimidaraJsConfigAuthToken | undefined = undefined;
-
   if (state) {
-    token = state[1].data?.other?.refresh;
+    return state[1].data?.other?.refresh;
   }
+}
 
-  if (!token) {
-    token = kUserSessionStorageFns.getData()?.jwtToken ?? undefined;
-  }
+function getUserTokenFromStorage() {
+  return kUserSessionStorageFns.getData()?.jwtToken ?? undefined;
+}
+
+export async function getUserToken() {
+  const token =
+    getUserTokenFromStore() ??
+    getUserTokenFromStorage() ??
+    (await getTokensFromOAuth())?.jwtToken;
 
   return token;
 }
 
 function getClientTokenFromStore() {
   const state = first(useUserSessionFetchStore.getState().states);
-  let token: FimidaraJsConfigAuthToken | undefined = undefined;
-
   if (state) {
-    token = state[1].data?.other?.refresh;
+    return state[1].data?.other?.refresh;
   }
+}
 
-  if (!token) {
-    token = kUserSessionStorageFns.getData()?.clientJwtToken ?? undefined;
-  }
+function getClientTokenFromStorage() {
+  return kUserSessionStorageFns.getData()?.clientJwtToken ?? undefined;
+}
+
+export async function getClientToken() {
+  const token =
+    getClientTokenFromStore() ??
+    getClientTokenFromStorage() ??
+    (await getTokensFromOAuth())?.clientJwtToken;
 
   return token;
 }
@@ -61,30 +89,16 @@ export function getPrivateFimidaraEndpoints(
   return privateFimidaraEndpoints;
 }
 
-export function getPublicFimidaraEndpointsUsingUserToken(
+export async function getPublicFimidaraEndpointsUsingUserToken(
   props: { userToken?: string } = {}
 ) {
-  const { userToken = getUserTokenFromStore() } = props;
+  const { userToken = await getUserToken() } = props;
   return getPublicFimidaraEndpoints({ authToken: userToken });
 }
 
-export function getPrivateFimidaraEndpointsUsingUserToken(
+export async function getPrivateFimidaraEndpointsUsingUserToken(
   props: { userToken?: string } = {}
 ) {
-  const { userToken = getUserTokenFromStore() } = props;
+  const { userToken = await getUserToken() } = props;
   return getPrivateFimidaraEndpoints({ authToken: userToken });
-}
-
-export function getPublicFimidaraEndpointsUsingFimidaraAgentToken(
-  props: { clientToken?: string } = {}
-) {
-  const { clientToken = getClientTokenFromStore() } = props;
-  return getPublicFimidaraEndpoints({ authToken: clientToken });
-}
-
-export function getPrivateFimidaraEndpointsUsingFimidaraAgentToken(
-  props: { clientToken?: string } = {}
-) {
-  const { clientToken = getClientTokenFromStore() } = props;
-  return getPrivateFimidaraEndpoints({ authToken: clientToken });
 }

@@ -26,7 +26,7 @@ export function useDownloadFile(fileId: string, filename: string) {
       description: `Prepping file ${filename}...`,
     });
 
-    const fimidara = getPublicFimidaraEndpointsUsingUserToken();
+    const fimidara = await getPublicFimidaraEndpointsUsingUserToken();
     const result = await fimidara.presignedPaths.issuePresignedPath({
       fileId,
       usageCount: 1,

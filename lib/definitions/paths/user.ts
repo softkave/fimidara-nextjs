@@ -4,5 +4,4 @@ export const kAppUserPaths = {
   request(id: string) {
     return `${this.requests}/${id}`;
   },
-  workspaces: "/workspaces",
 };

@@ -1,30 +1,11 @@
 import { htmlCharacterCodes } from "@/components/utils/utils";
 import { WebLayout } from "@/components/utils/WebLayout.tsx";
-import type { Metadata, NextPage, ResolvingMetadata } from "next";
 import Docs from "../components/web/Docs";
 import Features from "../components/web/Features";
 
-type Props = {};
-
-export async function generateMetadata(
-  {}: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || [];
-
-  return {
-    title: "fimidara",
-    description: "File storage service for developers",
-    // openGraph: {
-    //   images: ["/some-specific-page-image.jpg", ...previousImages],
-    // },
-  };
-}
-
-const Home: NextPage = () => {
+const Home = async () => {
   return (
-    <WebLayout>
+    <WebLayout isDocs={false} shouldRedirectToWorkspace={true}>
       <div className="space-y-32">
         <div className="mt-32 space-y-4">
           <h1 className="text-2xl underline decoration-red-500/70">fimidara</h1>

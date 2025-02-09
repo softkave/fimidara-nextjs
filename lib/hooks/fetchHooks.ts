@@ -73,7 +73,7 @@ import {
 async function userWorkspacesInputFetchFn(
   params: GetUserWorkspacesEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<Workspace>> {
-  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.workspaces.getUserWorkspaces(params);
   const count = await endpoints.workspaces.countUserWorkspaces();
   return { count: count.count, resourceList: data.workspaces };
@@ -84,7 +84,7 @@ async function userCollaborationRequestsInputFetchFn(
 ): Promise<
   FetchPaginatedResourceListReturnedData<CollaborationRequestForUser>
 > {
-  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.collaborationRequests.getUserRequests(params);
   const count = await endpoints.collaborationRequests.countUserRequests();
   return { count: count.count, resourceList: data.requests };
@@ -95,7 +95,7 @@ async function workspaceCollaborationRequestsInputFetchFn(
 ): Promise<
   FetchPaginatedResourceListReturnedData<CollaborationRequestForWorkspace>
 > {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.collaborationRequests.getWorkspaceRequests(
     params
   );
@@ -108,7 +108,7 @@ async function workspaceCollaborationRequestsInputFetchFn(
 async function workspaceCollaboratorsInputFetchFn(
   params: GetWorkspaceCollaboratorsEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<Collaborator>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.collaborators.getWorkspaceCollaborators(params);
   const count = await endpoints.collaborators.countWorkspaceCollaborators(
     omitPagination(params)
@@ -119,7 +119,7 @@ async function workspaceCollaboratorsInputFetchFn(
 async function workspaceAgentTokensInputFetchFn(
   params: GetWorkspaceAgentTokensEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<AgentToken>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.agentTokens.getWorkspaceTokens(params);
   const count = await endpoints.agentTokens.countWorkspaceTokens(
     omitPagination(params)
@@ -130,7 +130,7 @@ async function workspaceAgentTokensInputFetchFn(
 async function workspaceFoldersInputFetchFn(
   params: Omit<ListFolderContentEndpointParams, "contentType">
 ): Promise<FetchPaginatedResourceListReturnedData<Folder>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.folders.listFolderContent({
     ...params,
     contentType: "folder",
@@ -146,7 +146,7 @@ async function workspaceFoldersInputFetchFn(
 async function workspaceFilesInputFetchFn(
   params: Omit<ListFolderContentEndpointParams, "contentType">
 ): Promise<FetchPaginatedResourceListReturnedData<File>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.folders.listFolderContent({
     ...params,
     contentType: "file",
@@ -162,7 +162,7 @@ async function workspaceFilesInputFetchFn(
 async function workspacePermissionGroupsInputFetchFn(
   params: GetWorkspacePermissionGroupsEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<PermissionGroup>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.permissionGroups.getWorkspacePermissionGroups(
     params
   );
@@ -175,7 +175,7 @@ async function workspacePermissionGroupsInputFetchFn(
 async function workspaceBackendConfigsInputFetchFn(
   params: GetFileBackendConfigsEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<FileBackendConfig>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.fileBackends.getConfigs(params);
   const count = await endpoints.permissionGroups.countWorkspacePermissionGroups(
     omitPagination(params)
@@ -186,7 +186,7 @@ async function workspaceBackendConfigsInputFetchFn(
 async function workspaceUsageRecordsInputFetchFn(
   params: GetWorkspaceSummedUsageEndpointParams
 ): Promise<FetchPaginatedResourceListReturnedData<UsageRecord>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.usageRecords.getWorkspaceSummedUsage(params);
   const count = await endpoints.usageRecords.countWorkspaceSummedUsage(
     omitPagination(params)
@@ -197,7 +197,7 @@ async function workspaceUsageRecordsInputFetchFn(
 async function entityAssignedPermissionGroupsInputFetchFn(
   params: GetEntityAssignedPermissionGroupsParams
 ) {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data =
     await endpoints.permissionGroups.getEntityAssignedPermissionGroups(params);
   const { immediateAssignedPermissionGroupsMeta, permissionGroups } = data;
@@ -208,7 +208,7 @@ async function entityAssignedPermissionGroupsInputFetchFn(
 }
 
 async function usageCostsInputFetchFn() {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.usageRecords.getUsageCosts();
   return data;
 }
@@ -216,25 +216,25 @@ async function usageCostsInputFetchFn() {
 async function resolveEntityPermissionInputFetchFn(
   params: ResolveEntityPermissionsEndpointParams
 ) {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.permissionItems.resolveEntityPermissions(params);
   return data;
 }
 
 async function getWaitlistedUsersInputFetchFn() {
-  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.internals.getWaitlistedUsers();
   return data;
 }
 
 async function getUsersInputFetchFn() {
-  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.internals.getUsers();
   return data;
 }
 
 async function getWorkspacesInputFetchFn() {
-  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.internals.getWorkspaces();
   return data;
 }

@@ -10,7 +10,7 @@ import { FetchSingleResourceFetchFnData } from "./types.ts";
 async function workspaceAgentTokenInputFetchFn(
   params: GetAgentTokenEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<AgentToken>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.agentTokens.getToken(params);
   return { resource: data.token };
 }

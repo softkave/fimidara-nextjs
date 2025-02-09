@@ -1,27 +1,25 @@
-"use client";
-
-import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
-import { usePathname } from "next/navigation";
+import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { useServerUserLoggedIn } from "@/lib/hooks/session/useServerUserLoggedIn.ts";
+import { redirect } from "next/navigation";
 import { DocsSideNav } from "../docs/DocsSideNav.tsx";
 import { ScrollArea } from "../ui/scroll-area.tsx";
 import WebHeader from "../web/WebHeader.tsx";
-import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 
 export interface IWebLayoutProps {
+  isDocs: boolean;
+  shouldRedirectToWorkspace: boolean;
   children?: React.ReactNode;
 }
 
-export const WebLayout = (props: IWebLayoutProps) => {
-  const { children } = props;
+export const WebLayout = async (props: IWebLayoutProps) => {
+  const { children, isDocs, shouldRedirectToWorkspace } = props;
+  const isLoggedIn = await useServerUserLoggedIn();
 
-  const p = usePathname();
-  const { isLoggedIn } = useUserLoggedIn();
-
-  if (isLoggedIn === undefined || isLoggedIn) {
-    return null;
+  if (isLoggedIn && shouldRedirectToWorkspace) {
+    return redirect(kClientPaths.withURL(kAppWorkspacePaths.workspaces));
   }
 
-  const isDocs = p.startsWith(kAppRootPaths.docs);
   return (
     <div className="flex flex-1 max-h-screen">
       {isDocs && <DocsSideNav />}

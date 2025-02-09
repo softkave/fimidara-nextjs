@@ -10,7 +10,7 @@ import { FetchSingleResourceFetchFnData } from "./types.ts";
 async function workspaceFolderInputFetchFn(
   params: GetFolderEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<Folder>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.folders.getFolder(params);
   return { resource: data.folder };
 }

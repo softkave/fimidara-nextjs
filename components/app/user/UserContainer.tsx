@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import { useUserNode } from "../../hooks/useUserNode";
 import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
+import React from "react";
+import { useAssertGetUser } from "../../hooks/useAssertGetUser";
 
 export interface UserContainerProps {
   render: (data: LoginResult) => React.ReactElement;
@@ -10,12 +10,8 @@ export interface UserContainerProps {
 
 export default function UserContainer(props: UserContainerProps) {
   const { render } = props;
-  const user = useUserNode();
+  const user = useAssertGetUser();
 
-  if (user.renderedNode) {
-    return user.renderedNode;
-  } else {
-    const session = user.assertGet();
-    return render(session);
-  }
+  const session = user.assertGet();
+  return render(session);
 }

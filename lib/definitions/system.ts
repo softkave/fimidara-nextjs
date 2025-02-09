@@ -9,6 +9,7 @@ const workspaceRootname = defaultTo(
   process.env.NEXT_PUBLIC_WORKSPACE_ROOTNAME,
   "fimidara"
 );
+const kBaseUrl = process.env.NEXT_PUBLIC_URL;
 
 export const systemConstants = {
   workspaceRootname,
@@ -39,6 +40,7 @@ export const systemConstants = {
   minPage: 0,
   minPageSize: 1,
   maxPageSize: 1000,
+  baseUrl: kBaseUrl,
 };
 
 export function getWorkspaceTypeList(): FimidaraResourceType[] {

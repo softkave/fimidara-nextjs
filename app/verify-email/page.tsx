@@ -1,10 +1,10 @@
 "use client";
 
+import { useLoggedInReturnTo } from "@/components/hooks/useLoggedInReturnTo.tsx";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling.tsx";
 import { appComponentConstants } from "@/components/utils/utils.ts";
 import { useToast } from "@/hooks/use-toast.ts";
 import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { systemConstants } from "@/lib/definitions/system.ts";
 import { useUserConfirmEmailMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import { useMount } from "ahooks";
@@ -15,9 +15,10 @@ export interface IVerifyEmailProps {}
 export default function VerifyEmail(props: IVerifyEmailProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const returnTo = useLoggedInReturnTo();
   const verifyEmailHook = useUserConfirmEmailMutationHook({
     onSuccess(data, params) {
-      router.push(kAppWorkspacePaths.workspaces);
+      router.push(returnTo);
     },
     onError(e, params) {
       errorMessageNotificatition(e, "Error verifying email address", toast);

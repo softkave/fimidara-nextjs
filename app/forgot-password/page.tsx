@@ -1,5 +1,6 @@
 "use client";
 
+import SignInClient from "@/components/account/sign-in-client.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Form,
@@ -10,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
@@ -87,12 +89,18 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
             <FormAlert error={forgotHook.error} />
             {emailNode}
             <div className="my-4">
-              <Button type="submit" loading={forgotHook.loading}>
+              <Button
+                type="submit"
+                loading={forgotHook.loading}
+                className="w-full"
+              >
                 Send Change Password Email
               </Button>
             </div>
           </form>
         </Form>
+        <Separator className="my-8" />
+        <SignInClient className="w-full" />
       </div>
     </div>
   );

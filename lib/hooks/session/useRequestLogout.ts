@@ -1,9 +1,9 @@
 import { useCallback } from "react";
-import { useSessionHook } from "./useSessionHook.ts";
+import { useSessionStore } from "./useSessionStore.ts";
 
 export function useRequestLogout() {
   const requestLogout = useCallback((pathname?: string) => {
-    useSessionHook
+    useSessionStore
       .getState()
       .set({ isLogoutRequested: true, routeToOnLogout: pathname });
   }, []);

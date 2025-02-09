@@ -1,10 +1,9 @@
 import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
-import { kAppUserPaths } from "@/lib/definitions/paths/user.ts";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";
 import Link from "next/link";
-import { useUserNode } from "../hooks/useUserNode";
+import { useAssertGetUser } from "../hooks/useAssertGetUser.tsx";
 import { DropdownItems, IDropdownItem } from "../ui/dropdown-items.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover.tsx";
 import { insertMenuDivider } from "../utils/utils";
 import UserAvatar from "./user/UserAvatar";
 
@@ -16,27 +15,19 @@ const kMenuKeys = {
 
 export default function UserMenu() {
   const { requestLogout } = useRequestLogout();
-  const userNode = useUserNode();
+  const userNode = useAssertGetUser();
 
   const renderBtnNode = (userId: string, withError?: boolean) => {
     return <UserAvatar userId={userId} alt="Your profile picture" />;
   };
 
-  if (userNode.renderedNode) {
-    return (
-      <Popover>
-        <PopoverTrigger>
-          {renderBtnNode(/** userId */ "", /** withError */ true)}
-        </PopoverTrigger>
-        <PopoverContent>{userNode.renderedNode}</PopoverContent>
-      </Popover>
-    );
-  }
-
   const items: Array<IDropdownItem> = insertMenuDivider([
     {
       label: (
-        <Link href={kAppUserPaths.workspaces} className="w-full inline-block">
+        <Link
+          href={kAppWorkspacePaths.workspaces}
+          className="w-full inline-block"
+        >
           App
         </Link>
       ),

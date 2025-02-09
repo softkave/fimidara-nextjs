@@ -1,5 +1,7 @@
 "use client";
 
+import SignInClient from "@/components/account/sign-in-client.tsx";
+import { useLoggedInReturnTo } from "@/components/hooks/useLoggedInReturnTo.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import {
@@ -11,11 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { userConstants } from "@/lib/definitions/user.ts";
+import { kUserConstants } from "@/lib/definitions/user.ts";
 import { useUserLoginMutationHook } from "@/lib/hooks/mutationHooks/useUserLoginMutationHook.ts";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { kUserSessionStorageFns } from "@/lib/storage/UserSessionStorageFns";
@@ -35,19 +37,20 @@ export interface ILoginProps {}
 
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1).max(userConstants.maxPasswordLength),
+  password: z.string().min(1).max(kUserConstants.maxPasswordLength),
   remember: z.boolean().optional(),
 });
 
 export default function Login(props: ILoginProps) {
   const router = useRouter();
+  const returnTo = useLoggedInReturnTo();
   const loginHook = useUserLoginMutationHook({
     onSuccess(data, params) {
-      router.push(kAppWorkspacePaths.workspaces);
+      router.push(returnTo);
     },
   });
   const onSubmit = async (body: z.infer<typeof formSchema>) => {
-    const result = await loginHook.runAsync({
+    const { result } = await loginHook.runAsync({
       email: body.email,
       password: body.password,
     });
@@ -105,7 +108,7 @@ export default function Login(props: ILoginProps) {
               type="password"
               autoComplete="current-password"
               placeholder="Enter your password"
-              maxLength={userConstants.maxPasswordLength}
+              maxLength={kUserConstants.maxPasswordLength}
             />
           </FormControl>
           <FormMessage />
@@ -157,12 +160,18 @@ export default function Login(props: ILoginProps) {
             {passwordNode}
             {rememberNode}
             <div className="my-4">
-              <Button type="submit" loading={loginHook.loading}>
+              <Button
+                type="submit"
+                loading={loginHook.loading}
+                className="w-full"
+              >
                 Login
               </Button>
             </div>
           </form>
         </Form>
+        <Separator className="my-8" />
+        <SignInClient className="w-full" />
       </div>
     </div>
   );

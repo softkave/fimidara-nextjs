@@ -19,7 +19,7 @@ export default function AppAvatar(props: IAppAvatarProps) {
   const getPresignedPath = async () => {
     if (!filepath) return undefined;
 
-    const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+    const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
     const getResult = await endpoints.presignedPaths.getPresignedPaths({
       files: [{ filepath }],
     });
