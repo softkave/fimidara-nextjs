@@ -8,6 +8,7 @@ import {
   text,
 } from "drizzle-orm/sqlite-core";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { v7 as uuidv7 } from "uuid";
 
 const dbURL = process.env.TURSO_DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
@@ -20,7 +21,7 @@ export const db = drizzle(client);
 export const users = sqliteTable("user", {
   id: text("id")
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => uuidv7()),
   name: text("name"),
   email: text("email").unique(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
