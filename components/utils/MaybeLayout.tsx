@@ -1,15 +1,15 @@
-"use client";
-
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { AppLayout } from "./AppLayout.tsx";
 import { WebLayout } from "./WebLayout.tsx";
 
 export interface IMaybeLayoutProps {
   children?: React.ReactNode;
+  isDocs: boolean;
+  shouldRedirectToWorkspace: boolean;
 }
 
 export const MaybeLayout = (props: IMaybeLayoutProps) => {
-  const { children } = props;
+  const { children, isDocs, shouldRedirectToWorkspace } = props;
   const { isLoggedIn } = useUserLoggedIn();
 
   if (isLoggedIn === undefined) {
@@ -19,6 +19,11 @@ export const MaybeLayout = (props: IMaybeLayoutProps) => {
   return isLoggedIn ? (
     <AppLayout>{children}</AppLayout>
   ) : (
-    <WebLayout>{children}</WebLayout>
+    <WebLayout
+      isDocs={isDocs}
+      shouldRedirectToWorkspace={shouldRedirectToWorkspace}
+    >
+      {children}
+    </WebLayout>
   );
 };

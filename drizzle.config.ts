@@ -9,7 +9,7 @@ assert.ok(authToken, "TURSO_AUTH_TOKEN is required");
 
 export default defineConfig({
   out: "./drizzle",
-  schema: "./src/db/schema.ts",
+  schema: "./db/schema.ts",
   dialect: "turso",
   dbCredentials: {
     authToken,

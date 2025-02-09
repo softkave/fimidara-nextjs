@@ -13,7 +13,7 @@ import { FetchSingleResourceFetchFnData } from "./types.ts";
 async function workspaceCollaborationRequestInputFetchFn(
   params: GetWorkspaceCollaborationRequestEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<CollaborationRequestForWorkspace>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.collaborationRequests.getWorkspaceRequest(
     params
   );

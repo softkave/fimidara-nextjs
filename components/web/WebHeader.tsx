@@ -1,3 +1,5 @@
+"use client";
+
 import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
 import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
@@ -5,6 +7,7 @@ import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CSSProperties, FC, ReactNode } from "react";
+import SignInClient from "../account/sign-in-client.tsx";
 import { useAppMenu } from "../app/useAppMenu.tsx";
 import { DropdownItems } from "../ui/dropdown-items.tsx";
 import { cn } from "../utils.ts";
@@ -28,7 +31,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
       key: kAppAccountPaths.signup,
       label: (
         <Link href={kAppAccountPaths.signup} className="w-full inline-block">
-          Signup
+          Signup with Email
         </Link>
       ),
     },
@@ -36,8 +39,14 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
       key: kAppAccountPaths.login,
       label: (
         <Link href={kAppAccountPaths.login} className="w-full inline-block">
-          Login
+          Login with Email
         </Link>
+      ),
+    },
+    {
+      key: "signin-with-google",
+      label: (
+        <SignInClient className="w-full border-none shadow-none p-0 h-auto" />
       ),
     },
     {
@@ -63,12 +72,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
 
   sideLinksNode = (
     <div className="space-x-4 flex items-center">
-      <Link
-        href={kAppAccountPaths.login}
-        className="underline decoration-sky-500"
-      >
-        Login
-      </Link>
+      <SignInClient className="w-full border-none shadow-none" />
       <DropdownItems items={items}>
         <IconButton icon={<Ellipsis className="w-4 h-4" />} />
       </DropdownItems>
@@ -76,6 +80,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
   );
 
   const isDocs = pathname.startsWith(kAppRootPaths.docs);
+
   return (
     <div className={cn(styles.root, "space-x-4", className)} style={style}>
       {isDocs && !isOpen && (

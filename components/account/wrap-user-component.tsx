@@ -1,10 +1,12 @@
 "use client";
 
+import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
+import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import assert from "assert";
 import { redirect, usePathname } from "next/navigation";
 import { Fragment, useEffect } from "react";
 import { IOAuthUser } from "../../lib/definitions/user.ts";
-import { useOAuthSession } from "../../lib/hooks/useOAuthSession.ts";
+import { useOAuthSession } from "../../lib/hooks/session/useOAuthSession.ts";
 import PageError from "../utils/page/PageError.tsx";
 import PageLoading from "../utils/page/PageLoading.tsx";
 
@@ -22,7 +24,9 @@ export function WrapUserComponent({
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      redirect(kClientPaths.withURL(kClientPaths.signinWithRedirect(pathname)));
+      redirect(
+        kClientPaths.withURL(kAppAccountPaths.loginWithReturnPath(pathname))
+      );
     }
   }, [status, pathname]);
 

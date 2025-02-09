@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster.tsx";
 import { cn } from "@/components/utils.ts";
-import { InitApp } from "@/components/utils/InitApp.tsx";
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import { Source_Code_Pro, Work_Sans } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
@@ -38,7 +38,7 @@ export default function RootLayout({
         )}
       >
         <NextTopLoader />
-        <InitApp>{children}</InitApp>
+        <SessionProvider>{children}</SessionProvider>
         <Toaster />
       </body>
     </html>

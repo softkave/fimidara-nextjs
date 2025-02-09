@@ -2,7 +2,7 @@ import { useRequest } from "ahooks";
 import type { Options as UseRequestOptions } from "ahooks/lib/useRequest/src/types";
 import { compact, over } from "lodash-es";
 import React from "react";
-import { AnyFn } from "softkave-js-utils";
+import { AnyFn, OrPromise } from "softkave-js-utils";
 import { useHandleServerRecommendedActions } from "../useHandleServerRecommendedActions.tsx";
 
 type GetEndpointFn<TEndpoints, TFn> = TFn extends AnyFn<
@@ -18,7 +18,7 @@ export function makeEndpointMutationHook<
   TData = Awaited<ReturnType<GetEndpointFn<TEndpoints, TFn>>>,
   TParams extends any[] = Parameters<GetEndpointFn<TEndpoints, TFn>>
 >(
-  getEndpoints: AnyFn<[], TEndpoints>,
+  getEndpoints: AnyFn<[], OrPromise<TEndpoints>>,
   getFn: TFn,
   baseOnSuccess?: AnyFn<[TData, TParams]>,
   baseOnError?: AnyFn<[Error, TParams]>
@@ -28,7 +28,7 @@ export function makeEndpointMutationHook<
       useHandleServerRecommendedActions();
     const mutationFn = React.useCallback(
       async (...data: TParams): Promise<TData> => {
-        const endpoints = getEndpoints();
+        const endpoints = await getEndpoints();
         const fn = getFn(endpoints);
         // TODO: error seems to be leaking, try delete file
         const result = await fn(...data);

@@ -3,7 +3,6 @@ export const kAppDocPaths = {
   fimidara: "/docs/fimidara",
   fimidaraRestApi: "/docs/fimidara-rest-api/v1",
   fimidaraJsSdk: "/docs/fimidara-js-sdk/v1",
-
   fimidaraDoc(p: string) {
     return `${kAppDocPaths.fimidara}/${p}`;
   },

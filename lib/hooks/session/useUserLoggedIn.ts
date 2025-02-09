@@ -1,3 +1,5 @@
+"use client";
+
 import { useUserSessionFetchHook } from "../fetchHooks/session.ts";
 import { useFetchSingleResourceFetchState } from "../fetchHookUtils.tsx";
 

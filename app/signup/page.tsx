@@ -16,7 +16,7 @@ import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { SignupEndpointParams } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { userConstants } from "@/lib/definitions/user.ts";
+import { kUserConstants } from "@/lib/definitions/user.ts";
 import { useUserSignupMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { messages } from "@/lib/messages/messages.ts";
@@ -36,7 +36,7 @@ const formSchema = z.object({
   firstName: z.string({ required_error: "first name is required" }),
   lastName: z.string({ required_error: "last name is required" }),
   email: z.string().email(),
-  password: z.string().max(userConstants.maxPasswordLength),
+  password: z.string().max(kUserConstants.maxPasswordLength),
 });
 
 export default function Signup(props: ISignupProps) {
@@ -46,12 +46,15 @@ export default function Signup(props: ISignupProps) {
       router.push(kAppWorkspacePaths.workspaces);
     },
   });
+
   const onSubmit = (body: z.infer<typeof formSchema>) =>
     signupHook.runAsync(body);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
   });
+
   useFormHelpers(form, { errors: signupHook.error });
 
   const firstNameNode = (
@@ -67,15 +70,15 @@ export default function Signup(props: ISignupProps) {
               autoComplete="given-name"
               name="firstName"
               placeholder="Enter your first name"
-              maxLength={userConstants.maxNameLength}
+              maxLength={kUserConstants.maxNameLength}
             />
             <InputCounter
               count={field.value.length}
-              maxCount={userConstants.maxNameLength}
+              maxCount={kUserConstants.maxNameLength}
               onTruncate={() => {
                 form.setValue(
                   "firstName",
-                  field.value.slice(0, userConstants.maxNameLength)
+                  field.value.slice(0, kUserConstants.maxNameLength)
                 );
               }}
               className="mt-1"
@@ -100,15 +103,15 @@ export default function Signup(props: ISignupProps) {
               autoComplete="family-name"
               name="lastName"
               placeholder="Enter your last name"
-              maxLength={userConstants.maxNameLength}
+              maxLength={kUserConstants.maxNameLength}
             />
             <InputCounter
               count={field.value.length}
-              maxCount={userConstants.maxNameLength}
+              maxCount={kUserConstants.maxNameLength}
               onTruncate={() => {
                 form.setValue(
                   "lastName",
-                  field.value.slice(0, userConstants.maxNameLength)
+                  field.value.slice(0, kUserConstants.maxNameLength)
                 );
               }}
               className="mt-1"
@@ -153,7 +156,7 @@ export default function Signup(props: ISignupProps) {
               type="password"
               autoComplete="new-password"
               placeholder="Enter new password"
-              maxLength={userConstants.maxPasswordLength}
+              maxLength={kUserConstants.maxPasswordLength}
             />
           </FormControl>
           <FormMessage />

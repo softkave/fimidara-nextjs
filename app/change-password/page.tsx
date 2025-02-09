@@ -16,7 +16,7 @@ import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { useToast } from "@/hooks/use-toast.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { systemConstants } from "@/lib/definitions/system.ts";
-import { userConstants } from "@/lib/definitions/user.ts";
+import { kUserConstants } from "@/lib/definitions/user.ts";
 import { useUserChangePasswordWithTokenMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,8 +38,8 @@ export interface IChangePasswordWithTokeneProps {}
 const formSchema = z.object({
   password: z
     .string()
-    .min(userConstants.minPasswordLength)
-    .max(userConstants.maxPasswordLength),
+    .min(kUserConstants.minPasswordLength)
+    .max(kUserConstants.maxPasswordLength),
 });
 
 export default function ChangePasswordWithToken(
@@ -88,7 +88,7 @@ export default function ChangePasswordWithToken(
               type="password"
               autoComplete="new-password"
               placeholder="Enter new password"
-              maxLength={userConstants.maxPasswordLength}
+              maxLength={kUserConstants.maxPasswordLength}
             />
           </FormControl>
           <FormMessage />

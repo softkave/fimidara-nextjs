@@ -22,6 +22,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
     render,
     renderRedirecting = defaultOnRedirecting,
   } = options;
+
   const router = useRouter();
   const pathname = usePathname();
   const { isLogoutRequested, routeToOnLogout, set } = useSessionStore();

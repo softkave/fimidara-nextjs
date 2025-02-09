@@ -1,3 +1,5 @@
+"use client";
+
 import { LoginResult } from "@/lib/api-internal/endpoints/privateTypes.ts";
 import { useUserSessionFetchHook } from "@/lib/hooks/fetchHooks/session.ts";
 import { useRequestLogout } from "@/lib/hooks/session/useRequestLogout.ts";

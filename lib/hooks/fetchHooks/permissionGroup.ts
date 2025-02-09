@@ -10,7 +10,7 @@ import { FetchSingleResourceFetchFnData } from "./types.ts";
 async function workspacePermissionGroupInputFetchFn(
   params: GetPermissionGroupEndpointParams
 ): Promise<FetchSingleResourceFetchFnData<PermissionGroup>> {
-  const endpoints = getPublicFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPublicFimidaraEndpointsUsingUserToken();
   const data = await endpoints.permissionGroups.getPermissionGroup(params);
   return { resource: data.permissionGroup };
 }

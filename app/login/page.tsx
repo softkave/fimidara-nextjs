@@ -15,7 +15,7 @@ import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { userConstants } from "@/lib/definitions/user.ts";
+import { kUserConstants } from "@/lib/definitions/user.ts";
 import { useUserLoginMutationHook } from "@/lib/hooks/mutationHooks/useUserLoginMutationHook.ts";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { kUserSessionStorageFns } from "@/lib/storage/UserSessionStorageFns";
@@ -35,7 +35,7 @@ export interface ILoginProps {}
 
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().max(userConstants.maxPasswordLength),
+  password: z.string().max(kUserConstants.maxPasswordLength),
   remember: z.boolean().optional(),
 });
 
@@ -47,7 +47,7 @@ export default function Login(props: ILoginProps) {
     },
   });
   const onSubmit = async (body: z.infer<typeof formSchema>) => {
-    const result = await loginHook.runAsync({
+    const { result } = await loginHook.runAsync({
       email: body.email,
       password: body.password,
     });
@@ -103,7 +103,7 @@ export default function Login(props: ILoginProps) {
               type="password"
               autoComplete="current-password"
               placeholder="Enter your password"
-              maxLength={userConstants.maxPasswordLength}
+              maxLength={kUserConstants.maxPasswordLength}
             />
           </FormControl>
           <FormMessage />

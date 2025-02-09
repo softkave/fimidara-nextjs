@@ -1,3 +1,5 @@
+"use client";
+
 import { compact, flatten, last, uniq } from "lodash-es";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";

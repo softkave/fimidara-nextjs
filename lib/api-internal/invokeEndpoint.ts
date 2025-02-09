@@ -3,25 +3,24 @@ import axios, {
   AxiosResponse,
   Method,
   toFormData,
-} from 'axios';
-import {isArray, isObject, isString} from 'lodash-es';
-import {AnyObject} from 'softkave-js-utils';
-import {kDefaultServerURL} from './constants.ts';
-import {FimidaraEndpointError, FimidaraEndpointErrorItem} from './error.ts';
-import {FimidaraEndpointHeaders} from './types.ts';
+} from "axios";
+import { AnyObject } from "softkave-js-utils";
+import { kDefaultServerURL } from "./constants.ts";
+import { FimidaraEndpointError, FimidaraEndpointErrorItem } from "./error.ts";
+import { FimidaraEndpointHeaders } from "./types.ts";
 
 function isNodeEnv() {
-  return typeof window === 'undefined' && typeof process === 'object';
+  return typeof window === "undefined" && typeof process === "object";
 }
 
 // function isBrowserEnv() {
 //   return !isNodeEnv();
 // }
 
-const HTTP_HEADER_CONTENT_TYPE = 'content-type';
-const HTTP_HEADER_CONTENT_LENGTH = 'Content-Length';
-const HTTP_HEADER_AUTHORIZATION = 'authorization';
-const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
+const HTTP_HEADER_CONTENT_TYPE = "content-type";
+const HTTP_HEADER_CONTENT_LENGTH = "Content-Length";
+const HTTP_HEADER_AUTHORIZATION = "authorization";
+const CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
 export interface InvokeEndpointParams {
   serverURL?: string;
@@ -33,7 +32,7 @@ export interface InvokeEndpointParams {
   headers?: FimidaraEndpointHeaders;
   query?: AnyObject;
   method: Method;
-  responseType: 'blob' | 'json' | 'stream';
+  responseType: "blob" | "json" | "stream";
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
   onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
 }
@@ -53,7 +52,7 @@ export async function invokeEndpoint(props: InvokeEndpointParams) {
     onUploadProgress,
     endpointURL: propsEndpointURL,
   } = props;
-  const outgoingHeaders = {...headers};
+  const outgoingHeaders = { ...headers };
   let contentBody = undefined;
 
   if (formdata) {
@@ -121,17 +120,17 @@ export async function invokeEndpoint(props: InvokeEndpointParams) {
 
       const contentType = response.headers[HTTP_HEADER_CONTENT_TYPE];
       const isResultJSON =
-        isString(contentType) &&
+        typeof contentType === "string" &&
         contentType.includes(CONTENT_TYPE_APPLICATION_JSON);
 
-      if (isResultJSON && isString(response.data)) {
+      if (isResultJSON && typeof response.data === "string") {
         const body = JSON.parse(response.data);
-        if (isArray(body?.errors)) errors = body.errors;
+        if (Array.isArray(body?.errors)) errors = body.errors;
       } else if (
-        isObject(response.data) &&
-        isArray((response.data as any).errors)
+        typeof response.data === "object" &&
+        Array.isArray(response.data.errors)
       ) {
-        errors = (response.data as any).errors;
+        errors = response.data.errors;
       }
     } else if ((axiosError as any).request) {
       // The request was made but no response was received `error.request` is an

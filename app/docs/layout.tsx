@@ -11,5 +11,9 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <MaybeLayout>{children}</MaybeLayout>;
+  return (
+    <MaybeLayout isDocs={true} shouldRedirectToWorkspace={false}>
+      {children}
+    </MaybeLayout>
+  );
 }

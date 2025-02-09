@@ -14,7 +14,7 @@ import { FetchSingleResourceFetchFnData } from "./types.ts";
 async function getUserDataInputFetchFn(): Promise<
   FetchSingleResourceFetchFnData<User, UserSessionFetchStoreOther>
 > {
-  const endpoints = getPrivateFimidaraEndpointsUsingUserToken();
+  const endpoints = await getPrivateFimidaraEndpointsUsingUserToken();
   const data = await endpoints.users.getUserData();
   return {
     resource: data.user,

@@ -1,14 +1,19 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import assert from "assert";
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import Google from "next-auth/providers/google";
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 import { db, users as usersTable } from "./db/schema";
 import { FimidaraEndpoints } from "./lib/api-internal/endpoints/privateEndpoints.ts";
 import { systemConstants } from "./lib/definitions/system.ts";
-import { IOAuthUser } from "./lib/definitions/user.ts";
+import { IOAuthUser, kUserConstants } from "./lib/definitions/user.ts";
 
 const internalAuthSecret = process.env.INTER_SERVER_AUTH_SECRET;
-assert(internalAuthSecret, "INTER_SERVER_AUTH_SECRET is not set");
+
+if (!internalAuthSecret) {
+  throw new Error("INTER_SERVER_AUTH_SECRET is not set");
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
@@ -25,12 +30,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const emailVerifiedAt = (user as typeof usersTable.$inferSelect)
         .emailVerified;
-      await endpoint.users.signupWithOAuth({
+      const result = await endpoint.users.signupWithOAuth({
         oauthUserId: user.id,
         interServerAuthSecret: internalAuthSecret,
         name: user.name,
         email: user.email,
         emailVerifiedAt: emailVerifiedAt?.getTime(),
+      });
+
+      cookies().set(kUserConstants.httpOnlyJWTCookieName, result.jwtToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
       });
     },
   },
@@ -50,10 +62,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         ...res,
       };
 
+      cookies().set(kUserConstants.httpOnlyJWTCookieName, res.jwtToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+      });
+
       return {
         ...session,
         user: userData,
       };
     },
   },
+  pages: {
+    error: "/error",
+  },
 });
+
+export interface NextAuthRequest extends NextRequest {
+  auth: Session | null;
+}
