@@ -14,7 +14,7 @@ export function useFileForm(props: {
   const [formOpen, setFormOpen] = useState<File | boolean>(false);
 
   const isNewResourceForm = isBoolean(formOpen);
-  const node = formOpen && (
+  const node = (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
       <SheetContent className="w-full sm:w-[500px] p-0">
         <div className="w-full max-w-full h-full max-h-full">

@@ -9,8 +9,8 @@ import { Folder } from "fimidara";
 import { noop } from "lodash-es";
 import { FolderIcon } from "lucide-react";
 import Link from "next/link";
+import { FC, ReactNode, useCallback } from "react";
 import FolderMenu from "./FolderMenu";
-import { ReactNode, FC, useCallback } from "react";
 
 export interface FolderListProps {
   folders: Folder[];
@@ -30,7 +30,7 @@ const FolderList: FC<FolderListProps> = (props) => {
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center break-all">
               <Link
                 href={kAppWorkspacePaths.folder(
                   item.workspaceId,
@@ -40,7 +40,9 @@ const FolderList: FC<FolderListProps> = (props) => {
                 {item.name}
               </Link>
               {item.description && (
-                <span className="text-secondary">{item.description}</span>
+                <span className="text-secondary break-all">
+                  {item.description}
+                </span>
               )}
             </div>
           }

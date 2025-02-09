@@ -38,8 +38,8 @@ interface UserProfileFormValues {
 }
 
 const userSettingsValidation = z.object({
-  firstName: signupValidationParts.firstName,
-  lastName: signupValidationParts.lastName,
+  firstName: signupValidationParts.firstName.min(1),
+  lastName: signupValidationParts.lastName.min(1),
   email: signupValidationParts.email,
 });
 
@@ -94,12 +94,12 @@ export default function UserProfile(props: IUserProfileProps) {
                 placeholder="Enter your first name"
               />
               <InputCounter
-                count={field.value.length}
+                count={field.value?.length ?? 0}
                 maxCount={kUserConstants.maxNameLength}
                 onTruncate={() => {
                   form.setValue(
                     "firstName",
-                    field.value.slice(0, kUserConstants.maxNameLength)
+                    field.value?.slice(0, kUserConstants.maxNameLength)
                   );
                 }}
                 className="mt-1"
@@ -128,12 +128,12 @@ export default function UserProfile(props: IUserProfileProps) {
                 maxLength={kUserConstants.maxNameLength}
               />
               <InputCounter
-                count={field.value.length}
+                count={field.value?.length ?? 0}
                 maxCount={kUserConstants.maxNameLength}
                 onTruncate={() => {
                   form.setValue(
                     "lastName",
-                    field.value.slice(0, kUserConstants.maxNameLength)
+                    field.value?.slice(0, kUserConstants.maxNameLength)
                   );
                 }}
                 className="mt-1"

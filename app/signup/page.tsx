@@ -33,10 +33,10 @@ interface ISignupFormValues extends Required<SignupEndpointParams> {
 export interface ISignupProps {}
 
 const formSchema = z.object({
-  firstName: z.string({ required_error: "first name is required" }),
-  lastName: z.string({ required_error: "last name is required" }),
+  firstName: z.string({ required_error: "first name is required" }).min(1),
+  lastName: z.string({ required_error: "last name is required" }).min(1),
   email: z.string().email(),
-  password: z.string().max(kUserConstants.maxPasswordLength),
+  password: z.string().min(1).max(kUserConstants.maxPasswordLength),
 });
 
 export default function Signup(props: ISignupProps) {
@@ -52,7 +52,12 @@ export default function Signup(props: ISignupProps) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
   });
 
   useFormHelpers(form, { errors: signupHook.error });
@@ -65,24 +70,26 @@ export default function Signup(props: ISignupProps) {
         <FormItem>
           <FormLabel required>First Name</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              autoComplete="given-name"
-              name="firstName"
-              placeholder="Enter your first name"
-              maxLength={kUserConstants.maxNameLength}
-            />
-            <InputCounter
-              count={field.value.length}
-              maxCount={kUserConstants.maxNameLength}
-              onTruncate={() => {
-                form.setValue(
-                  "firstName",
-                  field.value.slice(0, kUserConstants.maxNameLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Input
+                {...field}
+                autoComplete="given-name"
+                name="firstName"
+                placeholder="Enter your first name"
+                maxLength={kUserConstants.maxNameLength}
+              />
+              <InputCounter
+                count={field.value?.length ?? 0}
+                maxCount={kUserConstants.maxNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "firstName",
+                    field.value?.slice(0, kUserConstants.maxNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -98,24 +105,26 @@ export default function Signup(props: ISignupProps) {
         <FormItem>
           <FormLabel required>Last Name</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              autoComplete="family-name"
-              name="lastName"
-              placeholder="Enter your last name"
-              maxLength={kUserConstants.maxNameLength}
-            />
-            <InputCounter
-              count={field.value.length}
-              maxCount={kUserConstants.maxNameLength}
-              onTruncate={() => {
-                form.setValue(
-                  "lastName",
-                  field.value.slice(0, kUserConstants.maxNameLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Input
+                {...field}
+                autoComplete="family-name"
+                name="lastName"
+                placeholder="Enter your last name"
+                maxLength={kUserConstants.maxNameLength}
+              />
+              <InputCounter
+                count={field.value?.length ?? 0}
+                maxCount={kUserConstants.maxNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "lastName",
+                    field.value?.slice(0, kUserConstants.maxNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>

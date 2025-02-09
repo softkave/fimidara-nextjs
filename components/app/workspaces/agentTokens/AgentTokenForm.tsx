@@ -117,23 +117,25 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         <FormItem>
           <FormLabel>Token Name</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              maxLength={systemConstants.maxNameLength}
-              placeholder="Enter token name"
-              autoComplete="off"
-            />
-            <InputCounter
-              count={field.value?.length || 0}
-              maxCount={systemConstants.maxNameLength}
-              onTruncate={() => {
-                form.setValue(
-                  "name",
-                  field.value?.slice(0, systemConstants.maxNameLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Input
+                {...field}
+                maxLength={systemConstants.maxNameLength}
+                placeholder="Enter token name"
+                autoComplete="off"
+              />
+              <InputCounter
+                count={field.value?.length || 0}
+                maxCount={systemConstants.maxNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "name",
+                    field.value?.slice(0, systemConstants.maxNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -149,23 +151,25 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         <FormItem>
           <FormLabel>Description</FormLabel>
           <FormControl>
-            <Textarea
-              {...field}
-              name="description"
-              placeholder="Enter token description"
-              maxLength={systemConstants.maxDescriptionLength}
-            />
-            <InputCounter
-              count={field.value?.length || 0}
-              maxCount={systemConstants.maxDescriptionLength}
-              onTruncate={() => {
-                form.setValue(
-                  "description",
-                  field.value?.slice(0, systemConstants.maxDescriptionLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Textarea
+                {...field}
+                name="description"
+                placeholder="Enter token description"
+                maxLength={systemConstants.maxDescriptionLength}
+              />
+              <InputCounter
+                count={field.value?.length || 0}
+                maxCount={systemConstants.maxDescriptionLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "description",
+                    field.value?.slice(0, systemConstants.maxDescriptionLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -205,26 +209,28 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
         <FormItem>
           <FormLabel>Provided Resource ID</FormLabel>
           <FormControl>
-            <Textarea
-              {...field}
-              value={field.value || ""}
-              placeholder="Enter token provided resource ID"
-              maxLength={agentTokenConstants.providedResourceMaxLength}
-            />
-            <InputCounter
-              count={field.value?.length || 0}
-              maxCount={agentTokenConstants.providedResourceMaxLength}
-              onTruncate={() => {
-                form.setValue(
-                  "providedResourceId",
-                  field.value?.slice(
-                    0,
-                    agentTokenConstants.providedResourceMaxLength
-                  )
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Textarea
+                {...field}
+                value={field.value || ""}
+                placeholder="Enter token provided resource ID"
+                maxLength={agentTokenConstants.providedResourceMaxLength}
+              />
+              <InputCounter
+                count={field.value?.length || 0}
+                maxCount={agentTokenConstants.providedResourceMaxLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "providedResourceId",
+                    field.value?.slice(
+                      0,
+                      agentTokenConstants.providedResourceMaxLength
+                    )
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>

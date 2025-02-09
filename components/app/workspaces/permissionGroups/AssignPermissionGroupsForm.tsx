@@ -20,7 +20,7 @@ import {
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
 import { indexArray } from "@/lib/utils/indexArray";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import PermissionGroupListContainer from "./PermissionGroupListContainer";
@@ -140,17 +140,16 @@ export default function AssignPermissionGroupsForm(
     />
   );
 
-  const formRef = useRef<HTMLFormElement>(null);
-
   const mainNode = (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8"
-        ref={formRef}
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormAlert error={mergedHook.error} />
         {permissionGroupsNode}
+        <div className="my-4">
+          <Button type="submit" loading={mergedHook.loading}>
+            Update
+          </Button>
+        </div>
       </form>
     </Form>
   );
@@ -160,18 +159,7 @@ export default function AssignPermissionGroupsForm(
       <SheetContent className="w-full sm:w-[500px] p-0">
         <ScrollArea className="p-6 h-full overflow-y-auto">
           <SheetTitle>Assign Permission Groups</SheetTitle>
-          <div className="pt-6 w-full space-y-8">
-            {mainNode}
-            <div>
-              <Button
-                type="button"
-                loading={mergedHook.loading}
-                onClick={() => formRef.current?.submit()}
-              >
-                Update
-              </Button>
-            </div>
-          </div>
+          <div className="pt-6 w-full space-y-8">{mainNode}</div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

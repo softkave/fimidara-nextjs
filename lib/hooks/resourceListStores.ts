@@ -7,15 +7,16 @@ import {
   File,
   Folder,
   PermissionGroup,
+  stringifyFimidaraFilepath,
   UsageRecord,
   Workspace,
 } from "fimidara";
+import {
+  CollaborationRequestForUser,
+  User,
+} from "../api-internal/endpoints/privateTypes.ts";
 import { makeKey } from "../utils/fns";
 import { makeResourceListStore } from "./makeResourceListStore";
-import {
-  User,
-  CollaborationRequestForUser,
-} from "../api-internal/endpoints/privateTypes.ts";
 
 export const useUsersStore = makeResourceListStore<User>("users");
 export const useUserCollaborationRequestsStore =
@@ -63,19 +64,14 @@ export function getFileByPath(
   filepath: string,
   includesWorkspaceRootname: boolean
 ) {
-  const isFilepathMatch = (f1: string[], f2: string[]) =>
-    f1.every((name, index) => name === f2[index]);
+  const stripPreSlash = (path: string) =>
+    path.startsWith("/") ? path.slice(1) : path;
+  const stripRootname = (path: string) => path.split("/").slice(1).join("/");
 
-  filepath = includesWorkspaceRootname
-    ? filepath.startsWith("/")
-      ? filepath.slice(1)
-      : filepath
-    : filepath.startsWith("/")
-    ? filepath
-    : "/" + filepath;
-  const [workspaceRootnameOrEmpty, ...restFilepathList] = filepath.split("/");
+  filepath = stripPreSlash(filepath);
+  filepath = includesWorkspaceRootname ? stripRootname(filepath) : filepath;
   return Object.values(useWorkspaceFilesStore.getState().items).find(
-    (nextFile) => isFilepathMatch(nextFile.namepath, restFilepathList)
+    (nextFile) => stringifyFimidaraFilepath(nextFile) === filepath
   );
 }
 

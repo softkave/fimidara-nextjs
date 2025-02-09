@@ -10,7 +10,7 @@ interface IDoc {
 
 const docs: IDoc[] = [
   {
-    title: "Fimidara Docs",
+    title: "fimidara Docs",
     icon: <FileTextOutlined />,
     link: "/docs/fimidara/introduction",
   },

@@ -48,7 +48,7 @@ import {
 import { newFileValidationSchema } from "./validation";
 
 const folderValidation = z.object({
-  name: fileValidationParts.filename,
+  name: fileValidationParts.filename.min(1),
   description: systemValidation.description.nullable().optional(),
   files: z.array(newFileValidationSchema).optional(),
 });
@@ -148,8 +148,6 @@ export default function FolderForm(props: FolderFormProps) {
         workspaceRootname
       );
 
-      console.log({ filepath, name: input.name });
-
       return await uploadHook.runAsync({
         filepath,
         // fileId: input.resourceId,
@@ -209,7 +207,7 @@ export default function FolderForm(props: FolderFormProps) {
 
   const form = useForm<z.infer<typeof folderValidation>>({
     resolver: zodResolver(folderValidation),
-    defaultValues: folder ? getFolderFormInputFromFolder(folder) : {},
+    defaultValues: folder ? getFolderFormInputFromFolder(folder) : { name: "" },
   });
   useFormHelpers(form, { errors: hookError });
 
@@ -263,7 +261,7 @@ export default function FolderForm(props: FolderFormProps) {
                   onTruncate={() => {
                     form.setValue(
                       "name",
-                      field.value.slice(0, folderConstants.maxFolderNameLength)
+                      field.value?.slice(0, folderConstants.maxFolderNameLength)
                     );
                   }}
                   className="mt-1"
@@ -295,7 +293,6 @@ export default function FolderForm(props: FolderFormProps) {
       control={form.control}
       name="description"
       render={({ field }) => {
-        console.log({ field });
         return (
           <FormItem>
             <FormLabel>Description</FormLabel>

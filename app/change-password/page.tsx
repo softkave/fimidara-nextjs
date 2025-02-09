@@ -70,7 +70,9 @@ export default function ChangePasswordWithToken(
   };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      password: "",
+    },
   });
 
   useFormHelpers(form, { errors: changePasswordHook.error });

@@ -30,7 +30,6 @@ export function makeEndpointMutationHook<
       async (...data: TParams): Promise<TData> => {
         const endpoints = await getEndpoints();
         const fn = getFn(endpoints);
-        // TODO: error seems to be leaking, try delete file
         const result = await fn(...data);
         return result;
       },

@@ -49,7 +49,9 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
     await forgotHook.runAsync(body);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      email: "",
+    },
   });
 
   useFormHelpers(form, { errors: forgotHook.error });

@@ -35,7 +35,7 @@ export interface ILoginProps {}
 
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().max(kUserConstants.maxPasswordLength),
+  password: z.string().min(1).max(kUserConstants.maxPasswordLength),
   remember: z.boolean().optional(),
 });
 
@@ -64,6 +64,8 @@ export default function Login(props: ILoginProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      email: "",
+      password: "",
       remember: false,
     },
   });

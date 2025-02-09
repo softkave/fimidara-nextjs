@@ -26,7 +26,9 @@ const validationSchema = z.object({
     .string()
     .min(kUserConstants.minPasswordLength)
     .max(kUserConstants.maxPasswordLength),
-  currentPassword: z.string({ required_error: "current password is required" }),
+  currentPassword: z
+    .string({ required_error: "current password is required" })
+    .min(1),
 });
 
 export default function ChangePasswordWithCurrentPassword() {
@@ -38,13 +40,17 @@ export default function ChangePasswordWithCurrentPassword() {
       },
     });
 
-  const onSubmit = (body: z.infer<typeof validationSchema>) =>
-    changePasswordHook.runAsync(body);
-
   const form = useForm<z.infer<typeof validationSchema>>({
     resolver: zodResolver(validationSchema),
-    defaultValues: {},
+    defaultValues: {
+      password: "",
+      currentPassword: "",
+    },
   });
+
+  const onSubmit = (body: z.infer<typeof validationSchema>) => {
+    return changePasswordHook.runAsync(body);
+  };
 
   useFormHelpers(form, { errors: changePasswordHook.error });
 

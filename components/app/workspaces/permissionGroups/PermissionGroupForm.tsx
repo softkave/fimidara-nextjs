@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const permissionGroupValidation = z.object({
-  name: systemValidation.name,
+  name: systemValidation.name.min(1),
   description: systemValidation.description.optional(),
 });
 
@@ -91,7 +91,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
     resolver: zodResolver(permissionGroupValidation),
     defaultValues: permissionGroup
       ? getPermissionGroupFormInputFromPermissionGroup(permissionGroup)
-      : {},
+      : { name: "" },
   });
 
   useFormHelpers(form, { errors: mergedHook.error });
@@ -104,23 +104,25 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
         <FormItem>
           <FormLabel required>Permission Group Name</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              maxLength={systemConstants.maxNameLength}
-              placeholder="Enter permission group name"
-              autoComplete="off"
-            />
-            <InputCounter
-              count={field.value.length}
-              maxCount={systemConstants.maxNameLength}
-              onTruncate={() => {
-                form.setValue(
-                  "name",
-                  field.value.slice(0, systemConstants.maxNameLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Input
+                {...field}
+                maxLength={systemConstants.maxNameLength}
+                placeholder="Enter permission group name"
+                autoComplete="off"
+              />
+              <InputCounter
+                count={field.value?.length ?? 0}
+                maxCount={systemConstants.maxNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "name",
+                    field.value?.slice(0, systemConstants.maxNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -136,23 +138,25 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
         <FormItem>
           <FormLabel>Description</FormLabel>
           <FormControl>
-            <Textarea
-              {...field}
-              name="description"
-              placeholder="Enter permission group description"
-              maxLength={systemConstants.maxDescriptionLength}
-            />
-            <InputCounter
-              count={field.value?.length || 0}
-              maxCount={systemConstants.maxDescriptionLength}
-              onTruncate={() => {
-                form.setValue(
-                  "description",
-                  field.value?.slice(0, systemConstants.maxDescriptionLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Textarea
+                {...field}
+                name="description"
+                placeholder="Enter permission group description"
+                maxLength={systemConstants.maxDescriptionLength}
+              />
+              <InputCounter
+                count={field.value?.length || 0}
+                maxCount={systemConstants.maxDescriptionLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "description",
+                    field.value?.slice(0, systemConstants.maxDescriptionLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>

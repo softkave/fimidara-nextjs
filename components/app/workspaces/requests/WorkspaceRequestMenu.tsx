@@ -45,8 +45,8 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   });
 
   const deleteModalHook = useDeleteModal({
-    title: `Delete collaboration request to - "${request.recipientEmail}"`,
-    description: "Are you sure you want to delete this collaboration request?",
+    title: "Delete collaboration request",
+    description: `Are you sure you want to delete collaboration request to "${request.recipientEmail}"?`,
     onDelete: async () => {
       await deleteHook.runAsync({
         requestId: request.resourceId,

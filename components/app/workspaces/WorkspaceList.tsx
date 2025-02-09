@@ -65,10 +65,12 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
               main={
                 <div className="flex flex-col justify-center">
                   <Link href={kAppWorkspacePaths.folderList(item.resourceId)}>
-                    <div>{item.name}</div>
+                    <div className="break-all">{item.name}</div>
                   </Link>
                   {item.description && (
-                    <span className="text-secondary">{item.description}</span>
+                    <span className="text-secondary break-all">
+                      {item.description}
+                    </span>
                   )}
                 </div>
               }
@@ -77,7 +79,7 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
                   <WorkspaceMenu workspace={item} onCompleteDelete={noop} />
                 </div>
               }
-              className="py-4 sm:p-2"
+              className="py-4"
             />
           )}
           emptyMessage={
@@ -91,7 +93,6 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
               }
             />
           }
-          className="sm:p-0"
         />
       )}
     />
@@ -128,7 +129,6 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
       <PaginatedContent
         content={contentNode}
         pagination={count ? { ...pagination, count } : undefined}
-        className="sm:border sm:border-gray-200 sm:rounded-lg"
       />
     </div>
   );

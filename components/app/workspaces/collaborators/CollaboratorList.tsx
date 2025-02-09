@@ -23,7 +23,7 @@ const CollaboratorList: FC<CollaboratorListProps> = (props) => {
       <ThumbnailContent
         key={item.resourceId}
         main={
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center break-all">
             <Link
               href={kAppWorkspacePaths.collaborator(
                 workspaceId,
@@ -32,7 +32,9 @@ const CollaboratorList: FC<CollaboratorListProps> = (props) => {
             >
               {item.firstName + " " + item.lastName}
             </Link>
-            {item.email && <span className="text-secondary">{item.email}</span>}
+            {item.email && (
+              <span className="text-secondary break-all">{item.email}</span>
+            )}
           </div>
         }
         menu={

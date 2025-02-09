@@ -14,7 +14,7 @@ export interface RestApiIndexProps {}
 const RestApiIndex: React.FC<RestApiIndexProps> = (props) => {
   return (
     <React.Fragment>
-      {renderNavItemList(restApiRawNavItems, "", "Fimidara REST API")}
+      {renderNavItemList(restApiRawNavItems, "", "fimidara REST API")}
     </React.Fragment>
   );
 };

@@ -34,7 +34,7 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
               key={item.resourceId}
               main={
                 <div className="flex flex-col justify-center">
-                  <span>{item.name}</span>
+                  <span className="break-all">{item.name}</span>
                   <span className="text-secondary">
                     Created {formatDateTime(item.createdAt)}
                   </span>
@@ -51,7 +51,7 @@ const FimidaraWorkspaces: React.FC<{}> = (props) => {
 
   return (
     <div className="space-y-8">
-      <ListHeader label="Fimidara Workspaces" />
+      <ListHeader label="fimidara Workspaces" />
       <PaginatedContent content={content} />
     </div>
   );

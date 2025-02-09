@@ -35,8 +35,8 @@ import { FormAlert } from "../../utils/FormAlert";
 import { getRootnameFromName } from "./utils";
 
 const formSchema = z.object({
-  name: systemValidation.name,
-  rootname: workspaceValidationParts.rootname,
+  name: systemValidation.name.min(1),
+  rootname: workspaceValidationParts.rootname.min(1),
   description: systemValidation.description.optional(),
 });
 
@@ -81,7 +81,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: workspace
       ? getWorkspaceFormInputFromWorkspace(workspace)
-      : {},
+      : { name: "", rootname: "" },
   });
 
   useFormHelpers(form, { errors: stateHook.error });
@@ -96,23 +96,25 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         <FormItem>
           <FormLabel required>Workspace Name</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              maxLength={systemConstants.maxNameLength}
-              placeholder="Enter workspace name"
-              autoComplete="off"
-            />
-            <InputCounter
-              count={field.value.length}
-              maxCount={systemConstants.maxNameLength}
-              onTruncate={() => {
-                form.setValue(
-                  "name",
-                  field.value.slice(0, systemConstants.maxNameLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Input
+                {...field}
+                maxLength={systemConstants.maxNameLength}
+                placeholder="Enter workspace name"
+                autoComplete="off"
+              />
+              <InputCounter
+                count={field.value.length}
+                maxCount={systemConstants.maxNameLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "name",
+                    field.value.slice(0, systemConstants.maxNameLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -137,12 +139,12 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
                 autoComplete="off"
               />
               <InputCounter
-                count={field.value.length}
+                count={field.value?.length ?? 0}
                 maxCount={folderConstants.maxFolderNameLength}
                 onTruncate={() => {
                   form.setValue(
                     "rootname",
-                    field.value.slice(0, folderConstants.maxFolderNameLength)
+                    field.value?.slice(0, folderConstants.maxFolderNameLength)
                   );
                 }}
                 className="mt-1"
@@ -181,23 +183,25 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
         <FormItem>
           <FormLabel>Description</FormLabel>
           <FormControl>
-            <Textarea
-              {...field}
-              name="description"
-              placeholder="Enter workspace description"
-              maxLength={systemConstants.maxDescriptionLength}
-            />
-            <InputCounter
-              count={field.value?.length || 0}
-              maxCount={systemConstants.maxDescriptionLength}
-              onTruncate={() => {
-                form.setValue(
-                  "description",
-                  field.value?.slice(0, systemConstants.maxDescriptionLength)
-                );
-              }}
-              className="mt-1"
-            />
+            <div>
+              <Textarea
+                {...field}
+                name="description"
+                placeholder="Enter workspace description"
+                maxLength={systemConstants.maxDescriptionLength}
+              />
+              <InputCounter
+                count={field.value?.length || 0}
+                maxCount={systemConstants.maxDescriptionLength}
+                onTruncate={() => {
+                  form.setValue(
+                    "description",
+                    field.value?.slice(0, systemConstants.maxDescriptionLength)
+                  );
+                }}
+                className="mt-1"
+              />
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>

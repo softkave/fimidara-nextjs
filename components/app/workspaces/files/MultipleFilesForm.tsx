@@ -39,12 +39,12 @@ export function MultipleFilesForm(props: MultipleFilesFormProps) {
               multiple
               showUploadList={false}
               disabled={disabled}
-              fileList={compact(field.value.map((item) => item.file))}
+              fileList={compact(field.value?.map((item) => item.file))}
               beforeUpload={(file, fileList) => {
-                const existingFilesMap = indexArray(field.value, {
+                const existingFilesMap = indexArray(field.value ?? [], {
                   indexer: (current) => current.file?.uid ?? current.name,
                 });
-                const update = field.value.concat(
+                const update = (field.value ?? []).concat(
                   fileList
                     .filter((file) => !existingFilesMap[file.uid ?? file.name])
                     .map(
