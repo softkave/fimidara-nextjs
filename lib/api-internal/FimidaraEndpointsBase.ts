@@ -1,20 +1,20 @@
-import { AnyObject } from "softkave-js-utils";
-import { FimidaraJsConfig, FimidaraJsConfigAuthToken } from "./config.ts";
-import { InvokeEndpointParams, invokeEndpoint } from "./invokeEndpoint.ts";
-import { FimidaraEndpointParamsOptional } from "./types.ts";
+import type {AnyObject} from 'softkave-js-utils';
+import {FimidaraJsConfig, FimidaraJsConfigAuthToken} from './config.ts';
+import {InvokeEndpointParams, invokeEndpoint} from './invokeEndpoint.ts';
+import type {FimidaraEndpointParamsOptional} from './types.ts';
 
 export type Mapping = Record<
   string,
-  readonly ["header" | "path" | "query" | "body", string]
+  readonly ['header' | 'path' | 'query' | 'body', string]
 >;
 
 export class FimidaraEndpointsBase extends FimidaraJsConfig {
-  protected getAuthToken(params?: { authToken?: FimidaraJsConfigAuthToken }) {
+  protected getAuthToken(params?: {authToken?: FimidaraJsConfigAuthToken}) {
     const authToken = params?.authToken || this.config.authToken;
-    return typeof authToken === "string" ? authToken : authToken?.getJwtToken();
+    return typeof authToken === 'string' ? authToken : authToken?.getJwtToken();
   }
 
-  protected getServerURL(params?: { serverURL?: string }) {
+  protected getServerURL(params?: {serverURL?: string}) {
     return params?.serverURL || this.config.serverURL;
   }
 
@@ -39,19 +39,19 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
         const [mapTo, field] = mapping[key] ?? [];
 
         switch (mapTo) {
-          case "header":
+          case 'header':
             write(headers, field, value);
             break;
 
-          case "query":
+          case 'query':
             write(query, field, value);
             break;
 
-          case "path":
+          case 'path':
             write(path, field, value);
             break;
 
-          case "body":
+          case 'body':
           default:
             write(body, field || key, value);
         }
@@ -67,31 +67,31 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
       body = data;
     }
 
-    return { headers, query, endpointPath, data: body };
+    return {headers, query, endpointPath, data: body};
   }
 
   protected async executeRaw(
     p01: InvokeEndpointParams,
-    p02?: Pick<FimidaraEndpointParamsOptional<any>, "authToken" | "serverURL"> &
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'> &
       /** for binary options */ Pick<
         InvokeEndpointParams,
-        "onUploadProgress" | "onDownloadProgress"
+        'onUploadProgress' | 'onDownloadProgress'
       >,
     mapping?: Mapping
   ) {
     if (!p01.path) {
-      throw new Error("Endpoint path not provided");
+      throw new Error('Endpoint path not provided');
     }
 
-    const { headers, query, data, endpointPath } = this.applyMapping(
+    const {headers, query, data, endpointPath} = this.applyMapping(
       p01.path,
       p01.data || p01.formdata,
       mapping
     );
 
-    if (endpointPath.includes("/:")) {
+    if (endpointPath.includes('/:')) {
       console.log(`invalid path ${endpointPath}, params not injected`);
-      throw new Error("SDK error");
+      throw new Error('SDK error');
     }
 
     const response = await invokeEndpoint({
@@ -112,18 +112,14 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
   }
 
   protected async executeJson(
-    p01: Pick<InvokeEndpointParams, "data" | "formdata" | "path" | "method">,
-    p02?: Pick<FimidaraEndpointParamsOptional<any>, "authToken" | "serverURL"> &
+    p01: Pick<InvokeEndpointParams, 'data' | 'formdata' | 'path' | 'method'>,
+    p02?: Pick<FimidaraEndpointParamsOptional<any>, 'authToken' | 'serverURL'> &
       /** for binary options */ Pick<
         InvokeEndpointParams,
-        "onUploadProgress" | "onDownloadProgress"
+        'onUploadProgress' | 'onDownloadProgress'
       >,
     mapping?: Mapping
   ) {
-    return await this.executeRaw(
-      { ...p01, responseType: "json" },
-      p02,
-      mapping
-    );
+    return await this.executeRaw({...p01, responseType: 'json'}, p02, mapping);
   }
 }
