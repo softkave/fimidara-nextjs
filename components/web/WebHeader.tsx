@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { CSSProperties, FC, ReactNode } from "react";
 import SignInClient from "../account/sign-in-client.tsx";
 import { useAppMenu } from "../app/useAppMenu.tsx";
+import { Button } from "../ui/button.tsx";
 import { DropdownItems } from "../ui/dropdown-items.tsx";
 import { cn } from "../utils.ts";
 import IconButton from "../utils/buttons/IconButton";
@@ -71,10 +72,12 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
   ]);
 
   sideLinksNode = (
-    <div className="space-x-4 flex items-center">
-      <SignInClient className="w-full border-none shadow-none" />
-      <DropdownItems items={items}>
-        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+    <div className="space-x-2 flex items-center">
+      <SignInClient className="w-full border-none shadow-none h-auto" />
+      <DropdownItems items={items} asChild>
+        <Button variant="outline" size="icon" className="px-2">
+          <Ellipsis className="w-4 h-4" />
+        </Button>
       </DropdownItems>
     </div>
   );

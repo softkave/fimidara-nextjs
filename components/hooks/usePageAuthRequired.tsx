@@ -1,12 +1,16 @@
 "use client";
 
+import { toast } from "@/hooks/use-toast.ts";
+import { callRmCookieEndpoint } from "@/lib/api/account/rm-cookie.ts";
 import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
 import { useLogout } from "@/lib/hooks/session/useLogout.ts";
 import { useSessionStore } from "@/lib/hooks/session/useSessionStore";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
-import { isUndefined } from "lodash-es";
+import { isNil } from "lodash-es";
+import { signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactElement, useEffect } from "react";
+import { useStateHistory } from "./useStateHistory.tsx";
 
 const defaultOnRedirecting = (): ReactElement => <></>;
 
@@ -28,30 +32,49 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
   const { isLogoutRequested, routeToOnLogout, set } = useSessionStore();
   const { isLoggedIn } = useUserLoggedIn();
   const { logout } = useLogout();
+  const trackedLoggedIn = useStateHistory({
+    state: isLoggedIn,
+    maxHistorySize: 2,
+  });
 
   useEffect(() => {
     if (isLogoutRequested) {
-      logout();
-      set({ isLogoutRequested: false, routeToOnLogout: undefined });
+      const toastControl = toast({
+        description: "Logging out...",
+      });
+
+      callRmCookieEndpoint()
+        .catch(console.error.bind(console))
+        .finally(() => toastControl.dismiss())
+        .then(() => {
+          logout();
+          signOut({ redirect: false });
+          set({ isLogoutRequested: false, routeToOnLogout: undefined });
+          router.push(routeToOnLogout || kAppAccountPaths.login);
+        });
     }
   }, [isLogoutRequested, logout, set]);
 
   useEffect(() => {
-    if (isUndefined(isLoggedIn) || isLoggedIn) {
-      return;
-    }
+    // Only transition to login if logged in state is newly decided to be false,
+    // so this should only run once
+    if (
+      isNil(trackedLoggedIn.previousState) &&
+      trackedLoggedIn.state === false
+    ) {
+      const loginPath = kAppAccountPaths.loginWithReturnPath(
+        returnTo || pathname
+      );
 
-    if (routeToOnLogout) {
-      // TODO: should we include return to?
-      router.push(routeToOnLogout);
-    } else if (!returnTo) {
-      router.push(kAppAccountPaths.login);
-    } else {
-      router.push(kAppAccountPaths.loginWithReturnPath(returnTo || pathname));
+      router.push(loginPath);
     }
-
-    set({ routeToOnLogout: undefined });
-  }, [isLoggedIn, router, returnTo, routeToOnLogout, pathname, set]);
+  }, [
+    trackedLoggedIn.state,
+    trackedLoggedIn.previousState,
+    router,
+    returnTo,
+    pathname,
+  ]);
 
   if (isLoggedIn === undefined) {
     return null;

@@ -1,9 +1,8 @@
 "use client";
 
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useLoggedInReturnTo } from "../hooks/useLoggedInReturnTo.tsx";
 import { Button } from "../ui/button.tsx";
 
 export interface ISignInClientProps {
@@ -13,16 +12,14 @@ export interface ISignInClientProps {
 
 export default function SignInClient(props: ISignInClientProps) {
   const { className } = props;
-  const searchParams = useSearchParams();
-  const redirectTo =
-    props.redirectTo ??
-    searchParams.get("redirectTo") ??
-    kAppWorkspacePaths.workspaces;
+  const returnTo = useLoggedInReturnTo({
+    defaultReturnTo: props.redirectTo,
+  });
 
   return (
     <Button
       onClick={() =>
-        signIn("google", { redirectTo: kClientPaths.withURL(redirectTo) })
+        signIn("google", { redirectTo: kClientPaths.withURL(returnTo) })
       }
       variant="outline"
       className={className}

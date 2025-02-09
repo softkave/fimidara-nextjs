@@ -1,4 +1,3 @@
-import assert from "assert";
 import { AnyObject } from "softkave-js-utils";
 import { FimidaraJsConfig, FimidaraJsConfigAuthToken } from "./config.ts";
 import { InvokeEndpointParams, invokeEndpoint } from "./invokeEndpoint.ts";
@@ -80,7 +79,10 @@ export class FimidaraEndpointsBase extends FimidaraJsConfig {
       >,
     mapping?: Mapping
   ) {
-    assert(p01.path, "Endpoint path not provided");
+    if (!p01.path) {
+      throw new Error("Endpoint path not provided");
+    }
+
     const { headers, query, data, endpointPath } = this.applyMapping(
       p01.path,
       p01.data || p01.formdata,

@@ -1,10 +1,10 @@
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
+import { useServerUserLoggedIn } from "@/lib/hooks/session/useServerUserLoggedIn.ts";
 import { redirect } from "next/navigation";
 import { DocsSideNav } from "../docs/DocsSideNav.tsx";
 import { ScrollArea } from "../ui/scroll-area.tsx";
 import WebHeader from "../web/WebHeader.tsx";
-import { useServerUserLoggedIn } from "@/lib/hooks/session/useServerUserLoggedIn.ts";
 
 export interface IWebLayoutProps {
   isDocs: boolean;
@@ -14,7 +14,6 @@ export interface IWebLayoutProps {
 
 export const WebLayout = async (props: IWebLayoutProps) => {
   const { children, isDocs, shouldRedirectToWorkspace } = props;
-
   const isLoggedIn = await useServerUserLoggedIn();
 
   if (isLoggedIn && shouldRedirectToWorkspace) {

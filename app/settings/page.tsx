@@ -17,8 +17,12 @@ function UserSettings() {
           <h4>Profile</h4>
           <UserProfile session={session} />
           <Separator />
-          <h4>Password</h4>
-          <ChangePasswordWithCurrentPassword />
+          {session.user.passwordLastChangedAt && (
+            <>
+              <h4>Password</h4>
+              <ChangePasswordWithCurrentPassword />
+            </>
+          )}
         </div>
       )}
     />

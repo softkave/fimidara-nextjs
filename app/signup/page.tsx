@@ -1,5 +1,7 @@
 "use client";
 
+import SignInClient from "@/components/account/sign-in-client.tsx";
+import { useLoggedInReturnTo } from "@/components/hooks/useLoggedInReturnTo.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Form,
@@ -11,11 +13,11 @@ import {
 } from "@/components/ui/form.tsx";
 import { InputCounter } from "@/components/ui/input-counter.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { SignupEndpointParams } from "@/lib/api-internal/endpoints/privateTypes.ts";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { kUserConstants } from "@/lib/definitions/user.ts";
 import { useUserSignupMutationHook } from "@/lib/hooks/mutationHooks.ts";
 import { useFormHelpers } from "@/lib/hooks/useFormHelpers.ts";
@@ -41,9 +43,10 @@ const formSchema = z.object({
 
 export default function Signup(props: ISignupProps) {
   const router = useRouter();
+  const returnTo = useLoggedInReturnTo();
   const signupHook = useUserSignupMutationHook({
     onSuccess(data, params) {
-      router.push(kAppWorkspacePaths.workspaces);
+      router.push(returnTo);
     },
   });
 
@@ -195,12 +198,18 @@ export default function Signup(props: ISignupProps) {
             {passwordNode}
             {consentNode}
             <div className="my-4">
-              <Button type="submit" loading={signupHook.loading}>
+              <Button
+                type="submit"
+                loading={signupHook.loading}
+                className="w-full"
+              >
                 Create Account
               </Button>
             </div>
           </form>
         </Form>
+        <Separator className="my-8" />
+        <SignInClient className="w-full" />
       </div>
     </div>
   );

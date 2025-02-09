@@ -29,6 +29,7 @@ export const UploadingFilesProgressButton: FC<
         <UploadingFilesProgressDrawer onClose={() => showListHook.toggle()} />
       )}
       <IconButton
+        asChild
         icon={<FiDownload />}
         title={`Uploading files progress...`}
         onClick={() => showListHook.toggle()}

@@ -3,3 +3,5 @@ export const kAppRootPaths = {
   internal: "/internal",
   docs: "/docs",
 };
+
+export const kDefaultReturnToQueryKey = "returnTo";

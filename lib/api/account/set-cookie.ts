@@ -1,12 +1,12 @@
+import { setCookieRouteZodSchema } from "@/lib/definitions/user.ts";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
-import { setCookieRouteZodSchema } from "../definitions/user.ts";
-import { kAccountApiKeys } from "./keys.ts";
+import { kAccountApiKeys } from "../keys.ts";
 import {
   handleResponse,
   IUseMutationHandlerOpts,
   useMutationHandler,
-} from "./utils.ts";
+} from "../utils.ts";
 
 export async function callSetCookieEndpoint(params: {
   url?: string;

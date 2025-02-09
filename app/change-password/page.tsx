@@ -1,5 +1,6 @@
 "use client";
 
+import { useLoggedInReturnTo } from "@/components/hooks/useLoggedInReturnTo.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Form,
@@ -14,7 +15,6 @@ import { cn } from "@/components/utils.ts";
 import styles from "@/components/utils/form/form.module.css";
 import { FormAlert } from "@/components/utils/FormAlert.tsx";
 import { useToast } from "@/hooks/use-toast.ts";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { systemConstants } from "@/lib/definitions/system.ts";
 import { kUserConstants } from "@/lib/definitions/user.ts";
 import { useUserChangePasswordWithTokenMutationHook } from "@/lib/hooks/mutationHooks.ts";
@@ -47,9 +47,10 @@ export default function ChangePasswordWithToken(
 ) {
   const router = useRouter();
   const { toast } = useToast();
+  const returnTo = useLoggedInReturnTo();
   const changePasswordHook = useUserChangePasswordWithTokenMutationHook({
     onSuccess(data, params) {
-      router.push(kAppWorkspacePaths.workspaces);
+      router.push(returnTo);
     },
   });
   const onSubmit = async (body: z.infer<typeof formSchema>) => {

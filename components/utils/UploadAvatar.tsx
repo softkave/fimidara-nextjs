@@ -7,7 +7,7 @@ import { getFimidaraUploadFileURL } from "fimidara";
 import { defaultTo, first } from "lodash-es";
 import React from "react";
 import { systemConstants } from "../../lib/definitions/system";
-import { useUserNode } from "../hooks/useUserNode";
+import { useAssertGetUser } from "../hooks/useAssertGetUser";
 import IconButton from "./buttons/IconButton";
 import { errorMessageNotificatition } from "./errorHandling";
 import { appDimensions } from "./theme";
@@ -56,7 +56,7 @@ const classes = {
 const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
   const { filepath, className, onCompleteUpload } = props;
   const { toast } = useToast();
-  const u0 = useUserNode();
+  const u0 = useAssertGetUser();
   const customMessages = {
     ...DEFAULT_MESSAGES,
     ...defaultTo(props.messages, {}),
@@ -89,10 +89,6 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
       setLoading(false);
     }
   };
-
-  if (u0.renderedNode) {
-    return u0.renderedNode;
-  }
 
   const clientAssignedToken = u0.assertGet().clientJwtToken;
   const uploadButton = (

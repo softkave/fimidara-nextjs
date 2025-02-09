@@ -11,7 +11,7 @@ export function useAgentTokenForm(props: { workspaceId: string }) {
   const isNewResourceForm = isBoolean(formOpen);
   const node = formOpen && (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="w-full sm:w-[500px]">
+      <SheetContent className="w-full sm:w-[420px]">
         <SheetTitle>
           {isNewResourceForm ? "New Agent Token" : "Update Agent Token"}
         </SheetTitle>

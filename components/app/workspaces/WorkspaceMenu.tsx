@@ -1,7 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import { ToastAction } from "@/components/ui/toast.tsx";
-import IconButton from "@/components/utils/buttons/IconButton";
-import { appClasses } from "@/components/utils/theme";
 import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
@@ -70,12 +69,11 @@ const WorkspaceMenu: FC<WorkspaceMenuProps> = (props) => {
 
   return (
     <Fragment>
-      <DropdownItems items={items} onSelect={onSelectMenuItem}>
-        <IconButton
-          className={appClasses.iconBtn}
-          icon={<Ellipsis className="w-4 h-4" />}
-        />
-      </DropdownItems>{" "}
+      <DropdownItems items={items} onSelect={onSelectMenuItem} asChild>
+        <Button variant="outline" size="icon">
+          <Ellipsis className="w-4 h-4" />
+        </Button>
+      </DropdownItems>
       {permissionsHook.node}
     </Fragment>
   );
