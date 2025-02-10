@@ -20,6 +20,7 @@ export interface IPageDrawerProps {
   onClose?: () => void;
   titleClassName?: string;
   contentClassName?: string;
+  side?: "left" | "right" | "top" | "bottom";
 }
 
 export interface IPageDrawerRef {
@@ -40,6 +41,7 @@ const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
     onClose,
     titleClassName,
     contentClassName,
+    side,
   } = props;
   const [isOpen, setOpen] = useState(open ?? false);
 
@@ -65,6 +67,7 @@ const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
       <SheetContent
         className={cn("w-full sm:w-[500px] p-4", className)}
         style={style}
+        side={side}
       >
         <SheetTitle className={titleClassName}>{title}</SheetTitle>
         <div className={cn("pt-4 w-full space-y-8", contentClassName)}>

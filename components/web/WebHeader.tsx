@@ -7,7 +7,9 @@ import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CSSProperties, FC, ReactNode } from "react";
-import SignInClient from "../account/sign-in-client.tsx";
+import { FaBook, FaEnvelope } from "react-icons/fa";
+import GitHubSignInClient from "../account/github-sign-in-client.tsx";
+import GoogleSignInClient from "../account/google-sign-in-client.tsx";
 import { useAppMenu } from "../app/useAppMenu.tsx";
 import { Button } from "../ui/button.tsx";
 import { DropdownItems } from "../ui/dropdown-items.tsx";
@@ -31,23 +33,37 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
     {
       key: kAppAccountPaths.signup,
       label: (
-        <Link href={kAppAccountPaths.signup} className="w-full inline-block">
-          Signup with Email
+        <Link
+          href={kAppAccountPaths.signup}
+          className="w-full inline-flex items-center gap-2"
+        >
+          <FaEnvelope />
+          <span className="hidden md:block">Signup with Email</span>
         </Link>
       ),
     },
     {
       key: kAppAccountPaths.login,
       label: (
-        <Link href={kAppAccountPaths.login} className="w-full inline-block">
-          Login with Email
+        <Link
+          href={kAppAccountPaths.login}
+          className="w-full inline-flex items-center gap-2"
+        >
+          <FaEnvelope />
+          <span className="hidden md:block">Login with Email</span>
         </Link>
       ),
     },
     {
       key: "signin-with-google",
       label: (
-        <SignInClient className="w-full border-none shadow-none p-0 h-auto" />
+        <GoogleSignInClient className="w-full border-none shadow-none p-0 h-auto" />
+      ),
+    },
+    {
+      key: "signin-with-github",
+      label: (
+        <GitHubSignInClient className="w-full border-none shadow-none p-0 h-auto" />
       ),
     },
     {
@@ -55,17 +71,22 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
       label: (
         <Link
           href={kAppAccountPaths.forgotPassword}
-          className="w-full inline-block"
+          className="w-full inline-flex items-center gap-2"
         >
-          Forgot Password
+          <FaEnvelope />
+          <span className="hidden md:block">Forgot Password</span>
         </Link>
       ),
     },
     {
       key: kAppRootPaths.docs,
       label: (
-        <Link href={kAppRootPaths.docs} className="w-full inline-block">
-          Docs
+        <Link
+          href={kAppRootPaths.docs}
+          className="w-full inline-flex items-center gap-2"
+        >
+          <FaBook />
+          <span className="hidden md:block">Docs</span>
         </Link>
       ),
     },
@@ -73,7 +94,8 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
 
   sideLinksNode = (
     <div className="space-x-2 flex items-center">
-      <SignInClient className="w-full border-none shadow-none h-auto" />
+      {/* <GoogleSignInClient className="w-full border-none shadow-none h-auto" /> */}
+      <GitHubSignInClient className="w-full border-none shadow-none h-auto" />
       <DropdownItems items={items} asChild>
         <Button variant="outline" size="icon" className="px-2">
           <Ellipsis className="w-4 h-4" />
@@ -93,7 +115,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
         />
       )}
       <div style={{ display: "flex", alignItems: "center" }}>
-        <h5 className="text-xl underline decoration-sky-500">
+        <h5 className="text-xl underline">
           {isDocs ? null : <Link href={kAppRootPaths.home}>fimidara</Link>}
         </h5>
       </div>

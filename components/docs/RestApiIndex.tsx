@@ -35,7 +35,7 @@ function renderNavItemList(
     return (
       <li key={item.key}>
         {item.href && !item.children && (
-          <Link href={item.href} className="underline decoration-sky-500">
+          <Link href={item.href} className="underline">
             {item.label}
           </Link>
         )}

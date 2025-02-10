@@ -98,10 +98,7 @@ export function renderJsonFieldType(
     );
   } else if (isFieldObject(data)) {
     return data.name ? (
-      <a
-        href={`#${getTypeNameID(data.name)}`}
-        className="underline decoration-sky-500"
-      >
+      <a href={`#${getTypeNameID(data.name)}`} className="underline">
         {data.name}
       </a>
     ) : null;
@@ -120,14 +117,14 @@ export function renderJsonFieldType(
           {isForJsSdk ? <span>string</span> : <code>string</code>}|{" "}
           <a
             href="https://nodejs.org/api/stream.html#class-streamreadable"
-            className="underline decoration-sky-500"
+            className="underline"
           >
             {isForJsSdk ? <span>Readable</span> : <code>Readable</code>}|{" "}
           </a>{" "}
           |{" "}
           <a
             href="https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream"
-            className="underline decoration-sky-500"
+            className="underline"
           >
             {isForJsSdk ? (
               <span>ReadableStream</span>
@@ -141,7 +138,7 @@ export function renderJsonFieldType(
   } else if (isFieldCustomType(data)) {
     if (data.descriptionLink) {
       return (
-        <a href={data.descriptionLink} className="underline decoration-sky-500">
+        <a href={data.descriptionLink} className="underline">
           {data.name}
         </a>
       );

@@ -1,7 +1,7 @@
 import { useDeleteModal } from "@/components/hooks/useDeleteModal.tsx";
 import { useFileForm } from "@/components/hooks/useFileForm.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
-import IconButton from "@/components/utils/buttons/IconButton";
 import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
@@ -98,8 +98,11 @@ const FileMenu: FC<FileMenuProps> = (props) => {
         disabled={deleteHook.loading}
         items={items}
         onSelect={onSelectMenuItem}
+        asChild
       >
-        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+        <Button variant="outline" size="icon">
+          <Ellipsis className="w-4 h-4" />
+        </Button>
       </DropdownItems>
       {permissionsHook.node}
       {deleteModalHook.node}

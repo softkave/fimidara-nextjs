@@ -33,7 +33,7 @@ export default function Docs() {
       <ul>
         {docs.map((item) => (
           <li key={item.link}>
-            <a href={item.link} className="underline decoration-sky-500">
+            <a href={item.link} className="underline">
               {item.title}
             </a>
           </li>

@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
 import { cn } from "@/components/utils.ts";
-import IconButton from "@/components/utils/buttons/IconButton";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
 import { insertMenuDivider } from "@/components/utils/utils";
 import { Folder } from "fimidara";
@@ -61,8 +61,11 @@ const FileListContainerHeader: React.FC<IFileListContainerHeaderProps> = (
               onBeginCreateFolder();
             }
           }}
+          asChild
         >
-          <IconButton icon={<Plus className="h-4 w-4" />} />
+          <Button variant="outline" size="icon">
+            <Plus className="h-4 w-4" />
+          </Button>
         </DropdownItems>
         {folder ? (
           <FolderMenu

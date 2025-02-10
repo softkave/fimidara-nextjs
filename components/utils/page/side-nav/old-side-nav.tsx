@@ -61,6 +61,7 @@ export function SideNav(props: ISideNavProps) {
         title={title}
         className="px-0"
         titleClassName="px-4"
+        side="left"
       >
         {menuNode}
       </PageDrawer>

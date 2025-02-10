@@ -94,12 +94,12 @@ export const fimidaraJsSdkNavItems: IRawNavItem[] = [
   },
 ];
 
-export const fimidaraAntdNavItems =
+export const fimidaraSideNavItems =
   renderToSideNavMenuItemList(fimidaraNavItems);
-export const fimidaraRestApiAntdNavItems = renderToSideNavMenuItemList(
+export const fimidaraRestApiSideNavItems = renderToSideNavMenuItemList(
   fimidaraRestApiNavItems
 );
-export const fimidaraJsSdkAntdNavItems = renderToSideNavMenuItemList(
+export const fimidaraJsSdkSideNavItems = renderToSideNavMenuItemList(
   fimidaraJsSdkNavItems
 );
 

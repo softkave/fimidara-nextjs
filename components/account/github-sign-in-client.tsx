@@ -2,15 +2,17 @@
 
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import { signIn } from "next-auth/react";
+import { FaGithub } from "react-icons/fa";
 import { useLoggedInReturnTo } from "../hooks/useLoggedInReturnTo.tsx";
 import { Button } from "../ui/button.tsx";
+import { cn } from "../utils.ts";
 
-export interface ISignInClientProps {
+export interface IGitHubSignInClientProps {
   redirectTo?: string;
   className?: string;
 }
 
-export default function SignInClient(props: ISignInClientProps) {
+export default function GitHubSignInClient(props: IGitHubSignInClientProps) {
   const { className } = props;
   const returnTo = useLoggedInReturnTo({
     defaultReturnTo: props.redirectTo,
@@ -19,12 +21,13 @@ export default function SignInClient(props: ISignInClientProps) {
   return (
     <Button
       onClick={() =>
-        signIn("google", { redirectTo: kClientPaths.withURL(returnTo) })
+        signIn("github", { redirectTo: kClientPaths.withURL(returnTo) })
       }
       variant="outline"
-      className={className}
+      className={cn(className, "space-x-2")}
     >
-      Sign-in with Google
+      <FaGithub />
+      <span className="hidden md:block">Sign-in with GitHub</span>
     </Button>
   );
 }

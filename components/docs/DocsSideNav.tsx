@@ -7,9 +7,9 @@ import { useAppMenu } from "../app/useAppMenu.tsx";
 import { SideNav } from "../utils/page/side-nav/old-side-nav.tsx";
 import {
   DOCS_BASE_PATH,
-  fimidaraAntdNavItems,
-  fimidaraJsSdkAntdNavItems,
-  fimidaraRestApiAntdNavItems,
+  fimidaraJsSdkSideNavItems,
+  fimidaraRestApiSideNavItems,
+  fimidaraSideNavItems,
   kDocNavRootKeysMap,
 } from "./navItems";
 
@@ -51,9 +51,9 @@ export function DocsSideNav() {
     return { openKeys, selectedKeys };
   }, [pathname]);
 
-  const completeNavItems = fimidaraAntdNavItems.concat(
-    fimidaraRestApiAntdNavItems,
-    fimidaraJsSdkAntdNavItems
+  const completeNavItems = fimidaraSideNavItems.concat(
+    fimidaraRestApiSideNavItems,
+    fimidaraJsSdkSideNavItems
   );
 
   return (

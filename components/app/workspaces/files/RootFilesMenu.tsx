@@ -1,5 +1,5 @@
+import { Button } from "@/components/ui/button.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
-import IconButton from "@/components/utils/buttons/IconButton";
 import { insertMenuDivider } from "@/components/utils/utils";
 import { Ellipsis } from "lucide-react";
 import React from "react";
@@ -36,8 +36,10 @@ const RootFilesMenu: React.FC<IRootFilesMenuProps> = (props) => {
 
   return (
     <React.Fragment>
-      <DropdownItems items={items} onSelect={onSelectMenuItem}>
-        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      <DropdownItems items={items} onSelect={onSelectMenuItem} asChild>
+        <Button variant="outline" size="icon">
+          <Ellipsis className="w-4 h-4" />
+        </Button>
       </DropdownItems>
       {permissionsHook.node}
     </React.Fragment>

@@ -1,6 +1,6 @@
 "use client";
 
-import SignInClient from "@/components/account/sign-in-client.tsx";
+import OAuthSignInClient from "@/components/account/oauth-sign-in.tsx";
 import { useLoggedInReturnTo } from "@/components/hooks/useLoggedInReturnTo.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
@@ -171,7 +171,7 @@ export default function Login(props: ILoginProps) {
           </form>
         </Form>
         <Separator className="my-8" />
-        <SignInClient className="w-full" />
+        <OAuthSignInClient className="w-full" />
       </div>
     </div>
   );

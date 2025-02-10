@@ -1,6 +1,6 @@
 import useTargetGrantPermissionModal from "@/components/hooks/useTargetGrantPermissionModal";
+import { Button } from "@/components/ui/button.tsx";
 import { DropdownItems } from "@/components/ui/dropdown-items.tsx";
-import IconButton from "@/components/utils/buttons/IconButton";
 import { insertMenuDivider } from "@/components/utils/utils";
 import { FimidaraResourceType } from "fimidara";
 import { Ellipsis } from "lucide-react";
@@ -41,8 +41,10 @@ const WorkspaceResourceListMenu: React.FC<WorkspaceResourceListMenuProps> = (
   return (
     <React.Fragment>
       {permissionsHook.node}
-      <DropdownItems items={items} onSelect={onSelectMenuItem}>
-        <IconButton icon={<Ellipsis className="w-4 h-4" />} />
+      <DropdownItems items={items} onSelect={onSelectMenuItem} asChild>
+        <Button variant="outline" size="icon">
+          <Ellipsis className="w-4 h-4" />
+        </Button>
       </DropdownItems>
     </React.Fragment>
   );

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button.tsx";
 import {
   DropdownItems,
   IDropdownItem,
@@ -5,7 +6,6 @@ import {
 import { CaretDownOutlined } from "@ant-design/icons";
 import React from "react";
 import ButtonGroup from "./ButtonGroup";
-import IconButton from "./IconButton";
 
 export interface IDropdownButtonProps {
   style?: React.CSSProperties;
@@ -25,7 +25,9 @@ const DropdownButton: React.FC<IDropdownButtonProps> = (props) => {
       {children}
       <DropdownItems disabled={disabled} items={items} onSelect={onSelect}>
         {triggerNode || (
-          <IconButton icon={<CaretDownOutlined />} disabled={disabled} />
+          <Button variant="outline" size="icon" disabled={disabled}>
+            <CaretDownOutlined />
+          </Button>
         )}
       </DropdownItems>
     </ButtonGroup>

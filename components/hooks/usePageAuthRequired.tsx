@@ -48,12 +48,11 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
         .finally(() => toastControl.dismiss())
         .then(() => {
           logout();
-          signOut({ redirect: false });
           set({ isLogoutRequested: false, routeToOnLogout: undefined });
-          router.push(routeToOnLogout || kAppAccountPaths.login);
+          signOut({ redirectTo: routeToOnLogout || kAppAccountPaths.login });
         });
     }
-  }, [isLogoutRequested, logout, set]);
+  }, [isLogoutRequested, logout, set, routeToOnLogout]);
 
   useEffect(() => {
     // Only transition to login if logged in state is newly decided to be false,
