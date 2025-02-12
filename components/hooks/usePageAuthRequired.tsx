@@ -39,6 +39,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
 
   useEffect(() => {
     if (isLogoutRequested) {
+      console.log("isLogoutRequested", isLogoutRequested);
       const toastControl = toast({
         description: "Logging out...",
       });
@@ -65,6 +66,11 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
         returnTo || pathname
       );
 
+      console.log("pushing to login path", {
+        loginPath,
+        state: trackedLoggedIn.state,
+        previousState: trackedLoggedIn.previousState,
+      });
       router.push(loginPath);
     }
   }, [
