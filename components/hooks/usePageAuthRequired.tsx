@@ -9,7 +9,7 @@ import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { isNil } from "lodash-es";
 import { signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactElement, useEffect } from "react";
+import { ReactElement, useEffect, useRef } from "react";
 import { useStateHistory } from "./useStateHistory.tsx";
 
 const defaultOnRedirecting = (): ReactElement => <></>;
@@ -36,6 +36,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
     state: isLoggedIn,
     maxHistorySize: 2,
   });
+  const isRedirectingToLogin = useRef(false);
 
   useEffect(() => {
     if (isLogoutRequested) {
@@ -60,26 +61,33 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
     // so this should only run once
     if (
       isNil(trackedLoggedIn.previousState) &&
-      trackedLoggedIn.state === false
+      trackedLoggedIn.state === false &&
+      !isRedirectingToLogin.current
     ) {
-      const loginPath = kAppAccountPaths.loginWithReturnPath(
-        returnTo || pathname
-      );
+      isRedirectingToLogin.current = true;
+      const returnToPath = returnTo || pathname;
+      const loginPath = kAppAccountPaths.loginWithReturnPath(returnToPath);
 
-      console.log("pushing to login path", {
-        loginPath,
-        state: trackedLoggedIn.state,
-        previousState: trackedLoggedIn.previousState,
-        returnTo,
-        pathname,
-      });
-      router.push(loginPath);
+      if (!pathname.includes(returnToPath)) {
+        console.log("pushing to login path", {
+          loginPath,
+          state: trackedLoggedIn.state,
+          previousState: trackedLoggedIn.previousState,
+          returnTo,
+          pathname,
+          returnToPath,
+          isRedirectingToLogin: isRedirectingToLogin.current,
+        });
+
+        router.push(loginPath);
+      }
     }
   }, [
     trackedLoggedIn.state,
     trackedLoggedIn.previousState,
     returnTo,
     pathname,
+    router,
   ]);
 
   if (isLoggedIn === undefined) {
