@@ -7,7 +7,11 @@ import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
 import { useDownloadFile } from "@/lib/hooks/useDownloadFile";
-import { File, stringifyFimidaraFilepath } from "fimidara";
+import {
+  File,
+  stringifyFimidaraFilename,
+  stringifyFimidaraFilepath,
+} from "fimidara";
 import { Ellipsis } from "lucide-react";
 import { FC, Fragment } from "react";
 import useTargetGrantPermissionModal from "../../../hooks/useTargetGrantPermissionModal";
@@ -42,7 +46,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
       errorMessageNotificatition(error, "Error deleting file", toast);
     },
   });
-  const filename = file.name + (file.ext ?? "");
+  const filename = stringifyFimidaraFilename(file);
   const downloadHook = useDownloadFile(file.resourceId, filename);
 
   const deleteModalHook = useDeleteModal({

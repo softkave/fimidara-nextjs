@@ -5,5 +5,5 @@ import { updateLocalLoginResult } from "./updateLocalLoginResult.ts";
 export const useUserLoginMutationHook = makeEndpointMutationHook(
   getPrivateFimidaraEndpoints,
   (endpoints) => endpoints.users.login,
-  updateLocalLoginResult
+  (result) => updateLocalLoginResult({ result, persistJwtToken: false })
 );

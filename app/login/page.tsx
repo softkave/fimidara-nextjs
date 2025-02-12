@@ -49,8 +49,9 @@ export default function Login(props: ILoginProps) {
       router.push(returnTo);
     },
   });
+
   const onSubmit = async (body: z.infer<typeof formSchema>) => {
-    const { result } = await loginHook.runAsync({
+    const result = await loginHook.runAsync({
       email: body.email,
       password: body.password,
     });
@@ -64,6 +65,7 @@ export default function Login(props: ILoginProps) {
       });
     }
   };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
