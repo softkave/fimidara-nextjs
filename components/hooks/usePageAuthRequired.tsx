@@ -70,13 +70,14 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
         loginPath,
         state: trackedLoggedIn.state,
         previousState: trackedLoggedIn.previousState,
+        returnTo,
+        pathname,
       });
       router.push(loginPath);
     }
   }, [
     trackedLoggedIn.state,
     trackedLoggedIn.previousState,
-    router,
     returnTo,
     pathname,
   ]);
