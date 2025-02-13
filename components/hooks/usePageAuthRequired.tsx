@@ -40,7 +40,6 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
 
   useEffect(() => {
     if (isLogoutRequested) {
-      console.log("isLogoutRequested", isLogoutRequested);
       const toastControl = toast({
         description: "Logging out...",
       });
@@ -69,16 +68,6 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
       const loginPath = kAppAccountPaths.loginWithReturnPath(returnToPath);
 
       if (!pathname.includes(returnToPath)) {
-        console.log("pushing to login path", {
-          loginPath,
-          state: trackedLoggedIn.state,
-          previousState: trackedLoggedIn.previousState,
-          returnTo,
-          pathname,
-          returnToPath,
-          isRedirectingToLogin: isRedirectingToLogin.current,
-        });
-
         router.push(loginPath);
       }
     }
