@@ -72,6 +72,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     error: "/error",
   },
+  cookies: {
+    pkceCodeVerifier: {
+      options: {
+        sameSite: "lax",
+      },
+    },
+  },
 });
 
 export interface NextAuthRequest extends NextRequest {
