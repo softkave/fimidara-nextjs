@@ -74,8 +74,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   cookies: {
     pkceCodeVerifier: {
+      name: "next-auth.pkce.code_verifier",
       options: {
-        sameSite: "lax",
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
       },
     },
   },
