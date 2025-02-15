@@ -16,7 +16,7 @@ if (!internalAuthSecret) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  debug: true,
+  // debug: true,
   providers: [
     Google({
       allowDangerousEmailAccountLinking: true,
@@ -72,17 +72,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     error: "/error",
   },
-  cookies: {
-    pkceCodeVerifier: {
-      name: "next-auth.pkce.code_verifier",
-      options: {
-        httpOnly: true,
-        sameSite: "none",
-        path: "/",
-        secure: true,
-      },
-    },
-  },
+  // cookies: {
+  //   pkceCodeVerifier: {
+  //     name: "next-auth.pkce.code_verifier",
+  //     options: {
+  //       httpOnly: true,
+  //       sameSite: "none",
+  //       path: "/",
+  //       secure: true,
+  //     },
+  //   },
+  // },
 });
 
 export interface NextAuthRequest extends NextRequest {
