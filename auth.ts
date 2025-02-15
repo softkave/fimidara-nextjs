@@ -4,7 +4,7 @@ import NextAuth, { Session } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import { NextRequest } from "next/server";
-import { db, users as usersTable } from "./db/schema";
+import { db } from "./db/schema";
 import { FimidaraEndpoints } from "./lib/api-internal/endpoints/privateEndpoints.ts";
 import { systemConstants } from "./lib/definitions/system.ts";
 import { IOAuthUser } from "./lib/definitions/user.ts";
@@ -36,14 +36,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         serverURL: systemConstants.serverAddr,
       });
 
-      const emailVerifiedAt = (user as typeof usersTable.$inferSelect)
-        .emailVerified;
-      const result = await endpoint.users.signupWithOAuth({
+      // I think it's safe to assume that the email is verified at the time of
+      // creation for the 2 providers we use, Google and GitHub
+      const emailVerifiedAt = Date.now();
+      await endpoint.users.signupWithOAuth({
         oauthUserId: user.id,
         interServerAuthSecret: internalAuthSecret,
         name: user.name,
         email: user.email,
-        emailVerifiedAt: emailVerifiedAt?.getTime(),
+        emailVerifiedAt,
       });
     },
   },
@@ -56,7 +57,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const res = await endpoint.users.loginWithOAuth({
         oauthUserId: user.id,
         interServerAuthSecret: internalAuthSecret,
-        emailVerifiedAt: user.emailVerified?.getTime(),
+        // there is no need to pass the emailVerifiedAt here, because it's
+        // already set in the createUser event
       });
       const userData: IOAuthUser = {
         ...user,
