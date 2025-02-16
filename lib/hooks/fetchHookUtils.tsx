@@ -68,6 +68,7 @@ export function makeFetchResourceHook<
             return { data: savedData, loading: false, error: undefined };
           });
         } catch (error: unknown) {
+          console.error(error);
           useStoreHook.getState().setFetchState(inputParams, (state) => ({
             loading: false,
             error: toAppErrorList(error),
