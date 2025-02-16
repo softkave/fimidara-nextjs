@@ -68,10 +68,14 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
       trackedLoggedIn.state === false &&
       !isRedirectingToLogin.current
     ) {
-      console.log("redirecting to login");
       isRedirectingToLogin.current = true;
       const returnToPath = returnTo || pathname;
       const loginPath = kAppAccountPaths.loginWithReturnPath(returnToPath);
+      console.log("redirecting to login", {
+        returnToPath,
+        loginPath,
+        pathname,
+      });
 
       if (!pathname.includes(returnToPath)) {
         router.push(loginPath);

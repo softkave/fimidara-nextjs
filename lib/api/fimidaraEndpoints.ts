@@ -11,7 +11,12 @@ import { kUserSessionStorageFns } from "../storage/UserSessionStorageFns.ts";
 
 async function getTokensFromOAuth() {
   const auth = await getSession();
-  const user = auth?.user as IOAuthUser;
+  console.log("auth", auth);
+  const user = auth?.user as IOAuthUser | undefined;
+  if (!user) {
+    return undefined;
+  }
+
   const jwtToken = user.jwtToken;
   const clientJwtToken = user.clientJwtToken;
 
