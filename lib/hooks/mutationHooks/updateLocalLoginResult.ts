@@ -61,15 +61,9 @@ export function updateLocalLoginResult(params: {
   result: LoginResult;
   persistJwtToken: boolean;
 }) {
-  console.log("updateLocalLoginResult", params);
   const { result, persistJwtToken } = params;
   const { user, clientJwtToken, jwtToken, jwtTokenExpiresAt, refreshToken } =
     result;
-
-  console.log(
-    "kUserSessionStorageFns.getData()",
-    kUserSessionStorageFns.getData()
-  );
 
   const shouldPersistJwtToken =
     kUserSessionStorageFns.getData().jwtToken || persistJwtToken;
