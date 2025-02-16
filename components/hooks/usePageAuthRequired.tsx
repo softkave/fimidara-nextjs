@@ -77,7 +77,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
         pathname,
       });
 
-      if (!pathname.includes(returnToPath)) {
+      if (!pathname.includes(kAppAccountPaths.login)) {
         router.push(loginPath);
       }
     }

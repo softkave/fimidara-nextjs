@@ -95,15 +95,23 @@ export function getPrivateFimidaraEndpoints(
 }
 
 export async function getPublicFimidaraEndpointsUsingUserToken(
-  props: { userToken?: string } = {}
+  props: { userToken?: string; throwIfNoToken?: boolean } = {}
 ) {
-  const { userToken = await getUserToken() } = props;
+  const { userToken = await getUserToken(), throwIfNoToken = true } = props;
+  if (throwIfNoToken && !userToken) {
+    throw new Error("No user token found");
+  }
+
   return getPublicFimidaraEndpoints({ authToken: userToken });
 }
 
 export async function getPrivateFimidaraEndpointsUsingUserToken(
-  props: { userToken?: string } = {}
+  props: { userToken?: string; throwIfNoToken?: boolean } = {}
 ) {
-  const { userToken = await getUserToken() } = props;
+  const { userToken = await getUserToken(), throwIfNoToken = true } = props;
+  if (throwIfNoToken && !userToken) {
+    throw new Error("No user token found");
+  }
+
   return getPrivateFimidaraEndpoints({ authToken: userToken });
 }
