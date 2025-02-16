@@ -4,8 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion.tsx";
-import DeleteButton from "@/components/utils/buttons/DeleteButton";
+import IconButton from "@/components/utils/buttons/IconButton.tsx";
 import { StyleableComponentProps } from "@/components/utils/styling/types";
+import { Trash2 } from "lucide-react";
 import prettyBytes from "pretty-bytes";
 import { FieldError, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -49,7 +50,7 @@ export function SelectedFilesForm(props: SelectedFilesFormProps) {
         <AccordionTrigger>
           <div className="flex flex-1 items-center mr-2">
             <div className="flex flex-1 flex-col items-start">
-              <span className="line-clamp-1 text-left break-all">
+              <span className="line-clamp-1 text-left break-words">
                 {value.name}
               </span>
               {errorMessage && (
@@ -64,7 +65,10 @@ export function SelectedFilesForm(props: SelectedFilesFormProps) {
                   {prettyBytes(value.file.size)}
                 </span>
               ) : null}
-              <DeleteButton onClick={() => handleRemoveFile(index)} />
+              <IconButton
+                onClick={() => handleRemoveFile(index)}
+                icon={<Trash2 className="h-4 w-4" />}
+              />
             </div>
           </div>
         </AccordionTrigger>

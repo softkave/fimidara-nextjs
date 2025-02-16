@@ -6,7 +6,7 @@ import { errorMessageNotificatition } from "@/components/utils/errorHandling";
 import { insertMenuDivider } from "@/components/utils/utils";
 import { useToast } from "@/hooks/use-toast.ts";
 import { useWorkspaceFileDeleteMutationHook } from "@/lib/hooks/mutationHooks";
-import { useDownloadFile } from "@/lib/hooks/useDownloadFile";
+import { useDownloadFile } from "@/lib/hooks/useDownloadFile.tsx";
 import {
   File,
   stringifyFimidaraFilename,

@@ -46,7 +46,17 @@ export function useDownloadFile(fileId: string, filename: string) {
     onSuccess() {
       toastHook.dismiss();
       toastHook.toast({
-        description: `Downloading file ${filename}...`,
+        description: (
+          <>
+            <p>Downloading file {filename}...</p>
+            {filename.startsWith(".") && (
+              <p className="font-bold text-muted-foreground">
+                Ensure to rename the file when downloaded because many browsers
+                strip the leading dot(.) from the filename for security reasons.
+              </p>
+            )}
+          </>
+        ),
         duration: appComponentConstants.messageDuration,
       });
     },

@@ -1,13 +1,14 @@
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
-import BackButton from "@/components/utils/buttons/BackButton";
+import IconButton from "@/components/utils/buttons/IconButton.tsx";
 import { addRootnameToPath } from "@/lib/definitions/folder";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { File } from "fimidara";
 import { useRouter } from "next/navigation";
+import { FiArrowLeft } from "react-icons/fi";
 import FileMenu from "./FileMenu";
 import FolderParentLink from "./FolderParentLink";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 
 export interface FileComponentProps {
   file: File;
@@ -26,7 +27,7 @@ function FileComponent(props: FileComponentProps) {
           title={file.name + extension}
           prefixNode={
             <FolderParentLink workspaceId={file.workspaceId} folder={file}>
-              <BackButton />
+              <IconButton icon={<FiArrowLeft />} />
             </FolderParentLink>
           }
         >
