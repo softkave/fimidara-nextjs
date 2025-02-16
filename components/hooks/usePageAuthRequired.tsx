@@ -38,6 +38,8 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
   });
   const isRedirectingToLogin = useRef(false);
 
+  console.log("isLoggedIn", isLoggedIn);
+
   useEffect(() => {
     if (isLogoutRequested) {
       const toastControl = toast({

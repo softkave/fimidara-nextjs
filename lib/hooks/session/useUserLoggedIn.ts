@@ -8,6 +8,10 @@ export function useUserLoggedIn() {
   const { isLoading, other } = useFetchSingleResourceFetchState(fetchState);
   let isLoggedIn: boolean | undefined = undefined;
 
+  console.log("fetchState", fetchState);
+  console.log("isLoading", isLoading);
+  console.log("other", other);
+
   if (!isLoading) {
     if (other?.refresh.getJwtToken()) {
       isLoggedIn = true;
