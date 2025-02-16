@@ -58,6 +58,9 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
   }, [isLogoutRequested, logout, set, routeToOnLogout]);
 
   useEffect(() => {
+    console.log("trackedLoggedIn", trackedLoggedIn);
+    console.log("isRedirectingToLogin", isRedirectingToLogin.current);
+
     // Only transition to login if logged in state is newly decided to be false,
     // so this should only run once
     if (
