@@ -57,10 +57,12 @@ function FileComponent(props: FileComponentProps) {
           code
           direction="vertical"
           label="File Path"
-          node={encodeURIComponent(
-            addRootnameToPath(file.namepath.join("/"), workspaceRootname) +
-              extension
-          )}
+          node={
+            addRootnameToPath(
+              file.namepath.map((name) => encodeURIComponent(name)).join("/"),
+              workspaceRootname
+            ) + extension
+          }
         />
         <LabeledNode
           nodeIsText

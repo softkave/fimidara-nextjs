@@ -30,9 +30,10 @@ function FolderComponent(props: FolderProps) {
           code
           direction="vertical"
           label="Folder Path"
-          node={encodeURIComponent(
-            path.normalize(
-              addRootnameToPath(folder.namepath.join("/"), workspaceRootname)
+          node={path.normalize(
+            addRootnameToPath(
+              folder.namepath.map((name) => encodeURIComponent(name)).join("/"),
+              workspaceRootname
             )
           )}
         />
