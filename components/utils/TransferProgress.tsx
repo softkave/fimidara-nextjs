@@ -27,21 +27,12 @@ export function TransferProgress(props: ITransferProgressProps) {
     ? Date.now() - progressHook.progress.startMs
     : 0;
   const elapsedSeconds = elapsedMs ? elapsedMs / 1000 : 0;
-  const loaded = progressHook.progress?.completedSize ?? 0;
+  const loaded = progressHook.progress?.sizeCompleted ?? 0;
   const rate = loaded && elapsedSeconds ? loaded / elapsedSeconds : 0;
   const total = progressHook.progress?.totalSize ?? 0;
   const estimatedTime = total && rate ? total / rate : undefined;
-  let percent = 0;
+  const percent = progressHook.progress?.percentComplete ?? 0;
 
-  if (progressHook.progress) {
-    percent =
-      (progressHook.progress.completedParts /
-        progressHook.progress.estimatedNumParts) *
-      100;
-  }
-
-  // TODO: have an internal way for calculating estimated time that doesnt
-  // depend on the progress event, or we can extend it to the progress event
   return (
     <div className="space-y-1">
       <span className="text-secondary break-words">{identifier}</span>

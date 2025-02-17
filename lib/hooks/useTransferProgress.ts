@@ -12,8 +12,9 @@ export interface ITransferProgress {
   completedParts: number;
   estimatedNumParts: number;
   totalSize: number;
-  completedSize: number;
   startMs: number;
+  percentComplete: number;
+  sizeCompleted: number;
 }
 
 export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
@@ -37,9 +38,9 @@ export function useTransferProgressHandler(inputIdentifiers: string[] = []) {
               estimatedNumParts: partParams.estimatedNumParts,
               totalSize:
                 otherParams?.totalSize ?? maybeProgress?.totalSize ?? 0,
-              completedSize:
-                (maybeProgress?.completedSize ?? 0) + (partParams.size ?? 0),
               startMs: maybeProgress?.startMs ?? Date.now(),
+              sizeCompleted: partParams.sizeCompleted,
+              percentComplete: partParams.percentComplete,
             };
             return progress;
           }
