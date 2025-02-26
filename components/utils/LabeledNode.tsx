@@ -32,7 +32,7 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
 
   if (node) {
     internalNodeContent = nodeIsText ? (
-      <Text code={code} copyable={copyable} className="break-words">
+      <Text code={code} copyable={copyable} className="break-all">
         {node}
       </Text>
     ) : (
@@ -47,14 +47,14 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
 
   if (direction === "horizontal") {
     return (
-      <div style={style} className={cn(className, "space-x-2 break-words")}>
+      <div style={style} className={cn(className, "space-x-2 break-all")}>
         {label && <div>{labelNode}</div>}
         <div style={{ textAlign }}>{internalNodeContent}</div>
       </div>
     );
   } else {
     return (
-      <div style={style} className={cn(className, "space-y-2 break-words")}>
+      <div style={style} className={cn(className, "space-y-2 break-all")}>
         {label && <div>{labelNode}</div>}
         <div>{internalNodeContent}</div>
       </div>

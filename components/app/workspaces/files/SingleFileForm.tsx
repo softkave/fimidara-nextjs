@@ -44,7 +44,7 @@ const kFileMessages = {
   autofillText: (name: string) => (
     <div className="inline-flex flex-wrap">
       <span>Use&nbsp;</span>
-      <strong className="underline whitespace-normal text-left break-words">
+      <strong className="underline whitespace-normal text-left break-all">
         {name}
       </strong>
       &nbsp;

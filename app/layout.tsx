@@ -1,16 +1,23 @@
 import { Toaster } from "@/components/ui/toaster.tsx";
 import { cn } from "@/components/utils.ts";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
-import { Source_Code_Pro, Work_Sans } from "next/font/google";
+import { Source_Code_Pro } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
-const defaultFont = Work_Sans({
-  subsets: ["latin"],
-  variable: "--font-default",
-  weight: "400",
-});
+// const geistSans = GeistSans({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
+
+// const geistMono = GeistMono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
+
 const codeFont = Source_Code_Pro({
   subsets: ["latin"],
   variable: "--font-code",
@@ -31,7 +38,8 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          defaultFont.variable,
+          GeistSans.variable,
+          GeistMono.variable,
           codeFont.variable,
           "flex",
           "flex-col"

@@ -30,7 +30,7 @@ const FolderList: FC<FolderListProps> = (props) => {
         <ThumbnailContent
           key={item.resourceId}
           main={
-            <div className="flex flex-col justify-center break-words">
+            <div className="flex flex-col justify-center break-all">
               <Link
                 href={kAppWorkspacePaths.folder(
                   item.workspaceId,
@@ -40,7 +40,7 @@ const FolderList: FC<FolderListProps> = (props) => {
                 {item.name}
               </Link>
               {item.description && (
-                <span className="text-secondary break-words">
+                <span className="text-secondary break-all">
                   {item.description}
                 </span>
               )}

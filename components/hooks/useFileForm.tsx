@@ -16,8 +16,8 @@ export function useFileForm(props: {
   const isNewResourceForm = isBoolean(formOpen);
   const node = (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="w-full sm:w-[500px] p-0">
-        <div className="w-full max-w-full h-full max-h-full">
+      <SheetContent className="sm:w-[500px] p-0">
+        <div className="h-full max-h-full">
           <ScrollArea className="h-full overflow-y-auto p-6">
             <SheetHeader>
               <SheetTitle>

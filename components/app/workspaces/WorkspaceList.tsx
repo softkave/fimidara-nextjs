@@ -65,10 +65,10 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
               main={
                 <div className="flex flex-col justify-center">
                   <Link href={kAppWorkspacePaths.folderList(item.resourceId)}>
-                    <div className="break-words">{item.name}</div>
+                    <div className="break-all">{item.name}</div>
                   </Link>
                   {item.description && (
-                    <span className="text-secondary break-words">
+                    <span className="text-secondary break-all">
                       {item.description}
                     </span>
                   )}
@@ -101,7 +101,7 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
   const isNewWorkspaceForm = isBoolean(formOpen);
   const sNode = (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="w-full sm:w-[420px]">
+      <SheetContent className="sm:w-[420px]">
         <SheetTitle>
           {isNewWorkspaceForm ? "New Workspace" : "Update Workspace"}
         </SheetTitle>

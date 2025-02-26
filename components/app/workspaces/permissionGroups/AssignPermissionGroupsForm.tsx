@@ -156,10 +156,10 @@ export default function AssignPermissionGroupsForm(
 
   return (
     <Sheet open onOpenChange={onClose}>
-      <SheetContent className="w-full sm:w-[500px] p-0">
+      <SheetContent className="sm:w-[500px] p-0">
         <ScrollArea className="p-6 h-full overflow-y-auto">
           <SheetTitle>Assign Permission Groups</SheetTitle>
-          <div className="pt-6 w-full space-y-8">{mainNode}</div>
+          <div className="pt-6 space-y-8">{mainNode}</div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

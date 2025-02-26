@@ -59,6 +59,7 @@ const baseNextConfig = {
     "@ant-design/icons-svg",
     "rc-tree",
     "rc-table",
+    "geist",
   ],
   swcMinify: true,
 };

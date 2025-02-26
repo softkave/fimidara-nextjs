@@ -34,7 +34,7 @@ const AgentTokenList: FC<AgentTokenListProps> = (props) => {
               {item.name || item.resourceId}
             </Link>
             {item.description && (
-              <span className="text-secondary break-words">
+              <span className="text-secondary break-all">
                 {item.description}
               </span>
             )}

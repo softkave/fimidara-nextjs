@@ -48,18 +48,16 @@ export function SelectedFilesForm(props: SelectedFilesFormProps) {
     return (
       <AccordionItem key={value.__localId} value={value.__localId}>
         <AccordionTrigger>
-          <div className="flex flex-1 items-center mr-2">
-            <div className="flex flex-1 flex-col items-start">
-              <span className="line-clamp-1 text-left break-words">
-                {value.name}
-              </span>
+          <div className="grid grid-cols-[1fr_auto] items-center mr-2 gap-2">
+            <div className="flex flex-col items-start">
+              <span className="text-left break-all">{value.name}</span>
               {errorMessage && (
                 <span className="text-sm font-medium text-destructive text-left">
                   {errorMessage}
                 </span>
               )}
             </div>
-            <div className="space-x-4 ml-4 flex items-center">
+            <div className="space-x-4 flex items-center">
               {value?.file ? (
                 <span className="text-secondary">
                   {prettyBytes(value.file.size)}

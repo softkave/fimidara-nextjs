@@ -16,7 +16,7 @@ export function useFolderForm(props: {
   const isNewResourceForm = isBoolean(formOpen);
   const node = formOpen && (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="w-full sm:w-[500px] p-0">
+      <SheetContent className="sm:w-[500px] p-0">
         <ScrollArea className="p-6 h-full overflow-y-auto">
           <SheetTitle>
             {isNewResourceForm ? "New Folder" : "Update Folder"}
