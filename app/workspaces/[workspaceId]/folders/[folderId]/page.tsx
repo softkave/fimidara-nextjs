@@ -3,14 +3,14 @@
 import WorkspaceContainer from "@/components/app/workspaces/WorkspaceContainer";
 import FolderComponent from "@/components/app/workspaces/files/FolderComponent";
 import FolderContainer from "@/components/app/workspaces/files/FolderContainer";
-import React from "react";
+import React, { use } from "react";
 
 export type IFolderPageProps = {
-  params: { workspaceId: string; folderId: string };
+  params: Promise<{ workspaceId: string; folderId: string }>;
 };
 
 const FolderPage: React.FC<IFolderPageProps> = (props) => {
-  const { workspaceId, folderId } = props.params;
+  const { folderId, workspaceId } = use(props.params);
   return (
     <WorkspaceContainer
       workspaceId={workspaceId}

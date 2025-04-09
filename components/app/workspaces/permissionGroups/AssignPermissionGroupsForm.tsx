@@ -91,7 +91,7 @@ export default function AssignPermissionGroupsForm(
     ]);
 
     if (assignedPgs.length || unassignedPgs.length) {
-      toast({ description: "Assigned permission groups updated" });
+      toast({ title: "Assigned permission groups updated" });
     }
 
     onCompleteSubmit();

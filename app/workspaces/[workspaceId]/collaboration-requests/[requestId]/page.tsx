@@ -2,14 +2,14 @@
 
 import WorkspaceRequest from "@/components/app/workspaces/requests/WorkspaceRequest";
 import WorkspaceRequestContainer from "@/components/app/workspaces/requests/WorkspaceRequestContainer.tsx";
-import React from "react";
+import React, { use } from "react";
 
 export type IWorkspaceRequestPageProps = {
-  params: { workspaceId: string; requestId: string };
+  params: Promise<{ workspaceId: string; requestId: string }>;
 };
 
 const WorkspaceRequestPage: React.FC<IWorkspaceRequestPageProps> = (props) => {
-  const { workspaceId, requestId } = props.params;
+  const { requestId } = use(props.params);
   return (
     <WorkspaceRequestContainer
       requestId={requestId}

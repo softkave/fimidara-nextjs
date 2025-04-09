@@ -40,7 +40,7 @@ export function SideNav(props: ISideNavProps) {
     }
 
     return (
-      <div>
+      <div className="h-full grid grid-rows-[auto_1fr] gap-0 max-w-[350px] w-full">
         <AppTitle
           className={cn(
             "py-4",
@@ -50,7 +50,9 @@ export function SideNav(props: ISideNavProps) {
             "sticky top-0 bg-white z-50"
           )}
         />
-        <ScrollArea>{menuNode}</ScrollArea>
+        <div className="overflow-hidden">
+          <ScrollArea className="h-full">{menuNode}</ScrollArea>
+        </div>
       </div>
     );
   } else {
@@ -59,11 +61,12 @@ export function SideNav(props: ISideNavProps) {
         open={isOpen}
         onClose={onClose}
         title={title}
-        className="px-0"
+        className="px-0 grid grid-rows-[auto_1fr] gap-0"
         titleClassName="px-4"
         side="left"
+        contentClassName="overflow-hidden"
       >
-        {menuNode}
+        <ScrollArea className="h-full">{menuNode}</ScrollArea>
       </PageDrawer>
     );
   }

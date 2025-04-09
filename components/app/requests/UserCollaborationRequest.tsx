@@ -12,9 +12,10 @@ import { useUserCollaborationRequestResponseMutationHook } from "@/lib/hooks/mut
 import { getBaseError } from "@/lib/utils/errors";
 import { css } from "@emotion/css";
 import { formatRelative } from "date-fns";
+import { use } from "react";
 
 export interface IUserCollaborationRequestProps {
-  params: { requestId: string };
+  params: Promise<{ requestId: string }>;
 }
 
 const classes = {
@@ -27,7 +28,7 @@ const classes = {
 
 function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
   const { toast } = useToast();
-  const { requestId } = props.params;
+  const { requestId } = use(props.params);
   const { fetchState, clearFetchState } = useUserCollaborationRequestFetchHook({
     requestId,
   });
@@ -35,7 +36,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
     useFetchSingleResourceFetchState(fetchState);
   const respondHook = useUserCollaborationRequestResponseMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Response submitted" });
+      toast({ title: "Response submitted" });
       clearFetchState();
     },
     onError(e, params) {

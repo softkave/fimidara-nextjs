@@ -4,5 +4,5 @@ import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export const POST = wrapRoute(async (request: NextRequest) => {
-  cookies().delete(kUserConstants.httpOnlyJWTCookieName);
+  (await cookies()).delete(kUserConstants.httpOnlyJWTCookieName);
 });

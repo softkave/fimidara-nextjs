@@ -20,7 +20,7 @@ export const POST = wrapRoute(async (request: NextRequest) => {
   });
 
   assert.ok(res.user.resourceId === params.userId, "Invalid credentials");
-  cookies().set(kUserConstants.httpOnlyJWTCookieName, params.jwtToken, {
+  (await cookies()).set(kUserConstants.httpOnlyJWTCookieName, params.jwtToken, {
     httpOnly: true,
     secure: true,
     sameSite: "strict",

@@ -29,7 +29,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
       },
       onSuccess(data, params) {
         toast({
-          description: `Email verification link sent to ${session.user.email}`,
+          title: `Email verification link sent to ${session.user.email}`,
         });
         cooldown.startCooldown();
       },

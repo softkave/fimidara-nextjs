@@ -88,7 +88,7 @@ export default function FolderForm(props: FolderFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceFolderUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Folder updated" });
+      toast({ title: "Folder updated" });
       router.push(
         kAppWorkspacePaths.folder(workspaceId, data.folder.resourceId)
       );
@@ -97,7 +97,7 @@ export default function FolderForm(props: FolderFormProps) {
 
   const createHook = useWorkspaceFolderAddMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Folder created" });
+      toast({ title: "Folder created" });
       router.push(
         kAppWorkspacePaths.folder(workspaceId, data.folder.resourceId)
       );
@@ -107,7 +107,7 @@ export default function FolderForm(props: FolderFormProps) {
   const progressHandlerHook = useTransferProgressHandler();
   const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
-      toast({ description: "File uploaded" });
+      toast({ title: "File uploaded" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.file.resourceId)
       // );

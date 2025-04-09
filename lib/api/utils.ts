@@ -7,7 +7,8 @@ import { Arguments, useSWRConfig } from "swr";
 export async function handleResponseError(res: Response) {
   if (res.status !== 200) {
     const json = await res.json();
-    throw new Error(json.message || "Unknown error");
+    // TODO: map server zod errors to fields, and other error fields
+    throw new Error(isString(json.message) ? json.message : "Unknown error");
   }
 }
 
@@ -78,9 +79,10 @@ export function useMutationHandler<TFn extends AnyFn>(
         convertToArray(opts.onError)?.forEach((fn) => fn?.(error, args));
         if (showToast) {
           toast({
-            title: "Error",
-            description:
-              (error as Error | undefined)?.message || "An error occurred",
+            title: "Error occurred",
+            description: isString((error as Error | undefined)?.message)
+              ? (error as Error).message
+              : "An error occurred",
           });
         }
 

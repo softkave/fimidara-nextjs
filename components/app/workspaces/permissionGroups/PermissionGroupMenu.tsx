@@ -47,7 +47,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
 
   const deleteHook = useWorkspacePermissionGroupDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Permission group scheduled for deletion" });
+      toast({ title: "Permission group scheduled for deletion" });
       onCompleteDelete();
     },
     onError(e, params) {
@@ -58,7 +58,7 @@ const PermissionGroupMenu: React.FC<PermissionGroupMenuProps> = (props) => {
   const unassignPermissionGroupHook =
     useWorkspacePermissionGroupUnassignMutationHook({
       onSuccess(data, params) {
-        toast({ description: "Permission group unassigned" });
+        toast({ title: "Permission group unassigned" });
         onCompleteUnassignPermissionGroup();
       },
       onError(e, params) {

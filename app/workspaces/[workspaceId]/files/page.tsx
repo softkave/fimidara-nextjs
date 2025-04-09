@@ -3,12 +3,12 @@
 import WorkspaceContainer from "@/components/app/workspaces/WorkspaceContainer";
 import FolderChildren from "@/components/app/workspaces/files/FolderChildren";
 import { IWorkspaceComponentProps } from "@/components/app/workspaces/utils";
-import React from "react";
+import React, { use } from "react";
 
 export interface IWorkspaceFilesPageProps extends IWorkspaceComponentProps {}
 
 const WorkspaceFilePage: React.FC<IWorkspaceFilesPageProps> = (props) => {
-  const { workspaceId } = props.params;
+  const { workspaceId } = use(props.params);
   return (
     <WorkspaceContainer
       workspaceId={workspaceId}

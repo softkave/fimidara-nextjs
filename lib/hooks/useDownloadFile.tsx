@@ -23,7 +23,8 @@ export function useDownloadFile(fileId: string, filename: string) {
 
   const downloadFn = async () => {
     toastHook.toast({
-      description: `Prepping file ${filename}...`,
+      title: "Prepping file...",
+      description: `Prepping file ${filename}. This may take a few seconds.`,
     });
 
     const fimidara = await getPublicFimidaraEndpointsUsingUserToken();
@@ -46,9 +47,10 @@ export function useDownloadFile(fileId: string, filename: string) {
     onSuccess() {
       toastHook.dismiss();
       toastHook.toast({
+        title: "Downloading file...",
         description: (
           <>
-            <p>Downloading file {filename}...</p>
+            <p>Downloading file {filename}... </p>
             {filename.startsWith(".") && (
               <p className="font-bold text-muted-foreground">
                 Ensure to rename the file when downloaded because many browsers
@@ -66,6 +68,7 @@ export function useDownloadFile(fileId: string, filename: string) {
 
       toastHook.dismiss();
       toastHook.toast({
+        title: "Error downloading file",
         description: `Error downloading file ${filename}. ${fErrors.error}`,
         variant: "destructive",
       });

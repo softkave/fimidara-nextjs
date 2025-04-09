@@ -3,11 +3,10 @@
 import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
 import { kAppRootPaths } from "@/lib/definitions/paths/root.ts";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Ellipsis } from "lucide-react";
+import { BookTextIcon, Ellipsis, MailIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CSSProperties, FC, ReactNode } from "react";
-import { FaBook, FaEnvelope } from "react-icons/fa";
 import GitHubSignInClient from "../account/github-sign-in-client.tsx";
 import GoogleSignInClient from "../account/google-sign-in-client.tsx";
 import { useAppMenu } from "../app/useAppMenu.tsx";
@@ -37,7 +36,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
           href={kAppAccountPaths.signup}
           className="w-full inline-flex items-center gap-2"
         >
-          <FaEnvelope />
+          <MailIcon className="w-4 h-4" />
           <span className="hidden md:block">Signup with Email</span>
         </Link>
       ),
@@ -49,7 +48,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
           href={kAppAccountPaths.login}
           className="w-full inline-flex items-center gap-2"
         >
-          <FaEnvelope />
+          <MailIcon className="w-4 h-4" />
           <span className="hidden md:block">Login with Email</span>
         </Link>
       ),
@@ -73,7 +72,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
           href={kAppAccountPaths.forgotPassword}
           className="w-full inline-flex items-center gap-2"
         >
-          <FaEnvelope />
+          <MailIcon className="w-4 h-4" />
           <span className="hidden md:block">Forgot Password</span>
         </Link>
       ),
@@ -85,7 +84,7 @@ const WebHeader: FC<IWebHeaderProps> = (props) => {
           href={kAppRootPaths.docs}
           className="w-full inline-flex items-center gap-2"
         >
-          <FaBook />
+          <BookTextIcon className="w-4 h-4" />
           <span className="hidden md:block">Docs</span>
         </Link>
       ),

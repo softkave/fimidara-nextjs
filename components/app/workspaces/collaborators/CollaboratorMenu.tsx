@@ -32,7 +32,7 @@ const CollaboratorMenu: React.FC<CollaboratorMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceCollaboratorDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Collaborator removed" });
+      toast({ title: "Collaborator removed" });
       onCompleteRemove();
     },
     onError(error, params) {

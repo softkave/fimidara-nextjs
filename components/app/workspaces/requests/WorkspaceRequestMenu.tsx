@@ -32,7 +32,7 @@ const WorkspaceRequestMenu: React.FC<IWorkspaceRequestMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceCollaborationRequestDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Collaboration request scheduled for deletion" });
+      toast({ title: "Collaboration request scheduled for deletion" });
       onCompleteDeleteRequest();
     },
     onError(e, params) {

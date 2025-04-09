@@ -60,12 +60,12 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Workspace updated" });
+      toast({ title: "Workspace updated" });
     },
   });
   const createHook = useWorkspaceAddMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Workspace created" });
+      toast({ title: "Workspace created" });
       router.push(kAppWorkspacePaths.folderList(data.workspace.resourceId));
     },
   });

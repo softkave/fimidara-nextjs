@@ -11,9 +11,6 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const baseNextConfig = {
-  experimental: {
-    instrumentationHook: true,
-  },
   reactStrictMode: true,
   pageExtensions: ["md", "mdx", "mdoc", "js", "jsx", "ts", "tsx"],
   redirects() {
@@ -61,7 +58,6 @@ const baseNextConfig = {
     "rc-table",
     "geist",
   ],
-  swcMinify: true,
 };
 
 const nextConfig = withPlugins(

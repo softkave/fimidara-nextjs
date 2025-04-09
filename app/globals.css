@@ -98,14 +98,14 @@
   color: hsl(var(--muted-foreground));
 }
 
-body {
+/* body {
   font-family: var(--font-default), -apple-system, BlinkMacSystemFont,
     "Work Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
-  /* font-weight: normal;
-  -webkit-font-smoothing: antialiased; */
-}
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+} */
 
 body * {
   box-sizing: border-box;

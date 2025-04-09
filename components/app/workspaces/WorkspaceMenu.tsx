@@ -35,7 +35,7 @@ const WorkspaceMenu: FC<WorkspaceMenuProps> = (props) => {
   const onSelectMenuItem = (key: string) => {
     if (key === MenuKeys.DeleteWorkspace) {
       toast({
-        description: "Are you sure you want to delete this workspace?",
+        title: "Are you sure you want to delete this workspace?",
         action: (
           <ToastAction altText="Yes" onClick={noop}>
             Yes

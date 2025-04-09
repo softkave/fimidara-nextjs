@@ -65,7 +65,7 @@ const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
   return (
     <Sheet open={isOpen} onOpenChange={toggleOpen}>
       <SheetContent
-        className={cn("sm:w-[500px] p-4", className)}
+        className={cn("sm:w-full sm:max-w-[420px] p-4", className)}
         style={style}
         side={side}
       >

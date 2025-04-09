@@ -1,7 +1,7 @@
 import { signIn } from "@/auth";
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { FaGoogle } from "react-icons/fa";
+import { TbBrandGoogleFilled } from "react-icons/tb";
 import { Button } from "../ui/button.tsx";
 import { cn } from "../utils.ts";
 
@@ -28,9 +28,9 @@ export default function GoogleSignInServer({
       <Button
         type="submit"
         variant="outline"
-        className={cn(className, "space-x-2")}
+        className={cn(className, "space-x-2 font-normal")}
       >
-        <FaGoogle />
+        <TbBrandGoogleFilled className="w-4 h-4" />
         <span className="hidden md:block">Sign-in with Google</span>
       </Button>
     </form>

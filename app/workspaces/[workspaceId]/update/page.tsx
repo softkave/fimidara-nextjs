@@ -6,11 +6,12 @@ import WorkspaceForm from "@/components/app/workspaces/WorkspaceForm";
 import { IWorkspaceComponentProps } from "@/components/app/workspaces/utils";
 import { Separator } from "@/components/ui/separator.tsx";
 import { NextPage } from "next";
+import { use } from "react";
 
 interface IEditWorkspacePageProps extends IWorkspaceComponentProps {}
 
 const EditWorkspacePage: NextPage<IEditWorkspacePageProps> = (props) => {
-  const { workspaceId } = props.params;
+  const { workspaceId } = use(props.params);
   return (
     <WorkspaceContainer
       workspaceId={workspaceId}

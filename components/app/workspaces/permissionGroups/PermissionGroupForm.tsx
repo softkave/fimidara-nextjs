@@ -54,7 +54,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   const router = useRouter();
   const updateHook = useWorkspacePermissionGroupUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Permission group updated" });
+      toast({ title: "Permission group updated" });
       router.push(
         kAppWorkspacePaths.permissionGroup(
           data.permissionGroup.workspaceId,
@@ -65,7 +65,7 @@ export default function PermissionGroupForm(props: IPermissionGroupFormProps) {
   });
   const createHook = useWorkspacePermissionGroupAddMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Permission group created" });
+      toast({ title: "Permission group created" });
       router.push(
         kAppWorkspacePaths.permissionGroup(
           data.permissionGroup.workspaceId,

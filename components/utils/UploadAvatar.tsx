@@ -69,6 +69,7 @@ const UploadAvatar: React.FC<IUploadAvatarProps> = (props) => {
       setLoading(true);
     } else if (info.file.status === "done") {
       toast({
+        title: "Uploaded image successfully",
         description: (
           <span>
             {customMessages.successful}.{" "}

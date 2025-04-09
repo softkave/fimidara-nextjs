@@ -83,7 +83,7 @@ const TargetGrantPermissionForm: FC<TargetGrantPermissionFormProps> = (
     ]);
 
     if (addItems.length || deleteItems.length) {
-      toast({ description: "Permissions updated" });
+      toast({ title: "Permissions updated" });
     }
 
     // Close first, to prevent a refetch of resolved permissions in this

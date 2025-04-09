@@ -32,7 +32,7 @@ const AgentTokenMenu: React.FC<AgentTokenMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceAgentTokenDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Agent token scheduled for deletion" });
+      toast({ title: "Agent token scheduled for deletion" });
       onCompleteDelete();
     },
     onError(error, params) {

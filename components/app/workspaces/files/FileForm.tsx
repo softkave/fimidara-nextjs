@@ -63,7 +63,7 @@ export default function FileForm(props: FileFormProps) {
   const progressHandlerHook = useTransferProgressHandler();
   const updateHook = useWorkspaceFileUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ description: "File updated" });
+      toast({ title: "File updated" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.file.resourceId)
       // );
@@ -71,7 +71,7 @@ export default function FileForm(props: FileFormProps) {
   });
   const uploadHook = useWorkspaceFileUploadMutationHook({
     onSuccess(data, params) {
-      toast({ description: "File uploaded" });
+      toast({ title: "File uploaded" });
       // router.push(
       //   appWorkspacePaths.file(workspaceId, data.file.resourceId)
       // );

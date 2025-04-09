@@ -59,7 +59,7 @@ export default function RequestForm(props: IRequestFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceCollaborationRequestUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Collaboration request updated" });
+      toast({ title: "Collaboration request updated" });
       router.push(
         kAppWorkspacePaths.request(
           data.request.workspaceId,
@@ -70,7 +70,7 @@ export default function RequestForm(props: IRequestFormProps) {
   });
   const createHook = useWorkspaceCollaborationRequestAddMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Collaboration request created" });
+      toast({ title: "Collaboration request created" });
       router.push(
         kAppWorkspacePaths.request(
           data.request.workspaceId,

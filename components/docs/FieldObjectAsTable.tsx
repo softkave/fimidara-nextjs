@@ -40,11 +40,12 @@ const FieldObjectAsTable: React.FC<FieldObjectAsTableProps> = (props) => {
   const objectsToProcess = useContainedFieldObjects({ fieldObject });
   const nodes = React.useMemo(() => {
     const nodes: React.ReactNode[] = [];
-    objectsToProcess.forEach((nextObject) => {
+    objectsToProcess.forEach((nextObject, index) => {
       nodes.push(
         renderFieldObjectAsTable(
           nextObject,
           isForJsSdk ?? false,
+          index,
           nextObject === fieldObject ? propName : undefined
         )
       );
@@ -137,6 +138,7 @@ export function renderTableFieldType(
 function renderFieldObjectAsTable(
   nextObject: FieldObject,
   isForJsSdk: boolean,
+  index: number | string | undefined,
   propName?: string
 ) {
   const rows = map(
@@ -193,7 +195,7 @@ function renderFieldObjectAsTable(
   ];
 
   return (
-    <div>
+    <div key={nextObject.name || index}>
       <div className="space-x-2 flex mb-4">
         {propName && <code>{propName}</code>}
         {nextObject.name && (

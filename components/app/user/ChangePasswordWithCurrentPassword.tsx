@@ -36,7 +36,7 @@ export default function ChangePasswordWithCurrentPassword() {
   const changePasswordHook =
     useUserChangePasswordWithCurrentPasswordMutationHook({
       onSuccess(data, params) {
-        toast({ description: "Password changed" });
+        toast({ title: "Password changed" });
       },
     });
 

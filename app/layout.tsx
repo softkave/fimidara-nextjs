@@ -1,20 +1,18 @@
 import { Toaster } from "@/components/ui/toaster.tsx";
 import { cn } from "@/components/utils.ts";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
-import { Source_Code_Pro } from "next/font/google";
+import { Source_Code_Pro, Space_Grotesk } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
-// const geistSans = GeistSans({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-sans",
+  subsets: ["latin"],
+});
 
-// const geistMono = GeistMono({
-//   variable: "--font-geist-mono",
+// const geistSans = Geist({
+//   variable: "--font-sans",
 //   subsets: ["latin"],
 // });
 
@@ -38,8 +36,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          GeistSans.variable,
-          GeistMono.variable,
+          spaceGrotesk.variable,
           codeFont.variable,
           "flex",
           "flex-col"

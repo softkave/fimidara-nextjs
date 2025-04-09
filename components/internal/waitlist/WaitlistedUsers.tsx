@@ -27,7 +27,7 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
   const selectedHook = useSelectList();
   const upgradeHook = useWaitlistedUsersUpgradeMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Waitlisted users upgraded" });
+      toast({ title: "Waitlisted users upgraded" });
       clearFetchState();
       selectedHook.clear();
     },

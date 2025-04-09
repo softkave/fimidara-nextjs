@@ -45,6 +45,7 @@ export function errorMessageNotificatition(
     enrichErrorMessage(error) || defaultMessage || messages.requestError;
   toast({
     variant: "destructive",
+    title: "Error occurred",
     description: String(errorMessage),
     duration: appComponentConstants.messageDuration,
   });

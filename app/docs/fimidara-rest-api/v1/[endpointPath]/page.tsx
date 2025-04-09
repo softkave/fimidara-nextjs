@@ -9,13 +9,13 @@ import { promises } from "fs";
 import { last } from "lodash-es";
 
 interface FimidaraRestApiEndpointDocPageProps {
-  params: { endpointPath: string };
+  params: Promise<{ endpointPath: string }>;
 }
 
 const FimidaraRestApiEndpointDocPage = async (
   props: FimidaraRestApiEndpointDocPageProps
 ) => {
-  const { endpointPath } = props.params;
+  const { endpointPath } = await props.params;
   const endpoint = await useEndpointInfo(endpointPath);
 
   if (!endpoint) {

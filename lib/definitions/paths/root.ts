@@ -5,3 +5,4 @@ export const kAppRootPaths = {
 };
 
 export const kDefaultReturnToQueryKey = "returnTo";
+export const kDefaultRedirectingQueryKey = "redirecting";

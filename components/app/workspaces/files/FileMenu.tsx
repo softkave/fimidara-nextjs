@@ -39,7 +39,7 @@ const FileMenu: FC<FileMenuProps> = (props) => {
   });
   const deleteHook = useWorkspaceFileDeleteMutationHook({
     onSuccess(data, params) {
-      toast({ description: "File scheduled for deletion" });
+      toast({ title: "File scheduled for deletion" });
       onScheduleDeleteSuccess();
     },
     onError(error, params) {

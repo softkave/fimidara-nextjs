@@ -3,6 +3,7 @@
 import { toast } from "@/hooks/use-toast.ts";
 import { callRmCookieEndpoint } from "@/lib/api/account/rm-cookie.ts";
 import { kAppAccountPaths } from "@/lib/definitions/paths/account.ts";
+import { kDefaultRedirectingQueryKey } from "@/lib/definitions/paths/root.ts";
 import { useLogout } from "@/lib/hooks/session/useLogout.ts";
 import { useSessionStore } from "@/lib/hooks/session/useSessionStore";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
@@ -29,6 +30,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
 
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = new URLSearchParams(window.location.search);
   const { isLogoutRequested, routeToOnLogout, set } = useSessionStore();
   const { isLoggedIn } = useUserLoggedIn();
   const { logout } = useLogout();
@@ -36,24 +38,30 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
     state: isLoggedIn,
     maxHistorySize: 2,
   });
-  const isRedirectingToLogin = useRef(false);
 
+  const isRedirecting =
+    searchParams.get(kDefaultRedirectingQueryKey) === "true";
+  const setRef = useRef(set);
   useEffect(() => {
-    if (isLogoutRequested) {
-      const toastControl = toast({
-        description: "Logging out...",
-      });
-
+    if (isLogoutRequested && !isRedirecting) {
+      const toastControl = toast({ title: "Logging out..." });
       callRmCookieEndpoint()
         .catch(console.error.bind(console))
         .finally(() => toastControl.dismiss())
         .then(() => {
           logout();
-          set({ isLogoutRequested: false, routeToOnLogout: undefined });
-          signOut({ redirectTo: routeToOnLogout || kAppAccountPaths.login });
+          setRef.current({
+            isLogoutRequested: false,
+            routeToOnLogout: undefined,
+          });
+          signOut({
+            redirectTo: kAppAccountPaths.appendRedirectingQueryKey(
+              routeToOnLogout || kAppAccountPaths.login
+            ),
+          });
         });
     }
-  }, [isLogoutRequested, logout, set, routeToOnLogout]);
+  }, [isLogoutRequested, logout, routeToOnLogout, pathname, isRedirecting]);
 
   useEffect(() => {
     // Only transition to login if logged in state is newly decided to be false,
@@ -61,14 +69,20 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
     if (
       isNil(trackedLoggedIn.previousState) &&
       trackedLoggedIn.state === false &&
-      !isRedirectingToLogin.current
+      !isRedirecting
     ) {
-      isRedirectingToLogin.current = true;
       const returnToPath = returnTo || pathname;
       const loginPath = kAppAccountPaths.loginWithReturnPath(returnToPath);
-
       if (!pathname.includes(kAppAccountPaths.login)) {
-        router.push(loginPath);
+        const toastControl = toast({ title: "Logging out..." });
+        callRmCookieEndpoint()
+          .catch(console.error.bind(console))
+          .finally(() => toastControl.dismiss())
+          .then(() => {
+            const finalLoginPath =
+              kAppAccountPaths.appendRedirectingQueryKey(loginPath);
+            router.push(finalLoginPath);
+          });
       }
     }
   }, [
@@ -77,6 +91,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
     returnTo,
     pathname,
     router,
+    isRedirecting,
   ]);
 
   if (isLoggedIn === undefined) {

@@ -65,7 +65,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
   const router = useRouter();
   const updateHook = useWorkspaceAgentTokenUpdateMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Agent token updated" });
+      toast({ title: "Agent token updated" });
       router.push(
         kAppWorkspacePaths.agentToken(
           data.token.workspaceId,
@@ -76,7 +76,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
   });
   const createHook = useWorkspaceAgentTokenAddMutationHook({
     onSuccess(data, params) {
-      toast({ description: "Agent token created" });
+      toast({ title: "Agent token created" });
       router.push(
         kAppWorkspacePaths.agentToken(
           data.token.workspaceId,

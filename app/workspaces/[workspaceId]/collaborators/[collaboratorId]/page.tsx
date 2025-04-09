@@ -1,16 +1,16 @@
 "use client";
 
 import CollaboratorComponent from "@/components/app/workspaces/collaborators/CollaboratorComponent";
-import React from "react";
+import React, { use } from "react";
 
 export type IWorkspaceCollaboratorPageProps = {
-  params: { workspaceId: string; collaboratorId: string };
+  params: Promise<{ workspaceId: string; collaboratorId: string }>;
 };
 
 const WorkspaceCollaboratorPage: React.FC<IWorkspaceCollaboratorPageProps> = (
   props
 ) => {
-  const { workspaceId, collaboratorId } = props.params;
+  const { collaboratorId, workspaceId } = use(props.params);
   return (
     <CollaboratorComponent
       collaboratorId={collaboratorId}

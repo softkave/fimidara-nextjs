@@ -1,7 +1,7 @@
 import { fileValidationParts } from "@/lib/validation/file";
 
 export type IWorkspaceComponentProps = {
-  params: { workspaceId: string };
+  params: Promise<{ workspaceId: string }>;
 };
 
 const withinNameSymbolsRegex = /[']/;
