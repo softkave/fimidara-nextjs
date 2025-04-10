@@ -9,7 +9,7 @@ import { useSessionStore } from "@/lib/hooks/session/useSessionStore";
 import { useUserLoggedIn } from "@/lib/hooks/session/useUserLoggedIn.ts";
 import { isNil } from "lodash-es";
 import { signOut } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ReactElement, useEffect, useRef } from "react";
 import { useStateHistory } from "./useStateHistory.tsx";
 
@@ -30,7 +30,7 @@ export const usePageAuthRequired = (options: WithPageAuthRequiredOptions) => {
 
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = useSearchParams();
   const { isLogoutRequested, routeToOnLogout, set } = useSessionStore();
   const { isLoggedIn } = useUserLoggedIn();
   const { logout } = useLogout();
