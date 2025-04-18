@@ -51,7 +51,7 @@ export function AgentTokenJWTToken(props: IAgentTokenJWTTokenProps) {
           <ObfuscateText
             text={token.jwtToken || ""}
             canCopy
-            defaultText={"Not Generated"}
+            defaultText={"Click Generate Token to generate a JWT token"}
           />
         }
       />
@@ -62,7 +62,7 @@ export function AgentTokenJWTToken(props: IAgentTokenJWTTokenProps) {
           <ObfuscateText
             text={token.refreshToken || ""}
             canCopy
-            defaultText={"Not Generated"}
+            defaultText={"Click Generate Token to generate a JWT refresh token"}
           />
         }
       />
