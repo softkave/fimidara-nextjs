@@ -24,7 +24,7 @@ const WorkspaceCollaborators: React.FC<IWorkspaceCollaboratorsProps> = (
   const formHook = useCollaborationRequestForm({ workspaceId });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <ListHeader
         label="Collaborators"
         buttons={

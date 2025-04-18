@@ -99,7 +99,7 @@ const WaitlistedUsers: React.FC<{}> = (props) => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <ListHeader label="Waitlisted Users" secondaryControls={controlsNode} />
       <PaginatedContent content={content} />
     </div>

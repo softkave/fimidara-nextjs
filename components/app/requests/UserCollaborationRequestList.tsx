@@ -63,7 +63,7 @@ export default function UserCollaborationRequestList() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <ListHeader label="Your Collaboration Requests" />
       <PaginatedContent
         content={contentNode}

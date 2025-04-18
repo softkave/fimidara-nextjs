@@ -54,7 +54,7 @@ const FieldObjectAsTable: React.FC<FieldObjectAsTableProps> = (props) => {
     return nodes;
   }, [objectsToProcess, fieldObject, isForJsSdk, propName]);
 
-  return <div className="space-y-8">{nodes}</div>;
+  return <div className="space-y-4">{nodes}</div>;
 };
 
 export default FieldObjectAsTable;

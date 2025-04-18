@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator";
 import ComponentHeader from "@/components/utils/ComponentHeader";
 import LabeledNode from "@/components/utils/LabeledNode";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
@@ -6,6 +7,7 @@ import { AgentToken } from "fimidara";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
+import { AgentTokenJWTToken } from "./AgentTokenJWTToken";
 import AgentTokenMenu from "./AgentTokenMenu";
 
 export interface IAgentTokenProps {
@@ -77,6 +79,9 @@ function AgentTokenComponent(props: IAgentTokenProps) {
           node={<p className="line-clamp-2">{resource.description}</p>}
         />
       )}
+      <Separator />
+      <AgentTokenJWTToken token={resource} />
+      <Separator />
       <AssignedPermissionGroupList
         entityId={resource.resourceId}
         workspaceId={resource.workspaceId}

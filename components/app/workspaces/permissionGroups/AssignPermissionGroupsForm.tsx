@@ -142,10 +142,10 @@ export default function AssignPermissionGroupsForm(
 
   const mainNode = (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormAlert error={mergedHook.error} />
         {permissionGroupsNode}
-        <div className="my-4">
+        <div className="!mt-4">
           <Button type="submit" loading={mergedHook.loading}>
             Update
           </Button>
@@ -156,10 +156,10 @@ export default function AssignPermissionGroupsForm(
 
   return (
     <Sheet open onOpenChange={onClose}>
-      <SheetContent className="sm:w-[500px] p-0">
-        <ScrollArea className="p-6 h-full overflow-y-auto">
-          <SheetTitle>Assign Permission Groups</SheetTitle>
-          <div className="pt-6 space-y-8">{mainNode}</div>
+      <SheetContent className="w-full max-w-[420px] p-0">
+        <ScrollArea className="h-full overflow-y-auto">
+          <SheetTitle className="p-6">Assign Permission Groups</SheetTitle>
+          <div className="p-6 pt-0">{mainNode}</div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

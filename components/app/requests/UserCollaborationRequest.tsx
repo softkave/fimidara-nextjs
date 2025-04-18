@@ -107,7 +107,7 @@ function UserCollaborationRequest(props: IUserCollaborationRequestProps) {
 
       return (
         <div className={classes.main}>
-          <div className="space-y-8">
+          <div className="space-y-4">
             <div className="space-y-0.5">
               <h4>Collaboration Request from {resource.workspaceName}</h4>
               <span className="text-secondary">Sent {createdDate}</span>

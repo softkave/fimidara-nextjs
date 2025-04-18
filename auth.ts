@@ -16,7 +16,7 @@ if (!internalAuthSecret) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  debug: true,
+  // debug: true,
   providers: [
     Google({
       allowDangerousEmailAccountLinking: true,

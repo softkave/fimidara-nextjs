@@ -213,14 +213,14 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-8", className)}
+        className={cn("space-y-4", className)}
         style={style}
       >
         <FormAlert error={stateHook.error} />
         {nameNode}
         {rootnameNode}
         {descriptionNode}
-        <div className="my-4">
+        <div className="!mt-4">
           <Button type="submit" loading={stateHook.loading}>
             {workspace ? "Update Workspace" : "Create Workspace"}
           </Button>

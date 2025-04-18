@@ -170,12 +170,12 @@ export default function UserProfile(props: IUserProfileProps) {
     <div className={styles.formBody}>
       <div className={cn(styles.formContentWrapper, "py-4")}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormAlert error={updateUserHook.error} />
             {firstNameNode}
             {lastNameNode}
             {emailNode}
-            <div className="my-4">
+            <div className="!mt-4">
               <Button type="submit" loading={updateUserHook.loading}>
                 Update Profile
               </Button>

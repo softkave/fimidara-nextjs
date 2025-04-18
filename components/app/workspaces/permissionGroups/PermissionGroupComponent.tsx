@@ -3,6 +3,7 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useWorkspacePermissionGroupFetchHook } from "@/lib/hooks/fetchHooks/permissionGroup.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { formatDateTime } from "@/lib/utils/dateFns";
@@ -10,10 +11,9 @@ import { getBaseError } from "@/lib/utils/errors";
 import assert from "assert";
 import { noop } from "lodash-es";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import AssignedPermissionGroupList from "./AssignedPermissionGroupList";
 import PermissionGroupMenu from "./PermissionGroupMenu";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { useCallback } from "react";
 
 export interface PermissionGroupComponentProps {
   permissionGroupId: string;
@@ -36,7 +36,7 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
   if (resource) {
     return (
       <div>
-        <div className="space-y-8">
+        <div className="space-y-4">
           <ComponentHeader title={resource.name}>
             <PermissionGroupMenu
               permissionGroup={resource}

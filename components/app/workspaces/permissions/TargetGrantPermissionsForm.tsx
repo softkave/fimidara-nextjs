@@ -187,9 +187,9 @@ const TargetGrantPermissionForm: FC<TargetGrantPermissionFormProps> = (
 
   return (
     <Sheet open onOpenChange={onClose}>
-      <SheetTitle>Update Permissions</SheetTitle>
-      <SheetContent className="sm:w-[500px]">
-        <div className="pt-6 space-y-8">
+      <SheetTitle className="p-6">Update Permissions</SheetTitle>
+      <SheetContent className="w-full max-w-[420px] p-0">
+        <div className="p-6 pt-0">
           {errorNode}
           {tabsNode}
           <div>

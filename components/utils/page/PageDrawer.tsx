@@ -65,12 +65,12 @@ const PageDrawer: ForwardRefRenderFunction<IPageDrawerRef, IPageDrawerProps> = (
   return (
     <Sheet open={isOpen} onOpenChange={toggleOpen}>
       <SheetContent
-        className={cn("sm:w-full sm:max-w-[420px] p-4", className)}
+        className={cn("w-full max-w-[420px] p-0", className)}
         style={style}
         side={side}
       >
-        <SheetTitle className={titleClassName}>{title}</SheetTitle>
-        <div className={cn("pt-4 space-y-8", contentClassName)}>{children}</div>
+        <SheetTitle className={cn("p-6", titleClassName)}>{title}</SheetTitle>
+        <div className={cn("p-6 pt-0", contentClassName)}>{children}</div>
       </SheetContent>
     </Sheet>
   );

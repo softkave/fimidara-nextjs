@@ -101,13 +101,13 @@ const WorkspaceList: FC<IWorkspaceListProps> = (props) => {
   const isNewWorkspaceForm = isBoolean(formOpen);
   const sNode = (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="sm:w-[420px]">
-        <SheetTitle>
+      <SheetContent className="w-full max-w-[420px] p-0">
+        <SheetTitle className="p-6">
           {isNewWorkspaceForm ? "New Workspace" : "Update Workspace"}
         </SheetTitle>
         <WorkspaceForm
           workspace={isBoolean(formOpen) ? undefined : formOpen}
-          className="mt-8"
+          className="p-6 pt-0"
         />
       </SheetContent>
     </Sheet>

@@ -35,7 +35,8 @@ export function DatePicker(props: IDatePickerProps) {
           variant={"outline"}
           className={cn(
             "w-[280px] justify-start text-left font-normal",
-            !value && "text-muted-foreground"
+            !value && "text-muted-foreground",
+            className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />

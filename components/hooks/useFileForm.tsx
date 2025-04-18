@@ -16,11 +16,11 @@ export function useFileForm(props: {
   const isNewResourceForm = isBoolean(formOpen);
   const node = (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="sm:w-[500px] p-0">
+      <SheetContent className="w-full max-w-[420px] p-0">
         <div className="h-full max-h-full">
-          <ScrollArea className="h-full overflow-y-auto p-6">
+          <ScrollArea className="h-full overflow-y-auto">
             <SheetHeader>
-              <SheetTitle>
+              <SheetTitle className="p-6">
                 {isNewResourceForm ? "New Files" : "Update File"}
               </SheetTitle>
             </SheetHeader>
@@ -28,7 +28,7 @@ export function useFileForm(props: {
               workspaceRootname={workspaceRootname}
               workspaceId={workspaceId}
               file={isBoolean(formOpen) ? undefined : formOpen}
-              className="mt-8"
+              className="p-6 pt-0"
               folderpath={folderpath}
             />
           </ScrollArea>

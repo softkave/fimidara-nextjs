@@ -13,8 +13,8 @@ export function useCollaborationRequestForm(props: { workspaceId: string }) {
   const isNewResourceForm = isBoolean(formOpen);
   const node = formOpen && (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="sm:w-[420px]">
-        <SheetTitle>
+      <SheetContent className="w-full max-w-[420px] p-0">
+        <SheetTitle className="p-6">
           {isNewResourceForm
             ? "New Collaboration Request"
             : "Update Collaboration Request"}
@@ -22,7 +22,7 @@ export function useCollaborationRequestForm(props: { workspaceId: string }) {
         <RequestForm
           workspaceId={workspaceId}
           request={isBoolean(formOpen) ? undefined : formOpen}
-          className="mt-8"
+          className="p-6 pt-0"
         />
       </SheetContent>
     </Sheet>

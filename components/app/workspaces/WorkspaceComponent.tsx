@@ -4,8 +4,8 @@ import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { formatDateTime } from "@/lib/utils/dateFns";
 import { Workspace } from "fimidara";
 import { useRouter } from "next/navigation";
-import WorkspaceMenu from "./WorkspaceMenu.tsx";
 import { useCallback } from "react";
+import WorkspaceMenu from "./WorkspaceMenu.tsx";
 
 export interface WorkspaceComponentProps {
   workspace: Workspace;
@@ -20,7 +20,7 @@ function WorkspaceComponent(props: WorkspaceComponentProps) {
 
   return (
     <div>
-      <div className="space-y-8">
+      <div className="space-y-4">
         <ComponentHeader title={resource.name || resource.resourceId}>
           <WorkspaceMenu
             workspace={resource}

@@ -157,7 +157,7 @@ function FolderChildren(props: FolderChildrenProps) {
           router.push(kAppWorkspacePaths.folder(workspaceId, folder?.parentId));
         }}
       />
-      <div className="space-y-8">
+      <div className="space-y-4">
         <FolderParentLink workspaceId={workspaceId} folder={folder}>
           <span style={{ fontSize: "24px" }}>..</span>
         </FolderParentLink>

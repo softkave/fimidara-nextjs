@@ -25,7 +25,7 @@ const WorkspacePermissionGroups: React.FC<IWorkspacePermissionGroupsProps> = (
 
   return (
     <div>
-      <div className="space-y-8">
+      <div className="space-y-4">
         <ListHeader
           label="Permission Groups"
           buttons={

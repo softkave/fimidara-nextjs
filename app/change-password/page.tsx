@@ -104,13 +104,13 @@ export default function ChangePasswordWithToken(
     <div className={styles.formBody}>
       <div className={cn(styles.formContentWrapper, "p-4")}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="mb-4">
               <h2 className="text-xl">Change Password</h2>
             </div>
             <FormAlert error={changePasswordHook.error} />
             {passwordNode}
-            <div className="my-4">
+            <div className="!mt-4">
               <Button type="submit" loading={changePasswordHook.loading}>
                 Change Password
               </Button>

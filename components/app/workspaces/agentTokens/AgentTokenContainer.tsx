@@ -25,11 +25,11 @@ const AgentTokenContainer: React.FC<IAgentTokenContainerProps> = (
   } else if (error) {
     return (
       <PageError
-        message={getBaseError(error) || "Error fetching agent assigned token"}
+        message={getBaseError(error) || "Error fetching agent token"}
       />
     );
   } else if (isLoading) {
-    return <PageLoading message="Loading agent assigned token..." />;
+    return <PageLoading message="Loading agent token..." />;
   } else {
     return <PageNothingFound message="Agent token not found" />;
   }

@@ -16,16 +16,16 @@ export function useFolderForm(props: {
   const isNewResourceForm = isBoolean(formOpen);
   const node = formOpen && (
     <Sheet open={!!formOpen} onOpenChange={setFormOpen}>
-      <SheetContent className="sm:w-[500px] p-0">
-        <ScrollArea className="p-6 h-full overflow-y-auto">
-          <SheetTitle>
+      <SheetContent className="w-full max-w-[420px] p-0">
+        <ScrollArea className="h-full overflow-y-auto">
+          <SheetTitle className="p-6">
             {isNewResourceForm ? "New Folder" : "Update Folder"}
           </SheetTitle>
           <FolderForm
             workspaceRootname={workspaceRootname}
             workspaceId={workspaceId}
             folder={isBoolean(formOpen) ? undefined : formOpen}
-            className="mt-8"
+            className="p-6 pt-0"
             parentPath={folderpath}
           />
         </ScrollArea>

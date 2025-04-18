@@ -410,7 +410,7 @@ export default function FolderForm(props: FolderFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-8", className)}
+        className={cn("space-y-4", className)}
       >
         <FormAlert error={hookError} />
         {parentPath && <p>{parentPath}/</p>}
@@ -421,7 +421,7 @@ export default function FolderForm(props: FolderFormProps) {
         <FilesFormUploadProgress
           identifiers={progressHandlerHook.identifiers}
         />
-        <div className="my-4">
+        <div className="!mt-4">
           <Button type="submit" loading={hookLoading}>
             Submit
           </Button>

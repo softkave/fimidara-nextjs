@@ -178,14 +178,14 @@ export default function FileForm(props: FileFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-8 max-w-full", className)}
+        className={cn("space-y-4 max-w-full", className)}
       >
         <FormAlert error={error} />
         {contentNode}
         <FilesFormUploadProgress
           identifiers={progressHandlerHook.identifiers}
         />
-        <div className="my-4">
+        <div className="!mt-4">
           <Button type="submit" loading={loading}>
             {file ? "Update File" : "Upload File"}
           </Button>

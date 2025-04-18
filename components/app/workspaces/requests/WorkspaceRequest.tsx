@@ -5,8 +5,8 @@ import { formatDateTime } from "@/lib/utils/dateFns";
 import assert from "assert";
 import { CollaborationRequestForWorkspace } from "fimidara";
 import { useRouter } from "next/navigation";
-import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 import { useCallback } from "react";
+import WorkspaceRequestMenu from "./WorkspaceRequestMenu";
 
 export interface IWorkspaceRequestProps {
   request: CollaborationRequestForWorkspace;
@@ -23,7 +23,7 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
 
   return (
     <div>
-      <div className="space-y-8">
+      <div className="space-y-4">
         <ComponentHeader title={resource.recipientEmail}>
           <WorkspaceRequestMenu
             request={resource}

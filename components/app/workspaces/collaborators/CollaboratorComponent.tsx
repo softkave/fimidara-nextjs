@@ -3,15 +3,15 @@ import LabeledNode from "@/components/utils/LabeledNode";
 import PageError from "@/components/utils/page/PageError";
 import PageLoading from "@/components/utils/page/PageLoading";
 import PageNothingFound from "@/components/utils/page/PageNothingFound";
+import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useWorkspaceCollaboratorFetchHook } from "@/lib/hooks/fetchHooks/workspaceCollaborator.ts";
 import { useFetchSingleResourceFetchState } from "@/lib/hooks/fetchHookUtils";
 import { getBaseError } from "@/lib/utils/errors";
 import { Collaborator } from "fimidara";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import AssignedPermissionGroupList from "../permissionGroups/AssignedPermissionGroupList";
 import CollaboratorMenu from "./CollaboratorMenu";
-import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { useCallback } from "react";
 
 export interface CollaboratorComponentProps {
   workspaceId: string;
@@ -35,7 +35,7 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
   if (resource) {
     return (
       <div>
-        <div className="space-y-8">
+        <div className="space-y-4">
           <ComponentHeader title={resource.firstName + " " + resource.lastName}>
             <CollaboratorMenu
               workspaceId={workspaceId}

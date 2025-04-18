@@ -64,7 +64,7 @@ export function SideNav(props: ISideNavProps) {
         className="px-0 grid grid-rows-[auto_1fr] gap-0"
         titleClassName="px-4"
         side="left"
-        contentClassName="overflow-hidden"
+        contentClassName="overflow-hidden p-0"
       >
         <ScrollArea className="h-full">{menuNode}</ScrollArea>
       </PageDrawer>

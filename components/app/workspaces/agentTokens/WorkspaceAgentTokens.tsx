@@ -22,7 +22,7 @@ const WorkspaceAgentTokens: FC<IWorkspaceAgentTokensProps> = (props) => {
   const formHook = useAgentTokenForm({ workspaceId });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <ListHeader
         label="Agent Tokens"
         buttons={

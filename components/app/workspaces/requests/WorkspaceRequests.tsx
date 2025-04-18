@@ -55,7 +55,7 @@ const WorkspaceRequests: React.FC<IWorkspaceRequestsProps> = (props) => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <ListHeader
         label="Collaboration Requests"
         buttons={

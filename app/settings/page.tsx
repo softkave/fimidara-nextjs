@@ -10,7 +10,7 @@ function UserSettings() {
   return (
     <UserContainer
       render={(session) => (
-        <div className="space-y-8">
+        <div className="space-y-4">
           <h4>Email Verification</h4>
           <EmailVerification session={session} />
           <Separator />

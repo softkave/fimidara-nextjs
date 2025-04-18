@@ -114,6 +114,28 @@ export const useWorkspaceAgentTokenUpdateMutationHook =
     }
   );
 
+export const useWorkspaceAgentTokenEncodeTokenMutationHook =
+  makeEndpointMutationHook(
+    getPublicFimidaraEndpointsUsingUserToken,
+    (endpoints) => endpoints.agentTokens.encodeToken,
+    (data, params) => {
+      const body = params[0];
+      let tokenId = body?.tokenId;
+
+      if (tokenId) {
+        const token = useWorkspaceAgentTokensStore.getState().get(tokenId);
+        if (token) {
+          useWorkspaceAgentTokensStore.getState().set(tokenId, {
+            ...token,
+            jwtToken: data.jwtToken,
+            refreshToken: data.refreshToken,
+            jwtTokenExpiresAt: data.jwtTokenExpiresAt,
+          });
+        }
+      }
+    }
+  );
+
 export const useWorkspaceAgentTokenDeleteMutationHook =
   makeEndpointMutationHook(
     getPublicFimidaraEndpointsUsingUserToken,

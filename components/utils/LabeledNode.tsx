@@ -42,7 +42,7 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
 
   const internalLabel = label && colon ? `${label}: ` : label;
   const labelNode = label && (
-    <div className="text-secondary line-clamp-1">{internalLabel}</div>
+    <div className="font-medium line-clamp-1">{internalLabel}</div>
   );
 
   if (direction === "horizontal") {
@@ -54,7 +54,7 @@ const LabeledNode: React.FC<ILabeledNodeProps> = (props) => {
     );
   } else {
     return (
-      <div style={style} className={cn(className, "space-y-2 break-all")}>
+      <div style={style} className={cn(className, "space-y-1 break-all")}>
         {label && <div>{labelNode}</div>}
         <div>{internalNodeContent}</div>
       </div>

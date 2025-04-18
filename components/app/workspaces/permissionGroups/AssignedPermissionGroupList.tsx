@@ -137,7 +137,7 @@ const AssignedPermissionGroupList: FC<IAssignedPermissionGroupListProps> = (
 
   return (
     <Fragment>
-      <div className={cn(className, "space-y-8")} style={style}>
+      <div className={cn(className, "space-y-4")} style={style}>
         <ListHeader
           label="Assigned Permission Groups"
           buttons={
