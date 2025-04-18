@@ -25,6 +25,8 @@ export function CopyButton(props: ICopyButtonProps) {
     } else {
       navigator.clipboard.writeText(text);
     }
+
+    setIsCopied(true);
   }, [text]);
 
   return (
