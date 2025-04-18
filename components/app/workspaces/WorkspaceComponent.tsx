@@ -20,7 +20,7 @@ function WorkspaceComponent(props: WorkspaceComponentProps) {
 
   return (
     <div>
-      <div className="space-y-4">
+      <div className="space-y-8">
         <ComponentHeader title={resource.name || resource.resourceId}>
           <WorkspaceMenu
             workspace={resource}

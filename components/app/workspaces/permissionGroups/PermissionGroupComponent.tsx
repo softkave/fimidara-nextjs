@@ -36,7 +36,7 @@ function PermissionGroupComponent(props: PermissionGroupComponentProps) {
   if (resource) {
     return (
       <div>
-        <div className="space-y-4">
+        <div className="space-y-8">
           <ComponentHeader title={resource.name}>
             <PermissionGroupMenu
               permissionGroup={resource}

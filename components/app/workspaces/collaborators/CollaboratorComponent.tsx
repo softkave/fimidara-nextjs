@@ -35,7 +35,7 @@ function CollaboratorComponent(props: CollaboratorComponentProps) {
   if (resource) {
     return (
       <div>
-        <div className="space-y-4">
+        <div className="space-y-8">
           <ComponentHeader title={resource.firstName + " " + resource.lastName}>
             <CollaboratorMenu
               workspaceId={workspaceId}

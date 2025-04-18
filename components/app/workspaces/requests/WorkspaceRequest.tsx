@@ -23,7 +23,7 @@ function WorkspaceRequest(props: IWorkspaceRequestProps) {
 
   return (
     <div>
-      <div className="space-y-4">
+      <div className="space-y-8">
         <ComponentHeader title={resource.recipientEmail}>
           <WorkspaceRequestMenu
             request={resource}

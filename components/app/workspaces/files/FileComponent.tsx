@@ -22,7 +22,7 @@ function FileComponent(props: FileComponentProps) {
 
   return (
     <div>
-      <div className="space-y-4">
+      <div className="space-y-8">
         <ComponentHeader
           title={file.name + extension}
           prefixNode={
