@@ -233,7 +233,7 @@ export function SingleFileForm(props: SingleFileFormProps) {
   // TODO: should "uploading files progress" below open the progress drawer on
   // click?
   return (
-    <div className={cn(className, "space-y-4")} style={style}>
+    <div className={cn(className, "space-y-8")} style={style}>
       {nameNode}
       {descriptionNode}
       {selectFileNode}

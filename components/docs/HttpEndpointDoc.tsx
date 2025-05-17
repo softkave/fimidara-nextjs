@@ -37,7 +37,7 @@ const HttpEndpointDoc: React.FC<HttpEndpointDocProps> = (props) => {
   );
 
   return (
-    <div style={{ width: "100%" }} className={cn("space-y-6", classes.root)}>
+    <div style={{ width: "100%" }} className={cn("space-y-8", classes.root)}>
       <div>
         <h5 className="inline-block" style={{ margin: 0 }}>
           <code>{endpoint.basePathname}</code>

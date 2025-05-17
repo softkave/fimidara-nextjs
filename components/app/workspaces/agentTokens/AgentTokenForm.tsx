@@ -183,7 +183,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: agentToken
       ? getAgentTokenFormInputFromToken(agentToken)
-      : {},
+      : { shouldRefresh: false },
   });
 
   useFormHelpers(form, { errors: mergedHook.error });
@@ -401,7 +401,7 @@ export default function AgentTokenForm(props: IAgentTokenFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
+        className={cn("space-y-8", className)}
       >
         <FormAlert error={mergedHook.error} />
         {nameNode}

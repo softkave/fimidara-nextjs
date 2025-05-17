@@ -213,7 +213,7 @@ export default function WorkspaceForm(props: WorkspaceFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
+        className={cn("space-y-8", className)}
         style={style}
       >
         <FormAlert error={stateHook.error} />

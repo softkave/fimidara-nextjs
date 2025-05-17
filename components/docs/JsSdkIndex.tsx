@@ -87,7 +87,7 @@ const JsSdkIndex: React.FC<JsSdkIndexProps> = (props) => {
   );
 
   return (
-    <div className={cn("space-y-6", classes.root)}>
+    <div className={cn("space-y-8", classes.root)}>
       <h5 style={{ margin: "0px 0px 24px 0px" }}>fimidara JS SDK</h5>
       {fimidaraJsDescriptionNode}
       <Separator />

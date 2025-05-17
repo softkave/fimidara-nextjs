@@ -142,7 +142,7 @@ export default function AssignPermissionGroupsForm(
 
   const mainNode = (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormAlert error={mergedHook.error} />
         {permissionGroupsNode}
         <div className="!mt-4">

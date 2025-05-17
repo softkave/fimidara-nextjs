@@ -1,8 +1,3 @@
-.root {
-  display: flex;
-  padding: 16px;
-}
-
 .sideLinks {
   display: flex;
   flex: 1;

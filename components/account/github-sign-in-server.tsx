@@ -1,18 +1,24 @@
 import { signIn } from "@/auth";
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { cn } from "@/lib/utils.ts";
-import { VscGithub } from "react-icons/vsc";
+import { GithubIcon } from "../icons/github.tsx";
 import { Button } from "../ui/button.tsx";
+import { cn } from "../utils.ts";
 
 export interface IGitHubSignInServerProps {
   redirectTo?: string;
   className?: string;
+  buttonClassName?: string;
+  variant?: "default" | "outline";
+  showIcon?: boolean;
 }
 
 export default function GitHubSignInServer({
   redirectTo,
   className,
+  buttonClassName,
+  variant = "default",
+  showIcon = true,
 }: IGitHubSignInServerProps) {
   return (
     <form
@@ -24,14 +30,15 @@ export default function GitHubSignInServer({
           ),
         });
       }}
+      className={className}
     >
       <Button
         type="submit"
-        variant="outline"
-        className={cn(className, "space-x-2 font-normal")}
+        variant={variant}
+        className={cn("space-x-4 font-normal", buttonClassName)}
       >
-        <VscGithub className="w-4 h-4" />
-        <span className="hidden md:block">Sign-in with GitHub</span>
+        {showIcon && <GithubIcon className={"size-4"} />}
+        <span className="flex-1">Sign-in with GitHub</span>
       </Button>
     </form>
   );

@@ -12,7 +12,11 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <MaybeLayout isDocs={true} shouldRedirectToWorkspace={false}>
+    <MaybeLayout
+      isDocs={true}
+      shouldRedirectToWorkspace={false}
+      contentClassName="max-w-2xl"
+    >
       {children}
     </MaybeLayout>
   );

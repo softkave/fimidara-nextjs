@@ -4,13 +4,15 @@ import AppHeader from "../app/AppHeader.tsx";
 import FimidaraSideNav from "../app/FimidaraSideNav.tsx";
 import { usePageAuthRequired } from "../hooks/usePageAuthRequired.tsx";
 import { ScrollArea } from "../ui/scroll-area.tsx";
+import { cn } from "../utils.ts";
 
 export interface IAppLayoutProps {
   children?: React.ReactNode;
+  contentClassName?: string;
 }
 
 export const AppLayout = (props: IAppLayoutProps) => {
-  const { children } = props;
+  const { children, contentClassName } = props;
 
   return usePageAuthRequired({
     render() {
@@ -21,8 +23,10 @@ export const AppLayout = (props: IAppLayoutProps) => {
             <AppHeader />
             <ScrollArea>
               <div
-                style={{ maxWidth: "700px" }}
-                className="mx-auto p-4 flex-1 w-full"
+                className={cn(
+                  "mx-auto p-4 flex-1 w-full max-w-4xl",
+                  contentClassName
+                )}
               >
                 {children}
               </div>

@@ -42,7 +42,7 @@ export default function EmailVerification(props: EmailVerificationProps) {
     );
   } else {
     rootNode = (
-      <div className="space-y-4">
+      <div className="space-y-8">
         <span className="text-red-600">
           Your email address is not verified.
         </span>

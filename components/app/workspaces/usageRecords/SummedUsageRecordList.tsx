@@ -49,7 +49,7 @@ const SummedUsageRecordList: React.FC<ISummedUsageRecordListProps> = (
   const sortedDroppedRecords = sortRecords(props.droppedRecords);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       <div className="space-y-4">
         <h5>Fulfilled Requests</h5>
         <ItemList

@@ -2,18 +2,26 @@
 
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import { signIn } from "next-auth/react";
-import { VscGithub } from "react-icons/vsc";
 import { useLoggedInReturnTo } from "../hooks/useLoggedInReturnTo.tsx";
+import { GithubIcon } from "../icons/github.tsx";
 import { Button } from "../ui/button.tsx";
 import { cn } from "../utils.ts";
 
 export interface IGitHubSignInClientProps {
   redirectTo?: string;
   className?: string;
+  size?: "icon" | "default" | "sm" | "lg";
+  variant?: "default" | "outline";
+  showIcon?: boolean;
 }
 
 export default function GitHubSignInClient(props: IGitHubSignInClientProps) {
-  const { className } = props;
+  const {
+    className,
+    size = "default",
+    variant = "outline",
+    showIcon = true,
+  } = props;
   const returnTo = useLoggedInReturnTo({
     defaultReturnTo: props.redirectTo,
   });
@@ -23,11 +31,12 @@ export default function GitHubSignInClient(props: IGitHubSignInClientProps) {
       onClick={() =>
         signIn("github", { redirectTo: kClientPaths.withURL(returnTo) })
       }
-      variant="outline"
-      className={cn(className, "space-x-2 font-normal")}
+      variant={variant}
+      className={cn(className, "space-x-4 font-normal")}
+      size={size}
     >
-      <VscGithub />
-      <span className="hidden md:block">Sign-in with GitHub</span>
+      {showIcon && <GithubIcon className={"size-4"} />}
+      <span className="flex-1">Sign-in with GitHub</span>
     </Button>
   );
 }

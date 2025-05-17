@@ -16,7 +16,7 @@ const EditWorkspacePage: NextPage<IEditWorkspacePageProps> = (props) => {
     <WorkspaceContainer
       workspaceId={workspaceId}
       render={(workspace) => (
-        <div className="space-y-4">
+        <div className="space-y-8">
           <Separator />
           <h4>Workspace Details</h4>
           <WorkspaceComponent workspace={workspace} />

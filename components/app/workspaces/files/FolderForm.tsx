@@ -410,7 +410,7 @@ export default function FolderForm(props: FolderFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
+        className={cn("space-y-8", className)}
       >
         <FormAlert error={hookError} />
         {parentPath && <p>{parentPath}/</p>}

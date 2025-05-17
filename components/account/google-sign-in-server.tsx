@@ -1,18 +1,24 @@
 import { signIn } from "@/auth";
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
-import { TbBrandGoogleFilled } from "react-icons/tb";
+import { GoogleIcon } from "../icons/google.tsx";
 import { Button } from "../ui/button.tsx";
 import { cn } from "../utils.ts";
 
 export interface IGoogleSignInServerProps {
   redirectTo?: string;
   className?: string;
+  variant?: "default" | "outline";
+  showIcon?: boolean;
+  buttonClassName?: string;
 }
 
 export default function GoogleSignInServer({
   redirectTo,
   className,
+  variant = "default",
+  showIcon = true,
+  buttonClassName,
 }: IGoogleSignInServerProps) {
   return (
     <form
@@ -24,14 +30,15 @@ export default function GoogleSignInServer({
           ),
         });
       }}
+      className={className}
     >
       <Button
         type="submit"
-        variant="outline"
-        className={cn(className, "space-x-2 font-normal")}
+        variant={variant}
+        className={cn("space-x-4 font-normal", buttonClassName)}
       >
-        <TbBrandGoogleFilled className="w-4 h-4" />
-        <span className="hidden md:block">Sign-in with Google</span>
+        {showIcon && <GoogleIcon className={"size-4"} />}
+        <span className="flex-1">Sign-in with Google</span>
       </Button>
     </form>
   );

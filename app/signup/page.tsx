@@ -187,7 +187,7 @@ export default function Signup(props: ISignupProps) {
     <div className={styles.formBody}>
       <div className={cn(styles.formContentWrapper, "p-4")}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="mb-4">
               <h2 className="text-xl">Signup</h2>
             </div>

@@ -102,7 +102,7 @@ export default function ChangePasswordWithCurrentPassword() {
     <div className={styles.formBody}>
       <div className={cn(styles.formContentWrapper, "py-4")}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormAlert error={changePasswordHook.error} />
             {currentPasswordNode}
             {newPasswordNode}

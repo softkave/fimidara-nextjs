@@ -6,18 +6,21 @@ export interface IMaybeLayoutProps {
   children?: React.ReactNode;
   isDocs: boolean;
   shouldRedirectToWorkspace: boolean;
+  contentClassName?: string;
 }
 
 export const MaybeLayout = async (props: IMaybeLayoutProps) => {
-  const { children, isDocs, shouldRedirectToWorkspace } = props;
+  const { children, isDocs, shouldRedirectToWorkspace, contentClassName } =
+    props;
   const isLoggedIn = await useServerUserLoggedIn();
 
   return isLoggedIn ? (
-    <AppLayout>{children}</AppLayout>
+    <AppLayout contentClassName={contentClassName}>{children}</AppLayout>
   ) : (
     <WebLayout
       isDocs={isDocs}
       shouldRedirectToWorkspace={shouldRedirectToWorkspace}
+      contentClassName={contentClassName}
     >
       {children}
     </WebLayout>

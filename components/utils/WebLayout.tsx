@@ -1,6 +1,7 @@
 import { kClientPaths } from "@/lib/definitions/paths/clientPath.ts";
 import { kAppWorkspacePaths } from "@/lib/definitions/paths/workspace.ts";
 import { useServerUserLoggedIn } from "@/lib/hooks/session/useServerUserLoggedIn.ts";
+import { cn } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { DocsSideNav } from "../docs/DocsSideNav.tsx";
 import { ScrollArea } from "../ui/scroll-area.tsx";
@@ -10,6 +11,7 @@ export interface IWebLayoutProps {
   isDocs: boolean;
   shouldRedirectToWorkspace: boolean;
   children?: React.ReactNode;
+  contentClassName?: string;
 }
 
 export const WebLayout = async (props: IWebLayoutProps) => {
@@ -27,8 +29,10 @@ export const WebLayout = async (props: IWebLayoutProps) => {
         <WebHeader />
         <ScrollArea>
           <div
-            style={{ maxWidth: "700px" }}
-            className="mx-auto p-4 flex-1 w-full"
+            className={cn(
+              "mx-auto p-4 flex-1 w-full max-w-4xl",
+              props.contentClassName
+            )}
           >
             {children}
           </div>
